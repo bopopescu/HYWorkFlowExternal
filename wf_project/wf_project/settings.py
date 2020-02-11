@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     # Optional: Skin for the admin interface
     'django_adminlte_theme',
 
+    'BusinessPartner',
+
     # Any apps which need to have their templates overridden by adminlte
     'django.contrib.admin',
     'django.contrib.auth',

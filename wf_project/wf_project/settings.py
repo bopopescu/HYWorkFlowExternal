@@ -31,13 +31,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'BusinessPartner.apps.BusinesspartnerConfig',
+    'administration.apps.AdministrationConfig',
+
     # The general purpose templates
     'django_adminlte',
 
     # Optional: Skin for the admin interface
     'django_adminlte_theme',
-
-    'BusinessPartner',
 
     # Any apps which need to have their templates overridden by adminlte
     'django.contrib.admin',

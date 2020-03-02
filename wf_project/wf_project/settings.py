@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'BusinessPartner.apps.BusinesspartnerConfig',
     'administration.apps.AdministrationConfig',
+    'Inventory.apps.InventoryConfig',
 
     # The general purpose templates
     'django_adminlte',

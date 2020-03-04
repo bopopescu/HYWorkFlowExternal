@@ -18,6 +18,14 @@ class WorkflowInstance(models.Model):
     def __str__(self):
         return self.template_code
 
+class WorkflowApprovalRule(models.Model):
+    ApprovalLevel = models.IntegerField(unique=True,verbose_name="Approval Level")
+    Description = models.CharField(max_length=250)
+    Condition = models.CharField(max_length=250)
+
+    def __str__(self):
+        return "Level %s - %s" % (self.ApprovalLevel, self.Description)
+
 class ProjectMaintenance(models.Model):
     company = models.ForeignKey('CompanyMaintenance', default=0, verbose_name="Company Name",on_delete=models.CASCADE)
     project_code = models.CharField(max_length=100)
@@ -145,3 +153,5 @@ class CurrencyMaintenance(models.Model):
 
     def __str__(self):
         return self.currency_code
+
+

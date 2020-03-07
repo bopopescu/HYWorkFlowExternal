@@ -67,10 +67,11 @@ class CompanyMaintenance(models.Model):
         return self.company_name
 
 class EmployeeMaintenance(models.Model):
+    gender_option = [('M','MALE'),('F','FEMALE')]
     employee_code = models.CharField(max_length=100)
     employee_name = models.CharField(max_length=250)
     nick_name = models.CharField(max_length=250)
-    gender = models.BooleanField()
+    gender = models.CharField(max_length=25,choices=gender_option)
     date_of_birth = models.DateField()
     tax_registration_no_2 = models.CharField(max_length=100)
     position = models.CharField(max_length=250)

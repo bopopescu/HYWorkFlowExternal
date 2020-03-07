@@ -14,6 +14,16 @@ from .models import LocationMaintenance
 from .models import ItemClassesMaintenance
 from .models import ItemGroupsMaintenance
 from .models import WorkflowApprovalRule
+from .models import VendorGroupMaintenance
+from .models import SystemFlagMaintenance
+from .models import EmployeePositionMaintenance
+from .models import BranchMaintenance
+from .models import CountryMaintenance
+from .models import EmployeeBranchMaintenance
+from .models import EmployeeDepartmentMaintenance
+from .models import EmployeeGroupMaintenance
+from .models import EmployeeProjectMaintenance
+from .models import RegionMaintenance
 
 admin.site.register(WorkflowPattern)
 admin.site.register(WorkflowInstance)
@@ -30,3 +40,13 @@ admin.site.register(LocationMaintenance)
 admin.site.register(ItemClassesMaintenance)
 admin.site.register(ItemGroupsMaintenance)
 admin.site.register(WorkflowApprovalRule)
+admin.site.register(VendorGroupMaintenance)
+admin.site.register(SystemFlagMaintenance)
+admin.site.register(EmployeePositionMaintenance)
+admin.site.register(BranchMaintenance)
+admin.site.register(CountryMaintenance)
+admin.site.register(EmployeeBranchMaintenance)
+admin.site.register(EmployeeDepartmentMaintenance)
+admin.site.register(EmployeeGroupMaintenance)
+admin.site.register(EmployeeProjectMaintenance)
+admin.site.register(RegionMaintenance)

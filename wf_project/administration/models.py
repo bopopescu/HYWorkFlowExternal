@@ -104,17 +104,20 @@ class EmployeeGroupMaintenance(models.Model):
 
 class EmployeeMaintenance(models.Model):
     gender_option = [('M','MALE'),('F','FEMALE')]
-    employee_code = models.CharField(max_length=100)
+    
     employee_name = models.CharField(max_length=250)
     nick_name = models.CharField(max_length=250)
     gender = models.CharField(max_length=25,choices=gender_option)
-    date_of_birth = models.DateField()
-    tax_registration_no_2 = models.CharField(max_length=100)
-    position = models.CharField(max_length=250)
-    email = models.CharField(max_length=250)
+    dob = models.DateField(verbose_name="Date of Birth")
+    position_id = models.ForeignKey('EmployeePositionMaintenance',default=0,verbose_name="Position",on_delete=models.CASCADE)
+    reporting_officer_id = models.ForeignKey('self',default=0,verbose_name="Reporting Officer",on_delete=models.CASCADE)
+    created_by = models.CharField(max_length=100,editable=False)
+    created_timestamp = models.DateField(editable=False)
+    modified_by = models.CharField(max_length=100,editable=False)
+    modified_timestamp = models.DateField(editable=False)
 
     def __str__(self):
-        return self.employee_code
+        return self.employee_name
 
 class EmployeeProjectMaintenance(models.Model):
     employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
@@ -246,3 +249,20 @@ class WorkflowPattern(models.Model):
 
     def __str__(self):
         return self.pattern_code
+
+class VendorGroupMaintenance(models.Model):
+    group_code = models.CharField(max_length=15)
+    group_name = models.CharField(max_length=100)
+    is_active = models.BooleanField()
+    created_by = models.CharField(max_length=100,editable=False)
+    created_timestamp = models.DateField(editable=False)
+    modified_by = models.CharField(max_length=100,editable=False)
+    modified_timestamp = models.DateField(editable=False)
+
+class SystemFlagMaintenance(models.Model):
+    flag_name= models.CharField(max_length=250)
+    table_id = models.IntegerField()
+    created_by = models.CharField(max_length=100,editable=False)
+    created_timestamp = models.DateField(editable=False)
+    modified_by = models.CharField(max_length=100,editable=False)
+    modified_timestamp = models.DateField(editable=False)

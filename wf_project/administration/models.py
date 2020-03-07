@@ -1,59 +1,5 @@
 from django.db import models
 
-class WorkflowPattern(models.Model):
-    pattern_code = models.CharField(max_length=100)
-    description = models.CharField(max_length=500)
-    is_active = models.BooleanField()
-
-    def __str__(self):
-        return self.pattern_code
-
-class WorkflowInstance(models.Model):
-    template_code = models.CharField(max_length=100)
-    company = models.ForeignKey('CompanyMaintenance', default=0, verbose_name="Company Name",on_delete=models.CASCADE)
-    document_type = models.ForeignKey('DocumentTypeMaintenance', default=0, verbose_name="Document Type",on_delete=models.CASCADE)
-    trans_type = models.CharField(max_length=100)
-    ceo_required = models.BooleanField()
-
-    def __str__(self):
-        return self.template_code
-
-class WorkflowApprovalRule(models.Model):
-    ApprovalLevel = models.IntegerField(unique=True,verbose_name="Approval Level")
-    Description = models.CharField(max_length=250)
-    Condition = models.CharField(max_length=250)
-
-    def __str__(self):
-        return "Level %s - %s" % (self.ApprovalLevel, self.Description)
-
-class ProjectMaintenance(models.Model):
-    company = models.ForeignKey('CompanyMaintenance', default=0, verbose_name="Company Name",on_delete=models.CASCADE)
-    project_code = models.CharField(max_length=100)
-    project_name = models.CharField(max_length=250)
-    phase_name = models.CharField(max_length=250)
-    sub_phase_name = models.CharField(max_length=250)
-    effect_start_date = models.DateField()
-    effect_end_date = models.DateField()
-
-    def __str__(self):
-        return self.project_code
-
-class StatusMaintenance(models.Model):
-    document_type = models.ForeignKey('DocumentTypeMaintenance', default=0, verbose_name="Document Type",on_delete=models.CASCADE)
-    status_code = models.IntegerField()
-    status_name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.status_code
-
-class DepartmentMaintenance(models.Model):
-    department_code = models.CharField(max_length=100)
-    department_name = models.CharField(max_length=250)
-    is_active = models.BooleanField()
-
-    def __str__(self):
-        return self.department_code
-
 class CompanyMaintenance(models.Model):
     company_code = models.CharField(max_length=100)
     short_name = models.CharField(max_length=250)
@@ -65,6 +11,61 @@ class CompanyMaintenance(models.Model):
 
     def __str__(self):
         return self.company_name
+
+class CurrencyMaintenance(models.Model):
+    currency_code = models.CharField(max_length=100)
+    currency_name = models.CharField(max_length=250)
+    rate = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.currency_code
+
+class DepartmentMaintenance(models.Model):
+    department_code = models.CharField(max_length=100)
+    department_name = models.CharField(max_length=250)
+    is_active = models.BooleanField()
+
+    def __str__(self):
+        return self.department_code
+
+class DocumentTypeMaintenance(models.Model):
+    document_type_code = models.CharField(max_length=100)
+    document_type_name = models.CharField(max_length=250)
+    is_active = models.BooleanField()
+    created_by = models.CharField(max_length=100)
+    created_timestamp = models.DateField()
+    modified_by = models.CharField(max_length=100)
+    modified_timestamp = models.DateField()
+
+    def __str__(self):
+        return "%s - %s" % (self.document_type_code, self.document_type_name)
+
+class EmployeeBranchMaintenance(models.Model):
+    employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
+    branch = models.ForeignKey('BranchMaintenance', default=0, verbose_name="Branch",on_delete=models.CASCADE)
+    created_by = models.CharField(max_length=100)
+    created_timestamp = models.DateField()
+    modified_by = models.CharField(max_length=100)
+    modified_timestamp = models.DateField()
+
+class EmployeeDepartmentMaintenance(models.Model):
+    employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
+    department = models.ForeignKey('DepartmentMaintenance', default=0, verbose_name="Department",on_delete=models.CASCADE)
+    created_by = models.CharField(max_length=100)
+    created_timestamp = models.DateField()
+    modified_by = models.CharField(max_length=100)
+    modified_timestamp = models.DateField()
+
+class EmployeeGroupMaintenance(models.Model):
+    group_code = models.CharField(max_length=100)
+    group_name = models.CharField(max_length=250)
+    created_by = models.CharField(max_length=100)
+    created_timestamp = models.DateField()
+    modified_by = models.CharField(max_length=100)
+    modified_timestamp = models.DateField()
+
+    def __str__(self):
+        return '{self.group_code} - {self.group_name}'
 
 class EmployeeMaintenance(models.Model):
     employee_code = models.CharField(max_length=100)
@@ -79,35 +80,23 @@ class EmployeeMaintenance(models.Model):
     def __str__(self):
         return self.employee_code
 
-class UserMaintenance(models.Model):
-    company = models.ForeignKey('CompanyMaintenance', default=0, verbose_name="Company Name",on_delete=models.CASCADE)
-    user_code = models.CharField(max_length=100)
-    user_name = models.CharField(max_length=250)
-    user_group = models.CharField(max_length=250)
-    signature = models.FileField()
+class EmployeeProjectMaintenance(models.Model):
+    employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
+    project = models.ForeignKey('ProjectMaintenance', default=0, verbose_name="Project",on_delete=models.CASCADE)
+    created_by = models.CharField(max_length=100)
+    created_timestamp = models.DateField()
+    modified_by = models.CharField(max_length=100)
+    modified_timestamp = models.DateField()
 
-    def __str__(self):
-        return self.user_code
-
-class PaymentTermMaintenance(models.Model):
-    term_code = models.CharField(max_length=100)
-    description = models.CharField(max_length=250)
-    days = models.IntegerField()
-    is_active = models.BooleanField()
-
-    def __str__(self):
-        return self.term_code
-
-class LocationMaintenance(models.Model):
-    loc_code = models.CharField(max_length=100)
-    loc_name = models.CharField(max_length=250)
+class EmployeePositionMaintenance(models.Model):
+    position_name = models.CharField(max_length=250)
     created_by = models.CharField(max_length=100)
     created_timestamp = models.DateField()
     modified_by = models.CharField(max_length=100)
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return self.loc_code
+        return self.position_name
 
 class ItemClassesMaintenance(models.Model):
     item_class_code = models.CharField(max_length=100)
@@ -134,24 +123,78 @@ class ItemGroupsMaintenance(models.Model):
     def __str__(self):
         return self.item_group_code
 
-class DocumentTypeMaintenance(models.Model):
-    document_type_code = models.CharField(max_length=100)
-    document_type_name = models.CharField(max_length=250)
-    is_active = models.BooleanField()
+class LocationMaintenance(models.Model):
+    loc_code = models.CharField(max_length=100)
+    loc_name = models.CharField(max_length=250)
     created_by = models.CharField(max_length=100)
     created_timestamp = models.DateField()
     modified_by = models.CharField(max_length=100)
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return "%s - %s" % (self.document_type_code, self.document_type_name)
+        return self.loc_code
 
-class CurrencyMaintenance(models.Model):
-    currency_code = models.CharField(max_length=100)
-    currency_name = models.CharField(max_length=250)
-    rate = models.DecimalField(max_digits=10, decimal_places=2)
+class PaymentTermMaintenance(models.Model):
+    term_code = models.CharField(max_length=100)
+    description = models.CharField(max_length=250)
+    days = models.IntegerField()
+    is_active = models.BooleanField()
 
     def __str__(self):
-        return self.currency_code
+        return self.term_code
 
+class ProjectMaintenance(models.Model):
+    company = models.ForeignKey('CompanyMaintenance', default=0, verbose_name="Company Name",on_delete=models.CASCADE)
+    project_code = models.CharField(max_length=100)
+    project_name = models.CharField(max_length=250)
+    phase_name = models.CharField(max_length=250)
+    sub_phase_name = models.CharField(max_length=250)
+    effect_start_date = models.DateField()
+    effect_end_date = models.DateField()
 
+    def __str__(self):
+        return self.project_code
+
+class StatusMaintenance(models.Model):
+    document_type = models.ForeignKey('DocumentTypeMaintenance', default=0, verbose_name="Document Type",on_delete=models.CASCADE)
+    status_code = models.IntegerField()
+    status_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.status_code
+
+class UserMaintenance(models.Model):
+    company = models.ForeignKey('CompanyMaintenance', default=0, verbose_name="Company Name",on_delete=models.CASCADE)
+    user_code = models.CharField(max_length=100)
+    user_name = models.CharField(max_length=250)
+    user_group = models.CharField(max_length=250)
+    signature = models.FileField()
+
+    def __str__(self):
+        return self.user_code
+
+class WorkflowApprovalRule(models.Model):
+    ApprovalLevel = models.IntegerField(unique=True,verbose_name="Approval Level")
+    Description = models.CharField(max_length=250)
+    Condition = models.CharField(max_length=250)
+
+    def __str__(self):
+        return "Level %s - %s" % (self.ApprovalLevel, self.Description)
+
+class WorkflowInstance(models.Model):
+    template_code = models.CharField(max_length=100)
+    company = models.ForeignKey('CompanyMaintenance', default=0, verbose_name="Company Name",on_delete=models.CASCADE)
+    document_type = models.ForeignKey('DocumentTypeMaintenance', default=0, verbose_name="Document Type",on_delete=models.CASCADE)
+    trans_type = models.CharField(max_length=100)
+    ceo_required = models.BooleanField()
+
+    def __str__(self):
+        return self.template_code
+
+class WorkflowPattern(models.Model):
+    pattern_code = models.CharField(max_length=100)
+    description = models.CharField(max_length=500)
+    is_active = models.BooleanField()
+
+    def __str__(self):
+        return self.pattern_code

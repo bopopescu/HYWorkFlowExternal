@@ -1,21 +1,56 @@
 from django.db import models
 
+class BranchMaintenance(models.Model):
+    branch_code = models.CharField(max_length=100)
+    branch_name = models.CharField(max_length=250)
+    is_active = models.BooleanField()
+    created_by = models.CharField(max_length=100)
+    created_timestamp = models.DateField()
+    modified_by = models.CharField(max_length=100)
+    modified_timestamp = models.DateField()
+
+    def __str__(self):
+        return "%s - %s" % (self.branch_code, self.branch_name)
+
 class CompanyMaintenance(models.Model):
     company_code = models.CharField(max_length=100)
-    short_name = models.CharField(max_length=250)
     company_name = models.CharField(max_length=250)
+    short_name = models.CharField(max_length=250)        
+    business_registration_no = models.CharField(max_length=30)
+    tax_id_1 = models.CharField(max_length=100)
+    tax_id_2 = models.CharField(max_length=100)
     currency = models.ForeignKey('CurrencyMaintenance', default=0, verbose_name="Currency",on_delete=models.CASCADE)
-    business_registration_no = models.CharField(max_length=100)
-    tax_registration_no = models.CharField(max_length=100)
-    tax_registration_no_2 = models.CharField(max_length=100)
+    region = models.ForeignKey('RegionMaintenance', default=0, verbose_name="Region",on_delete=models.CASCADE)
 
     def __str__(self):
         return self.company_name
 
+class CountryMaintenance(models.Model):
+    country_code = models.CharField(max_length=3)
+    country_name = models.CharField(max_length=250)
+    alpha_2 = models.CharField(max_length=2)
+    alpha_3 = models.CharField(max_length=3)
+    iso3166_2 = models.CharField(max_length=20)
+    is_active = models.BooleanField()
+    created_by = models.CharField(max_length=100)
+    created_timestamp = models.DateField()
+    modified_by = models.CharField(max_length=100)
+    modified_timestamp = models.DateField()
+
+    def __str__(self):
+        return self.country_code
+
 class CurrencyMaintenance(models.Model):
     currency_code = models.CharField(max_length=100)
     currency_name = models.CharField(max_length=250)
+    alphabet = models.CharField(max_length=100)
+    country = models.ForeignKey('CountryMaintenance', default=0, verbose_name="Coountry",on_delete=models.CASCADE)
     rate = models.DecimalField(max_digits=10, decimal_places=2)
+    is_active = models.BooleanField()
+    created_by = models.CharField(max_length=100)
+    created_timestamp = models.DateField()
+    modified_by = models.CharField(max_length=100)
+    modified_timestamp = models.DateField()
 
     def __str__(self):
         return self.currency_code
@@ -26,7 +61,7 @@ class DepartmentMaintenance(models.Model):
     is_active = models.BooleanField()
 
     def __str__(self):
-        return self.department_code
+        return "%s - %s" % (self.department_code, self.department_name)
 
 class DocumentTypeMaintenance(models.Model):
     document_type_code = models.CharField(max_length=100)
@@ -65,7 +100,7 @@ class EmployeeGroupMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return '{self.group_code} - {self.group_name}'
+        return "%s - %s" % (self.group_code, self.group_name)
 
 class EmployeeMaintenance(models.Model):
     gender_option = [('M','MALE'),('F','FEMALE')]
@@ -109,7 +144,7 @@ class ItemClassesMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return self.item_class_code
+        return "%s - %s" % (self.item_class_code, self.item_class_name)
 
 class ItemGroupsMaintenance(models.Model):
     parent_id = models.ForeignKey('self', default=0, verbose_name="Parent Group", on_delete=models.CASCADE)
@@ -122,7 +157,7 @@ class ItemGroupsMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return self.item_group_code
+        return "%s - %s" % (self.item_group_code, self.item_group_name)
 
 class LocationMaintenance(models.Model):
     loc_code = models.CharField(max_length=100)
@@ -133,7 +168,7 @@ class LocationMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return self.loc_code
+        return "%s - %s" % (self.loc_code, self.loc_name)
 
 class PaymentTermMaintenance(models.Model):
     term_code = models.CharField(max_length=100)
@@ -154,7 +189,19 @@ class ProjectMaintenance(models.Model):
     effect_end_date = models.DateField()
 
     def __str__(self):
-        return self.project_code
+        return "%s - %s" % (self.project_code, self.project_name)
+
+class RegionMaintenance(models.Model):
+    region_code = models.CharField(max_length=100)
+    region_name = models.CharField(max_length=250)
+    is_active = models.BooleanField()
+    created_by = models.CharField(max_length=100)
+    created_timestamp = models.DateField()
+    modified_by = models.CharField(max_length=100)
+    modified_timestamp = models.DateField()
+
+    def __str__(self):
+        return "%s - %s" % (self.region_code, self.region_name)
 
 class StatusMaintenance(models.Model):
     document_type = models.ForeignKey('DocumentTypeMaintenance', default=0, verbose_name="Document Type",on_delete=models.CASCADE)
@@ -162,7 +209,7 @@ class StatusMaintenance(models.Model):
     status_name = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.status_code
+        return "%s - %s" % (self.status_code, self.status_name)
 
 class UserMaintenance(models.Model):
     company = models.ForeignKey('CompanyMaintenance', default=0, verbose_name="Company Name",on_delete=models.CASCADE)

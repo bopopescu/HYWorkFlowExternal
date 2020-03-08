@@ -44,7 +44,7 @@ class CurrencyMaintenance(models.Model):
     currency_code = models.CharField(max_length=100)
     currency_name = models.CharField(max_length=250)
     alphabet = models.CharField(max_length=100)
-    country = models.ForeignKey('CountryMaintenance', default=0, verbose_name="Coountry",on_delete=models.CASCADE)
+    country = models.ForeignKey('CountryMaintenance', default=0, verbose_name="Country",on_delete=models.CASCADE)
     rate = models.DecimalField(max_digits=10, decimal_places=2)
     is_active = models.BooleanField()
     created_by = models.CharField(max_length=100)

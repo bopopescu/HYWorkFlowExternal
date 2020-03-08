@@ -1,0 +1,4 @@
+
+*.pyc
+wf_project/administration/__pycache__/models.cpython-36.pyc
+wf_project/administration/__pycache__/admin.cpython-36.pyc

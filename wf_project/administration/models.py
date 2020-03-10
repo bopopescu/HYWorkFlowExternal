@@ -19,6 +19,7 @@ class CompanyMaintenance(models.Model):
     business_registration_no = models.CharField(max_length=30)
     tax_id_1 = models.CharField(max_length=100)
     tax_id_2 = models.CharField(max_length=100)
+    is_active = models.BooleanField()
     currency = models.ForeignKey('CurrencyMaintenance', default=0, verbose_name="Currency",on_delete=models.CASCADE)
     region = models.ForeignKey('RegionMaintenance', default=0, verbose_name="Region",on_delete=models.CASCADE)
     created_by = models.CharField(max_length=100)
@@ -29,8 +30,8 @@ class CompanyMaintenance(models.Model):
         return self.company_name
 
 class CompanyMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('short_name', 'company_name', 'currency','region')
-    list_filter = ('currency','region',)
+    list_display = ('short_name', 'company_name', 'currency','region','is_active')
+    list_filter = ('is_active')
     search_fields = ('short_name', 'company_name','currency__currency_name',)
 
 class CountryMaintenance(models.Model):

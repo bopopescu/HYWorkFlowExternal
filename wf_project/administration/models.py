@@ -118,7 +118,7 @@ class EmployeeBranchMaintenance(models.Model):
 
 class EmployeeBranchMaintenanceScreen(admin.ModelAdmin):
     list_display = ('employee', 'branch')
-    search_fields = ('employee__employee_name','employee__employee_code' ,'branch__branch_name','branch__branch_code')
+    search_fields = ('employee__employee_name','employee__nick_name' ,'branch__branch_name','branch__branch_code')
 
 class EmployeeDepartmentMaintenance(models.Model):
     employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
@@ -130,7 +130,7 @@ class EmployeeDepartmentMaintenance(models.Model):
 
 class EmployeeDepartmentMaintenanceScreen(admin.ModelAdmin):
     list_display = ('employee', 'department')
-    search_fields = ('employee__employee_name','employee__employee_code' ,'department__department_name','department__department_code')
+    search_fields = ('employee__employee_name','employee__nick_name' ,'department__department_name','department__department_code')
 
 class EmployeeGroupMaintenance(models.Model):
     group_code = models.CharField(max_length=100)
@@ -179,7 +179,7 @@ class EmployeeProjectMaintenance(models.Model):
 
 class EmployeeProjectMaintenanceScreen(admin.ModelAdmin):
     list_display = ('employee', 'project')
-    search_fields = ('employee__employee_name','employee__employee_code' ,'project__project_code','project__project_name','project__phase_name','project__sub_phase_name')
+    search_fields = ('employee__employee_name','employee__nick_name' ,'project__project_code','project__project_name','project__phase_name','project__sub_phase_name')
 
 class EmployeePositionMaintenance(models.Model):
     position_name = models.CharField(max_length=250)
@@ -273,7 +273,7 @@ class ProjectMaintenance(models.Model):
 
 class ProjectMaintenanceScreen(admin.ModelAdmin):
     list_display = ('project_code','company','project_name','phase_name','sub_phase_name')
-    search_fields = ('company__company_name', 'company__company_code','project_code','project_name','phase_name','sub_phase_name',)
+    search_fields = ('company__company_name', 'company__short_name','project_code','project_name','phase_name','sub_phase_name',)
 
 class RegionMaintenance(models.Model):
     region_code = models.CharField(max_length=100)
@@ -302,7 +302,7 @@ class StatusMaintenance(models.Model):
 
 class StatusMaintenanceScreen(admin.ModelAdmin):
     list_display = ('status_code','status_name','document_type')
-    search_fields = ('status_code', 'status_name','document_type')
+    search_fields = ('status_code', 'status_name','document_type__document_type_name')
 
 class UserMaintenance(models.Model):
     company = models.ForeignKey('CompanyMaintenance', default=0, verbose_name="Company Name",on_delete=models.CASCADE)

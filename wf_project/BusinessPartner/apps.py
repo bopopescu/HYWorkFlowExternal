@@ -1,6 +1,0 @@
-from django.apps import AppConfig
-
-
-class BusinesspartnerConfig(AppConfig):
-    name = 'BusinessPartner'
-    verbose_name = 'Vendor'

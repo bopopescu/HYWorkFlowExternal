@@ -1,7 +1,6 @@
 from django.db import models
 
 class BranchMaintenance(models.Model):
-    branch_code = models.CharField(max_length=100)
     branch_name = models.CharField(max_length=250)
     is_active = models.BooleanField()
     created_by = models.CharField(max_length=100)
@@ -10,10 +9,9 @@ class BranchMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return "%s - %s" % (self.branch_code, self.branch_name)
+        return self.branch_name
 
 class CompanyMaintenance(models.Model):
-    company_code = models.CharField(max_length=100)
     company_name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=250)        
     business_registration_no = models.CharField(max_length=30)
@@ -26,7 +24,6 @@ class CompanyMaintenance(models.Model):
         return self.company_name
 
 class CountryMaintenance(models.Model):
-    country_code = models.CharField(max_length=3)
     country_name = models.CharField(max_length=250)
     alpha_2 = models.CharField(max_length=2)
     alpha_3 = models.CharField(max_length=3)
@@ -38,10 +35,9 @@ class CountryMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return self.country_code
+        return self.country_name
 
 class CurrencyMaintenance(models.Model):
-    currency_code = models.CharField(max_length=100)
     currency_name = models.CharField(max_length=250)
     alphabet = models.CharField(max_length=100)
     country = models.ForeignKey('CountryMaintenance', default=0, verbose_name="Country",on_delete=models.CASCADE)
@@ -53,18 +49,16 @@ class CurrencyMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return self.currency_code
+        return self.currency_name
 
 class DepartmentMaintenance(models.Model):
-    department_code = models.CharField(max_length=100)
     department_name = models.CharField(max_length=250)
     is_active = models.BooleanField()
 
     def __str__(self):
-        return "%s - %s" % (self.department_code, self.department_name)
+        return self.department_name
 
 class DocumentTypeMaintenance(models.Model):
-    document_type_code = models.CharField(max_length=100)
     document_type_name = models.CharField(max_length=250)
     is_active = models.BooleanField()
     created_by = models.CharField(max_length=100)
@@ -73,7 +67,7 @@ class DocumentTypeMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return "%s - %s" % (self.document_type_code, self.document_type_name)
+        return self.document_type_name
 
 class EmployeeBranchMaintenance(models.Model):
     employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
@@ -92,7 +86,6 @@ class EmployeeDepartmentMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
 class EmployeeGroupMaintenance(models.Model):
-    group_code = models.CharField(max_length=100)
     group_name = models.CharField(max_length=250)
     created_by = models.CharField(max_length=100)
     created_timestamp = models.DateField()
@@ -100,7 +93,7 @@ class EmployeeGroupMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return "%s - %s" % (self.group_code, self.group_name)
+        return self.group_name
 
 class EmployeeMaintenance(models.Model):
     gender_option = [('M','MALE'),('F','FEMALE')]
@@ -138,7 +131,6 @@ class EmployeePositionMaintenance(models.Model):
         return self.position_name
 
 class ItemClassesMaintenance(models.Model):
-    item_class_code = models.CharField(max_length=100)
     item_class_name = models.CharField(max_length=250)
     is_active = models.BooleanField()
     created_by = models.CharField(max_length=100)
@@ -147,11 +139,10 @@ class ItemClassesMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return "%s - %s" % (self.item_class_code, self.item_class_name)
+        return self.item_class_name
 
 class ItemGroupsMaintenance(models.Model):
     parent_id = models.ForeignKey('self', default=0, verbose_name="Parent Group", on_delete=models.CASCADE)
-    item_group_code = models.CharField(max_length=100)
     item_group_name = models.CharField(max_length=250)
     is_active = models.BooleanField()
     created_by = models.CharField(max_length=100)
@@ -160,10 +151,9 @@ class ItemGroupsMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return "%s - %s" % (self.item_group_code, self.item_group_name)
+        return self.item_group_name
 
 class LocationMaintenance(models.Model):
-    loc_code = models.CharField(max_length=100)
     loc_name = models.CharField(max_length=250)
     created_by = models.CharField(max_length=100)
     created_timestamp = models.DateField()
@@ -171,7 +161,7 @@ class LocationMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return "%s - %s" % (self.loc_code, self.loc_name)
+        return self.loc_name
 
 class PaymentTermMaintenance(models.Model):
     term_code = models.CharField(max_length=100)
@@ -192,10 +182,9 @@ class ProjectMaintenance(models.Model):
     effect_end_date = models.DateField()
 
     def __str__(self):
-        return "%s - %s" % (self.project_code, self.project_name)
+        return self.project_name
 
 class RegionMaintenance(models.Model):
-    region_code = models.CharField(max_length=100)
     region_name = models.CharField(max_length=250)
     is_active = models.BooleanField()
     created_by = models.CharField(max_length=100)
@@ -204,7 +193,7 @@ class RegionMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return "%s - %s" % (self.region_code, self.region_name)
+        return self.region_name
 
 class StatusMaintenance(models.Model):
     document_type = models.ForeignKey('DocumentTypeMaintenance', default=0, verbose_name="Document Type",on_delete=models.CASCADE)
@@ -251,9 +240,21 @@ class WorkflowPattern(models.Model):
         return self.pattern_code
 
 class VendorGroupMaintenance(models.Model):
-    group_code = models.CharField(max_length=15)
     group_name = models.CharField(max_length=100)
     is_active = models.BooleanField()
+    created_by = models.CharField(max_length=100,editable=False)
+    created_timestamp = models.DateField(editable=False)
+    modified_by = models.CharField(max_length=100,editable=False)
+    modified_timestamp = models.DateField(editable=False)
+
+class VendorMasterData(models.Model):
+    vendor_name = models.CharField(max_length=100)
+    currency = models.ForeignKey('CurrencyMaintenance', default=0, verbose_name="Currency",on_delete=models.CASCADE)
+    business_registration_no = models.CharField(max_length=30)
+    tax_id_1 = models.CharField(max_length=100)
+    tax_id_2 = models.CharField(max_length=100)
+    vendor_group = models.ForeignKey('VendorGroupMaintenance', default=0, verbose_name="Vendor Group",on_delete=models.CASCADE)
+    is_company = models.BooleanField()
     created_by = models.CharField(max_length=100,editable=False)
     created_timestamp = models.DateField(editable=False)
     modified_by = models.CharField(max_length=100,editable=False)

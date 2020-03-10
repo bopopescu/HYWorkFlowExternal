@@ -31,9 +31,17 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'BusinessPartner.apps.BusinesspartnerConfig',
+    # HY workflow modules
     'administration.apps.AdministrationConfig',
+    'contract_service.apps.ContractServiceConfig',
+    'drawer_reimbursement.apps.DrawerReimbursementConfig',
+    'human_resource.apps.HumanResourceConfig',
     'Inventory.apps.InventoryConfig',
+    'memo.apps.MemoConfig',
+    'payment.apps.PaymentConfig',
+    'purchasing.apps.PurchasingConfig',
+    'sales.apps.SalesConfig',
+    'vendor.apps.VendorConfig',
 
     # The general purpose templates
     'django_adminlte',

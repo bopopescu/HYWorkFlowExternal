@@ -24,6 +24,9 @@ from .models import EmployeeDepartmentMaintenance
 from .models import EmployeeGroupMaintenance
 from .models import EmployeeProjectMaintenance
 from .models import RegionMaintenance
+from .models import CompanyMaintenanceScreen
+from .models import TaxMaintenance
+from .models import TaxMaintenanceScreen
 
 admin.site.register(WorkflowPattern)
 admin.site.register(WorkflowInstance)
@@ -31,7 +34,7 @@ admin.site.register(ProjectMaintenance)
 admin.site.register(StatusMaintenance)
 admin.site.register(DepartmentMaintenance)
 admin.site.register(DocumentTypeMaintenance)
-admin.site.register(CompanyMaintenance)
+admin.site.register(CompanyMaintenance,CompanyMaintenanceScreen)
 admin.site.register(CurrencyMaintenance)
 admin.site.register(EmployeeMaintenance)
 admin.site.register(UserMaintenance)
@@ -50,3 +53,4 @@ admin.site.register(EmployeeDepartmentMaintenance)
 admin.site.register(EmployeeGroupMaintenance)
 admin.site.register(EmployeeProjectMaintenance)
 admin.site.register(RegionMaintenance)
+admin.site.register(TaxMaintenance,TaxMaintenanceScreen)

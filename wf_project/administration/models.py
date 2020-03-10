@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib import admin
 
 class BranchMaintenance(models.Model):
     branch_code = models.CharField(max_length=100)
@@ -13,7 +14,6 @@ class BranchMaintenance(models.Model):
         return "%s - %s" % (self.branch_code, self.branch_name)
 
 class CompanyMaintenance(models.Model):
-    company_code = models.CharField(max_length=100)
     company_name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=250)        
     business_registration_no = models.CharField(max_length=30)
@@ -21,9 +21,17 @@ class CompanyMaintenance(models.Model):
     tax_id_2 = models.CharField(max_length=100)
     currency = models.ForeignKey('CurrencyMaintenance', default=0, verbose_name="Currency",on_delete=models.CASCADE)
     region = models.ForeignKey('RegionMaintenance', default=0, verbose_name="Region",on_delete=models.CASCADE)
-
+    created_by = models.CharField(max_length=100)
+    created_timestamp = models.DateField()
+    modified_by = models.CharField(max_length=100)
+    modified_timestamp = models.DateField()
     def __str__(self):
         return self.company_name
+
+class CompanyMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('short_name', 'company_name', 'currency','region')
+    list_filter = ('currency','region',)
+    search_fields = ('short_name', 'company_name','currency__currency_name',)
 
 class CountryMaintenance(models.Model):
     country_code = models.CharField(max_length=3)
@@ -53,7 +61,7 @@ class CurrencyMaintenance(models.Model):
     modified_timestamp = models.DateField()
 
     def __str__(self):
-        return self.currency_code
+        return self.currency_name
 
 class DepartmentMaintenance(models.Model):
     department_code = models.CharField(max_length=100)
@@ -259,6 +267,9 @@ class VendorGroupMaintenance(models.Model):
     modified_by = models.CharField(max_length=100,editable=False)
     modified_timestamp = models.DateField(editable=False)
 
+    def __str__(self):
+        return self.group_name
+
 class SystemFlagMaintenance(models.Model):
     flag_name= models.CharField(max_length=250)
     table_id = models.IntegerField()
@@ -266,3 +277,24 @@ class SystemFlagMaintenance(models.Model):
     created_timestamp = models.DateField(editable=False)
     modified_by = models.CharField(max_length=100,editable=False)
     modified_timestamp = models.DateField(editable=False)
+
+    def __str__(self):
+        return self.flag_name
+
+class TaxMaintenance(models.Model):
+    tax_code= models.CharField(max_length=100)
+    tax_name= models.CharField(max_length=250)
+    rate= models.DecimalField(max_digits=10, decimal_places=2)
+    is_active = models.BooleanField()
+    created_by = models.CharField(max_length=100)
+    created_timestamp = models.DateField()
+    modified_by = models.CharField(max_length=100)
+    modified_timestamp = models.DateField()
+
+    def __str__(self):
+        return self.tax_name
+
+class TaxMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('tax_code', 'tax_name', 'rate')
+    list_filter = ('rate',)
+    search_fields = ('tax_code', 'tax_name','rate',)

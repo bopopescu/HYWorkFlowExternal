@@ -31,7 +31,7 @@ class CompanyMaintenance(models.Model):
 
 class CompanyMaintenanceScreen(admin.ModelAdmin):
     list_display = ('short_name', 'company_name', 'currency','region','is_active')
-    list_filter = ('is_active')
+    list_filter = ('is_active',)
     search_fields = ('short_name', 'company_name','currency__currency_name',)
 
 class CountryMaintenance(models.Model):

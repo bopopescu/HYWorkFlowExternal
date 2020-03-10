@@ -13,8 +13,8 @@ class BranchMaintenance(models.Model):
         return self.branch_name
 
 class BranchMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('branch_code', 'branch_name','is_active' )
-    search_fields = ('branch_code', 'branch_name',)
+    list_display = ('branch_name','is_active' )
+    search_fields = ('branch_name',)
 
 class CompanyMaintenance(models.Model):
     company_name = models.CharField(max_length=250)
@@ -52,9 +52,9 @@ class CountryMaintenance(models.Model):
         return self.country_name
 
 class CountryMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('country_code', 'country_name', 'is_active',)
+    list_display = ('country_name', 'is_active',)
     list_filter = ('is_active',)
-    search_fields = ('country_code', 'country_name',)
+    search_fields = ('country_name',)
 
 class CurrencyMaintenance(models.Model):
     currency_name = models.CharField(max_length=250)
@@ -71,9 +71,9 @@ class CurrencyMaintenance(models.Model):
         return self.currency_name
 
 class CurrencyMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('currency_code', 'currency_name', 'is_active',)
+    list_display = ('currency_name', 'is_active',)
     list_filter = ('is_active',)
-    search_fields = ('currency_code', 'currency_name',)
+    search_fields = ('currency_name',)
 
 class DepartmentMaintenance(models.Model):
     department_name = models.CharField(max_length=250)
@@ -83,9 +83,9 @@ class DepartmentMaintenance(models.Model):
         return self.department_name
 
 class DepartmentMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('department_code', 'department_name', 'is_active',)
+    list_display = ('department_name', 'is_active',)
     list_filter = ('is_active',)
-    search_fields = ('department_code', 'department_name',)
+    search_fields = ('department_name',)
 
 class DocumentTypeMaintenance(models.Model):
     document_type_name = models.CharField(max_length=250)
@@ -99,9 +99,9 @@ class DocumentTypeMaintenance(models.Model):
         return self.document_type_name
 
 class DocumentTypeMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('document_type_code', 'document_type_name', 'is_active',)
+    list_display = ('document_type_name', 'is_active',)
     list_filter = ('is_active',)
-    search_fields = ('document_type_code', 'document_type_name',)
+    search_fields = ('document_type_name',)
 
 class EmployeeBranchMaintenance(models.Model):
     employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
@@ -138,8 +138,8 @@ class EmployeeGroupMaintenance(models.Model):
         return self.group_name
 
 class EmployeeGroupMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('group_code', 'group_name',)
-    search_fields = ('group_code', 'group_name',)
+    list_display = ('group_name',)
+    search_fields = ('group_name',)
 
 class EmployeeMaintenance(models.Model):
     gender_option = [('M','MALE'),('F','FEMALE')]
@@ -201,9 +201,9 @@ class ItemClassesMaintenance(models.Model):
         return self.item_class_name
 
 class ItemClassesMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('item_class_code', 'item_class_name','is_active')
+    list_display = ('item_class_name','is_active')
     list_filter = ('is_active',)
-    search_fields = ('item_class_code', 'item_class_name',)
+    search_fields = ('item_class_name',)
 
 class ItemGroupsMaintenance(models.Model):
     parent_id = models.ForeignKey('self', default=0, verbose_name="Parent Group", on_delete=models.CASCADE)
@@ -218,9 +218,9 @@ class ItemGroupsMaintenance(models.Model):
         return self.item_group_name
 
 class ItemGroupsMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('item_group_code', 'item_group_name','is_active')
+    list_display = ('item_group_name','is_active')
     list_filter = ('is_active',)
-    search_fields = ('item_group_code', 'item_group_name',)
+    search_fields = ('item_group_name',)
 
 class LocationMaintenance(models.Model):
     loc_name = models.CharField(max_length=250)
@@ -233,8 +233,8 @@ class LocationMaintenance(models.Model):
         return self.loc_name
 
 class LocationMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('loc_code', 'loc_name')
-    search_fields = ('loc_code', 'loc_name',)
+    list_display = ('loc_name',)
+    search_fields = ('loc_name',)
 
 class PaymentTermMaintenance(models.Model):
     term_code = models.CharField(max_length=100)
@@ -278,9 +278,9 @@ class RegionMaintenance(models.Model):
         return self.region_name
 
 class RegionMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('region_code', 'region_name','is_active')
+    list_display = ('region_name','is_active')
     list_filter = ('is_active',)
-    search_fields = ('region_code', 'region_name',)
+    search_fields = ('region_name',)
 
 class StatusMaintenance(models.Model):
     document_type = models.ForeignKey('DocumentTypeMaintenance', default=0, verbose_name="Document Type",on_delete=models.CASCADE)
@@ -346,9 +346,9 @@ class VendorGroupMaintenance(models.Model):
         return self.group_name
 
 class VendorGroupMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('group_code', 'group_name','is_active')
+    list_display = ('group_name','is_active')
     list_filter = ('is_active',)
-    search_fields = ('group_code', 'group_name')
+    search_fields = ('group_name',)
 
 class VendorMasterData(models.Model):
     vendor_name = models.CharField(max_length=100)

@@ -325,14 +325,14 @@ class WorkflowApprovalRuleScreen(admin.ModelAdmin):
 
 class WorkflowApprovalGroup(models.Model):
     approval_group_name = models.CharField(max_length=250)
-    no_of_group = models.PositiveIntegerField(verbose_name="No of User",validators=[MinValueValidator(0)]) 
+    no_of_person = models.PositiveIntegerField(verbose_name="No of person",validators=[MinValueValidator(0)]) 
     user_group = models.ForeignKey('EmployeeGroupMaintenance',default=0,verbose_name="User Group",on_delete=models.CASCADE)
     is_active = models.BooleanField()
     def __str__(self):
         return self.approval_group_name
 
 class WorkflowApprovalGroupScreen(admin.ModelAdmin):
-    list_display = ('approval_group_name', 'no_of_group','user_group','is_active')
+    list_display = ('approval_group_name', 'no_of_person','user_group','is_active')
     list_filter = ('is_active',)
     search_fields = ('approval_group_name',)
 

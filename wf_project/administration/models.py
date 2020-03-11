@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib import admin
+from django.core.validators import MinValueValidator
 
 class BranchMaintenance(models.Model):
     branch_name = models.CharField(max_length=250)
@@ -305,16 +306,25 @@ class UserMaintenance(models.Model):
         return self.user_code
 
 class WorkflowApprovalRule(models.Model):
-    ApprovalLevel = models.IntegerField(unique=True,verbose_name="Approval Level")
-    Description = models.CharField(max_length=250)
-    Condition = models.CharField(max_length=250)
+    condition_option = [('And','And'),('Or','Or')]
+    approval_level = models.IntegerField(unique=True,verbose_name="Approval Level")
+    description = models.CharField(max_length=250)
+    document_amount_range= models.DecimalField(max_digits=10, decimal_places=2,verbose_name="Document Amount Range From (RM)")
+    document_amount_range2= models.DecimalField(max_digits=10, decimal_places=2,verbose_name="To")
+    supervisor_approve = models.BooleanField(verbose_name="Supervisor Approve?")
+    no_of_groupa = models.PositiveIntegerField(verbose_name="No of Group A User",validators=[MinValueValidator(0)])
+    no_of_groupb = models.PositiveIntegerField(verbose_name="No of Group B User",validators=[MinValueValidator(0)])
+    condition = models.CharField(max_length=10,verbose_name='Condition',choices=condition_option) 
+    is_active = models.BooleanField()
 
     def __str__(self):
-        return "Level %s - %s" % (self.ApprovalLevel, self.Description)
+        return "Level %s - %s" % (self.approval_level, self.description)
 
 class WorkflowApprovalRuleScreen(admin.ModelAdmin):
-    list_display = ('ApprovalLevel', 'Description','Condition')
-    search_fields = ('ApprovalLevel', 'Description','Condition')
+    fields = ['approval_level', 'description', ('document_amount_range', 'document_amount_range2'),('no_of_groupb','condition','no_of_groupa'),'supervisor_approve','is_active']
+    list_display = ('approval_level', 'description','supervisor_approve','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('approval_level', 'description')
 
 class WorkflowInstance(models.Model):
     template_code = models.CharField(max_length=100)

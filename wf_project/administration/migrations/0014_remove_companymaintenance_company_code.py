@@ -8,10 +8,3 @@ class Migration(migrations.Migration):
     dependencies = [
         ('administration', '0013_auto_20200310_0954'),
     ]
-
-    operations = [
-        migrations.RemoveField(
-            model_name='companymaintenance',
-            name='company_code',
-        ),
-    ]

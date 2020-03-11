@@ -26,6 +26,10 @@ from .models import ItemGroupsMaintenance
 from .models import ItemGroupsMaintenanceScreen
 from .models import WorkflowApprovalRule
 from .models import WorkflowApprovalRuleScreen
+from .models import WorkflowApprovalGroup
+from .models import WorkflowApprovalGroupScreen
+from .models import WorkflowApprovalRuleGroupMaintenance
+from .models import WorkflowApprovalRuleGroupMaintenanceScreen
 from .models import VendorGroupMaintenance
 from .models import VendorGroupMaintenanceScreen
 from .models import SystemFlagMaintenance
@@ -64,6 +68,8 @@ admin.site.register(LocationMaintenance,LocationMaintenanceScreen)
 admin.site.register(ItemClassesMaintenance,ItemClassesMaintenanceScreen)
 admin.site.register(ItemGroupsMaintenance,ItemGroupsMaintenanceScreen)
 admin.site.register(WorkflowApprovalRule,WorkflowApprovalRuleScreen)
+admin.site.register(WorkflowApprovalGroup,WorkflowApprovalGroupScreen)
+admin.site.register(WorkflowApprovalRuleGroupMaintenance,WorkflowApprovalRuleGroupMaintenanceScreen)
 admin.site.register(VendorGroupMaintenance,VendorGroupMaintenanceScreen)
 admin.site.register(SystemFlagMaintenance,SystemFlagMaintenanceScreen)
 admin.site.register(EmployeePositionMaintenance,EmployeePositionMaintenanceScreen)

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib import admin
+from django.core.validators import MinValueValidator
 
 class BranchMaintenance(models.Model):
     branch_name = models.CharField(max_length=250)
@@ -305,16 +306,46 @@ class UserMaintenance(models.Model):
         return self.user_code
 
 class WorkflowApprovalRule(models.Model):
-    ApprovalLevel = models.IntegerField(unique=True,verbose_name="Approval Level")
-    Description = models.CharField(max_length=250)
-    Condition = models.CharField(max_length=250)
+    approval_level = models.IntegerField(unique=True,verbose_name="Approval Level")
+    approval_rule_name = models.CharField(max_length=250)
+    document_amount_range= models.DecimalField(max_digits=10, decimal_places=2,verbose_name="Document Amount Range From (RM)")
+    document_amount_range2= models.DecimalField(max_digits=10, decimal_places=2,verbose_name="To")
+    supervisor_approve = models.BooleanField(verbose_name="Supervisor Approve?")
+    is_active = models.BooleanField()
 
     def __str__(self):
-        return "Level %s - %s" % (self.ApprovalLevel, self.Description)
+        return "Level %s - %s" % (self.approval_level, self.approval_rule_name)
 
 class WorkflowApprovalRuleScreen(admin.ModelAdmin):
-    list_display = ('ApprovalLevel', 'Description','Condition')
-    search_fields = ('ApprovalLevel', 'Description','Condition')
+    fields = ['approval_level', 'approval_rule_name', ('document_amount_range', 'document_amount_range2'),'supervisor_approve','is_active']
+    list_display = ('approval_level', 'approval_rule_name','supervisor_approve','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('approval_level', 'approval_rule_name')
+    
+
+class WorkflowApprovalGroup(models.Model):
+    approval_group_name = models.CharField(max_length=250)
+    no_of_person = models.PositiveIntegerField(verbose_name="No of person",validators=[MinValueValidator(0)]) 
+    user_group = models.ForeignKey('EmployeeGroupMaintenance',default=0,verbose_name="User Group",on_delete=models.CASCADE)
+    is_active = models.BooleanField()
+    def __str__(self):
+        return self.approval_group_name
+
+class WorkflowApprovalGroupScreen(admin.ModelAdmin):
+    list_display = ('approval_group_name', 'no_of_person','user_group','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('approval_group_name',)
+
+class WorkflowApprovalRuleGroupMaintenance(models.Model):
+    condition_option = [('And','And'),('Or','Or')]
+    approval_rule = models.ForeignKey('WorkflowApprovalRule',default=0,verbose_name="Approval Level",on_delete=models.CASCADE)
+    approval_group = models.ForeignKey('WorkflowApprovalGroup',default=0,verbose_name="Approval Group",on_delete=models.CASCADE)
+    next_condition = models.CharField(max_length=15,choices=condition_option,null=True)
+
+class WorkflowApprovalRuleGroupMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('approval_rule', 'approval_group',)
+    list_filter = ('approval_rule',)
+    search_fields = ('approval_rule__approval_rule_name','approval_rule__approval_approval_level','approval_group__approval_group_name')
 
 class WorkflowInstance(models.Model):
     template_code = models.CharField(max_length=100)

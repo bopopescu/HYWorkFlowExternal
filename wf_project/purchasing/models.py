@@ -109,6 +109,10 @@ class PurchaseRequest(models.Model):
     submit_date = models.DateField()
     subject = models.CharField(max_length=250)
     reference = models.CharField(max_length=100)
+    sub_total = models.DecimalField(decimal_places=2,max_digits=6)
+    remarks = models.CharField(max_length=250)
+    attachment = models.FileField(verbose_name="File Name")
+    attachment_date = models.DateField()
 
     class Meta:
         verbose_name = 'Purchase Request'
@@ -116,6 +120,35 @@ class PurchaseRequest(models.Model):
 
     def __str__(self):
         return self.document_number
+
+class PurchaseRequestAddress(models.Model):
+    name = models.CharField(verbose_name="To",max_length=150)
+    address = models.CharField(verbose_name="Address",max_length=250)
+    pr = models.ForeignKey(PurchaseRequest, on_delete=models.CASCADE)
+    
+    class Meta:
+        verbose_name = 'Address'    
+        verbose_name_plural = 'Addresses'    
+
+class PurchaseRequestCC(models.Model):
+    name = models.CharField(verbose_name="Name",max_length=150)
+    email = models.CharField(verbose_name="Email",max_length=250)
+    pr = models.ForeignKey(PurchaseRequest, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'CC'
+
+class PurchaseRequestDetail(models.Model):
+    description = models.CharField(verbose_name="Additional Description",max_length=250)
+    item = models.ForeignKey(Item, verbose_name="Item", on_delete=models.CASCADE)
+    pr = models.ForeignKey(PurchaseRequest, on_delete=models.CASCADE)
+    eta = models.DateTimeField(verbose_name="ETA Date")
+    quantity = models.IntegerField(verbose_name="Qty")
+    amount = models.IntegerField()
+    remark = models.CharField(max_length=250)
+
+    class Meta:
+        verbose_name = 'Detail'
 
 class RequestForQuotation(models.Model):    
     revision = models.CharField(max_length=100)

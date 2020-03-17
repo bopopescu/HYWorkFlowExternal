@@ -12,6 +12,9 @@ class Memo(models.Model):
     status = models.CharField(max_length=1)
     submit_date = models.DateField()
     subject = models.CharField(max_length=250)
+    details = models.TextField(default="")
+    attachment = models.FileField(verbose_name="File Name")
+    attachment_date = models.DateField()
 
     class Meta:
         verbose_name = 'Memo'
@@ -19,3 +22,11 @@ class Memo(models.Model):
 
     def __str__(self):
         return self.document_number
+
+class MemoCC(models.Model):
+    name = models.CharField(verbose_name="Name",max_length=150)
+    email = models.CharField(verbose_name="Email",max_length=250)
+    memo = models.ForeignKey(Memo, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'CC'

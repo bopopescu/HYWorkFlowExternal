@@ -426,3 +426,24 @@ class TaxMaintenanceScreen(admin.ModelAdmin):
     list_display = ('tax_code', 'tax_name', 'rate','is_active')
     list_filter = ('is_active',)
     search_fields = ('tax_code', 'tax_name','rate',)
+
+
+class DrawerMaintenance(models.Model):
+    status_option = [('O','Open'),('C','Closed')]
+    month_option = [('1','January'),('2','February'),('3','March'),('4','April'),
+                    ('5','May'),('6','June'),('7','July'),('8','August'),('9','September'),
+                    ('10','October'),('11','November'),('12','December')]
+    drawer_name = models.CharField(max_length=250)
+    branch = models.ForeignKey('BranchMaintenance', default=0,on_delete=models.CASCADE)
+    open_year = models.PositiveIntegerField()
+    open_month = models.CharField(choices=month_option,max_length=20)
+    limit = models.DecimalField(max_digits=10, decimal_places=2)
+    drawer_status = models.CharField(max_length=10,choices=status_option)
+
+    def __str__(self):
+        return self.drawer_name
+
+class DrawerMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('drawer_name', 'open_year', 'open_month','drawer_status')
+    list_filter = ('drawer_status',)
+    search_fields = ('drawer_name',)

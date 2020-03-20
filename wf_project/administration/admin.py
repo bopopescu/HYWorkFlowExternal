@@ -52,6 +52,8 @@ from .models import RegionMaintenance
 from .models import RegionMaintenanceScreen
 from .models import TaxMaintenance
 from .models import TaxMaintenanceScreen
+from .models import DrawerMaintenance
+from .models import DrawerMaintenanceScreen
 
 admin.site.register(WorkflowPattern)
 admin.site.register(WorkflowInstance)
@@ -81,3 +83,4 @@ admin.site.register(EmployeeGroupMaintenance,EmployeeGroupMaintenanceScreen)
 admin.site.register(EmployeeProjectMaintenance,EmployeeProjectMaintenanceScreen)
 admin.site.register(RegionMaintenance,RegionMaintenanceScreen)
 admin.site.register(TaxMaintenance,TaxMaintenanceScreen)
+admin.site.register(DrawerMaintenance,DrawerMaintenanceScreen)

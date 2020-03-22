@@ -25,7 +25,7 @@ SECRET_KEY = 'fh33gjx$+5lu0u7r^j%6(bv1#n@#r!*+z9qd%g@bgud^dv*n)x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -33,21 +33,15 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # HY workflow modules
     'administration.apps.AdministrationConfig',
-    'contract_service.apps.ContractServiceConfig',
-    'drawer_reimbursement.apps.DrawerReimbursementConfig',
-    'human_resource.apps.HumanResourceConfig',
+    #'contract_service.apps.ContractServiceConfig',
+    #'drawer_reimbursement.apps.DrawerReimbursementConfig',
+    #'human_resource.apps.HumanResourceConfig',
     'Inventory.apps.InventoryConfig',
-    'memo.apps.MemoConfig',
-    'payment.apps.PaymentConfig',
+    #'memo.apps.MemoConfig',
+    #'payment.apps.PaymentConfig',
     'purchasing.apps.PurchasingConfig',
-    'sales.apps.SalesConfig',
-    'vendor.apps.VendorConfig',
-
-    # The general purpose templates
-    'django_adminlte',
-
-    # Optional: Skin for the admin interface
-    'django_adminlte_theme',
+    #'sales.apps.SalesConfig',
+    #'vendor.apps.VendorConfig',
 
     # Any apps which need to have their templates overridden by adminlte
     'django.contrib.admin',
@@ -55,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles',  
 ]
 
 MIDDLEWARE = [
@@ -73,7 +67,9 @@ ROOT_URLCONF = 'wf_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -137,3 +133,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]

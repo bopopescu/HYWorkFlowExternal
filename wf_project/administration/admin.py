@@ -23,7 +23,6 @@ from .models import LocationMaintenanceScreen
 from .models import ItemClassesMaintenance
 from .models import ItemClassesMaintenanceScreen
 from .models import ItemGroupsMaintenance
-from .models import ItemGroupsMaintenanceScreen
 from .models import WorkflowApprovalRule
 from .models import WorkflowApprovalRuleScreen
 from .models import WorkflowApprovalGroup
@@ -52,6 +51,7 @@ from .models import RegionMaintenance
 from .models import RegionMaintenanceScreen
 from .models import TaxMaintenance
 from .models import TaxMaintenanceScreen
+from datetime import datetime
 
 admin.site.register(WorkflowPattern)
 admin.site.register(WorkflowInstance)
@@ -66,6 +66,25 @@ admin.site.register(UserMaintenance)
 admin.site.register(PaymentTermMaintenance,PaymentTermMaintenanceScreen)
 admin.site.register(LocationMaintenance,LocationMaintenanceScreen)
 admin.site.register(ItemClassesMaintenance,ItemClassesMaintenanceScreen)
+   
+class ItemGroupsMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('item_group_name','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('item_group_name',)
+    fieldsets = [
+        (None, {'fields': ['parent_id', 'item_group_name','is_active']}),
+    ]
+    exclude = ['created_by','modified_by']
+
+    def save_model(self, request, obj, form, change):
+        self.request = request
+        if not obj.pk:
+            # Only set added_by during the first save.
+            obj.created_by = self.request.user
+        else:
+            obj.modified_by = self.request.user
+        return super().save_model(request, obj, form, change)
+
 admin.site.register(ItemGroupsMaintenance,ItemGroupsMaintenanceScreen)
 admin.site.register(WorkflowApprovalRule,WorkflowApprovalRuleScreen)
 admin.site.register(WorkflowApprovalGroup,WorkflowApprovalGroupScreen)

@@ -1,0 +1,9 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% block title %}HuaYang - Administration & Maintenance{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}"><img src="{% static 'logo_admin.png'%}" style="width: 150px"/></a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

@@ -150,6 +150,43 @@ class PurchaseRequestDetail(models.Model):
     class Meta:
         verbose_name = 'Detail'
 
+class PurchaseRequestPettyCash(models.Model):
+    is_employee = models.BooleanField(verbose_name="Pay To")    
+    revision = models.CharField(max_length=100)
+    employee = models.ForeignKey(EmployeeMaintenance, verbose_name="Requester", on_delete=models.CASCADE)
+    currency = models.ForeignKey(CurrencyMaintenance, verbose_name="Currency", on_delete=models.CASCADE)    
+    company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE)
+    project = models.ForeignKey(ProjectMaintenance, verbose_name="Project", on_delete=models.CASCADE)
+    status = models.CharField(max_length=1)
+    submit_date = models.DateField()
+    payment_mode = models.CharField(max_length=100)
+    subject = models.CharField(max_length=250)
+    reference = models.CharField(max_length=100)
+    sub_total = models.DecimalField(decimal_places=2,max_digits=6)
+    discount = models.DecimalField(decimal_places=2,max_digits=6)
+    tax_amount = models.DecimalField(decimal_places=2,max_digits=6)
+    total_amount = models.DecimalField(decimal_places=2,max_digits=6)
+    remarks = models.CharField(max_length=250)
+    attachment = models.FileField(verbose_name="File Name")
+    attachment_date = models.DateField()
+
+    class Meta:
+        verbose_name = 'Purchase Request (Petty Cash)'
+        verbose_name_plural = 'Purchase Request (Petty Cash)'
+
+    def __str__(self):
+        return self.reference
+
+class PurchaseRequestPettyCashItems(models.Model):
+    description = models.CharField(verbose_name="Item Description",max_length=250)
+    prpc = models.ForeignKey(PurchaseRequestPettyCash, on_delete=models.CASCADE)
+    amount = models.DecimalField(decimal_places=2,max_digits=6)
+    tax_amount = models.DecimalField(decimal_places=2,max_digits=6)
+    line_total = models.DecimalField(decimal_places=2,max_digits=6)
+
+    class Meta:
+        verbose_name = 'Item'
+
 class RequestForQuotation(models.Model):    
     revision = models.CharField(max_length=100)
     document_number = models.CharField(max_length=100)

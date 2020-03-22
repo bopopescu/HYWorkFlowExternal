@@ -4,7 +4,6 @@ from administration.models import ItemGroupsMaintenance
 
 class Item(models.Model):
     item_type = models.CharField(max_length=1)
-    prefix = models.CharField(max_length=100)
     item_class = models.ForeignKey(ItemClassesMaintenance, verbose_name="Item Class", on_delete=models.CASCADE)
     item_group = models.ForeignKey(ItemGroupsMaintenance, verbose_name="Item Group", on_delete=models.CASCADE)
     item_code = models.CharField(max_length=100)
@@ -22,6 +21,10 @@ class Item(models.Model):
     created_timestamp = models.DateField()
     modified_by = models.CharField(max_length=100)
     modified_timestamp = models.DateField()
+
+    class Meta:
+        verbose_name = 'Item Master Data'
+        verbose_name_plural = 'Item Master Data'
 
     def __str__(self):
         return self.item_code

@@ -1,14 +1,16 @@
 from django.db import models
 from django.contrib import admin
 from django.core.validators import MinValueValidator
+from datetime import datetime
+from django.contrib.auth.models import User
 
 class BranchMaintenance(models.Model):
     branch_name = models.CharField(max_length=250)
     is_active = models.BooleanField()
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
 
     def __str__(self):
         return self.branch_name
@@ -27,9 +29,9 @@ class CompanyMaintenance(models.Model):
     currency = models.ForeignKey('CurrencyMaintenance', default=0, verbose_name="Currency",on_delete=models.CASCADE)
     region = models.ForeignKey('RegionMaintenance', default=0, verbose_name="Region",on_delete=models.CASCADE)
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
     def __str__(self):
         return self.company_name
 
@@ -45,9 +47,9 @@ class CountryMaintenance(models.Model):
     iso3166_2 = models.CharField(max_length=20)
     is_active = models.BooleanField()
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
 
     def __str__(self):
         return self.country_name
@@ -64,9 +66,9 @@ class CurrencyMaintenance(models.Model):
     rate = models.DecimalField(max_digits=10, decimal_places=2)
     is_active = models.BooleanField()
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
 
     def __str__(self):
         return self.currency_name
@@ -92,9 +94,9 @@ class DocumentTypeMaintenance(models.Model):
     document_type_name = models.CharField(max_length=250)
     is_active = models.BooleanField()
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
 
     def __str__(self):
         return self.document_type_name
@@ -108,9 +110,9 @@ class EmployeeBranchMaintenance(models.Model):
     employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
     branch = models.ForeignKey('BranchMaintenance', default=0, verbose_name="Branch",on_delete=models.CASCADE)
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
 
 class EmployeeBranchMaintenanceScreen(admin.ModelAdmin):
     list_display = ('employee', 'branch')
@@ -120,9 +122,9 @@ class EmployeeDepartmentMaintenance(models.Model):
     employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
     department = models.ForeignKey('DepartmentMaintenance', default=0, verbose_name="Department",on_delete=models.CASCADE)
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
 
 class EmployeeDepartmentMaintenanceScreen(admin.ModelAdmin):
     list_display = ('employee', 'department')
@@ -131,9 +133,9 @@ class EmployeeDepartmentMaintenanceScreen(admin.ModelAdmin):
 class EmployeeGroupMaintenance(models.Model):
     group_name = models.CharField(max_length=250)
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
 
     def __str__(self):
         return self.group_name
@@ -168,9 +170,9 @@ class EmployeeProjectMaintenance(models.Model):
     employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
     project = models.ForeignKey('ProjectMaintenance', default=0, verbose_name="Project",on_delete=models.CASCADE)
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
 
 class EmployeeProjectMaintenanceScreen(admin.ModelAdmin):
     list_display = ('employee', 'project')
@@ -179,9 +181,9 @@ class EmployeeProjectMaintenanceScreen(admin.ModelAdmin):
 class EmployeePositionMaintenance(models.Model):
     position_name = models.CharField(max_length=250)
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
 
     def __str__(self):
         return self.position_name
@@ -194,9 +196,9 @@ class ItemClassesMaintenance(models.Model):
     item_class_name = models.CharField(max_length=250)
     is_active = models.BooleanField()
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
 
     def __str__(self):
         return self.item_class_name
@@ -205,30 +207,28 @@ class ItemClassesMaintenanceScreen(admin.ModelAdmin):
     list_display = ('item_class_name','is_active')
     list_filter = ('is_active',)
     search_fields = ('item_class_name',)
+    fieldsets = [
+        (None, {'fields': ['item_class_name','is_active']}),
+    ]
 
 class ItemGroupsMaintenance(models.Model):
-    parent_id = models.ForeignKey('self', default=0, verbose_name="Parent Group", on_delete=models.CASCADE)
+    parent_id = models.ForeignKey('self', verbose_name="Parent Group", on_delete=models.CASCADE,  blank=True, null=True)
     item_group_name = models.CharField(max_length=250)
     is_active = models.BooleanField()
-    created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
-    modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    created_by = models.ForeignKey(User, related_name='created_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='modified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.item_group_name
-
-class ItemGroupsMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('item_group_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('item_group_name',)
-
+    
 class LocationMaintenance(models.Model):
     loc_name = models.CharField(max_length=250)
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
 
     def __str__(self):
         return self.loc_name
@@ -257,8 +257,8 @@ class ProjectMaintenance(models.Model):
     project_name = models.CharField(max_length=250)
     phase_name = models.CharField(max_length=250)
     sub_phase_name = models.CharField(max_length=250)
-    effect_start_date = models.DateField()
-    effect_end_date = models.DateField()
+    effect_start_date = models.DateField(default=datetime.now)
+    effect_end_date = models.DateField(default=datetime.now)
 
     def __str__(self):
         return self.project_name
@@ -271,9 +271,9 @@ class RegionMaintenance(models.Model):
     region_name = models.CharField(max_length=250)
     is_active = models.BooleanField()
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
 
     def __str__(self):
         return self.region_name
@@ -415,9 +415,9 @@ class TaxMaintenance(models.Model):
     rate= models.DecimalField(max_digits=10, decimal_places=2)
     is_active = models.BooleanField()
     created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
+    created_timestamp = models.DateField(default=datetime.now)
     modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    modified_timestamp = models.DateField(default=datetime.now)
 
     def __str__(self):
         return self.tax_name

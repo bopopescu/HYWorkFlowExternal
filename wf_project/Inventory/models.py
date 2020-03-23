@@ -1,11 +1,12 @@
 from django.db import models
 from administration.models import ItemClassesMaintenance
 from administration.models import ItemGroupsMaintenance
+from django.contrib.auth.models import User
 
 class Item(models.Model):
     item_type = models.CharField(max_length=1)
-    item_class = models.ForeignKey(ItemClassesMaintenance, verbose_name="Item Class", on_delete=models.CASCADE)
-    item_group = models.ForeignKey(ItemGroupsMaintenance, verbose_name="Item Group", on_delete=models.CASCADE)
+    item_class = models.ForeignKey(ItemClassesMaintenance, verbose_name="Item Class",null=True, blank=True, on_delete=models.CASCADE)
+    item_group = models.ForeignKey(ItemGroupsMaintenance, verbose_name="Item Group",null=True, blank=True, on_delete=models.CASCADE)
     item_code = models.CharField(max_length=100)
     item_description = models.CharField(max_length=250)
     origin = models.CharField(max_length=100)
@@ -17,10 +18,10 @@ class Item(models.Model):
     leadtime = models.IntegerField()
     remarks = models.CharField(max_length=250)
     is_active = models.BooleanField()
-    created_by = models.CharField(max_length=100)
-    created_timestamp = models.DateField()
-    modified_by = models.CharField(max_length=100)
-    modified_timestamp = models.DateField()
+    created_by = models.ForeignKey(User, related_name='itemcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='itemmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'Item Master Data'

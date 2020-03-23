@@ -98,7 +98,7 @@ class DocumentTypeMaintenanceScreen(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('document_type_name',)
     fieldsets = [
-        (None, {'fields': ['document_type_name','is_active']}),
+        (None, {'fields': ['document_type_name','attachment_path','is_active']}),
     ]
     exclude = ['created_by','modified_by']
 

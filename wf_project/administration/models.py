@@ -73,6 +73,7 @@ class DepartmentMaintenance(models.Model):
 
 class DocumentTypeMaintenance(models.Model):
     document_type_name = models.CharField(max_length=250)
+    attachment_path = models.CharField(max_length=250)
     is_active = models.BooleanField()
     created_by = models.ForeignKey(User, related_name='documenttypecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)

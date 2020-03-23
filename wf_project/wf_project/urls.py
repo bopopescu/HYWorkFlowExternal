@@ -15,12 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.views.generic import TemplateView
+from rest_framework import routers
+from dashboard.views import IndexView
+from django.conf import settings
+from django.conf.urls.static import static
+from purchasing import views
+
+router = routers.DefaultRouter()
+router.register('podata', views.POViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name="home.html")),
-    path('home', TemplateView.as_view(template_name="home.html")),
-    path('PO', TemplateView.as_view(template_name="index.html")),
-    path('addPO', TemplateView.as_view(template_name="po.html"))
-]
+    path('', IndexView.as_view(), name='index'),
+    path('accounts/', include('django.contrib.auth.urls')),         
+    path('admin/', admin.site.urls, name='admin'),
+    path('api/', include(router.urls)),
+    path('purchasing/', include('purchasing.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

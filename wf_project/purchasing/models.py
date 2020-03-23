@@ -5,6 +5,7 @@ from administration.models import CurrencyMaintenance
 from administration.models import DepartmentMaintenance
 from administration.models import ProjectMaintenance
 from Inventory.models import Item
+from ckeditor_uploader.fields import RichTextUploadingField
 
 class GoodsReceiptNote(models.Model):
     revision = models.CharField(max_length=100)
@@ -34,13 +35,13 @@ class PurchaseOrder(models.Model):
     submit_date = models.DateField()
     subject = models.CharField(max_length=250)
     reference = models.CharField(max_length=100)
-    sub_total = models.DecimalField(decimal_places=2,max_digits=6)
-    discount = models.DecimalField(decimal_places=2,max_digits=6)
-    tax_amount = models.DecimalField(decimal_places=2,max_digits=6)
-    total_amount = models.DecimalField(decimal_places=2,max_digits=6)
+    sub_total = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
+    discount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
+    tax_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
+    total_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
     payment_term = models.CharField(max_length=100)
     payment_schedule = models.CharField(max_length=100)
-    remarks = models.CharField(max_length=250)
+    remarks = RichTextUploadingField(config_name='remarks_po')
     attachment = models.FileField(verbose_name="File Name")
     attachment_date = models.DateField()
 

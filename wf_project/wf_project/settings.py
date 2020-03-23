@@ -33,11 +33,12 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     # HY workflow modules
     'administration.apps.AdministrationConfig',
+    'dashboard.apps.DashboardConfig',
     #'contract_service.apps.ContractServiceConfig',
     #'drawer_reimbursement.apps.DrawerReimbursementConfig',
     #'human_resource.apps.HumanResourceConfig',
     'Inventory.apps.InventoryConfig',
-    #'memo.apps.MemoConfig',
+    'memo.apps.MemoConfig',
     #'payment.apps.PaymentConfig',
     'purchasing.apps.PurchasingConfig',
     #'sales.apps.SalesConfig',
@@ -50,6 +51,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',  
+    'ckeditor',
+    'ckeditor_uploader',
+    'rest_framework_datatables',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +73,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'templates')
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'templates','purchasing')
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -136,3 +142,47 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+LOGIN_URL = 'accounts/login'
+LOGIN_REDIRECT_URL = '/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework_datatables.renderers.DatatablesRenderer',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework_datatables.filters.DatatablesFilterBackend',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework_datatables.pagination.DatatablesPageNumberPagination',
+    'PAGE_SIZE': 50,
+}
+
+####################################
+    ##  CKEDITOR CONFIGURATION ##
+####################################
+ 
+CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'
+ 
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+CKEDITOR_IMAGE_BACKEND = "pillow"
+ 
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': None,
+    },
+    'remarks_po': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline']
+        ],
+        'height':174,
+        'width': 300,
+    },
+}
+ 
+###################################

@@ -1,0 +1,315 @@
+{% extends 'main_template.html' %}
+
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Payment Request</h1>
+<form method="post" novalidate>
+  {% csrf_token %} 
+    <div>
+      <a href="PO" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</a>
+      <a href="{% url 'polist' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
+    </div>    
+  </div>
+
+  <div class="row">
+    <div class="col-xl-6 col-md-6 mb-4">
+      <div class="card shadow mb-4">
+        <a href="#GeneralCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="GeneralCard">
+          <h6 class="m-0 font-weight-bold text-primary">General</h6>
+        </a>
+        <div class="collapse show" id="GeneralCard">
+          <div class="card-body">
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.vendor.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.vendor class="col-md-12 form-control form-control-user" placeholder=form.vendor.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.currency.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.currency class="col-md-12 form-control form-control-user" placeholder=form.currency.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.company.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.company class="col-md-12 form-control form-control-user" placeholder=form.company.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.transaction_type.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.transaction_type class="col-md-12 form-control form-control-user" placeholder=form.transaction_type.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">Project
+                    {{form.project.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.project class="col-md-12 form-control form-control-user" placeholder=form.project.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.payment_mode.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.payment_mode class="col-md-12 form-control form-control-user" placeholder=form.payment_mode.label %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>        
+      </div>
+    </div>  
+    <div class="col-xl-6 col-md-6 mb-4">      
+      <div class="card shadow mb-4">
+        <a href="#DocInfoCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="DocInfoCard">
+          <h6 class="m-0 font-weight-bold text-primary">Document Info</h6>
+        </a>
+        <div class="collapse show" id="DocInfoCard">
+          <div class="card-body">
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.revision.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.revision class="col-md-12 form-control form-control-user" placeholder=form.revision.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.document_number.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.document_number class="col-md-12 form-control form-control-user" placeholder=form.document_number.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.status.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.status class="col-md-12 form-control form-control-user" placeholder=form.status.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.submit_date.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.submit_date type="date" class="col-md-12 form-control form-control-user" placeholder=form.submit_date.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.subject.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.subject class="col-md-12 form-control form-control-user" placeholder=form.subject.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.reference.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.reference class="col-md-12 form-control form-control-user" placeholder=form.reference.label %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>        
+      </div>
+    </div>
+  </div>  
+
+  <div class="card shadow mb-4">    
+    <div class="card-body">
+      <div class="d-sm-flex align-items-right justify-content-end mb-4">
+        <div>
+          <a href="#" data-toggle="modal" data-target="#" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add Detail</a>
+        </div>    
+      </div>
+      <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Item Description</th>
+              <th>Amount</th>
+              <th>Tax</th>
+              <th>Tax Amount</th>
+              <th>Line Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>HP Laserjet-Q2612A</td>
+              <td>Tax for 5%</td>
+              <td>6.15</td>
+              <td>123.00</td>
+              <td>129.15</td>
+              <td>
+                  <a href="#" class="btn btn-info btn-circle btn-sm">
+                    <i class="fas fa-pencil-alt"></i>
+                    </a>
+                    <a href="#" class="btn btn-danger btn-circle btn-sm">
+                        <i class="fas fa-trash"></i>
+                      </a>
+                </td>
+            </tr> 
+            <tr>
+              <td>2</td>
+              <td>Pencil(box)</td>
+              <td>Tax for 5%</td>
+              <td>6.15</td>
+              <td>123.00</td>
+              <td>129.15</td>
+              <td>
+                  <a href="#" class="btn btn-info btn-circle btn-sm">
+                    <i class="fas fa-pencil-alt"></i>
+                    </a>
+                    <a href="#" class="btn btn-danger btn-circle btn-sm">
+                        <i class="fas fa-trash"></i>
+                      </a>
+                </td>
+            </tr>    
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-6 col-md-4 mb-4">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">Summary</h6>
+        </div>
+        <div class="card-body">   
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col col-md-3">
+                <label class="control-label">{{form.sub_total.label_tag}}</label>
+              </div>
+              <div class="col col-md-8">
+                {% render_field form.sub_total class="col-md-12 form-control form-control-user" placeholder=form.sub_total.label %}
+              </div>
+            </div> 
+          </div>
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col col-md-3">
+                <label class="control-label">{{form.discount_amount.label_tag}}</label>
+              </div>
+              <div class="col col-md-2">
+                {% render_field form.discount_rate class="col-md-12 form-control form-control-user" %}
+              </div>
+              <div class="col col-md-6">
+                {% render_field form.discount_amount class="col-md-12 form-control form-control-user" %}
+              </div>
+            </div>  
+          </div>
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col col-md-3">
+                <label class="control-label">{{form.tax_amount.label_tag}}</label>
+              </div>
+              <div class="col col-md-8">
+                {% render_field form.tax_amount class="col-md-12 form-control form-control-user" placeholder=form.tax_amount.label %}
+              </div>
+            </div> 
+          </div>
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col col-md-3">
+                <label class="control-label">{{form.total_amount.label_tag}}</label>
+              </div>
+              <div class="col col-md-8">
+                {% render_field form.total_amount class="col-md-12 form-control form-control-user" placeholder=form.total_amount.label %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-6 col-md-4 mb-4">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">{{form.remarks.label}}</h6>
+        </div>
+        <div class="card-body">  
+          <div class="form-row">
+            <div class="col col-md-12">
+                {{form.media}}
+                {{form.remarks}}
+            </div>
+          </div>     
+        </div>
+      </div>
+    </div>
+  </div> 
+</form>
+
+{% endblock content %}

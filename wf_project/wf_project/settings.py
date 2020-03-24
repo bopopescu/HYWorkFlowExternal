@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     #'human_resource.apps.HumanResourceConfig',
     'Inventory.apps.InventoryConfig',
     'memo.apps.MemoConfig',
-    #'payment.apps.PaymentConfig',
+    'payment.apps.PaymentConfig',
     'purchasing.apps.PurchasingConfig',
     #'sales.apps.SalesConfig',
     #'vendor.apps.VendorConfig',
@@ -76,7 +76,8 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
             os.path.join(BASE_DIR, 'templates','memo'),
-            os.path.join(BASE_DIR, 'templates','purchasing')
+            os.path.join(BASE_DIR, 'templates','purchasing'),
+            os.path.join(BASE_DIR, 'templates','payment')
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -193,6 +194,14 @@ CKEDITOR_CONFIGS = {
         'toolbar_Custom': [
             ['Bold', 'Italic', 'Underline','Table','BulletedList', 'NumberedList']
         ],
+    },
+    'remarks_py': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline']
+        ],
+        'height':174,
+        'width': 530,
     },
 }
  

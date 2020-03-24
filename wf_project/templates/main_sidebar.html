@@ -60,7 +60,7 @@
             </a>
             <div id="collapsePurchasing" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
               <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{% url 'polist' %}">Purchase Order</a>
+                <a class="collapse-item" href="{% url 'po_list' %}">Purchase Order</a>
               </div>
             </div>
           </li>
@@ -83,7 +83,7 @@
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{% url 'memo_list' %}">
                 <i class="far fa-sticky-note"></i>
               <span>Memo</span>
             </a>
@@ -126,8 +126,7 @@
             </a>
             <div id="collapseInventory" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
               <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">Item Management</a>
-                <a class="collapse-item" href="#">Item Balance Inquiry Report</a>   
+                <a class="collapse-item" href="#">Balance Inquiry</a>   
               </div>
             </div>
           </li>
@@ -135,6 +134,12 @@
         <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
 
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'report_builder' %}" target="_blank">
+            <i class="fas fa-file-contract"></i>
+            <span>Report Builder</span>
+          </a>
+        </li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'admin:index' %}">
                 <i class="fas fa-cogs"></i>

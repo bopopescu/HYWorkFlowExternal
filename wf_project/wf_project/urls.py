@@ -15,20 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
 from dashboard.views import IndexView
 from django.conf import settings
 from django.conf.urls.static import static
-from purchasing import views
-
-router = routers.DefaultRouter()
-router.register('podata', views.POViewSet)
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
     path('accounts/', include('django.contrib.auth.urls')),         
-    path('admin/', admin.site.urls, name='admin'),
-    path('api/', include(router.urls)),
+    path('admin/', admin.site.urls, name='admin'),    
     path('purchasing/', include('purchasing.urls')),
+    path('memo/', include('memo.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('report_builder/', include('report_builder.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

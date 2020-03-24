@@ -1,7 +1,12 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
 from . import views
 
+router = routers.DefaultRouter()
+router.register('podata', views.POViewSet)
+
 urlpatterns = [    
-    path('po/list/', views.polist, name='polist'),
-    path('po/create/', views.pocreate, name='pocreate'),
+    path('api/', include(router.urls)),
+    path('po/list/', views.po_list, name='po_list'),
+    path('po/create/', views.po_create, name='po_create'),
 ]

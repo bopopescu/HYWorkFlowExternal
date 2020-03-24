@@ -7,7 +7,7 @@
     <h1 class="h3 mb-0 text-gray-800">Purchase Order</h1>
     <div>
       <a href="PO" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</a>
-      <a href="{% url 'polist' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
+      <a href="{% url 'po_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
     </div>    
   </div>
 
@@ -168,7 +168,7 @@
                 <div class="form-group">
                   <div class="form-row">
                     <div class="col col-md-3">
-                      <label class="control-label">Deliver To</label>
+                      <label class="control-label">Delivery Address</label>
                     </div>
                     <div class="col col-md-8">
                       <input type="text" class="col-md-12 form-control form-control-user">
@@ -186,7 +186,7 @@
                 <div class="form-group">
                   <div class="form-row">
                     <div class="col col-md-3">
-                      <label class="control-label">Bill To</label>
+                      <label class="control-label">Billing Address</label>
                     </div>
                     <div class="col col-md-8">
                       <input type="text" class="col-md-12 form-control form-control-user">

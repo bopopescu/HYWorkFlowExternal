@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'rest_framework_datatables',
     'widget_tweaks',
+    'report_builder',
 ]
 
 MIDDLEWARE = [
@@ -74,6 +75,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'templates','memo'),
             os.path.join(BASE_DIR, 'templates','purchasing')
         ],
         'APP_DIRS': True,
@@ -83,6 +85,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.static',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -139,8 +143,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "static")
 ]
 
 MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
@@ -178,10 +183,16 @@ CKEDITOR_CONFIGS = {
     'remarks_po': {
         'toolbar': 'Custom',
         'toolbar_Custom': [
-            ['Bold', 'Italic', 'Underline']
+            ['Bold', 'Italic', 'Underline','Table','BulletedList', 'NumberedList']
         ],
         'height':174,
         'width': 300,
+    },
+    'details_memo': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline','Table','BulletedList', 'NumberedList']
+        ],
     },
 }
  

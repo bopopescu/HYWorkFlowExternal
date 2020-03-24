@@ -2,6 +2,7 @@ from django.db import models
 from administration.models import CompanyMaintenance
 from administration.models import DepartmentMaintenance
 from administration.models import ProjectMaintenance
+from administration.models import MemoTemplateMaintenance
 from ckeditor_uploader.fields import RichTextUploadingField
 
 class Memo(models.Model):
@@ -13,7 +14,8 @@ class Memo(models.Model):
     status = models.CharField(max_length=1)
     submit_date = models.DateField(auto_now_add=True)
     subject = models.CharField(max_length=250)
-    details = RichTextUploadingField()
+    details = RichTextUploadingField(config_name='details_memo')
+    template = models.ForeignKey(MemoTemplateMaintenance, verbose_name="Project", on_delete=models.CASCADE)
     attachment = models.ForeignKey('MemoAttachment', verbose_name="Attachment", on_delete=models.CASCADE)
 
     class Meta:

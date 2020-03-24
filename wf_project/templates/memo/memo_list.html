@@ -4,14 +4,14 @@
 {% load static %}
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Purchase Order</h1>
-    <a href="{% url 'pocreate' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
+    <h1 class="h3 mb-0 text-gray-800">Memo</h1>
+    <a href="{% url 'memo_create' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
   </div>
 
 <div class="card shadow mb-4">
     <div class="card-body">
       <div class="table-responsive">
-        <table id="pos" class="table table-striped table-bordered" style="width:100%" data-server-side="true" data-ajax="../../../api/podata/?format=datatables">
+        <table id="memos" class="table table-striped table-bordered" style="width:100%" data-server-side="true" data-ajax="../../api/memodata/?format=datatables">
           <thead>
             <tr>
               <th data-data="revision">Revision</th>
@@ -34,7 +34,7 @@
   </div>  
   <script>
       $(document).ready(function() {
-          $('#pos').DataTable();
+          $('#memos').DataTable();
       });
   </script>
 {% endblock content %}

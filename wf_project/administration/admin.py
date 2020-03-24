@@ -161,7 +161,7 @@ class EmployeeMaintenanceScreen(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('nick_name', 'employee_name','position_id__position_name')
     fieldsets = [
-        (None, {'fields': ['employee_name','nick_name','gender','dob','position_id','employee_group','reporting_officer_id','is_active']}),
+        (None, {'fields': ['employee_name','nick_name','gender','dob','position_id','employee_group','reporting_officer_id','employee_signature','is_active']}),
     ]
     exclude = ['created_by','modified_by']
 

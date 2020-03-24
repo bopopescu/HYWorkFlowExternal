@@ -124,6 +124,7 @@ class EmployeeMaintenance(models.Model):
     employee_group = models.ForeignKey('EmployeeGroupMaintenance',default=0,verbose_name="Employee Group",on_delete=models.CASCADE)
     reporting_officer_id = models.ForeignKey('self',default=0,verbose_name="Reporting Officer",null=True, blank=True,on_delete=models.CASCADE)
     is_active = models.BooleanField()
+    employee_signature = models.FileField(verbose_name="Employee Signature")
     created_by = models.ForeignKey(User, related_name='employeecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, related_name='employeemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)

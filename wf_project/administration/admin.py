@@ -30,6 +30,9 @@ from .models import RegionMaintenance
 from .models import TaxMaintenance
 from datetime import datetime
 from .models import DrawerMaintenance
+from .models import TransactiontypeMaintenance
+from .models import PaymentmodeMaintenance
+from .models import MemoTemplateMaintenance
 
 admin.site.register(WorkflowPattern)
 admin.site.register(WorkflowInstance)
@@ -158,7 +161,7 @@ class EmployeeMaintenanceScreen(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('nick_name', 'employee_name','position_id__position_name')
     fieldsets = [
-        (None, {'fields': ['employee_name','nick_name','gender','dob','position_id','reporting_officer_id','is_active']}),
+        (None, {'fields': ['employee_name','nick_name','gender','dob','position_id','employee_group','reporting_officer_id','is_active']}),
     ]
     exclude = ['created_by','modified_by']
 
@@ -572,3 +575,63 @@ class DrawerMaintenanceScreen(admin.ModelAdmin):
         return super().save_model(request, obj, form, change)
 
 admin.site.register(DrawerMaintenance,DrawerMaintenanceScreen)
+
+class PaymentmodeMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('payment_mode_name', 'is_active')
+    list_filter = ('is_active',)
+    search_fields = ('payment_mode_name',)
+    fieldsets = [
+        (None, {'fields': ['payment_mode_name','is_active']}),
+    ]
+    exclude = ['created_by','modified_by']
+
+    def save_model(self, request, obj, form, change):
+        self.request = request
+        if not obj.pk:
+            # Only set added_by during the first save.
+            obj.created_by = self.request.user
+        else:
+            obj.modified_by = self.request.user
+        return super().save_model(request, obj, form, change)
+
+admin.site.register(PaymentmodeMaintenance,PaymentmodeMaintenanceScreen)
+
+class TransactiontypeMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('transaction_type_name','document_type','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('payment_mode_name','document_type')
+    fieldsets = [
+        (None, {'fields': ['payment_mode_name','document_type','is_active']}),
+    ]
+    exclude = ['created_by','modified_by']
+
+    def save_model(self, request, obj, form, change):
+        self.request = request
+        if not obj.pk:
+            # Only set added_by during the first save.
+            obj.created_by = self.request.user
+        else:
+            obj.modified_by = self.request.user
+        return super().save_model(request, obj, form, change)
+
+admin.site.register(TransactiontypeMaintenance,TransactiontypeMaintenanceScreen)
+
+class MemoTemplateMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('memo_template_name','template_htmldesign','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('memo_template_name','template_htmldesign')
+    fieldsets = [
+        (None, {'fields': ['memo_template_name','template_htmldesign','is_active']}),
+    ]
+    exclude = ['created_by','modified_by']
+
+    def save_model(self, request, obj, form, change):
+        self.request = request
+        if not obj.pk:
+            # Only set added_by during the first save.
+            obj.created_by = self.request.user
+        else:
+            obj.modified_by = self.request.user
+        return super().save_model(request, obj, form, change)
+
+admin.site.register(MemoTemplateMaintenance,MemoTemplateMaintenanceScreen)

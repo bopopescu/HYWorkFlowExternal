@@ -121,6 +121,7 @@ class EmployeeMaintenance(models.Model):
     gender = models.CharField(max_length=25,choices=gender_option)
     dob = models.DateField(verbose_name="Date of Birth")
     position_id = models.ForeignKey('EmployeePositionMaintenance',default=0,verbose_name="Position",on_delete=models.CASCADE)
+    employee_group = models.ForeignKey('EmployeeGroupMaintenance',default=0,verbose_name="Employee Group",on_delete=models.CASCADE)
     reporting_officer_id = models.ForeignKey('self',default=0,verbose_name="Reporting Officer",null=True, blank=True,on_delete=models.CASCADE)
     is_active = models.BooleanField()
     created_by = models.ForeignKey(User, related_name='employeecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
@@ -331,6 +332,9 @@ class VendorMasterData(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, related_name='vendormodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.vendor_name
     
 class SystemFlagMaintenance(models.Model):
     flag_name= models.CharField(max_length=250)
@@ -374,3 +378,38 @@ class DrawerMaintenance(models.Model):
 
     def __str__(self):
         return self.drawer_name
+
+class TransactiontypeMaintenance(models.Model):
+    transaction_type_name = models.CharField(max_length=250)
+    document_type = models.ForeignKey('DocumentTypeMaintenance', default=0, verbose_name="Document Type",on_delete=models.CASCADE)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='transactiontypecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='transactiontypemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.transaction_type_name
+
+class PaymentmodeMaintenance(models.Model):
+    payment_mode_name = models.CharField(max_length=250)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='paymentmodecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='paymentmodemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.payment_mode_name
+
+class MemoTemplateMaintenance(models.Model):
+    memo_template_name = models.CharField(max_length=250,verbose_name='Memo Template Name')
+    template_htmldesign = models.CharField(max_length=4000,verbose_name='HTML design')
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='memotemplatecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='memotemplatemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.memo_template_name

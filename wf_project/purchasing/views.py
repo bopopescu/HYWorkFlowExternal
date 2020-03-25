@@ -5,7 +5,7 @@ from rest_framework import viewsets
 from .serializers import POSerializer
 
 def po_list(request):
-    return render(request, 'po_list.html')
+    return render(request, 'po/list.html')
 
 class POViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.all() #.order_by('rank')
@@ -14,4 +14,4 @@ class POViewSet(viewsets.ModelViewSet):
 def po_create(request):
     po = PurchaseOrder
     form = NewPOForm()
-    return render(request, 'po_create.html', {'po': po, 'form': form})
+    return render(request, 'po/create.html', {'po': po, 'form': form})

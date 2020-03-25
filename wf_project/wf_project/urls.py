@@ -18,22 +18,14 @@ from django.urls import path, include
 from dashboard.views import IndexView
 from django.conf import settings
 from django.conf.urls.static import static
-from purchasing import views
-from payment import views as pyview
-from rest_framework import routers
-
-router = routers.DefaultRouter()
-router.register('podata', views.POViewSet)
-router.register('pydata', pyview.PYViewSet)
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
-    path('api/', include(router.urls)),
     path('accounts/', include('django.contrib.auth.urls')),         
     path('admin/', admin.site.urls, name='admin'),    
     path('purchasing/', include('purchasing.urls')),
     path('memo/', include('memo.urls')),
-    path('payment/', include('payment.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('payment/', include('payment.urls')),
     path('report_builder/', include('report_builder.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

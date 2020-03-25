@@ -33,6 +33,7 @@ from .models import DrawerMaintenance
 from .models import TransactiontypeMaintenance
 from .models import PaymentmodeMaintenance
 from .models import MemoTemplateMaintenance
+from .models import UOMMaintenance
 
 admin.site.register(WorkflowPattern)
 admin.site.register(WorkflowInstance)
@@ -424,7 +425,7 @@ class CountryMaintenanceScreen(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('country_name',)
     fieldsets = [
-        (None, {'fields': ['country_name','alpha_2','alpha_3','iso3166_2','is_active']}),
+        (None, {'fields': ['country_name','currency','alpha_2','alpha_3','iso3166_2','is_active']}),
     ]
     exclude = ['created_by','modified_by']
 
@@ -635,3 +636,23 @@ class MemoTemplateMaintenanceScreen(admin.ModelAdmin):
         return super().save_model(request, obj, form, change)
 
 admin.site.register(MemoTemplateMaintenance,MemoTemplateMaintenanceScreen)
+
+class UOMMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('uom_name','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('uom_name',)
+    fieldsets = [
+        (None, {'fields': ['uom_name','is_active']}),
+    ]
+    exclude = ['created_by','modified_by']
+
+    def save_model(self, request, obj, form, change):
+        self.request = request
+        if not obj.pk:
+            # Only set added_by during the first save.
+            obj.created_by = self.request.user
+        else:
+            obj.modified_by = self.request.user
+        return super().save_model(request, obj, form, change)
+
+admin.site.register(UOMMaintenance,UOMMaintenanceScreen)

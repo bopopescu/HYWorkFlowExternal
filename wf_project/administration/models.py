@@ -20,7 +20,7 @@ class CompanyMaintenance(models.Model):
     short_name = models.CharField(max_length=250)        
     business_registration_no = models.CharField(max_length=30)
     tax_id_1 = models.CharField(max_length=100)
-    tax_id_2 = models.CharField(max_length=100)
+    tax_id_2 = models.CharField(max_length=100, null=True, blank=True)
     is_active = models.BooleanField()
     currency = models.ForeignKey('CurrencyMaintenance', default=0, verbose_name="Currency",on_delete=models.CASCADE)
     region = models.ForeignKey('RegionMaintenance', default=0, verbose_name="Region",on_delete=models.CASCADE)
@@ -33,6 +33,7 @@ class CompanyMaintenance(models.Model):
 
 class CountryMaintenance(models.Model):
     country_name = models.CharField(max_length=250)
+    currency = models.ForeignKey('CurrencyMaintenance', verbose_name="Currency",on_delete=models.CASCADE)
     alpha_2 = models.CharField(max_length=2)
     alpha_3 = models.CharField(max_length=3)
     iso3166_2 = models.CharField(max_length=20)
@@ -414,3 +415,16 @@ class MemoTemplateMaintenance(models.Model):
 
     def __str__(self):
         return self.memo_template_name
+
+class UOMMaintenance(models.Model):
+    uom_name = models.CharField(max_length=250)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='uomcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='uommodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.uom_name
+
+

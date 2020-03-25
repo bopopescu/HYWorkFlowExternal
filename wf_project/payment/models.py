@@ -1,7 +1,6 @@
 from django.db import models
 from administration.models import CompanyMaintenance
 from administration.models import CurrencyMaintenance
-from administration.models import DocumentTypeMaintenance
 from administration.models import ProjectMaintenance
 from administration.models import VendorMasterData
 from administration.models import TaxMaintenance
@@ -55,4 +54,4 @@ class PaymentRequestDetail(models.Model):
         verbose_name = 'Payment Detail'
 
     def __str__(self):
-        return self.document_number
+        return self.linenum

@@ -10,7 +10,7 @@ class ItemAdmin(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('item_type', 'item_class','item_description')
     fieldsets = [
-        (None, {'fields': ['item_type', 'item_class','item_group', 'item_description', 'is_active']}),
+        (None, {'fields': ['item_type', 'item_class','item_group', 'item_description','item_uom', 'is_active']}),
         ('Quantity', {'fields': ['minimum_quantity','minimum_order_quantity','standard_packing_quantity','leadtime']}),
         ('Other Information', {'fields': ['origin','specification','hs_code','remarks']}),
     ]

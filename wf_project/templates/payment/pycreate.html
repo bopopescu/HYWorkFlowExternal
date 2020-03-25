@@ -7,10 +7,90 @@
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Payment Request</h1>
 <form method="post" novalidate>
+  <style>
+    table#dataTable tbody tr td a#additem {
+       display:none;
+   }
+
+  table#dataTable .form-control.error2 {
+		border-color: #f50000;
+	}
+   
+   i.fas.fa-plus{
+      color:white;
+      margin-right: 1px;
+      position: relative;
+      top: 2px;
+   }
+   i.fas.fa-pencil-alt{
+      color:white;
+   }
+   i.fas.fa-trash{
+      color:white;
+   }
+ </style>
+ <script type="text/javascript">
+   $(document).ready(function(){
+     $('[data-toggle="tooltip"]').tooltip();
+     var actions = $("table#dataTable td:last-child").html();
+     // Append table with add row form on add new button click
+       $(".add-new").click(function(){
+       $(this).attr("disabled", "disabled");
+       var index = $("table#dataTable tbody tr:last-child").index();
+       
+           var row = '<tr>' +
+               '<td><input type="text" class="form-control" name="name" id="name"></td>' +
+               '<td><input type="text" class="form-control" name="department" id="department"></td>' +
+               '<td><input type="text" class="form-control" name="phone" id="phone"></td>' +
+               '<td><input type="text" class="form-control" name="phone" id="phone"></td>'+
+               '<td><input type="text" class="form-control" name="phone" id="phone"></td>'+
+               '<td>' + actions + '</td>' +
+           '</tr>';
+         $("table").append(row);		
+       $("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
+           $('[data-toggle="tooltip"]').tooltip();
+           $(".add").eq(index + 1).css("display", "inline-block");
+       });
+     // Add row on add button click
+     $(document).on("click", ".add", function(){
+       var empty = false;
+       var input = $(this).parents("tr").find('input[type="text"]');
+           input.each(function(){
+         if(!$(this).val()){
+           $(this).addClass("error2");
+           empty = true;
+         } else{
+                   $(this).removeClass("error2");
+            }
+       });
+       $(this).parents("tr").find(".error2").first().focus();
+       if(!empty){
+         input.each(function(){
+           $(this).parent("td").html($(this).val());
+         });			
+         $(this).parents("tr").find(".add, .edit").toggle();
+         $(".add-new").removeAttr("disabled");
+       }		
+       });
+     // Edit row on edit button click
+     $(document).on("click", ".edit", function(){		
+           $(this).parents("tr").find("td:not(:last-child)").each(function(){
+         $(this).html('<input type="text" class="form-control" value="' + $(this).text() + '">');
+       });		
+       $(this).parents("tr").find(".add, .edit").toggle();
+       $(".add-new").attr("disabled", "disabled");
+       });
+     // Delete row on delete button click
+     $(document).on("click", ".delete", function(){
+           $(this).parents("tr").remove();
+       $(".add-new").removeAttr("disabled");
+       });
+   });
+   </script> 
   {% csrf_token %} 
     <div>
       <a href="PO" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</a>
-      <a href="{% url 'polist' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
+      <a href="{% url 'pylist' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
     </div>    
   </div>
 
@@ -73,7 +153,7 @@
             <div class="form-group">
               <div class="form-row">
                 <div class="col col-md-3">
-                  <label class="control-label">Project
+                  <label class="control-label">
                     {{form.project.label_tag}}
                   </label>
                 </div>
@@ -149,7 +229,7 @@
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.submit_date type="date" class="col-md-12 form-control form-control-user" placeholder=form.submit_date.label %}
+                  {% render_field form.submit_date type="date" class="col-md-12 form-control form-control-user" placeholder=form.submit_date.label readonly=true %}
                 </div>
               </div>
             </div>
@@ -187,55 +267,40 @@
     <div class="card-body">
       <div class="d-sm-flex align-items-right justify-content-end mb-4">
         <div>
-          <a href="#" data-toggle="modal" data-target="#" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add Detail</a>
+          <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm add-new"><i class="fas fa-plus fa-sm text-white-50"></i> Add Detail</a></button>
         </div>    
       </div>
       <div class="table-responsive">
         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th>#</th>
               <th>Item Description</th>
               <th>Amount</th>
               <th>Tax</th>
               <th>Tax Amount</th>
               <th>Line Total</th>
-              <th></th>
+              <th style="width:10%"></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>1</td>
               <td>HP Laserjet-Q2612A</td>
               <td>Tax for 5%</td>
               <td>6.15</td>
               <td>123.00</td>
               <td>129.15</td>
               <td>
-                  <a href="#" class="btn btn-info btn-circle btn-sm">
+                  <a title="Add" id="additem" class="btn btn-success btn-circle btn-sm add">
+                    <i class="fas fa-plus"></i>
+                  </a>
+                  <a title="Edit" id="edititem" class="btn btn-info btn-circle btn-sm edit">
                     <i class="fas fa-pencil-alt"></i>
-                    </a>
-                    <a href="#" class="btn btn-danger btn-circle btn-sm">
-                        <i class="fas fa-trash"></i>
-                      </a>
+                  </a>
+                  <a title="Delete" id="deleteitem" class="btn btn-danger btn-circle btn-sm delete">
+                      <i class="fas fa-trash"></i>
+                  </a>
                 </td>
-            </tr> 
-            <tr>
-              <td>2</td>
-              <td>Pencil(box)</td>
-              <td>Tax for 5%</td>
-              <td>6.15</td>
-              <td>123.00</td>
-              <td>129.15</td>
-              <td>
-                  <a href="#" class="btn btn-info btn-circle btn-sm">
-                    <i class="fas fa-pencil-alt"></i>
-                    </a>
-                    <a href="#" class="btn btn-danger btn-circle btn-sm">
-                        <i class="fas fa-trash"></i>
-                      </a>
-                </td>
-            </tr>    
+            </tr>   
           </tbody>
         </table>
       </div>
@@ -309,7 +374,7 @@
         </div>
       </div>
     </div>
-  </div> 
+  </div>
 </form>
 
 {% endblock content %}

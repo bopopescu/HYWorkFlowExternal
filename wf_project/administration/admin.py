@@ -600,9 +600,9 @@ admin.site.register(PaymentmodeMaintenance,PaymentmodeMaintenanceScreen)
 class TransactiontypeMaintenanceScreen(admin.ModelAdmin):
     list_display = ('transaction_type_name','document_type','is_active')
     list_filter = ('is_active',)
-    search_fields = ('payment_mode_name','document_type')
+    search_fields = ('transaction_type_name','document_type')
     fieldsets = [
-        (None, {'fields': ['payment_mode_name','document_type','is_active']}),
+        (None, {'fields': ['transaction_type_name','document_type','is_active']}),
     ]
     exclude = ['created_by','modified_by']
 

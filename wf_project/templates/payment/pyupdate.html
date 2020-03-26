@@ -4,9 +4,9 @@
 {% load static %}
 {% load widget_tweaks %}
 
-<form method="post">
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Payment Request</h1>
+<form method="post" novalidate>
   <style>
     table#dataTable tbody tr td a#additem {
        display:none;
@@ -193,7 +193,7 @@
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.revision class="col-md-12 form-control form-control-user" placeholder=form.revision.label readonly=true %}
+                  {% render_field form.revision|append_attr:"readonly" class="col-md-12 form-control form-control-user" placeholder=form.revision.label %}
                 </div>
               </div>
             </div>
@@ -329,7 +329,7 @@
                 <label class="control-label">{{form.discount_amount.label_tag}}</label>
               </div>
               <div class="col col-md-2">
-                {% render_field form.discount_rate class="col-md-12 form-control form-control-user" %}
+                {% render_field form.discount_rate|append_attr:"max=100" class="col-md-12 form-control form-control-user" %}
               </div>
               <div class="col col-md-6">
                 {% render_field form.discount_amount class="col-md-12 form-control form-control-user" %}

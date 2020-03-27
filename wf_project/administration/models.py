@@ -31,6 +31,37 @@ class CompanyMaintenance(models.Model):
     def __str__(self):
         return self.company_name
 
+class CompanyContactDetail(models.Model):
+    personal_option = [('Mr.','Mr.'),('Mrs.','Mrs.'),('Ms.','Ms.'),('Miss','Miss')]
+    company = models.ForeignKey('CompanyMaintenance',default=0,on_delete=models.CASCADE)
+    personal_title = models.CharField(max_length=20,choices=personal_option)
+    contact_person = models.CharField(max_length=100,verbose_name="Contact Person Name")
+    tel_no1 = models.CharField(max_length=20,verbose_name="Tel 1")
+    tel_no2 = models.CharField(max_length=20,verbose_name="Tel 2",null=True,blank=True)
+    mobile = models.CharField(max_length=20,verbose_name="Mobile",null=True,blank=True)
+    fax = models.CharField(max_length=20,verbose_name="Fax",null=True,blank=True)
+    email = models.EmailField(verbose_name="Email",null=True,blank=True)
+    ic_or_passport_no = models.CharField(max_length=50,verbose_name="IC/Passport No.",null=True,blank=True)
+    dob = models.DateField(null=True,blank=True,verbose_name="D.O.B")
+    position = models.CharField(max_length=150,verbose_name="Position",null=True,blank=True)
+
+    def __str__(self):
+        return "%s %s" % (self.personal_title,self.contact_person) 
+
+class CompanyAddressDetail(models.Model):
+    company = models.ForeignKey('CompanyMaintenance',default=0,on_delete=models.CASCADE)
+    address_name = models.CharField(max_length=200)
+    address1 = models.CharField(max_length=150)
+    address2 = models.CharField(max_length=150)
+    address3 = models.CharField(max_length=150,null=True,blank=True)
+    address4 = models.CharField(max_length=150,null=True,blank=True)
+    address_zip = models.IntegerField(verbose_name="Zip")
+    state = models.ForeignKey('StateMaintenance',verbose_name="State",on_delete=models.CASCADE)
+    country = models.ForeignKey('CountryMaintenance',verbose_name="Country",on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "%s" % (self.address_name) 
+
 class CountryMaintenance(models.Model):
     country_name = models.CharField(max_length=250)
     currency = models.ForeignKey('CurrencyMaintenance', verbose_name="Currency",on_delete=models.CASCADE)
@@ -50,7 +81,7 @@ class CountryMaintenance(models.Model):
 class CurrencyMaintenance(models.Model):
     currency_name = models.CharField(max_length=250)
     alphabet = models.CharField(max_length=100)
-    country = models.ForeignKey('CountryMaintenance', default=0, verbose_name="Country",on_delete=models.CASCADE)
+    country = models.ForeignKey('CountryMaintenance',verbose_name="Country",on_delete=models.CASCADE)
     rate = models.DecimalField(max_digits=10, decimal_places=2)
     is_active = models.BooleanField()
     created_by = models.ForeignKey(User, related_name='currencycreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
@@ -86,23 +117,25 @@ class DocumentTypeMaintenance(models.Model):
 
 class EmployeeBranchMaintenance(models.Model):
     employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
-    branch = models.ForeignKey('BranchMaintenance', default=0, verbose_name="Branch",on_delete=models.CASCADE)
+    branch = models.ForeignKey('BranchMaintenance', verbose_name="Branch",on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, related_name='employeebranchcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, related_name='employeebranchmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     modified_timestamp = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.branch.branch_name
+
 class EmployeeDepartmentMaintenance(models.Model):
     employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
-    department = models.ForeignKey('DepartmentMaintenance', default=0, verbose_name="Department",on_delete=models.CASCADE)
+    department = models.ForeignKey('DepartmentMaintenance', verbose_name="Department",on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, related_name='employeedepartmentcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, related_name='employeedepartmentmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     modified_timestamp = models.DateTimeField(auto_now=True)
 
-class EmployeeDepartmentMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('employee', 'department')
-    search_fields = ('employee__employee_name','employee__nick_name' ,'department__department_name','department__department_code')
+    def __str__(self):
+        return self.department.department_name
 
 class EmployeeGroupMaintenance(models.Model):
     group_name = models.CharField(max_length=250)
@@ -120,7 +153,8 @@ class EmployeeMaintenance(models.Model):
     employee_name = models.CharField(max_length=250)
     nick_name = models.CharField(max_length=250)
     gender = models.CharField(max_length=25,choices=gender_option)
-    dob = models.DateField(verbose_name="Date of Birth")
+    dob = models.DateField(verbose_name="Date of Birth",null=True,blank=True)
+    email = models.EmailField(null=True,blank=True)
     position_id = models.ForeignKey('EmployeePositionMaintenance',default=0,verbose_name="Position",on_delete=models.CASCADE)
     employee_group = models.ForeignKey('EmployeeGroupMaintenance',default=0,verbose_name="Employee Group",on_delete=models.CASCADE)
     reporting_officer_id = models.ForeignKey('self',default=0,verbose_name="Reporting Officer",null=True, blank=True,on_delete=models.CASCADE)
@@ -137,15 +171,14 @@ class EmployeeMaintenance(models.Model):
 
 class EmployeeProjectMaintenance(models.Model):
     employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
-    project = models.ForeignKey('ProjectMaintenance', default=0, verbose_name="Project",on_delete=models.CASCADE)
+    project = models.ForeignKey('ProjectMaintenance', verbose_name="Project",on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, related_name='employeeprojectcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, related_name='employeeprojectmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     modified_timestamp = models.DateTimeField(auto_now=True)
 
-class EmployeeProjectMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('employee', 'project')
-    search_fields = ('employee__employee_name','employee__nick_name' ,'project__project_code','project__project_name','project__phase_name','project__sub_phase_name')
+    def __str__(self):
+        return self.project.project_name
 
 class EmployeePositionMaintenance(models.Model):
     position_name = models.CharField(max_length=250)
@@ -285,12 +318,15 @@ class WorkflowApprovalGroup(models.Model):
 class WorkflowApprovalRuleGroupMaintenance(models.Model):
     condition_option = [('And','And'),('Or','Or')]
     approval_rule = models.ForeignKey('WorkflowApprovalRule',default=0,verbose_name="Approval Level",on_delete=models.CASCADE)
-    approval_group = models.ForeignKey('WorkflowApprovalGroup',default=0,verbose_name="Approval Group",on_delete=models.CASCADE)
-    next_condition = models.CharField(max_length=15,choices=condition_option,null=True)
+    approval_group = models.ForeignKey('WorkflowApprovalGroup',verbose_name="Approval Group",on_delete=models.CASCADE)
+    next_condition = models.CharField(max_length=15,choices=condition_option,null=True, blank=True)
     created_by = models.ForeignKey(User, related_name='workflowapprovalrulegroupcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, related_name='workflowapprovalrulegroupmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.approval_group.approval_group_name
 
 class WorkflowInstance(models.Model):
     template_code = models.CharField(max_length=100)
@@ -323,13 +359,15 @@ class VendorGroupMaintenance(models.Model):
 
 class VendorMasterData(models.Model):
     vendor_name = models.CharField(max_length=100)
-    currency = models.ForeignKey('CurrencyMaintenance', default=0, verbose_name="Currency",on_delete=models.CASCADE)
+    currency = models.ForeignKey('CurrencyMaintenance', verbose_name="Currency",on_delete=models.CASCADE)
     business_registration_no = models.CharField(max_length=30)
     tax_id_1 = models.CharField(max_length=100)
     tax_id_2 = models.CharField(max_length=100,blank=True,null=True)
-    vendor_group = models.ForeignKey('VendorGroupMaintenance', default=0, verbose_name="Vendor Group",on_delete=models.CASCADE)
+    vendor_group = models.ForeignKey('VendorGroupMaintenance', verbose_name="Vendor Group",on_delete=models.CASCADE)
+    vendor_category = models.ForeignKey('VendorCategoryMaintenance', verbose_name="Vendor Category",on_delete=models.CASCADE)
     is_company = models.BooleanField()
     is_active = models.BooleanField()
+    is_qualified = models.BooleanField(default=False)
     created_by = models.ForeignKey(User, related_name='vendorcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, related_name='vendormodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
@@ -337,7 +375,62 @@ class VendorMasterData(models.Model):
 
     def __str__(self):
         return self.vendor_name
-    
+
+class VendorContactDetail(models.Model):
+    personal_option = [('Mr.','Mr.'),('Mrs.','Mrs.'),('Ms.','Ms.'),('Miss','Miss')]
+    vendor = models.ForeignKey('VendorMasterData',default=0,on_delete=models.CASCADE)
+    personal_title = models.CharField(max_length=20,choices=personal_option)
+    contact_person = models.CharField(max_length=100,verbose_name="Contact Person Name")
+    tel_no1 = models.CharField(max_length=20,verbose_name="Tel 1")
+    tel_no2 = models.CharField(max_length=20,verbose_name="Tel 2",null=True,blank=True)
+    mobile = models.CharField(max_length=20,verbose_name="Mobile",null=True,blank=True)
+    fax = models.CharField(max_length=20,verbose_name="Fax",null=True,blank=True)
+    email = models.EmailField(verbose_name="Email",null=True,blank=True)
+    ic_or_passport_no = models.CharField(max_length=50,verbose_name="IC/Passport No.",null=True,blank=True)
+    dob = models.DateField(null=True,blank=True,verbose_name="D.O.B")
+    position = models.CharField(max_length=150,verbose_name="Position",null=True,blank=True)
+
+    def __str__(self):
+        return "%s %s" % (self.personal_title,self.contact_person) 
+
+class VendorAddressDetail(models.Model):
+    vendor = models.ForeignKey('VendorMasterData',default=0,on_delete=models.CASCADE)
+    address_name = models.CharField(max_length=200)
+    address1 = models.CharField(max_length=150)
+    address2 = models.CharField(max_length=150)
+    address3 = models.CharField(max_length=150,null=True,blank=True)
+    address4 = models.CharField(max_length=150,null=True,blank=True)
+    address_zip = models.IntegerField(verbose_name="Zip")
+    state = models.ForeignKey('StateMaintenance',verbose_name="State",on_delete=models.CASCADE)
+    country = models.ForeignKey('CountryMaintenance',verbose_name="Country",on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "%s" % (self.address_name) 
+
+class VendorCategoryMaintenance(models.Model):
+    vendor_category_name = models.CharField(max_length=200,verbose_name="Vendor Category Name")
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='vendorcategorycreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='vendorcategorymodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.vendor_category_name
+
+class StateMaintenance(models.Model):
+    state_name = models.CharField(max_length=200)
+    capital = models.CharField(max_length=200)
+    country = models.ForeignKey('CountryMaintenance',verbose_name="Country",on_delete=models.CASCADE)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='statecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='statemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "%s" % (self.state_name) 
+
 class SystemFlagMaintenance(models.Model):
     flag_name= models.CharField(max_length=250)
     table_id = models.IntegerField()
@@ -426,5 +519,3 @@ class UOMMaintenance(models.Model):
 
     def __str__(self):
         return self.uom_name
-
-

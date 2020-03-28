@@ -1,0 +1,113 @@
+{% extends 'main_template.html' %}
+
+{% block content %}
+{% load widget_tweaks %}
+{% load static %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Approval Selection</h1>
+    <div>      
+      <a href="{% url 'approval_update' approval_item.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit</a>      
+    </div>    
+  </div>
+
+  <div class="row">
+    <div class="col-xl-8 col-md-8 mb-4">
+      <div class="card shadow mb-4">
+        <a href="#GeneralCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="GeneralCard">
+          <h6 class="m-0 font-weight-bold text-primary">Approval Information</h6>
+        </a>
+        <div class="collapse show" id="GeneralCard">
+          <div class="card-body">
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.document_type.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.document_type|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.document_number.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.document_number|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.transaction_type.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.transaction_type|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.approval_level.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.approval_level|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.notification.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.notification|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>        
+      </div>
+    </div>      
+  </div>  
+    
+  <div class="card shadow mb-4">    
+    <div class="card-body">
+      <div class="form-row">
+        <div class="col col-md-12">
+          <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+              <a class="nav-item nav-link active" id="nav-approvers-tab" data-toggle="tab" href="#nav-approvers" role="tab" aria-controls="nav-approvers" aria-selected="true">Approver(s)</a>
+              <a class="nav-item nav-link" id="nav-cc-tab" data-toggle="tab" href="#nav-cc" role="tab" aria-controls="nav-cc" aria-selected="false">CC</a>
+            </div>
+          </nav>
+          <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-approvers" role="tabpanel" aria-labelledby="nav-approvers-tab">
+              <br/>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-12">
+                  </div>
+                </div>
+              </div>  
+            </div>
+            <div class="tab-pane fade" id="nav-cc" role="tabpanel" aria-labelledby="nav-cc-tab">
+              <br/>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-12">
+                  </div>
+                </div>
+              </div>   
+            </div>
+          </div>            
+        </div>
+      </div>  
+    </div>
+  </div>
+
+{% endblock content %}

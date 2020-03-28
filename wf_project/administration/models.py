@@ -73,8 +73,10 @@ class DepartmentMaintenance(models.Model):
         return self.department_name
 
 class DocumentTypeMaintenance(models.Model):
+    document_type_code = models.CharField(max_length=10)
     document_type_name = models.CharField(max_length=250)
     attachment_path = models.CharField(max_length=250)
+    running_number = models.IntegerField(default=1)
     is_active = models.BooleanField()
     created_by = models.ForeignKey(User, related_name='documenttypecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)
@@ -83,6 +85,25 @@ class DocumentTypeMaintenance(models.Model):
 
     def __str__(self):
         return self.document_type_name
+
+class DrawerMaintenance(models.Model):
+    status_option = [('O','Open'),('C','Closed')]
+    month_option = [('1','January'),('2','February'),('3','March'),('4','April'),
+                    ('5','May'),('6','June'),('7','July'),('8','August'),('9','September'),
+                    ('10','October'),('11','November'),('12','December')]
+    drawer_name = models.CharField(max_length=250)
+    branch = models.ForeignKey('BranchMaintenance', default=0,on_delete=models.CASCADE)
+    open_year = models.PositiveIntegerField()
+    open_month = models.CharField(choices=month_option,max_length=20)
+    limit = models.DecimalField(max_digits=10, decimal_places=2)
+    drawer_status = models.CharField(max_length=10,choices=status_option)
+    created_by = models.ForeignKey(User, related_name='drawercreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='drawermodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.drawer_name
 
 class EmployeeBranchMaintenance(models.Model):
     employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
@@ -192,6 +213,29 @@ class LocationMaintenance(models.Model):
     def __str__(self):
         return self.loc_name
 
+class MemoTemplateMaintenance(models.Model):
+    memo_template_name = models.CharField(max_length=250,verbose_name='Memo Template Name')
+    template_htmldesign = models.CharField(max_length=4000,verbose_name='HTML design')
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='memotemplatecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='memotemplatemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.memo_template_name
+
+class PaymentmodeMaintenance(models.Model):
+    payment_mode_name = models.CharField(max_length=250)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='paymentmodecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='paymentmodemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.payment_mode_name
+
 class PaymentTermMaintenance(models.Model):
     description = models.CharField(max_length=250)
     days = models.IntegerField()
@@ -244,6 +288,53 @@ class StatusMaintenance(models.Model):
     def __str__(self):
         return "%s - %s" % (self.status_code, self.status_name)
 
+class SystemFlagMaintenance(models.Model):
+    flag_name= models.CharField(max_length=250)
+    table_id = models.IntegerField()
+    created_by = models.ForeignKey(User, related_name='systemflagcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='systemflagmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.flag_name
+
+class TaxMaintenance(models.Model):
+    tax_code= models.CharField(max_length=100)
+    tax_name= models.CharField(max_length=250)
+    rate= models.DecimalField(max_digits=10, decimal_places=2)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='taxcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='taxmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.tax_name
+
+class TransactiontypeMaintenance(models.Model):
+    transaction_type_name = models.CharField(max_length=250)
+    document_type = models.ForeignKey('DocumentTypeMaintenance', default=0, verbose_name="Document Type",on_delete=models.CASCADE)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='transactiontypecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='transactiontypemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.transaction_type_name
+
+class UOMMaintenance(models.Model):
+    uom_name = models.CharField(max_length=250)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='uomcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='uommodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.uom_name
+
 class UserMaintenance(models.Model):
     company = models.ForeignKey('CompanyMaintenance', default=0, verbose_name="Company Name",on_delete=models.CASCADE)
     user_code = models.CharField(max_length=100)
@@ -253,6 +344,34 @@ class UserMaintenance(models.Model):
 
     def __str__(self):
         return self.user_code
+
+class VendorGroupMaintenance(models.Model):
+    group_name = models.CharField(max_length=100)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='vendorgroupcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='vendorgroupmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.group_name
+
+class VendorMasterData(models.Model):
+    vendor_name = models.CharField(max_length=100)
+    currency = models.ForeignKey('CurrencyMaintenance', default=0, verbose_name="Currency",on_delete=models.CASCADE)
+    business_registration_no = models.CharField(max_length=30)
+    tax_id_1 = models.CharField(max_length=100)
+    tax_id_2 = models.CharField(max_length=100,blank=True,null=True)
+    vendor_group = models.ForeignKey('VendorGroupMaintenance', default=0, verbose_name="Vendor Group",on_delete=models.CASCADE)
+    is_company = models.BooleanField()
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='vendorcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='vendormodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.vendor_name
 
 class WorkflowApprovalRule(models.Model):
     approval_level = models.IntegerField(unique=True,verbose_name="Approval Level")
@@ -309,122 +428,3 @@ class WorkflowPattern(models.Model):
 
     def __str__(self):
         return self.pattern_code
-
-class VendorGroupMaintenance(models.Model):
-    group_name = models.CharField(max_length=100)
-    is_active = models.BooleanField()
-    created_by = models.ForeignKey(User, related_name='vendorgroupcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='vendorgroupmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.group_name
-
-class VendorMasterData(models.Model):
-    vendor_name = models.CharField(max_length=100)
-    currency = models.ForeignKey('CurrencyMaintenance', default=0, verbose_name="Currency",on_delete=models.CASCADE)
-    business_registration_no = models.CharField(max_length=30)
-    tax_id_1 = models.CharField(max_length=100)
-    tax_id_2 = models.CharField(max_length=100,blank=True,null=True)
-    vendor_group = models.ForeignKey('VendorGroupMaintenance', default=0, verbose_name="Vendor Group",on_delete=models.CASCADE)
-    is_company = models.BooleanField()
-    is_active = models.BooleanField()
-    created_by = models.ForeignKey(User, related_name='vendorcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='vendormodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.vendor_name
-    
-class SystemFlagMaintenance(models.Model):
-    flag_name= models.CharField(max_length=250)
-    table_id = models.IntegerField()
-    created_by = models.ForeignKey(User, related_name='systemflagcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='systemflagmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.flag_name
-
-class TaxMaintenance(models.Model):
-    tax_code= models.CharField(max_length=100)
-    tax_name= models.CharField(max_length=250)
-    rate= models.DecimalField(max_digits=10, decimal_places=2)
-    is_active = models.BooleanField()
-    created_by = models.ForeignKey(User, related_name='taxcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='taxmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.tax_name
-
-class DrawerMaintenance(models.Model):
-    status_option = [('O','Open'),('C','Closed')]
-    month_option = [('1','January'),('2','February'),('3','March'),('4','April'),
-                    ('5','May'),('6','June'),('7','July'),('8','August'),('9','September'),
-                    ('10','October'),('11','November'),('12','December')]
-    drawer_name = models.CharField(max_length=250)
-    branch = models.ForeignKey('BranchMaintenance', default=0,on_delete=models.CASCADE)
-    open_year = models.PositiveIntegerField()
-    open_month = models.CharField(choices=month_option,max_length=20)
-    limit = models.DecimalField(max_digits=10, decimal_places=2)
-    drawer_status = models.CharField(max_length=10,choices=status_option)
-    created_by = models.ForeignKey(User, related_name='drawercreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='drawermodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.drawer_name
-
-class TransactiontypeMaintenance(models.Model):
-    transaction_type_name = models.CharField(max_length=250)
-    document_type = models.ForeignKey('DocumentTypeMaintenance', default=0, verbose_name="Document Type",on_delete=models.CASCADE)
-    is_active = models.BooleanField()
-    created_by = models.ForeignKey(User, related_name='transactiontypecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='transactiontypemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.transaction_type_name
-
-class PaymentmodeMaintenance(models.Model):
-    payment_mode_name = models.CharField(max_length=250)
-    is_active = models.BooleanField()
-    created_by = models.ForeignKey(User, related_name='paymentmodecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='paymentmodemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.payment_mode_name
-
-class MemoTemplateMaintenance(models.Model):
-    memo_template_name = models.CharField(max_length=250,verbose_name='Memo Template Name')
-    template_htmldesign = models.CharField(max_length=4000,verbose_name='HTML design')
-    is_active = models.BooleanField()
-    created_by = models.ForeignKey(User, related_name='memotemplatecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='memotemplatemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.memo_template_name
-
-class UOMMaintenance(models.Model):
-    uom_name = models.CharField(max_length=250)
-    is_active = models.BooleanField()
-    created_by = models.ForeignKey(User, related_name='uomcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='uommodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.uom_name
-
-

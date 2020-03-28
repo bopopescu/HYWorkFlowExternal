@@ -102,7 +102,7 @@ class DocumentTypeMaintenanceScreen(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('document_type_name',)
     fieldsets = [
-        (None, {'fields': ['document_type_name','attachment_path','is_active']}),
+        (None, {'fields': ['document_type_name','document_type_code','running_number','attachment_path','is_active']}),
     ]
     exclude = ['created_by','modified_by']
 
@@ -602,7 +602,7 @@ class TransactiontypeMaintenanceScreen(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('payment_mode_name','document_type')
     fieldsets = [
-        (None, {'fields': ['payment_mode_name','document_type','is_active']}),
+        (None, {'fields': ['transaction_type_name','document_type','is_active']}),
     ]
     exclude = ['created_by','modified_by']
 

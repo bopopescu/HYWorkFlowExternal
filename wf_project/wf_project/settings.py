@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     # HY workflow modules
     'administration.apps.AdministrationConfig',
+    'approval.apps.ApprovalConfig',
     'dashboard.apps.DashboardConfig',
     #'contract_service.apps.ContractServiceConfig',
     #'drawer_reimbursement.apps.DrawerReimbursementConfig',
@@ -75,6 +76,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'templates','approval'),
             os.path.join(BASE_DIR, 'templates','memo'),
             os.path.join(BASE_DIR, 'templates','purchasing'),
             os.path.join(BASE_DIR, 'templates','payment')

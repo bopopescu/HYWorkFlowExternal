@@ -151,17 +151,43 @@
                           </div>
                       </div>
                       <div class="tab-pane fade" id="nav-attachments" role="tabpanel" aria-labelledby="nav-attachments-tab">
-                          <br/>
-                          <div class="form-group">
-                              <div class="form-row">
-                                  <div class="col col-md-3">
-                                      Attachment
-                                  </div>
-                                  <div class="col col-md-8">
-                                      Attachment
-                                  </div>
-                              </div>
+                        <br/>
+                        <div class="d-sm-flex align-items-right justify-content-between mb-4">
+                          <h1 class="h3 mb-0 text-gray-800"></h1>
+                          <a href="#" data-toggle="modal" data-target="#addMemoAttachmentModal" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
+                        </div>
+                        <div class="table-responsive">
+                          <table id="myattachments" class="table table-striped table-bordered" style="width:100%" data-server-side="true">
+                            <thead>
+                              <tr>
+                                <th data-data="id"></th>
+                                <th data-data="memo"></th>
+                                <th data-data="attachment">Attachment</th> 
+                                <th data-data="attachment_date">Date</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                          </table>       
                           </div>
+                          <script>
+                            $(document).ready(function() {
+                              var table = $('#myattachments').DataTable( {
+                                "ajax": "../../api/memoattachment/?format=datatables&pk={{memo.pk}}",
+                                "dom":  "<'row'<'col-sm-12 small'tr>>" +
+                                        "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                                "columnDefs": [ {
+                                    "targets": -1,
+                                    "data": null,
+                                    "render": function ( data, type, row ) {
+                                          return '<a href="' + row.attachment + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-file-download"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteMemoAttachmentModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                      }
+                                },                  
+                                { "visible": false, 
+                                "targets": [ 0, 1 ] }
+                                ]        
+                              });
+                            });
+                        </script> 
                       </div>
                   </div>
               </div>
@@ -170,4 +196,82 @@
   </div>
 </form>
 
+  <!-- Delete Modal-->
+  <div class="modal fade" id="deleteMemoAttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Select "Delete" below if you are ready to delete.
+          <input type="hidden" name="hiddenValue" id="hiddenValue" value="" />
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-danger" href="#" id="deleteMemoAttachmentButton">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    function sendDelete(param) {
+      var deleteInput = document.getElementById("hiddenValue"); 
+      deleteInput.value = param;
+    }
+  </script>
+  <script type="text/javascript">
+    $(function () {
+        $("#deleteMemoAttachmentButton").click(function () {
+            var memoattachment_id = $(".modal-body #hiddenValue").val();
+            window.location.href = "../../deleteattachment/" + memoattachment_id + "/";
+        })
+    });
+  </script>
+
+  <!-- Add Modal-->
+  <div class="modal fade" id="addMemoAttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <form action="{% url 'memo_attachment_create' memo.pk %}" method="POST" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New Attachment</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% csrf_token %} 
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-3">
+                            {{form_attachment.attachment.label_tag}}
+                            </div>
+                            <div class="col col-md-8">
+                            {% render_field form_attachment.attachment class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-3">
+                            {{form_attachment.attachment_date.label_tag}}
+                            </div>
+                            <div class="col col-md-8">
+                            {% render_field form_attachment.attachment_date type="date" class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" id="addMemoAttachmentButton">Submit</a>
+                    <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>          
+                </div>
+            </form>
+      </div>
+    </div>
+  </div>
 {% endblock content %}

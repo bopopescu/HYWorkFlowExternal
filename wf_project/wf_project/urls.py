@@ -22,10 +22,11 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
     path('accounts/', include('django.contrib.auth.urls')),         
-    path('admin/', admin.site.urls, name='admin'),    
-    path('purchasing/', include('purchasing.urls')),
-    path('memo/', include('memo.urls')),
+    path('admin/', admin.site.urls, name='admin'), 
+    path('approval/', include('approval.urls')),   
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('memo/', include('memo.urls')),
     path('payment/', include('payment.urls')),
+    path('purchasing/', include('purchasing.urls')),
     path('report_builder/', include('report_builder.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

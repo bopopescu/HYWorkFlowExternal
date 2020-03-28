@@ -1,5 +1,5 @@
 from django import forms
-from .models import Memo
+from .models import Memo, MemoAttachment
 from django.shortcuts import get_object_or_404
 import datetime
 from administration.models import CompanyMaintenance
@@ -40,3 +40,10 @@ class UpdateMemoForm(forms.ModelForm):
     class Meta:
         model = Memo
         fields = ['revision', 'details', 'status', 'document_number', 'subject']
+
+class NewMemoAttachmentForm(forms.ModelForm):
+    attachment_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput)
+    
+    class Meta:
+        model = MemoAttachment
+        fields = ['memo', 'attachment']

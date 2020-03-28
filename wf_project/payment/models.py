@@ -28,8 +28,6 @@ class PaymentRequest(models.Model):
     tax_amount = models.DecimalField(max_digits=10, decimal_places=2)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     remarks = RichTextUploadingField(config_name='remarks_py')
-    attachment = models.FileField(verbose_name="File Name")
-    attachment_date = models.DateField()
     created_by = models.ForeignKey(User, related_name='paymentcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, related_name='paymentmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
@@ -41,6 +39,14 @@ class PaymentRequest(models.Model):
 
     def __str__(self):
         return self.subject
+
+class PaymentAttachment(models.Model):
+    attachment = models.FileField(verbose_name="File Name")
+    attachment_date = models.DateField(auto_now_add=True)
+    payment_request = models.ForeignKey('PaymentRequest', verbose_name="PaymentRequest", on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Attachment'
 
 class PaymentRequestDetail(models.Model):
     parent_id = models.ForeignKey('PaymentRequest', default=0,on_delete=models.CASCADE)

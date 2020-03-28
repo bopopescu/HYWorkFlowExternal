@@ -7,6 +7,9 @@ router.register('pydata', views.PYViewSet)
 
 urlpatterns = [ 
     path('api/', include(router.urls)), 
-    path('py/list/', views.pylist, name='pylist'),
-    path('py/create/', views.pycreate, name='pycreate'),
+    path('list/', views.pylist, name='pylist'),
+    path('create/', views.py_create, name='pycreate'),
+    path('<int:pk>/', views.py_detail, name='py_detail'),    
+    path('delete/<int:pk>/', views.py_delete, name='py_delete'),
+    path('update/<int:pk>/', views.py_update, name='py_update'),
 ]

@@ -1,13 +1,37 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import NewPaymentForm,UpdatePaymentForm,DetailPaymentForm
+from .forms import NewPaymentForm,UpdatePaymentForm,DetailPaymentForm,NewPYItemForm,NewPYAttachmentForm
 from django.contrib.auth.decorators import login_required
-from .models import PaymentRequest
+from .models import PaymentRequest,PaymentRequestDetail,PaymentAttachment
 from rest_framework import viewsets
-from .serializers import PYSerializer
+from .serializers import PYSerializer,PYItemSerializer,PYAttachmentSerializer
 
 class PYViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequest.objects.all() #.order_by('rank')
     serializer_class = PYSerializer
+
+class PYItemViewSet(viewsets.ModelViewSet):
+    queryset = PaymentRequestDetail.objects.all()
+    serializer_class = PYItemSerializer
+
+    def get_queryset(self):
+        """
+        This view should return a list of all models by
+        the maker passed in the URL
+        """
+        py = get_object_or_404(PaymentRequest,pk=self.request.query_params.get('pk', None))
+        return PaymentRequestDetail.objects.filter(py=py)
+
+class PYAttachmentViewSet(viewsets.ModelViewSet):
+    queryset = PaymentAttachment.objects.all()
+    serializer_class = PYAttachmentSerializer
+
+    def get_queryset(self):
+        """
+        This view should return a list of all models by
+        the maker passed in the URL
+        """
+        py = get_object_or_404(PaymentRequest,pk=self.request.query_params.get('pk', None))
+        return PaymentAttachment.objects.filter(py=py)
 
 @login_required
 def py_create(request):    
@@ -19,10 +43,12 @@ def py_create(request):
             company = form.cleaned_data['company']
             transaction_type = form.cleaned_data['transaction_type']
             project = form.cleaned_data['project']
+            employee = form.cleaned_data['employee']
             payment_mode = form.cleaned_data['payment_mode']
             py = form.save(commit=False)
-            py.vendor = vendor
             py.currency = currency
+            py.vendor = vendor
+            py.employee = employee
             py.company = company
             py.transaction_type = transaction_type
             py.project = project
@@ -67,4 +93,58 @@ def py_update(request, pk):
             print(form.errors)
     else:
         form = UpdatePaymentForm(instance=py)
-    return render(request, 'pyupdate.html', {'py': py, 'form': form})
+        form_item = NewPYItemForm()
+        form_attachment = NewPYAttachmentForm
+    return render(request, 'pyupdate.html', {'py': py, 'form': form,'form_item':form_item ,'form_attachment':form_attachment})
+
+@login_required
+def py_item_create(request, pk):    
+    form = NewPYItemForm(request.POST)
+    if form.is_valid():
+        py_item = form.save(commit=False)
+        tax = form.cleaned_data['tax']
+        py = get_object_or_404(PaymentRequest, pk=pk)
+        py_item.py = py
+        py_item.tax= tax
+        # py_item.line_num = py_item.line_num + 1
+        py_item.save()
+        
+        sub_total = 0
+        price = 0
+        payment_items = PaymentRequestDetail.objects.filter(py=py)
+        for payment_item in payment_items:
+            sub_total += payment_item.price
+            price += payment_item.line_total
+        
+        py.sub_total = sub_total
+        py.total_amount = price
+        py.save()
+    else:
+        print(form.errors)
+    return redirect(py_update, pk=pk) 
+
+@login_required
+def py_item_delete(request, pk):
+    py_item =  get_object_or_404(PaymentRequestDetail, pk=pk)
+    py = get_object_or_404(PaymentRequest, pk=py_item.py.pk)
+    py_item.delete()
+    return redirect(py_update, pk=py.pk)
+
+@login_required
+def py_attachment_create(request, pk):    
+    form = NewPYAttachmentForm(request.POST, request.FILES)
+    if form.is_valid():
+        py_attachment = form.save(commit=False)
+        py = get_object_or_404(PaymentRequest, pk=pk)
+        py_attachment.py = py
+        py_attachment.save()
+    else:
+        print(form.errors)
+    return redirect(py_update, pk=pk) 
+
+@login_required
+def py_attachment_delete(request, pk):
+    py_attachment =  get_object_or_404(PaymentAttachment, pk=pk)
+    py = get_object_or_404(PaymentRequest, pk=py_attachment.py.pk)
+    py_attachment.delete()
+    return redirect(py_update, pk=py.pk)

@@ -5,7 +5,7 @@
 {% load widget_tweaks %}
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Payment Request</h1>
+    <h1 class="h3 mb-0 text-gray-800">Payment Request(Update)</h1>
 <form method="post" novalidate>
   <style>
     table#dataTable tbody tr td a#additem {
@@ -31,62 +31,26 @@
  </style>
  <script type="text/javascript">
    $(document).ready(function(){
-     $('[data-toggle="tooltip"]').tooltip();
-     var actions = $("table#dataTable td:last-child").html();
-     // Append table with add row form on add new button click
-       $(".add-new").click(function(){
-       $(this).attr("disabled", "disabled");
-       var index = $("table#dataTable tbody tr:last-child").index();
-       
-           var row = '<tr>' +
-               '<td><input type="text" class="form-control" name="name" id="name"></td>' +
-               '<td><input type="text" class="form-control" name="department" id="department"></td>' +
-               '<td><input type="text" class="form-control" name="phone" id="phone"></td>' +
-               '<td><input type="text" class="form-control" name="phone" id="phone"></td>'+
-               '<td><input type="text" class="form-control" name="phone" id="phone"></td>'+
-               '<td>' + actions + '</td>' +
-           '</tr>';
-         $("table").append(row);		
-       $("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
-           $('[data-toggle="tooltip"]').tooltip();
-           $(".add").eq(index + 1).css("display", "inline-block");
-       });
-     // Add row on add button click
-     $(document).on("click", ".add", function(){
-       var empty = false;
-       var input = $(this).parents("tr").find('input[type="text"]');
-           input.each(function(){
-         if(!$(this).val()){
-           $(this).addClass("error2");
-           empty = true;
-         } else{
-                   $(this).removeClass("error2");
+    $("input[name='checkpay']").click(function(){
+        	var radioValue = $("input[name='checkpay']:checked").val();
+            if(radioValue == "checkvendor"){
+                $("#vendorlabel").css("display", "block");
+                $("#employeelabel").css("display", "none");
+                // $("#id_vendor").val($("#id_vendor option:first").val());
+                // $("#id_employee").val($("#id_employee option:first").val());
+                $("#id_vendor").attr('required',true);
+                $("#id_employee").attr('required',false);
+            }else{
+                $("#vendorlabel").css("display", "none");
+                $("#employeelabel").css("display", "block");
+                // $("#id_vendor").val($("#id_vendor option:first").val());
+                // $("#id_employee").val($("#id_employee option:first").val());
+                $("#id_employee").attr('required',true);
+                $("#id_vendor").attr('required',false);
             }
-       });
-       $(this).parents("tr").find(".error2").first().focus();
-       if(!empty){
-         input.each(function(){
-           $(this).parent("td").html($(this).val());
-         });			
-         $(this).parents("tr").find(".add, .edit").toggle();
-         $(".add-new").removeAttr("disabled");
-       }		
-       });
-     // Edit row on edit button click
-     $(document).on("click", ".edit", function(){		
-           $(this).parents("tr").find("td:not(:last-child)").each(function(){
-         $(this).html('<input type="text" class="form-control" value="' + $(this).text() + '">');
-       });		
-       $(this).parents("tr").find(".add, .edit").toggle();
-       $(".add-new").attr("disabled", "disabled");
-       });
-     // Delete row on delete button click
-     $(document).on("click", ".delete", function(){
-           $(this).parents("tr").remove();
-       $(".add-new").removeAttr("disabled");
-       });
+        });
    });
-   </script> 
+  </script> 
   {% csrf_token %} 
     <div>
       <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
@@ -106,11 +70,35 @@
               <div class="form-row">
                 <div class="col col-md-3">
                   <label class="control-label">
+                    Pay To : 
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  <label><input type="radio" name="checkpay" value="checkvendor" checked>Vendor</label> &nbsp;&nbsp; <label><input type="radio" name="checkpay" value="checkemployee">Employee</label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group"  id="vendorlabel">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
                     {{form.vendor.label_tag}}
                   </label>
                 </div>
                 <div class="col col-md-8">
                   {% render_field form.vendor class="col-md-12 form-control form-control-user" placeholder=form.vendor.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group" id="employeelabel" style="display:none;">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.employee.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.employee class="col-md-12 form-control form-control-user" placeholder=form.vendor.label %}
                 </div>
               </div>
             </div>
@@ -261,51 +249,129 @@
         </div>        
       </div>
     </div>
-  </div>  
-
+  </div> 
   <div class="card shadow mb-4">    
     <div class="card-body">
-      <div class="d-sm-flex align-items-right justify-content-end mb-4">
-        <div>
-          <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm add-new"><i class="fas fa-plus fa-sm text-white-50"></i> Add Detail</a></button>
-        </div>    
-      </div>
-      <div class="table-responsive">
-        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-          <thead>
-            <tr>
-              <th>Item Description</th>
-              <th>Amount</th>
-              <th>Tax</th>
-              <th>Tax Amount</th>
-              <th>Line Total</th>
-              <th style="width:10%"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>HP Laserjet-Q2612A</td>
-              <td>Tax for 5%</td>
-              <td>6.15</td>
-              <td>123.00</td>
-              <td>129.15</td>
-              <td>
-                  <a title="Add" id="additem" class="btn btn-success btn-circle btn-sm add">
-                    <i class="fas fa-plus"></i>
-                  </a>
-                  <a title="Edit" id="edititem" class="btn btn-info btn-circle btn-sm edit">
-                    <i class="fas fa-pencil-alt"></i>
-                  </a>
-                  <a title="Delete" id="deleteitem" class="btn btn-danger btn-circle btn-sm delete">
-                      <i class="fas fa-trash"></i>
-                  </a>
-                </td>
-            </tr>   
-          </tbody>
-        </table>
-      </div>
+      <div class="form-row">
+        <div class="col col-md-12">
+          <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+              <a class="nav-item nav-link active" id="nav-item-tab" data-toggle="tab" href="#nav-item" role="tab" aria-controls="nav-item" aria-selected="true">Item</a>
+              <a class="nav-item nav-link" id="nav-details-tab" data-toggle="tab" href="#nav-details" role="tab" aria-controls="nav-details" aria-selected="true">Remarks</a>
+              <a class="nav-item nav-link" id="nav-attachments-tab" data-toggle="tab" href="#nav-attachments" role="tab" aria-controls="nav-attachments" aria-selected="false">Attachments</a>
+            </div>
+          </nav>
+          <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-item" role="tabpanel" aria-labelledby="nav-item-tab">
+              <br/>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-12">
+                    <div class="col col-md-12">
+                      <div class="d-sm-flex align-items-right justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800"></h1>
+                        <a href="#" data-toggle="modal" data-target="#additemModal" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
+                      </div>
+                      <div class="table-responsive">
+                        <table id="myitems" class="table table-striped table-bordered" style="width:100%" data-server-side="true">
+                          <thead>
+                            <tr>
+                              <th data-data="id"></th>
+                              <th data-data="py"></th>
+                              <th data-data="item_description">Item Description</th> 
+                              <th data-data="price">Price</th>
+                              <th data-data="tax">Tax</th> 
+                              <th data-data="line_total">Line Total</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                        </table>       
+                        </div>
+                        <script>
+                          $(document).ready(function() {
+                            var table = $('#myitems').DataTable( {
+                              "ajax": "../../api/pyitem/?format=datatables&pk={{py.pk}}",
+                              "dom":  "<'row'<'col-sm-12 small'tr>>" +
+                                      "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                              "columnDefs": [ {
+                                  "targets": -1,
+                                  "data": null,
+                                  "render": function ( data, type, row ) {
+                                        return '<a href="' + row.item_description + '/" target="_blank" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePYItemModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                    }
+                              },                  
+                              { "visible": false, 
+                              "targets": [ 0, 1 ] }
+                              ]        
+                            });
+                          });
+                      </script> 
+                    </div>
+                  </div>
+                </div>
+              </div>  
+            </div>
+            <div class="tab-pane fade show" id="nav-details" role="tabpanel" aria-labelledby="nav-details-tab">
+              <br/>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-12">
+                    {{form.media}}
+                    {{form.remarks}}
+                  </div>
+                </div>
+              </div>  
+            </div>
+            <div class="tab-pane fade" id="nav-attachments" role="tabpanel" aria-labelledby="nav-attachments-tab">
+              <br/>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-12">
+                    <div class="d-sm-flex align-items-right justify-content-between mb-4">
+                      <h1 class="h3 mb-0 text-gray-800"></h1>
+                      <a href="#" data-toggle="modal" data-target="#addPYAttachmentModal" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
+                    </div>
+                    <div class="table-responsive">
+                      <table id="myattachments" class="table table-striped table-bordered" style="width:100%" data-server-side="true">
+                        <thead>
+                          <tr>
+                            <th data-data="id"></th>
+                            <th data-data="py"></th>
+                            <th data-data="attachment">Attachment</th> 
+                            <th data-data="attachment_date">Date</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                      </table>       
+                      </div>
+                      <script>
+                        $(document).ready(function() {
+                          var table = $('#myattachments').DataTable( {
+                            "ajax": "../../api/pyattachment/?format=datatables&pk={{py.pk}}",
+                            "dom":  "<'row'<'col-sm-12 small'tr>>" +
+                                    "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                            "columnDefs": [ {
+                                "targets": -1,
+                                "data": null,
+                                "render": function ( data, type, row ) {
+                                      return '<a href="' + row.attachment + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-file-download"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePYAttachmentModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                  }
+                            },                  
+                            { "visible": false, 
+                            "targets": [ 0, 1 ] }
+                            ]        
+                          });
+                        });
+                    </script> 
+                  </div>
+                </div>
+              </div>  
+            </div>
+          </div>            
+        </div>
+      </div>  
     </div>
-  </div>
+  </div> 
   <div class="row">
     <div class="col-xl-6 col-md-4 mb-4">
       <div class="card shadow mb-4">
@@ -319,7 +385,7 @@
                 <label class="control-label">{{form.sub_total.label_tag}}</label>
               </div>
               <div class="col col-md-8">
-                {% render_field form.sub_total class="col-md-12 form-control form-control-user" placeholder=form.sub_total.label %}
+                {% render_field form.sub_total|append_attr:"readonly"  class="col-md-12 form-control form-control-user" placeholder=form.sub_total.label %}
               </div>
             </div> 
           </div>
@@ -329,7 +395,7 @@
                 <label class="control-label">{{form.discount_amount.label_tag}}</label>
               </div>
               <div class="col col-md-2">
-                {% render_field form.discount_rate|append_attr:"max=100" class="col-md-12 form-control form-control-user" %}
+                {% render_field form.discount_rate|append_attr:"readonly"  class="col-md-12 form-control form-control-user" %}
               </div>
               <div class="col col-md-6">
                 {% render_field form.discount_amount class="col-md-12 form-control form-control-user" %}
@@ -342,7 +408,7 @@
                 <label class="control-label">{{form.tax_amount.label_tag}}</label>
               </div>
               <div class="col col-md-8">
-                {% render_field form.tax_amount class="col-md-12 form-control form-control-user" placeholder=form.tax_amount.label %}
+                {% render_field form.tax_amount|append_attr:"readonly"  class="col-md-12 form-control form-control-user" placeholder=form.tax_amount.label %}
               </div>
             </div> 
           </div>
@@ -352,29 +418,192 @@
                 <label class="control-label">{{form.total_amount.label_tag}}</label>
               </div>
               <div class="col col-md-8">
-                {% render_field form.total_amount class="col-md-12 form-control form-control-user" placeholder=form.total_amount.label %}
+                {% render_field form.total_amount|append_attr:"readonly"  class="col-md-12 form-control form-control-user" placeholder=form.total_amount.label %}
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-xl-6 col-md-4 mb-4">
-      <div class="card shadow mb-4">
-        <div class="card-header py-3">
-          <h6 class="m-0 font-weight-bold text-primary">{{form.remarks.label}}</h6>
+</form>
+
+  <!-- Delete Modal-->
+  <div class="modal fade" id="deletePYItemModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
         </div>
-        <div class="card-body">  
-          <div class="form-row">
-            <div class="col col-md-12">
-                {{form.media}}
-                {{form.remarks}}
-            </div>
-          </div>     
+        <div class="modal-body">
+          Select "Delete" below if you are ready to delete.
+          <input type="hidden" name="hiddenValue" id="hiddenValue" value="" />
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-danger" href="#" id="deletePYItemButton">Delete</a>
         </div>
       </div>
     </div>
   </div>
-</form>
+  <script type="text/javascript">
+    function sendDelete(param) {
+      var deleteInput = document.getElementById("hiddenValue"); 
+      deleteInput.value = param;
+    }
+  </script>
+  <script type="text/javascript">
+    $(function () {
+        $("#deletePYItemButton").click(function () {
+            var pyitem_id = $(".modal-body #hiddenValue").val();
+            window.location.href = "../../deleteitem/" + pyitem_id + "/";
+        })
+    });
+  </script>
+
+  <!-- Add Modal-->
+  <div class="modal fade" id="additemModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <form action="{% url 'py_item_create' py.pk %}" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New Payment Request Item</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% csrf_token %} 
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-3">
+                            {{form_item.item_description.label_tag}}
+                            </div>
+                            <div class="col col-md-8">
+                            {% render_field form_item.item_description class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-3">
+                            {{form_item.price.label_tag}}
+                            </div>
+                            <div class="col col-md-8">
+                            {% render_field form_item.price class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="form-row">
+                          <div class="col col-md-3">
+                          {{form_item.tax.label_tag}}
+                          </div>
+                          <div class="col col-md-8">
+                          {% render_field form_item.tax class="col-md-12 form-control form-control-use" %}
+                          </div>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="form-row">
+                        <div class="col col-md-3">
+                        {{form_item.line_total.label_tag}}
+                        </div>
+                        <div class="col col-md-8">
+                        {% render_field form_item.line_total class="col-md-12 form-control form-control-use" %}
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" id="addPYItemButton">Submit</a>
+                    <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>          
+                </div>
+            </form>
+      </div>
+    </div>
+  </div>
+
+<!-- Delete Modal-->
+<div class="modal fade" id="deletePYAttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Select "Delete" below if you are ready to delete.
+        <input type="hidden" name="hiddenValue2" id="hiddenValue2" value="" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+        <a class="btn btn-danger" href="#" id="deletePYAttachmentButton">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  function sendDelete(param) {
+    var deleteInput = document.getElementById("hiddenValue2"); 
+    deleteInput.value = param;
+  }
+</script>
+<script type="text/javascript">
+  $(function () {
+      $("#deletePYAttachmentButton").click(function () {
+          var pyattachment_id = $(".modal-body #hiddenValue2").val();
+          window.location.href = "../../deleteattachment/" + pyattachment_id + "/";
+      })
+  });
+</script>
+
+<!-- Add Modal-->
+<div class="modal fade" id="addPYAttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <form action="{% url 'py_attachment_create' py.pk %}" method="POST" enctype="multipart/form-data">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">New Attachment</h5>
+                  <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  {% csrf_token %} 
+                  <div class="form-group">
+                      <div class="form-row">
+                          <div class="col col-md-3">
+                          {{form_attachment.attachment.label_tag}}
+                          </div>
+                          <div class="col col-md-8">
+                          {% render_field form_attachment.attachment class="col-md-12 form-control form-control-use" %}
+                          </div>
+                      </div>
+                  </div>
+                  <div class="form-group">
+                      <div class="form-row">
+                          <div class="col col-md-3">
+                          {{form_attachment.attachment_date.label_tag}}
+                          </div>
+                          <div class="col col-md-8">
+                          {% render_field form_attachment.attachment_date type="date" class="col-md-12 form-control form-control-use" %}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button class="btn btn-success" id="addPYAttachmentButton">Submit</a>
+                  <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>          
+              </div>
+          </form>
+    </div>
+  </div>
+</div>
+  
 
 {% endblock content %}

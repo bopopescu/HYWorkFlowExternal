@@ -1,5 +1,5 @@
 from django import forms
-from .models import PaymentRequest
+from .models import PaymentRequest,PaymentRequestDetail,PaymentAttachment
 from django.shortcuts import get_object_or_404
 import datetime
 from administration.models import CompanyMaintenance
@@ -9,6 +9,7 @@ from administration.models import VendorMasterData
 from administration.models import TaxMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import PaymentmodeMaintenance
+from administration.models import EmployeeMaintenance
 
 
 class DetailPaymentForm(forms.ModelForm):
@@ -18,6 +19,7 @@ class DetailPaymentForm(forms.ModelForm):
     transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.transaction_type, disabled=True)
     currency = forms.ModelChoiceField(queryset=CurrencyMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.currency, disabled=True)
     payment_mode = forms.ModelChoiceField(queryset=PaymentmodeMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.payment_mode, disabled=True)
+    employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.employee, disabled=True)
 
     class Meta:
         model = PaymentRequest
@@ -27,14 +29,19 @@ class DetailPaymentForm(forms.ModelForm):
 
 class NewPaymentForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.all(), empty_label="Not Assigned")
-    vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.all(), empty_label="Not Assigned")
+    vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.all(), empty_label="Not Assigned",required=False)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all(), empty_label="Not Assigned")
     transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.all(), empty_label="Not Assigned")
     currency = forms.ModelChoiceField(queryset=CurrencyMaintenance.objects.all(), empty_label="Not Assigned")
     payment_mode = forms.ModelChoiceField(queryset=PaymentmodeMaintenance.objects.all(), empty_label="Not Assigned")
+    employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.all(), empty_label="Not Assigned",required=False)
     submit_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput)
     revision = forms.IntegerField(initial=0)
-
+    sub_total = forms.DecimalField(initial=0.00)
+    discount_amount = forms.DecimalField(initial=0.00)
+    discount_rate = forms.DecimalField(initial=0.00)
+    tax_amount = forms.DecimalField(initial=0.00)
+    total_amount = forms.DecimalField(initial=0.00)
     class Meta:
         model = PaymentRequest
         fields = ['revision','document_number','status','submit_date','subject','reference',
@@ -43,14 +50,33 @@ class NewPaymentForm(forms.ModelForm):
 
 class UpdatePaymentForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.company)
-    vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.vendor)
+    vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.vendor,required=False)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.project)
     transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.transaction_type)
     currency = forms.ModelChoiceField(queryset=CurrencyMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.currency)
     payment_mode = forms.ModelChoiceField(queryset=PaymentmodeMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.payment_mode)
-
+    employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.employee,required=False)
+    sub_total = forms.DecimalField(initial=PaymentRequest.sub_total)
+    discount_amount = forms.DecimalField(initial=PaymentRequest.discount_amount)
+    discount_rate = forms.DecimalField(initial=PaymentRequest.discount_rate)
+    tax_amount = forms.DecimalField(initial=PaymentRequest.tax_amount)
+    total_amount = forms.DecimalField(initial=PaymentRequest.total_amount)
     class Meta:
         model = PaymentRequest
         fields = ['revision','document_number','status','submit_date','subject','reference',
         'sub_total','discount_amount','discount_rate','tax_amount','total_amount',
         'remarks']
+
+class NewPYItemForm(forms.ModelForm):
+    tax = forms.ModelChoiceField(queryset=TaxMaintenance.objects.all(), empty_label="Not Assigned")
+
+    class Meta:
+        model = PaymentRequestDetail
+        fields = ['py', 'item_description', 'price','line_total']
+
+class NewPYAttachmentForm(forms.ModelForm):
+    attachment_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput)
+    
+    class Meta:
+        model = PaymentAttachment
+        fields = ['py', 'attachment']

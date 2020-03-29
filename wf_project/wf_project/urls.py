@@ -28,5 +28,6 @@ urlpatterns = [
     path('memo/', include('memo.urls')),
     path('payment/', include('payment.urls')),
     path('purchasing/', include('purchasing.urls')),
+    path('staffrecruitment/', include('human_resource.urls')),
     path('report_builder/', include('report_builder.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

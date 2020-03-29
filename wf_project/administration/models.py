@@ -81,7 +81,6 @@ class CountryMaintenance(models.Model):
 class CurrencyMaintenance(models.Model):
     currency_name = models.CharField(max_length=250)
     alphabet = models.CharField(max_length=100)
-    country = models.ForeignKey('CountryMaintenance',verbose_name="Country",on_delete=models.CASCADE)
     rate = models.DecimalField(max_digits=10, decimal_places=2)
     is_active = models.BooleanField()
     created_by = models.ForeignKey(User, related_name='currencycreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
@@ -321,6 +320,28 @@ class StatusMaintenance(models.Model):
     def __str__(self):
         return "%s - %s" % (self.status_code, self.status_name)
 
+class StaffHireTypeMaintenance(models.Model):
+    hire_type_name = models.CharField(max_length=250)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='staffhirecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='staffhiremodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.hire_type_name
+
+class StaffPositionTitleMaintenance(models.Model):
+    position_title_name = models.CharField(max_length=250)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='staffpositioncreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='staffpositionmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.position_title_name
+
 class SystemFlagMaintenance(models.Model):
     flag_name= models.CharField(max_length=250)
     table_id = models.IntegerField()
@@ -357,6 +378,18 @@ class TransactiontypeMaintenance(models.Model):
     def __str__(self):
         return self.transaction_type_name
 
+class UtiliyAccountTypeMaintenance(models.Model):
+    account_short_name = models.CharField(max_length=100)
+    account_name = models.CharField(max_length=250)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='utilityaccountcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='utilityaccountmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.position_title_name
+
 class UOMMaintenance(models.Model):
     uom_name = models.CharField(max_length=250)
     is_active = models.BooleanField()
@@ -367,19 +400,6 @@ class UOMMaintenance(models.Model):
 
     def __str__(self):
         return self.uom_name
-    
-class WorkflowApprovalRuleGroupMaintenance(models.Model):
-    condition_option = [('And','And'),('Or','Or')]
-    approval_rule = models.ForeignKey('WorkflowApprovalRule',default=0,verbose_name="Approval Level",on_delete=models.CASCADE)
-    approval_group = models.ForeignKey('WorkflowApprovalGroup',verbose_name="Approval Group",on_delete=models.CASCADE)
-    next_condition = models.CharField(max_length=15,choices=condition_option,null=True, blank=True)
-    created_by = models.ForeignKey(User, related_name='workflowapprovalrulegroupcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='uommodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.approval_group.approval_group_name
 
 class WorkflowInstance(models.Model):
     template_code = models.CharField(max_length=100)
@@ -486,14 +506,6 @@ class StateMaintenance(models.Model):
     def __str__(self):
         return "%s" % (self.state_name) 
 
-class SystemFlagMaintenance(models.Model):
-    flag_name= models.CharField(max_length=250)
-    table_id = models.IntegerField()
-    created_by = models.ForeignKey(User, related_name='systemflagcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='systemflagmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
-
 class WorkflowApprovalRule(models.Model):
     approval_level = models.IntegerField(unique=True,verbose_name="Approval Level")
     approval_rule_name = models.CharField(max_length=250)
@@ -531,16 +543,6 @@ class WorkflowApprovalRuleGroupMaintenance(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, related_name='workflowapprovalrulegroupmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     modified_timestamp = models.DateTimeField(auto_now=True)
-
-class WorkflowInstance(models.Model):
-    template_code = models.CharField(max_length=100)
-    company = models.ForeignKey('CompanyMaintenance', default=0, verbose_name="Company Name",on_delete=models.CASCADE)
-    document_type = models.ForeignKey('DocumentTypeMaintenance', default=0, verbose_name="Document Type",on_delete=models.CASCADE)
-    trans_type = models.CharField(max_length=100)
-    ceo_required = models.BooleanField()
-
-    def __str__(self):
-        return self.template_code
 
 class WorkflowPattern(models.Model):
     pattern_code = models.CharField(max_length=100)

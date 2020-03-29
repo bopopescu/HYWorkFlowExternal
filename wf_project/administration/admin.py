@@ -40,6 +40,9 @@ from .models import TransactiontypeMaintenance
 from .models import PaymentmodeMaintenance
 from .models import MemoTemplateMaintenance
 from .models import UOMMaintenance
+from .models import StaffHireTypeMaintenance
+from .models import StaffPositionTitleMaintenance
+from .models import UtiliyAccountTypeMaintenance
 
 admin.site.register(WorkflowPattern)
 admin.site.register(WorkflowInstance)
@@ -130,7 +133,6 @@ class CompanyContactInline(admin.StackedInline):
     ]
     exclude = ['created_by','modified_by']
     extra = 0
-    css = {'all': ('no-more-warnings.css', )}
     def save_model(self, request, obj, form, change):
         self.request = request
         if not obj.pk:
@@ -442,7 +444,6 @@ class VendorContactInline(admin.StackedInline):
     ]
     exclude = ['created_by','modified_by']
     extra = 0
-    css = {'all': ('no-more-warnings.css', )}
     def save_model(self, request, obj, form, change):
         self.request = request
         if not obj.pk:
@@ -828,3 +829,63 @@ class UOMMaintenanceScreen(admin.ModelAdmin):
         return super().save_model(request, obj, form, change)
 
 admin.site.register(UOMMaintenance,UOMMaintenanceScreen)
+
+class StaffHireTypeMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('hire_type_name','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('hire_type_name',)
+    fieldsets = [
+        (None, {'fields': ['hire_type_name','is_active']}),
+    ]
+    exclude = ['created_by','modified_by']
+
+    def save_model(self, request, obj, form, change):
+        self.request = request
+        if not obj.pk:
+            # Only set added_by during the first save.
+            obj.created_by = self.request.user
+        else:
+            obj.modified_by = self.request.user
+        return super().save_model(request, obj, form, change)
+
+admin.site.register(StaffHireTypeMaintenance,StaffHireTypeMaintenanceScreen)
+
+class StaffPositionTitleMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('position_title_name','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('position_title_name',)
+    fieldsets = [
+        (None, {'fields': ['position_title_name','is_active']}),
+    ]
+    exclude = ['created_by','modified_by']
+
+    def save_model(self, request, obj, form, change):
+        self.request = request
+        if not obj.pk:
+            # Only set added_by during the first save.
+            obj.created_by = self.request.user
+        else:
+            obj.modified_by = self.request.user
+        return super().save_model(request, obj, form, change)
+
+admin.site.register(StaffPositionTitleMaintenance,StaffPositionTitleMaintenanceScreen)
+
+class UtiliyAccountTypeMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('account_short_name','account_name','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('account_short_name','account_name',)
+    fieldsets = [
+        (None, {'fields': ['account_short_name','account_name','is_active']}),
+    ]
+    exclude = ['created_by','modified_by']
+
+    def save_model(self, request, obj, form, change):
+        self.request = request
+        if not obj.pk:
+            # Only set added_by during the first save.
+            obj.created_by = self.request.user
+        else:
+            obj.modified_by = self.request.user
+        return super().save_model(request, obj, form, change)
+
+admin.site.register(UtiliyAccountTypeMaintenance,UtiliyAccountTypeMaintenanceScreen)

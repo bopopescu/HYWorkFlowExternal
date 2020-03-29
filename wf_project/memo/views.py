@@ -8,6 +8,7 @@ from .serializers import MemoSerializer, MemoAttachmentSerializer
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
+from django.contrib.auth.models import User
 from approval.models import ApprovalItem
 
 class MemoAttachmentViewSet(viewsets.ModelViewSet):
@@ -22,9 +23,21 @@ class MemoAttachmentViewSet(viewsets.ModelViewSet):
         memo = get_object_or_404(Memo,pk=self.request.query_params.get('pk', None))
         return MemoAttachment.objects.filter(memo=memo)
 
-class MemoViewSet(viewsets.ModelViewSet):
-    queryset = Memo.objects.all() #.order_by('rank')
+class MyMemoViewSet(viewsets.ModelViewSet):
+    queryset = Memo.objects.all().order_by('-id')
     serializer_class = MemoSerializer
+    
+    def get_queryset(self):
+        return Memo.objects.filter(submit_by=self.request.user.id)
+
+class TeamMemoViewSet(viewsets.ModelViewSet):
+    queryset = Memo.objects.all().order_by('-id')    
+    serializer_class = MemoSerializer
+
+    def get_queryset(self):
+        groups = self.request.user.groups.values_list('id', flat=True)
+        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        return Memo.objects.filter(submit_by__in=users)
 
 @login_required
 def memo_create(request):    
@@ -40,6 +53,7 @@ def memo_create(request):
             memo.department = department
             memo.project = project
             memo.template = template
+            memo.submit_by = request.user
             memo.save()
 
             document_type = get_object_or_404(DocumentTypeMaintenance,document_type_name="Memo")
@@ -78,6 +92,10 @@ def memo_detail(request, pk):
     return render(request, 'memo/detail.html', {'memo': memo, 'form': form})
 
 @login_required
+def memo_index(request):
+    return redirect(memo_list)
+
+@login_required
 def memo_list(request):
     return render(request, 'memo/list.html')
 
@@ -89,6 +107,7 @@ def memo_update(request, pk):
         if form.is_valid():
             memo = form.save()
             memo.revision = memo.revision + 1
+            memo.submit_by = request.user
             memo.save()
             return redirect(memo_detail, pk=memo.pk)
         else:

@@ -1,5 +1,5 @@
 from django import forms
-from .models import ApprovalItem
+from .models import ApprovalItem, ApprovalItemApprover, ApprovalItemCC
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
@@ -14,3 +14,13 @@ class ApprovalForm(forms.ModelForm):
     class Meta:
         model = ApprovalItem
         fields = ['document_number', 'notification']
+
+class ApproverForm(forms.ModelForm):
+    class Meta:
+        model = ApprovalItemApprover
+        fields = ['stage', 'user']
+
+class CCForm(forms.ModelForm):
+    class Meta:
+        model = ApprovalItemCC
+        fields = ['user']

@@ -29,7 +29,7 @@ class CompanyMaintenance(models.Model):
     modified_by = models.ForeignKey(User, related_name='companymodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     modified_timestamp = models.DateTimeField(auto_now=True)
     def __str__(self):
-        return self.company_name
+        return self.short_name
 
 class CompanyContactDetail(models.Model):
     personal_option = [('Mr.','Mr.'),('Mrs.','Mrs.'),('Ms.','Ms.'),('Miss','Miss')]
@@ -295,7 +295,7 @@ class ProjectMaintenance(models.Model):
     modified_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.project_name
+        return self.project_code
 
 class RegionMaintenance(models.Model):
     region_name = models.CharField(max_length=250)
@@ -320,6 +320,20 @@ class StatusMaintenance(models.Model):
 
     def __str__(self):
         return "%s - %s" % (self.status_code, self.status_name)
+
+
+class StateMaintenance(models.Model):
+    state_name = models.CharField(max_length=200)
+    capital = models.CharField(max_length=200)
+    country = models.ForeignKey('CountryMaintenance',verbose_name="Country",on_delete=models.CASCADE)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='statecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='statemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "%s" % (self.state_name) 
 
 class SystemFlagMaintenance(models.Model):
     flag_name= models.CharField(max_length=250)
@@ -364,29 +378,6 @@ class UOMMaintenance(models.Model):
     created_timestamp = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, related_name='uommodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     modified_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.uom_name
-    
-class WorkflowApprovalRuleGroupMaintenance(models.Model):
-    condition_option = [('And','And'),('Or','Or')]
-    approval_rule = models.ForeignKey('WorkflowApprovalRule',default=0,verbose_name="Approval Level",on_delete=models.CASCADE)
-    approval_group = models.ForeignKey('WorkflowApprovalGroup',verbose_name="Approval Group",on_delete=models.CASCADE)
-    next_condition = models.CharField(max_length=15,choices=condition_option,null=True, blank=True)
-    created_by = models.ForeignKey(User, related_name='workflowapprovalrulegroupcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='uommodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.approval_group.approval_group_name
-
-class WorkflowInstance(models.Model):
-    template_code = models.CharField(max_length=100)
-    company = models.ForeignKey('CompanyMaintenance', default=0, verbose_name="Company Name",on_delete=models.CASCADE)
-    document_type = models.ForeignKey('DocumentTypeMaintenance', default=0, verbose_name="Document Type",on_delete=models.CASCADE)
-    trans_type = models.CharField(max_length=100)
-    ceo_required = models.BooleanField()
 
     def __str__(self):
         return self.uom_name
@@ -472,27 +463,6 @@ class VendorCategoryMaintenance(models.Model):
 
     def __str__(self):
         return self.vendor_category_name
-
-class StateMaintenance(models.Model):
-    state_name = models.CharField(max_length=200)
-    capital = models.CharField(max_length=200)
-    country = models.ForeignKey('CountryMaintenance',verbose_name="Country",on_delete=models.CASCADE)
-    is_active = models.BooleanField()
-    created_by = models.ForeignKey(User, related_name='statecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='statemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return "%s" % (self.state_name) 
-
-class SystemFlagMaintenance(models.Model):
-    flag_name= models.CharField(max_length=250)
-    table_id = models.IntegerField()
-    created_by = models.ForeignKey(User, related_name='systemflagcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    created_timestamp = models.DateTimeField(auto_now_add=True)
-    modified_by = models.ForeignKey(User, related_name='systemflagmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
-    modified_timestamp = models.DateTimeField(auto_now=True)
 
 class WorkflowApprovalRule(models.Model):
     approval_level = models.IntegerField(unique=True,verbose_name="Approval Level")

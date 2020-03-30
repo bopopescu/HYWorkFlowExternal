@@ -342,6 +342,19 @@ class StaffPositionTitleMaintenance(models.Model):
     def __str__(self):
         return self.position_title_name
 
+class StateMaintenance(models.Model):
+    state_name = models.CharField(max_length=200)
+    capital = models.CharField(max_length=200)
+    country = models.ForeignKey('CountryMaintenance',verbose_name="Country",on_delete=models.CASCADE)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='statecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='statemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "%s" % (self.state_name) 
+
 class SystemFlagMaintenance(models.Model):
     flag_name= models.CharField(max_length=250)
     table_id = models.IntegerField()

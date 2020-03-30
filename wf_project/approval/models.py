@@ -27,6 +27,8 @@ class ApprovalItemApprover(models.Model):
     stage = models.IntegerField(default=0)
     user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE,  blank=True, null=True)
     approval_item = models.ForeignKey('ApprovalItem', on_delete=models.CASCADE)
+    status = models.CharField(max_length=2, blank=True, null=True)
+    reason = models.CharField(max_length=250, blank=True, null=True)
 
 class ApprovalItemCC(models.Model):
     user = models.ForeignKey(User, verbose_name="CC", on_delete=models.CASCADE,  blank=True, null=True)

@@ -6,8 +6,10 @@
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Memo</h1>
     <div>
-        <a href="{% url 'approval_detail' memo.approval.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
-        <a href="{% url 'memo_update' memo.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-pencil-alt"></i> Edit</a>
+        {% if memo.status == "D" || memo.status == "R" %}
+            <a href="{% url 'approval_detail' memo.approval.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>             
+            <a href="{% url 'memo_update' memo.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-pencil-alt"></i> Edit</a>
+        {% endif %}  
         <a href="{% url 'memo_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
     </div>
 </div>
@@ -88,13 +90,13 @@
                             </div>
                             <div class="col col-md-8">
                                 {% if memo.status == "D" %}
-                                <strong>Draft</strong>
+                                <p class="text-info"><strong>Draft</strong></p>
                                 {% elif memo.status == "P" %}
-                                <strong>Pending Approval</strong>
+                                <p class="text-warning"><strong>Pending Approval</strong></p>
                                 {% elif memo.status == "A" %}
-                                <strong>Approved</strong>
+                                <p class="text-success"><strong>Approved</strong></p>
                                 {% else %}
-                                <strong>Rejected</strong>
+                                <p class="text-danger"><strong>Rejected</strong></p>
                                 {% endif %}
                             </div>
                         </div>

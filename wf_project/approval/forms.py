@@ -24,3 +24,11 @@ class CCForm(forms.ModelForm):
     class Meta:
         model = ApprovalItemCC
         fields = ['user']
+
+class RejectForm(forms.ModelForm):
+    reason = forms.CharField(widget=forms.Textarea())
+    hiddenValueReject = forms.IntegerField()
+
+    class Meta:
+        model = ApprovalItemApprover
+        fields = ['id']

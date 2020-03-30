@@ -163,7 +163,7 @@ class CompanyMaintenanceScreen(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('short_name', 'company_name','currency__currency_name','currency__currency_code',)
     fieldsets = [
-        (None, {'fields': ['short_name','company_name','business_registration_no','tax_id_1','tax_id_2','is_active','currency','region']}),
+        (None, {'fields': ['branch','short_name','company_name','business_registration_no','tax_id_1','tax_id_2','is_active','currency','region']}),
     ]
     exclude = ['created_by','modified_by']
     inlines = [CompanyContactInline,CompanyAddressInline]

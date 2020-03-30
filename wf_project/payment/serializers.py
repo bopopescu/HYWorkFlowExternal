@@ -7,10 +7,12 @@ class PYSerializer(serializers.ModelSerializer):
     submit_date = serializers.DateField(format='%d/%m/%Y')
     company = serializers.StringRelatedField(many=False)
     project = serializers.StringRelatedField(many=False)
+    approval = serializers.StringRelatedField(many=False)
+    submit_by = serializers.StringRelatedField(many=False)
 
     class Meta:
         model = PaymentRequest
-        fields = ['id', 'revision', 'document_number', 'subject', 'submit_date', 'company', 'project']
+        fields = ['id', 'revision', 'document_number', 'subject', 'submit_date', 'company', 'project','submit_by', 'approval']
 
 class PYItemSerializer(serializers.ModelSerializer):
     tax = serializers.StringRelatedField(many=False)

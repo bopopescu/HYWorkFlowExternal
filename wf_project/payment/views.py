@@ -4,10 +4,31 @@ from django.contrib.auth.decorators import login_required
 from .models import PaymentRequest,PaymentRequestDetail,PaymentAttachment
 from rest_framework import viewsets
 from .serializers import PYSerializer,PYItemSerializer,PYAttachmentSerializer
+from administration.models import DocumentTypeMaintenance
+from administration.models import TransactiontypeMaintenance
+from administration.models import WorkflowApprovalRule
+from approval.models import ApprovalItem
+from django.contrib.auth.models import User
 
 class PYViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequest.objects.all() #.order_by('rank')
     serializer_class = PYSerializer
+
+class MyPYViewSet(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')
+    serializer_class = PYSerializer
+    
+    def get_queryset(self):
+        return PaymentRequest.objects.filter(submit_by=self.request.user.id)
+
+class TeamPYViewSet(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')    
+    serializer_class = PYSerializer
+
+    def get_queryset(self):
+        groups = self.request.user.groups.values_list('id', flat=True)
+        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        return PaymentRequest.objects.filter(submit_by__in=users)
 
 class PYItemViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequestDetail.objects.all()
@@ -53,7 +74,26 @@ def py_create(request):
             py.transaction_type = transaction_type
             py.project = project
             py.payment_mode = payment_mode
+            py.submit_by = request.user
             py.save()
+
+            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_name="Payment Request")
+            transaction_type = get_object_or_404(TransactiontypeMaintenance,pk = transaction_type.pk, document_type=document_type)
+            approval_level = get_object_or_404(WorkflowApprovalRule,approval_level=2)
+
+            approval_item = ApprovalItem()        
+            approval_item.document_number = py.document_number
+            approval_item.document_pk = py.pk
+            approval_item.document_type = document_type
+            approval_item.transaction_type = transaction_type
+            approval_item.approval_level = approval_level
+            approval_item.notification = ""
+            approval_item.status = "D"
+            approval_item.save()
+
+            py.approval = approval_item
+            py.save()
+
             return redirect(pylist)
         else:
             py = PaymentRequest
@@ -106,18 +146,31 @@ def py_item_create(request, pk):
         py = get_object_or_404(PaymentRequest, pk=pk)
         py_item.py = py
         py_item.tax= tax
+        line_total = 0
+        taxamount = py_item.price * tax.rate / 100
+        py_item.line_taxamount = taxamount
+        line_total = py_item.price + taxamount
+        py_item.line_total = line_total
         # py_item.line_num = py_item.line_num + 1
         py_item.save()
         
         sub_total = 0
         price = 0
+        total_tax_amount = 0
         payment_items = PaymentRequestDetail.objects.filter(py=py)
         for payment_item in payment_items:
             sub_total += payment_item.price
             price += payment_item.line_total
-        
+            total_tax_amount += payment_item.line_taxamount
+
+        discount_amount = py.discount_amount
+        total_amount_afterdiscount = (sub_total - discount_amount)
+        after_add_taxamount = total_amount_afterdiscount + total_tax_amount
+        discount_rate = (discount_amount / sub_total) * 100 
+        py.discount_rate = discount_rate
         py.sub_total = sub_total
-        py.total_amount = price
+        py.tax_amount = total_tax_amount
+        py.total_amount = after_add_taxamount
         py.save()
     else:
         print(form.errors)

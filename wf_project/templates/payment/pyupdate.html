@@ -31,28 +31,23 @@
  </style>
  <script type="text/javascript">
    $(document).ready(function(){
-    $("input[name='checkpay']").click(function(){
-        	var radioValue = $("input[name='checkpay']:checked").val();
-            if(radioValue == "checkvendor"){
-                $("#vendorlabel").css("display", "block");
-                $("#employeelabel").css("display", "none");
-                // $("#id_vendor").val($("#id_vendor option:first").val());
-                // $("#id_employee").val($("#id_employee option:first").val());
-                $("#id_vendor").attr('required',true);
-                $("#id_employee").attr('required',false);
-            }else{
-                $("#vendorlabel").css("display", "none");
-                $("#employeelabel").css("display", "block");
-                // $("#id_vendor").val($("#id_vendor option:first").val());
-                // $("#id_employee").val($("#id_employee option:first").val());
-                $("#id_employee").attr('required',true);
-                $("#id_vendor").attr('required',false);
-            }
+    $("input[name='discount_amount']").keyup(function(){
+          var discount_amount = $("input[name='discount_amount']").val();
+          var sub_total =  $("input[name='sub_total']").val();
+          var tax_amount = $("input[name='tax_amount']").val();
+          var total_amount_afterdiscount = (sub_total - discount_amount);
+          var after_add_taxamount = parseFloat(total_amount_afterdiscount) + parseFloat(tax_amount)
+          var discount_rate = (discount_amount /sub_total) * 100 ;
+
+          $("input[name='total_amount']").val(parseFloat(after_add_taxamount).toFixed(2)); 
+          $("input[name='discount_rate']").val(parseFloat(discount_rate).toFixed(2));
+          
         });
    });
   </script> 
   {% csrf_token %} 
     <div>
+      <a href="{% url 'approval_detail' py.approval.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
       <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
       <a href="{% url 'pylist' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
     </div>    
@@ -74,22 +69,41 @@
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  <label><input type="radio" name="checkpay" value="checkvendor" checked>Vendor</label> &nbsp;&nbsp; <label><input type="radio" name="checkpay" value="checkemployee">Employee</label>
+                  {%if py.vendor == null %}
+                  <label><input type="radio" name="checkpay" value="checkvendor" disabled>Vendor</label> &nbsp;&nbsp; <label><input type="radio" name="checkpay" value="checkemployee" checked disabled>Employee</label>
+                  {% else %}
+                  <label><input type="radio" name="checkpay" value="checkvendor" checked disabled>Vendor</label> &nbsp;&nbsp; <label><input type="radio" name="checkpay" value="checkemployee" disabled>Employee</label>
+                  {% endif %}
                 </div>
               </div>
             </div>
-            <div class="form-group"  id="vendorlabel">
+            {%if py.vendor == null %}
+            <div class="form-group">
               <div class="form-row">
                 <div class="col col-md-3">
                   <label class="control-label">
-                    {{form.vendor.label_tag}}
+                    {{form.employee.label_tag}}
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.vendor class="col-md-12 form-control form-control-user" placeholder=form.vendor.label %}
+                  {% render_field form.employee class="col-md-12 form-control form-control-user" placeholder=form.employee.label %}
                 </div>
               </div>
             </div>
+            {% else %}
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-3">
+                    <label class="control-label">
+                      {{form.vendor.label_tag}}
+                    </label>
+                  </div>
+                  <div class="col col-md-8">
+                    {% render_field form.vendor class="col-md-12 form-control form-control-user" placeholder=form.vendor.label %}
+                  </div>
+                </div>
+              </div>
+            {% endif %}
             <div class="form-group" id="employeelabel" style="display:none;">
               <div class="form-row">
                 <div class="col col-md-3">
@@ -205,7 +219,15 @@
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.status class="col-md-12 form-control form-control-user" placeholder=form.status.label %}
+                  {% if py.status == "D" %}
+                  <strong>Draft</strong>
+                  {% elif py.status == "P" %}
+                  <strong>Pending Approval</strong>
+                  {% elif py.status == "A" %}
+                  <strong>Approved</strong>
+                  {% else %}
+                  <strong>Rejected</strong>
+              {% endif %}
                 </div>
               </div>
             </div>
@@ -354,7 +376,7 @@
                                 "targets": -1,
                                 "data": null,
                                 "render": function ( data, type, row ) {
-                                      return '<a href="' + row.attachment + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-file-download"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePYAttachmentModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                      return '<a href="' + row.attachment + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-file-download"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePYAttachmentModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete2(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                   }
                             },                  
                             { "visible": false, 
@@ -506,16 +528,6 @@
                           </div>
                       </div>
                   </div>
-                  <div class="form-group">
-                    <div class="form-row">
-                        <div class="col col-md-3">
-                        {{form_item.line_total.label_tag}}
-                        </div>
-                        <div class="col col-md-8">
-                        {% render_field form_item.line_total class="col-md-12 form-control form-control-use" %}
-                        </div>
-                    </div>
-                </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-success" id="addPYItemButton">Submit</a>
@@ -548,7 +560,7 @@
   </div>
 </div>
 <script type="text/javascript">
-  function sendDelete(param) {
+  function sendDelete2(param) {
     var deleteInput = document.getElementById("hiddenValue2"); 
     deleteInput.value = param;
   }

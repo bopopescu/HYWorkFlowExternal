@@ -28,6 +28,7 @@ class PaymentRequest(models.Model):
     approval = models.ForeignKey(ApprovalItem, verbose_name="Approval", on_delete=models.CASCADE, blank=True, null=True)
     payment_mode = models.ForeignKey(PaymentmodeMaintenance, verbose_name="Payment Mode", on_delete=models.CASCADE)
     status = models.CharField(max_length=1,default="D", blank=True, null=True)
+    submit_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     submit_date = models.DateField(null=True, blank=True)
     subject = models.CharField(max_length=250)
     reference = models.CharField(max_length=100)
@@ -67,7 +68,8 @@ class PaymentRequestDetail(models.Model):
     item_description = models.CharField(max_length=300)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     tax = models.ForeignKey(TaxMaintenance,default=0,on_delete=models.CASCADE)
-    line_total = models.DecimalField(max_digits=10, decimal_places=2)
+    line_taxamount = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
+    line_total = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
 
     class Meta:
         verbose_name = 'Payment Detail'

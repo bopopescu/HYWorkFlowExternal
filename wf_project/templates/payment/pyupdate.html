@@ -31,23 +31,17 @@
  </style>
  <script type="text/javascript">
    $(document).ready(function(){
-    $("input[name='checkpay']").click(function(){
-        	var radioValue = $("input[name='checkpay']:checked").val();
-            if(radioValue == "checkvendor"){
-                $("#vendorlabel").css("display", "block");
-                $("#employeelabel").css("display", "none");
-                // $("#id_vendor").val($("#id_vendor option:first").val());
-                // $("#id_employee").val($("#id_employee option:first").val());
-                $("#id_vendor").attr('required',true);
-                $("#id_employee").attr('required',false);
-            }else{
-                $("#vendorlabel").css("display", "none");
-                $("#employeelabel").css("display", "block");
-                // $("#id_vendor").val($("#id_vendor option:first").val());
-                // $("#id_employee").val($("#id_employee option:first").val());
-                $("#id_employee").attr('required',true);
-                $("#id_vendor").attr('required',false);
-            }
+    $("input[name='discount_amount']").keyup(function(){
+          var discount_amount = $("input[name='discount_amount']").val();
+          var sub_total =  $("input[name='sub_total']").val();
+          var tax_amount = $("input[name='tax_amount']").val();
+          var total_amount_afterdiscount = (sub_total - discount_amount);
+          var after_add_taxamount = parseFloat(total_amount_afterdiscount) + parseFloat(tax_amount)
+          var discount_rate = (discount_amount /sub_total) * 100 ;
+
+          $("input[name='total_amount']").val(parseFloat(after_add_taxamount).toFixed(2)); 
+          $("input[name='discount_rate']").val(parseFloat(discount_rate).toFixed(2));
+          
         });
    });
   </script> 
@@ -225,7 +219,15 @@
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.status class="col-md-12 form-control form-control-user" placeholder=form.status.label %}
+                  {% if py.status == "D" %}
+                  <strong>Draft</strong>
+                  {% elif py.status == "P" %}
+                  <strong>Pending Approval</strong>
+                  {% elif py.status == "A" %}
+                  <strong>Approved</strong>
+                  {% else %}
+                  <strong>Rejected</strong>
+              {% endif %}
                 </div>
               </div>
             </div>
@@ -374,7 +376,7 @@
                                 "targets": -1,
                                 "data": null,
                                 "render": function ( data, type, row ) {
-                                      return '<a href="' + row.attachment + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-file-download"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePYAttachmentModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                      return '<a href="' + row.attachment + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-file-download"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePYAttachmentModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete2(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                   }
                             },                  
                             { "visible": false, 
@@ -526,16 +528,6 @@
                           </div>
                       </div>
                   </div>
-                  <div class="form-group">
-                    <div class="form-row">
-                        <div class="col col-md-3">
-                        {{form_item.line_total.label_tag}}
-                        </div>
-                        <div class="col col-md-8">
-                        {% render_field form_item.line_total class="col-md-12 form-control form-control-use" %}
-                        </div>
-                    </div>
-                </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-success" id="addPYItemButton">Submit</a>
@@ -568,7 +560,7 @@
   </div>
 </div>
 <script type="text/javascript">
-  function sendDelete(param) {
+  function sendDelete2(param) {
     var deleteInput = document.getElementById("hiddenValue2"); 
     deleteInput.value = param;
   }

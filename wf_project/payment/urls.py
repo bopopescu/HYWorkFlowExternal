@@ -3,6 +3,8 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
+router.register('mypydata', views.MyPYViewSet)
+router.register('teampydata', views.TeamPYViewSet)
 router.register('pydata', views.PYViewSet)
 router.register('pyitem', views.PYItemViewSet)
 router.register('pyattachment',views.PYAttachmentViewSet)

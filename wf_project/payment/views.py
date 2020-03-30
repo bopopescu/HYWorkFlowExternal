@@ -4,6 +4,10 @@ from django.contrib.auth.decorators import login_required
 from .models import PaymentRequest,PaymentRequestDetail,PaymentAttachment
 from rest_framework import viewsets
 from .serializers import PYSerializer,PYItemSerializer,PYAttachmentSerializer
+from administration.models import DocumentTypeMaintenance
+from administration.models import TransactiontypeMaintenance
+from administration.models import WorkflowApprovalRule
+from approval.models import ApprovalItem
 
 class PYViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequest.objects.all() #.order_by('rank')
@@ -54,6 +58,24 @@ def py_create(request):
             py.project = project
             py.payment_mode = payment_mode
             py.save()
+
+            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_name="Payment Request")
+            transaction_type = get_object_or_404(TransactiontypeMaintenance,pk = transaction_type.pk, document_type=document_type)
+            approval_level = get_object_or_404(WorkflowApprovalRule,approval_level=2)
+
+            approval_item = ApprovalItem()        
+            approval_item.document_number = py.document_number
+            approval_item.document_pk = py.pk
+            approval_item.document_type = document_type
+            approval_item.transaction_type = transaction_type
+            approval_item.approval_level = approval_level
+            approval_item.notification = ""
+            approval_item.status = "D"
+            approval_item.save()
+
+            py.approval = approval_item
+            py.save()
+
             return redirect(pylist)
         else:
             py = PaymentRequest

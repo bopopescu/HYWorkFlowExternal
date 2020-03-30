@@ -89,6 +89,7 @@
    </script> 
   {% csrf_token %} 
     <div>
+      <a href="{% url 'approval_detail' py.approval.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
       <a href="{% url 'py_update' py.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-pencil-alt"></i> Edit</a>
       <a href="{% url 'pylist' %}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
     </div>    
@@ -102,18 +103,33 @@
         </a>
         <div class="collapse show" id="GeneralCard">
           <div class="card-body">
+            {%if py.vendor == null %}
             <div class="form-group">
               <div class="form-row">
                 <div class="col col-md-3">
                   <label class="control-label">
-                    {{form.vendor.label_tag}}
+                    {{form.employee.label_tag}}
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.vendor class="col-md-12 form-control form-control-user" placeholder=form.vendor.label %}
+                  {% render_field form.employee class="col-md-12 form-control form-control-user" placeholder=form.employee.label %}
                 </div>
               </div>
             </div>
+            {% else %}
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-3">
+                    <label class="control-label">
+                      {{form.vendor.label_tag}}
+                    </label>
+                  </div>
+                  <div class="col col-md-8">
+                    {% render_field form.vendor class="col-md-12 form-control form-control-user" placeholder=form.vendor.label %}
+                  </div>
+                </div>
+              </div>
+            {% endif %}
             <div class="form-group">
               <div class="form-row">
                 <div class="col col-md-3">
@@ -217,7 +233,15 @@
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.status|append_attr:"disabled" class="col-md-12 form-control form-control-user" placeholder=form.status.label %}
+                  {% if py.status == "D" %}
+                      <strong>Draft</strong>
+                      {% elif py.status == "P" %}
+                      <strong>Pending Approval</strong>
+                      {% elif py.status == "A" %}
+                      <strong>Approved</strong>
+                      {% else %}
+                      <strong>Rejected</strong>
+                  {% endif %}
                 </div>
               </div>
             </div>

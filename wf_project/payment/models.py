@@ -7,20 +7,27 @@ from administration.models import EmployeeMaintenance
 from administration.models import TaxMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import PaymentmodeMaintenance
+from administration.models import DocumentTypeMaintenance
+from approval.models import ApprovalItem
 from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
 
+def documenttype_document_number():
+    document_type = DocumentTypeMaintenance.objects.filter(document_type_name="Payment Request")[0]
+    return '{0}-{1:05d}'.format(document_type.document_type_code,document_type.running_number)
+
 class PaymentRequest(models.Model):
     revision = models.IntegerField()
-    document_number = models.CharField(max_length=100,verbose_name="Document No")
+    document_number = models.CharField(default=documenttype_document_number,max_length=100,verbose_name="Document No")
     vendor = models.ForeignKey(VendorMasterData,null=True, blank=True,verbose_name="Vendor", on_delete=models.CASCADE)
     employee = models.ForeignKey(EmployeeMaintenance,null=True, blank=True, verbose_name="Vendor", on_delete=models.CASCADE)
     company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE)
     currency = models.ForeignKey(CurrencyMaintenance, verbose_name="Currency", on_delete=models.CASCADE)
     project = models.ForeignKey(ProjectMaintenance, verbose_name="Project", on_delete=models.CASCADE)
     transaction_type = models.ForeignKey(TransactiontypeMaintenance,verbose_name="Trans. Type", on_delete=models.CASCADE)
+    approval = models.ForeignKey(ApprovalItem, verbose_name="Approval", on_delete=models.CASCADE, blank=True, null=True)
     payment_mode = models.ForeignKey(PaymentmodeMaintenance, verbose_name="Payment Mode", on_delete=models.CASCADE)
-    status = models.CharField(max_length=1)
+    status = models.CharField(max_length=1,default="D", blank=True, null=True)
     submit_date = models.DateField(null=True, blank=True)
     subject = models.CharField(max_length=250)
     reference = models.CharField(max_length=100)
@@ -42,8 +49,12 @@ class PaymentRequest(models.Model):
     def __str__(self):
         return self.subject
 
+def documenttype_directory_path(instance, filename):
+    py_type = DocumentTypeMaintenance.objects.filter(document_type_name="Payment Request")[0]
+    return '{0}/{1}'.format(py_type.attachment_path,filename)
+
 class PaymentAttachment(models.Model):
-    attachment = models.FileField(verbose_name="File Name")
+    attachment = models.FileField(upload_to=documenttype_directory_path,verbose_name="File Name")
     attachment_date = models.DateField(auto_now_add=True)
     py = models.ForeignKey('PaymentRequest', verbose_name="PaymentRequest",blank=True, null=True, on_delete=models.CASCADE)
 

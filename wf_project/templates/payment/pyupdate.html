@@ -53,6 +53,7 @@
   </script> 
   {% csrf_token %} 
     <div>
+      <a href="{% url 'approval_detail' py.approval.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
       <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
       <a href="{% url 'pylist' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
     </div>    
@@ -74,22 +75,41 @@
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  <label><input type="radio" name="checkpay" value="checkvendor" checked>Vendor</label> &nbsp;&nbsp; <label><input type="radio" name="checkpay" value="checkemployee">Employee</label>
+                  {%if py.vendor == null %}
+                  <label><input type="radio" name="checkpay" value="checkvendor" disabled>Vendor</label> &nbsp;&nbsp; <label><input type="radio" name="checkpay" value="checkemployee" checked disabled>Employee</label>
+                  {% else %}
+                  <label><input type="radio" name="checkpay" value="checkvendor" checked disabled>Vendor</label> &nbsp;&nbsp; <label><input type="radio" name="checkpay" value="checkemployee" disabled>Employee</label>
+                  {% endif %}
                 </div>
               </div>
             </div>
-            <div class="form-group"  id="vendorlabel">
+            {%if py.vendor == null %}
+            <div class="form-group">
               <div class="form-row">
                 <div class="col col-md-3">
                   <label class="control-label">
-                    {{form.vendor.label_tag}}
+                    {{form.employee.label_tag}}
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.vendor class="col-md-12 form-control form-control-user" placeholder=form.vendor.label %}
+                  {% render_field form.employee class="col-md-12 form-control form-control-user" placeholder=form.employee.label %}
                 </div>
               </div>
             </div>
+            {% else %}
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-3">
+                    <label class="control-label">
+                      {{form.vendor.label_tag}}
+                    </label>
+                  </div>
+                  <div class="col col-md-8">
+                    {% render_field form.vendor class="col-md-12 form-control form-control-user" placeholder=form.vendor.label %}
+                  </div>
+                </div>
+              </div>
+            {% endif %}
             <div class="form-group" id="employeelabel" style="display:none;">
               <div class="form-row">
                 <div class="col col-md-3">

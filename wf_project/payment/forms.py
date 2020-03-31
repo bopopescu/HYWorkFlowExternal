@@ -23,7 +23,8 @@ class DetailPaymentForm(forms.ModelForm):
 
     class Meta:
         model = PaymentRequest
-        fields = ['revision','document_number','status','submit_date','subject','reference',
+        fields = ['company','vendor','project','transaction_type','currency','payment_mode',
+        'employee','revision','document_number','status','submit_date','subject','reference',
         'sub_total','discount_amount','discount_rate','tax_amount','total_amount',
         'remarks']
 
@@ -63,7 +64,8 @@ class UpdatePaymentForm(forms.ModelForm):
     total_amount = forms.DecimalField(initial=PaymentRequest.total_amount)
     class Meta:
         model = PaymentRequest
-        fields = ['revision','document_number','status','submit_date','subject','reference',
+        fields = ['company','vendor','project','transaction_type','currency','payment_mode','employee',
+        'revision','document_number','status','submit_date','subject','reference',
         'sub_total','discount_amount','discount_rate','tax_amount','total_amount',
         'remarks']
 

@@ -8,6 +8,7 @@ from administration.models import WorkflowApprovalRule
 from .serializers import ApprovalItemSerializer, ApprovalApproverSerializer, ApprovalCCSerializer
 from rest_framework import viewsets
 from memo.models import Memo
+from payment.models import PaymentRequest
 
 class ApprovalViewSet(viewsets.ModelViewSet):
     queryset = ApprovalItem.objects.all().order_by('-id')
@@ -55,6 +56,10 @@ def approval_update(request, pk):
         memo = get_object_or_404(Memo, pk=approval_item.document_pk)
         memo.status = "P"
         memo.save()
+    if document_type.document_type_name == "Payment Request":
+        payment = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
+        payment.status = "P"
+        payment.save()
 
     return redirect(approval_list)
 
@@ -77,6 +82,10 @@ def approve(request, pk):
             memo = get_object_or_404(Memo, pk=approval_item.document_pk)
             memo.status = "A"
             memo.save()
+        if document_type.document_type_name == "Payment Request":
+            payment = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
+            payment.status = "A"
+            payment.save()
 
     return redirect(approval_list)
 
@@ -135,5 +144,9 @@ def reject(request):
         memo = get_object_or_404(Memo, pk=approval_item.document_pk)
         memo.status = "R"
         memo.save()
+    if document_type.document_type_name == "Payment Request":
+        payment = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
+        payment.status = "R"
+        payment.save()
 
     return redirect(approval_list)

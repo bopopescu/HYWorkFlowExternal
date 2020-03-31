@@ -13,7 +13,7 @@ class ApprovalForm(forms.ModelForm):
 
     class Meta:
         model = ApprovalItem
-        fields = ['document_number', 'notification']
+        fields = ['document_number', 'notification','document_type','transaction_type','approval_level']
 
 class ApproverForm(forms.ModelForm):
     class Meta:

@@ -28,6 +28,10 @@
    i.fas.fa-trash{
       color:white;
    }
+   select[readonly]
+    {
+        pointer-events: none;
+    }
  </style>
  <script type="text/javascript">
    $(document).ready(function(){
@@ -136,7 +140,7 @@
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.company class="col-md-12 form-control form-control-user" placeholder=form.company.label %}
+                  {% render_field form.company|append_attr:"readonly" class="col-md-12 form-control form-control-user" placeholder=form.company.label %}
                 </div>
               </div>
             </div>
@@ -148,7 +152,7 @@
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.transaction_type class="col-md-12 form-control form-control-user" placeholder=form.transaction_type.label %}
+                  {% render_field form.transaction_type|append_attr:"readonly" class="col-md-12 form-control form-control-user" placeholder=form.transaction_type.label %}
                 </div>
               </div>
             </div>

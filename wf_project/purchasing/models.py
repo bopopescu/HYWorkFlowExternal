@@ -1,10 +1,9 @@
 from django.db import models
-from administration.models import EmployeeMaintenance
-from administration.models import CompanyMaintenance
-from administration.models import CurrencyMaintenance
-from administration.models import DepartmentMaintenance
-from administration.models import ProjectMaintenance
+from administration.models import EmployeeMaintenance, CompanyMaintenance, CurrencyMaintenance, TransactiontypeMaintenance
+from administration.models import DepartmentMaintenance, DocumentTypeMaintenance, ProjectMaintenance
 from Inventory.models import Item
+from approval.models import ApprovalItem
+from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
 
 class GoodsReceiptNote(models.Model):
@@ -25,23 +24,30 @@ class GoodsReceiptNote(models.Model):
     def __str__(self):
         return self.document_number
 
+def documenttype_document_number():
+    po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]
+    return '{0}-{1:05d}'.format(po_type.document_type_code,po_type.running_number)
+
 class PurchaseOrder(models.Model):
-    revision = models.CharField(max_length=100)
-    document_number = models.CharField(max_length=100)
-    vendor = models.ForeignKey(EmployeeMaintenance, verbose_name="Vendor", on_delete=models.CASCADE)
-    company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE)
+    revision = models.IntegerField(default=1)
+    document_number = models.CharField(default=documenttype_document_number, max_length=100, blank=True, null=True)
+    vendor = models.ForeignKey(EmployeeMaintenance, verbose_name="Vendor", on_delete=models.CASCADE, blank=True, null=True)
+    company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE, blank=True, null=True)
     project = models.ForeignKey(ProjectMaintenance, verbose_name="Project", on_delete=models.CASCADE)
-    status = models.CharField(max_length=1)
-    submit_date = models.DateField()
-    subject = models.CharField(max_length=250)
-    reference = models.CharField(max_length=100)
+    approval = models.ForeignKey(ApprovalItem, verbose_name="Approval", on_delete=models.CASCADE, blank=True, null=True)
+    transaction_type = models.ForeignKey(TransactiontypeMaintenance, verbose_name="Transaction Type", on_delete=models.CASCADE, blank=True, null=True)
+    status = models.CharField(default="D",max_length=1, blank=True, null=True)
+    submit_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    submit_date = models.DateField(auto_now_add=True)
+    subject = models.CharField(max_length=250, blank=True, null=True)
+    reference = models.CharField(max_length=100, blank=True, null=True)
     sub_total = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
     discount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
     tax_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
     total_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
-    payment_term = models.CharField(max_length=100)
-    payment_schedule = models.CharField(max_length=100)
-    remarks = RichTextUploadingField(config_name='remarks_po')
+    payment_term = models.CharField(max_length=100, blank=True, null=True)
+    payment_schedule = models.CharField(max_length=100, blank=True, null=True)
+    remarks = RichTextUploadingField(config_name='remarks_po', blank=True, null=True)
     attachment = models.FileField(verbose_name="File Name")
     attachment_date = models.DateField()
 

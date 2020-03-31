@@ -22,6 +22,36 @@
         <div class="collapse show" id="GeneralCard">
           <div class="card-body">
             <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.company.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.company class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.position_title.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.position_title class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.position_grade.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.position_grade class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
                 <div class="form-row">
                   <div class="col col-md-3">
                     {{form.no_of_pax.label_tag}}
@@ -30,14 +60,14 @@
                     {% render_field form.no_of_pax class="col-md-12 form-control form-control-use" %}
                   </div>
                 </div>
-              </div>
+            </div>
             <div class="form-group">
               <div class="form-row">
                 <div class="col col-md-3">
-                  {{form.position_title.label_tag}}
+                  {{form.department.label_tag}}
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.position_title class="col-md-12 form-control form-control-use" %}
+                  {% render_field form.department class="col-md-12 form-control form-control-use" %}
                 </div>
               </div>
             </div>
@@ -54,30 +84,10 @@
             <div class="form-group">
               <div class="form-row">
                 <div class="col col-md-3">
-                  {{form.company.label_tag}}
+                  {{form.employment_type.label_tag}}
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.company class="col-md-12 form-control form-control-use" %}
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="form-row">
-                <div class="col col-md-3">
-                  {{form.department.label_tag}}
-                </div>
-                <div class="col col-md-8">
-                  {% render_field form.department class="col-md-12 form-control form-control-use" %}
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="form-row">
-                <div class="col col-md-3">
-                  {{form.hire_type.label_tag}}
-                </div>
-                <div class="col col-md-8">
-                  {% render_field form.hire_type class="col-md-12 form-control form-control-use" %}
+                  {% render_field form.employment_type class="col-md-12 form-control form-control-use" %}
                 </div>
               </div>
             </div>
@@ -118,7 +128,7 @@
                   {{form.document_number.label_tag}}
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.document_number class="col-md-12 form-control form-control-use" %}
+                  {% render_field form.document_number|attr:"readonly" class="col-md-12 form-control form-control-use" %}
                 </div>
               </div>
             </div>
@@ -128,7 +138,7 @@
                   {{form.status.label_tag}}
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.status class="col-md-12 form-control form-control-use" %}
+                   <strong>New</strong>
                 </div>
               </div>
             </div>
@@ -141,19 +151,7 @@
                   {% render_field form.request_date|attr:"readonly" type="date"  class="form-control form-control-use" %}
                 </div>
               </div>
-            </div>  
-            <div class="form-group">
-                <div class="form-row">
-                  <div class="col col-md-3">
-                    <label class="control-label">
-                      {{form.subject.label_tag}}
-                    </label>
-                  </div>
-                  <div class="col col-md-8">
-                    {% render_field form.subject class="col-md-12 form-control form-control-user" placeholder=form.subject.label %}
-                  </div>
-                </div>
-              </div>  
+            </div> 
               <div class="form-group">
                 <div class="form-row">
                   <div class="col col-md-3">
@@ -183,73 +181,23 @@
           <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane fade show active" id="nav-requirement" role="tabpanel" aria-labelledby="nav-requirement-tab">
               <br/>
-              <div class="card shadow mb-4">    
-                <div class="card-body">
-                  <div class="d-sm-flex align-items-right justify-content-end mb-4">
-                    <div>
-                      <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm add-new"><i class="fas fa-plus fa-sm text-white-50"></i> Add Detail</a></button>
-                    </div>    
-                  </div>
-                  <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>Job Requirement</th>
-                          <th style="width:10%"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>Testing</td>
-                          <td>
-                              <a href="#" class="btn btn-info btn-circle btn-sm">
-                                <i class="fas fa-pencil-alt"></i>
-                                </a>
-                                <a href="#" class="btn btn-danger btn-circle btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                  </a>
-                            </td>
-                        </tr>   
-                      </tbody>
-                    </table>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-12">
+                    Please save this staff recruitment request before insert job requirements for this this staff recruitment request 
                   </div>
                 </div>
               </div>
-            </div>
+          </div>
             <div class="tab-pane fade" id="nav-reponsible" role="tabpanel" aria-labelledby="nav-reponsible-tab">
               <br/>
-              <div class="card shadow mb-4">    
-                <div class="card-body">
-                  <div class="d-sm-flex align-items-right justify-content-end mb-4">
-                    <div>
-                      <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm add-new"><i class="fas fa-plus fa-sm text-white-50"></i> Add Detail</a></button>
-                    </div>    
-                  </div>
-                  <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>Job Responsibilities</th>
-                          <th style="width:10%"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>Testing</td>
-                          <td>
-                              <a href="#" class="btn btn-info btn-circle btn-sm">
-                                <i class="fas fa-pencil-alt"></i>
-                                </a>
-                                <a href="#" class="btn btn-danger btn-circle btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                  </a>
-                            </td>
-                        </tr>   
-                      </tbody>
-                    </table>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-12">
+                    Please save this staff recruitment request before insert job responsiblities for this this staff recruitment request
                   </div>
                 </div>
-              </div> 
+              </div>
             </div>
           </div>            
         </div>

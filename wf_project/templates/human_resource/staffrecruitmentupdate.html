@@ -4,11 +4,22 @@
 {% load widget_tweaks %}
 {% load static %}
 
+<style>
+  select[readonly]
+    {
+        pointer-events: none;
+    }
+</style>
+<script>
+
+</script>
+
 <form method="post">
     {% csrf_token %} 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Staff Recruitment Request(Update)</h1>
     <div>
+      <a href="{% url 'approval_detail' staff.approval.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
       <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
       <a href="{% url 'staff_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
     </div>    
@@ -23,6 +34,36 @@
         <div class="collapse show" id="GeneralCard">
           <div class="card-body">
             <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.company.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.company|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.position_title.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.position_title class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.position_grade.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.position_grade class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
                 <div class="form-row">
                   <div class="col col-md-3">
                     {{form.no_of_pax.label_tag}}
@@ -31,14 +72,14 @@
                     {% render_field form.no_of_pax class="col-md-12 form-control form-control-use" %}
                   </div>
                 </div>
-              </div>
+            </div>
             <div class="form-group">
               <div class="form-row">
                 <div class="col col-md-3">
-                  {{form.position_title.label_tag}}
+                  {{form.department.label_tag}}
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.position_title class="col-md-12 form-control form-control-use" %}
+                  {% render_field form.department class="col-md-12 form-control form-control-use" %}
                 </div>
               </div>
             </div>
@@ -55,55 +96,25 @@
             <div class="form-group">
               <div class="form-row">
                 <div class="col col-md-3">
-                  {{form.company.label_tag}}
+                  {{form.employment_type.label_tag}}
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.company class="col-md-12 form-control form-control-use" %}
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="form-row">
-                <div class="col col-md-3">
-                  {{form.department.label_tag}}
-                </div>
-                <div class="col col-md-8">
-                  {% render_field form.department class="col-md-12 form-control form-control-use" %}
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="form-row">
-                <div class="col col-md-3">
-                  {{form.hire_type.label_tag}}
-                </div>
-                <div class="col col-md-8">
-                  {% render_field form.hire_type class="col-md-12 form-control form-control-use" %}
+                  {% render_field form.employment_type class="col-md-12 form-control form-control-use" %}
                 </div>
               </div>
             </div>
             <div class="form-group">
                 <div class="form-row">
                   <div class="col col-md-3">
-                    {{form.hire_type.label_tag}}
+                    {{form.budgeted.label_tag}}
                   </div>
                   <div class="col col-md-8">
-                    {% render_field form.hire_type class="col-md-12 form-control form-control-use" %}
+                    {% render_field form.budgeted class="col-md-12 form-control form-control-use" %}
                   </div>
                 </div>
               </div>
-              <div class="form-group">
-                  <div class="form-row">
-                    <div class="col col-md-3">
-                      {{form.budgeted.label_tag}}
-                    </div>
-                    <div class="col col-md-8">
-                      {% render_field form.budgeted class="col-md-12 form-control form-control-use" %}
-                    </div>
-                  </div>
-                </div>
           </div>
-        </div>        
+        </div>      
       </div>
     </div>  
     <div class="col-xl-6 col-md-6 mb-4">      
@@ -152,19 +163,7 @@
                   {% render_field form.request_date|append_attr:"readonly" type="date" class="form-control form-control-use" %}
                 </div>
               </div>
-            </div>  
-            <div class="form-group">
-                <div class="form-row">
-                  <div class="col col-md-3">
-                    <label class="control-label">
-                      {{form.subject.label_tag}}
-                    </label>
-                  </div>
-                  <div class="col col-md-8">
-                    {% render_field form.subject class="col-md-12 form-control form-control-user" placeholder=form.subject.label %}
-                  </div>
-                </div>
-              </div> 
+            </div>
               <div class="form-group">
                 <div class="form-row">
                   <div class="col col-md-3">
@@ -194,73 +193,95 @@
           <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane fade show active" id="nav-requirement" role="tabpanel" aria-labelledby="nav-requirement-tab">
               <br/>
-              <div class="card shadow mb-4">    
-                <div class="card-body">
-                  <div class="d-sm-flex align-items-right justify-content-end mb-4">
-                    <div>
-                      <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm add-new"><i class="fas fa-plus fa-sm text-white-50"></i> Add Detail</a></button>
-                    </div>    
-                  </div>
-                  <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>Job Requirement</th>
-                          <th style="width:10%"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>Testing</td>
-                          <td>
-                              <a href="#" class="btn btn-info btn-circle btn-sm">
-                                <i class="fas fa-pencil-alt"></i>
-                                </a>
-                                <a href="#" class="btn btn-danger btn-circle btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                  </a>
-                            </td>
-                        </tr>   
-                      </tbody>
-                    </table>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-12">
+                    <div class="col col-md-12">
+                      <div class="d-sm-flex align-items-right justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800"></h1>
+                        <a href="#" data-toggle="modal" data-target="#addRequirementModal" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
+                      </div>
+                      <div class="table-responsive">
+                        <table id="myrequirements" class="table table-striped table-bordered" style="width:100%" data-server-side="true">
+                          <thead>
+                            <tr>
+                              <th data-data="id"></th>
+                              <th data-data="staff_recruitment"></th>
+                              <th data-data="requirement_description">Job Requirement Description</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                        </table>       
+                        </div>
+                        <script>
+                          $(document).ready(function() {
+                            var table = $('#myrequirements').DataTable( {
+                              "ajax": "../../api/staffjobrequirement/?format=datatables&pk={{staff.pk}}",
+                              "dom":  "<'row'<'col-sm-12 small'tr>>" +
+                                      "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                              "columnDefs": [ {
+                                  "targets": -1,
+                                  "data": null,
+                                  "render": function ( data, type, row ) {
+                                        return '<a href="' + row.responsible_description + '/" target="_blank" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteRequirementModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                    }
+                              },                  
+                              { "visible": false, 
+                              "targets": [ 0, 1 ] }
+                              ]        
+                            });
+                          });
+                      </script> 
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
             <div class="tab-pane fade" id="nav-reponsible" role="tabpanel" aria-labelledby="nav-reponsible-tab">
               <br/>
-              <div class="card shadow mb-4">    
-                <div class="card-body">
-                  <div class="d-sm-flex align-items-right justify-content-end mb-4">
-                    <div>
-                      <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm add-new"><i class="fas fa-plus fa-sm text-white-50"></i> Add Detail</a></button>
-                    </div>    
-                  </div>
-                  <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>Job Responsibilities</th>
-                          <th style="width:10%"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>Testing</td>
-                          <td>
-                              <a href="#" class="btn btn-info btn-circle btn-sm">
-                                <i class="fas fa-pencil-alt"></i>
-                                </a>
-                                <a href="#" class="btn btn-danger btn-circle btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                  </a>
-                            </td>
-                        </tr>   
-                      </tbody>
-                    </table>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-12">
+                    <div class="col col-md-12">
+                      <div class="d-sm-flex align-items-right justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800"></h1>
+                        <a href="#" data-toggle="modal" data-target="#addResponsibleModal" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
+                      </div>
+                      <div class="table-responsive">
+                        <table id="myresponsibles" class="table table-striped table-bordered" style="width:100%" data-server-side="true">
+                          <thead>
+                            <tr>
+                              <th data-data="id"></th>
+                              <th data-data="staff_recruitment"></th>
+                              <th data-data="responsible_description">Job Responsible Description</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                        </table>       
+                        </div>
+                        <script>
+                          $(document).ready(function() {
+                            var table = $('#myresponsibles').DataTable( {
+                              "ajax": "../../api/staffjobresponsible/?format=datatables&pk={{staff.pk}}",
+                              "dom":  "<'row'<'col-sm-12 small'tr>>" +
+                                      "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                              "columnDefs": [ {
+                                  "targets": -1,
+                                  "data": null,
+                                  "render": function ( data, type, row ) {
+                                        return '<a href="' + row.responsible_description + '/" target="_blank" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteResponsibleModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete2(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                    }
+                              },                  
+                              { "visible": false, 
+                              "targets": [ 0, 1 ] }
+                              ]        
+                            });
+                          });
+                      </script> 
+                    </div>
                   </div>
                 </div>
-              </div> 
+              </div>
             </div>
           </div>            
         </div>
@@ -268,5 +289,143 @@
     </div>
   </div>
 </form>
+
+<!-- Delete Modal-->
+<div class="modal fade" id="deleteRequirementModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Select "Delete" below if you are ready to delete.
+        <input type="hidden" name="hiddenValue" id="hiddenValue" value="" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+        <a class="btn btn-danger" href="#" id="deleteRequirementButton">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  function sendDelete(param) {
+    var deleteInput = document.getElementById("hiddenValue"); 
+    deleteInput.value = param;
+  }
+</script>
+<script type="text/javascript">
+  $(function () {
+      $("#deleteRequirementButton").click(function () {
+          var requirement_id = $(".modal-body #hiddenValue").val();
+          window.location.href = "../../deleterequirement/" + requirement_id + "/";
+      })
+  });
+</script>
+
+<!-- Add Modal-->
+<div class="modal fade" id="addRequirementModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <form action="{% url 'staff_requirement_create' staff.pk %}" method="POST">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">New Job Requirement</h5>
+                  <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  {% csrf_token %} 
+                  <div class="form-group">
+                      <div class="form-row">
+                          <div class="col col-md-3">
+                          {{form_requirement.requirement_description.label_tag}}
+                          </div>
+                          <div class="col col-md-8">
+                          {% render_field form_requirement.requirement_description class="col-md-12 form-control form-control-use" %}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button class="btn btn-success" id="addRequirementButton">Submit</a>
+                  <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>          
+              </div>
+          </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Modal-->
+<div class="modal fade" id="deleteResponsibleModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Select "Delete" below if you are ready to delete.
+        <input type="hidden" name="hiddenValue2" id="hiddenValue2" value="" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+        <a class="btn btn-danger" href="#" id="deleteResponsibleButton">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  function sendDelete2(param) {
+    var deleteInput = document.getElementById("hiddenValue2"); 
+    deleteInput.value = param;
+  }
+</script>
+<script type="text/javascript">
+  $(function () {
+      $("#deleteResponsibleButton").click(function () {
+          var responsible_id = $(".modal-body #hiddenValue2").val();
+          window.location.href = "../../deleteresponsible/" + responsible_id + "/";
+      })
+  });
+</script>
+
+<!-- Add Modal-->
+<div class="modal fade" id="addResponsibleModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <form action="{% url 'staff_responsible_create' staff.pk %}" method="POST">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">New Responsible</h5>
+                  <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  {% csrf_token %} 
+                  <div class="form-group">
+                      <div class="form-row">
+                          <div class="col col-md-3">
+                          {{form_responsible.responsible_description.label_tag}}
+                          </div>
+                          <div class="col col-md-8">
+                          {% render_field form_responsible.responsible_description class="col-md-12 form-control form-control-use" %}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button class="btn btn-success" id="addResponsibleButton">Submit</a>
+                  <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>          
+              </div>
+          </form>
+    </div>
+  </div>
+</div>
 
 {% endblock content %}

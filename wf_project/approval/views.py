@@ -9,6 +9,7 @@ from .serializers import ApprovalItemSerializer, ApprovalApproverSerializer, App
 from rest_framework import viewsets
 from memo.models import Memo
 from payment.models import PaymentRequest
+from human_resource.models import StaffRecruitmentRequest
 
 class ApprovalViewSet(viewsets.ModelViewSet):
     queryset = ApprovalItem.objects.all().order_by('-id')
@@ -60,6 +61,10 @@ def approval_update(request, pk):
         payment = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
         payment.status = "P"
         payment.save()
+    if document_type.document_type_name == "Staff Recruitment Request":
+        staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
+        staff.status = "P"
+        staff.save()
 
     return redirect(approval_list)
 
@@ -86,6 +91,10 @@ def approve(request, pk):
             payment = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
             payment.status = "A"
             payment.save()
+        if document_type.document_type_name == "Staff Recruitment Request":
+            staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
+            staff.status = "A"
+            staff.save()
 
     return redirect(approval_list)
 
@@ -148,5 +157,9 @@ def reject(request):
         payment = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
         payment.status = "R"
         payment.save()
+    if document_type.document_type_name == "Staff Recruitment Request":
+        staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
+        staff.status = "R"
+        staff.save()
 
     return redirect(approval_list)

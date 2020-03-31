@@ -9,7 +9,10 @@
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Staff Recruiment Request</h1>
     <div>
+        {% if staff.status == "D" or staff.status == "R" %}
+        <a href="{% url 'approval_detail' staff.approval.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
         <a href="{% url 'staff_update' staff.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-pencil-alt"></i> Edit</a>
+        {% endif %}
         <a href="{% url 'staff_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
     </div>    
   </div>
@@ -23,6 +26,36 @@
         <div class="collapse show" id="GeneralCard">
           <div class="card-body">
             <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.company.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.company class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.position_title.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.position_title class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  {{form.position_grade.label_tag}}
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.position_grade class="col-md-12 form-control form-control-use" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
                 <div class="form-row">
                   <div class="col col-md-3">
                     {{form.no_of_pax.label_tag}}
@@ -31,14 +64,14 @@
                     {% render_field form.no_of_pax|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
                   </div>
                 </div>
-              </div>
+            </div>
             <div class="form-group">
               <div class="form-row">
                 <div class="col col-md-3">
-                  {{form.position_title.label_tag}}
+                  {{form.department.label_tag}}
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.position_title|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                  {% render_field form.department class="col-md-12 form-control form-control-use" %}
                 </div>
               </div>
             </div>
@@ -48,62 +81,32 @@
                   {{form.reporting_to.label_tag}}
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.reporting_to|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                  {% render_field form.reporting_to class="col-md-12 form-control form-control-use" %}
                 </div>
               </div>
             </div>
             <div class="form-group">
               <div class="form-row">
                 <div class="col col-md-3">
-                  {{form.company.label_tag}}
+                  {{form.employment_type.label_tag}}
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.company|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="form-row">
-                <div class="col col-md-3">
-                  {{form.department.label_tag}}
-                </div>
-                <div class="col col-md-8">
-                  {% render_field form.department|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="form-row">
-                <div class="col col-md-3">
-                  {{form.hire_type.label_tag}}
-                </div>
-                <div class="col col-md-8">
-                  {% render_field form.hire_type|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                  {% render_field form.employment_type class="col-md-12 form-control form-control-use" %}
                 </div>
               </div>
             </div>
             <div class="form-group">
                 <div class="form-row">
                   <div class="col col-md-3">
-                    {{form.hire_type.label_tag}}
+                    {{form.budgeted.label_tag}}
                   </div>
                   <div class="col col-md-8">
-                    {% render_field form.hire_type|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                    {% render_field form.budgeted|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
                   </div>
                 </div>
               </div>
-              <div class="form-group">
-                  <div class="form-row">
-                    <div class="col col-md-3">
-                      {{form.budgeted.label_tag}}
-                    </div>
-                    <div class="col col-md-8">
-                      {% render_field form.budgeted|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
-                    </div>
-                  </div>
-                </div>
           </div>
-        </div>        
+        </div>          
       </div>
     </div>  
     <div class="col-xl-6 col-md-6 mb-4">      
@@ -153,18 +156,6 @@
                 </div>
               </div>
             </div>  
-            <div class="form-group">
-                <div class="form-row">
-                  <div class="col col-md-3">
-                    <label class="control-label">
-                      {{form.subject.label_tag}}
-                    </label>
-                  </div>
-                  <div class="col col-md-8">
-                    {% render_field form.subject|append_attr:"disabled" class="col-md-12 form-control form-control-user" placeholder=form.subject.label %}
-                  </div>
-                </div>
-              </div> 
               <div class="form-group">
                 <div class="form-row">
                   <div class="col col-md-3">
@@ -194,73 +185,10 @@
           <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane fade show active" id="nav-requirement" role="tabpanel" aria-labelledby="nav-requirement-tab">
               <br/>
-              <div class="card shadow mb-4">    
-                <div class="card-body">
-                  <div class="d-sm-flex align-items-right justify-content-end mb-4">
-                    <div>
-                      <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm add-new"><i class="fas fa-plus fa-sm text-white-50"></i> Add Detail</a></button>
-                    </div>    
-                  </div>
-                  <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>Job Requirement</th>
-                          <th style="width:10%"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>Testing</td>
-                          <td>
-                              <a href="#" class="btn btn-info btn-circle btn-sm">
-                                <i class="fas fa-pencil-alt"></i>
-                                </a>
-                                <a href="#" class="btn btn-danger btn-circle btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                  </a>
-                            </td>
-                        </tr>   
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
+
             </div>
             <div class="tab-pane fade" id="nav-reponsible" role="tabpanel" aria-labelledby="nav-reponsible-tab">
               <br/>
-              <div class="card shadow mb-4">    
-                <div class="card-body">
-                  <div class="d-sm-flex align-items-right justify-content-end mb-4">
-                    <div>
-                      <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm add-new"><i class="fas fa-plus fa-sm text-white-50"></i> Add Detail</a></button>
-                    </div>    
-                  </div>
-                  <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>Job Responsibilities</th>
-                          <th style="width:10%"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>Testing</td>
-                          <td>
-                              <a href="#" class="btn btn-info btn-circle btn-sm">
-                                <i class="fas fa-pencil-alt"></i>
-                                </a>
-                                <a href="#" class="btn btn-danger btn-circle btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                  </a>
-                            </td>
-                        </tr>   
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div> 
             </div>
           </div>            
         </div>

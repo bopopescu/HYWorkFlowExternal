@@ -26,10 +26,11 @@
                   <th data-data="id"></th>
                   <th data-data="revision"></th>
                   <th data-data="document_number">Doc. No. (Rev.)</th> 
-                  <th data-data="company">Company</th>             
-                  <th data-data="subject">Subject</th>              
+                  <th data-data="company">Company</th>              
                   <th data-data="department">Department</th>
+                  <th data-data="submit_by">Submitted By</th>   
                   <th data-data="request_date">Request Date</th>
+                  <th data-data="approval">Status</th>  
                   <th></th>
                 </tr>
               </thead>
@@ -37,27 +38,61 @@
             </div>
             <script>
               $(document).ready(function() {
-                var table = $('#mystaffs').DataTable( {
-                  "ajax": "../api/staffdata/?format=datatables",
-                  "dom":  "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
+                  var mytable = $('#mystaffs').DataTable({
+                      "ajax": "../api/mystaffdata/?format=datatables",
+                      "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                           "<'row'<'col-sm-12 small'tr>>" +
                           "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
-                  "columnDefs": [ {
-                      "targets": -1,
-                      "data": null,
-                      "render": function ( data, type, row ) {
-                            return '<a href="../' + row.id + '/" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;<a href="../update/' + row.id + '/" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteStaffModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
-                        }
-                  },
-                  { "visible": false, 
-                  "targets": [ 0, 1 ] },
-                  { "render": function ( data, type, row ) {
-                            return data +' ('+ row.revision +')';
-                        }, 
-                    "targets": 2 }
-                  ],
-                  "lengthMenu": [50, 100, 200, 500],          
-                });
+                      "columnDefs": [{
+                          "searchable": false,
+                          "orderable": false,
+                          "targets": 0,
+                          "defaultContent": "<i>Not set</i>"
+                      }, {
+                          "targets": 7,
+                          "render": function(data, type, row) {  
+                              var label = '';                                  
+                              if (row.approval == 'Draft') {
+                                  label = '<p class="text-info"><strong>' + row.approval + '</strong></p>';
+                              } else if (row.approval == 'In Progress') {
+                                  label = '<p class="text-warning"><strong>' + row.approval + '</strong></p>';
+                              } else if (row.approval == 'Approved') {
+                                  label = '<p class="text-success"><strong>' + row.approval + '</strong></p>';
+                              } else {
+                                  label = '<p class="text-danger"><strong>' + row.approval + '</strong></p>';
+                              }
+                              return label;
+                          }
+                      }, {
+                          "targets": -1,
+                          "data": null,
+                          "render": function(data, type, row) {
+                              if (row.approval == 'Draft' || row.approval == 'Rejected') {
+                                  return '<a href="../' + row.id + '/" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;<a href="../update/' + row.id + '/" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteStaffModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                              }else{
+                                  return '<a href="../' + row.id + '/" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
+                              }
+                          }
+                      }, {
+                          "visible": false,
+                          "targets": [1, 2]
+                      }, {
+                          "render": function(data, type, row) {
+                              return row.document_number + ' (' + row.revision + ')';
+                          },
+                          "targets": 3
+                      }],
+                      "lengthMenu": [50, 100, 200, 500],
+                  });
+  
+                  mytable.on('order.dt search.dt', function() {
+                      mytable.column(0, {
+                          search: 'applied',
+                          order: 'applied'
+                      }).nodes().each(function(cell, i) {
+                          cell.innerHTML = i + 1;
+                      });
+                  }).draw();
               });
           </script>
         </div>
@@ -70,45 +105,75 @@
                   <th data-data="id"></th>
                   <th data-data="revision"></th>
                   <th data-data="document_number">Doc. No. (Rev.)</th> 
-                  <th data-data="company">Company</th>             
-                  <th data-data="subject">Subject</th>              
-                  <th data-data="department">Project</th>
-                  <th data-data="request_date">Submit Date</th>
+                  <th data-data="company">Company</th>            
+                  <th data-data="department">Department</th>
+                  <th data-data="submit_by">Submitted By</th>   
+                  <th data-data="request_date">Request Date</th>
+                  <th data-data="approval">Status</th>  
                   <th></th>
                 </tr>
               </thead>
-            </table> 
-          </div>
-          <script>
-                $(document).ready(function() {
-                  var table = $('#teamstaffs').DataTable( {
-                    "ajax": "../api/staffdata/?format=datatables",
-                    "dom":  "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
-                            "<'row'<'col-sm-12 small'tr>>" +
-                            "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
-                    "columnDefs": [ {
-                        "targets": -1,
-                        "data": null,
-                        "render": function ( data, type, row ) {
-                            return '<a href="../' + row.id + '/" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;<a href="../update/' + row.id + '/" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteStaffModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
-                        }
-                    },
-                    { "visible": false, 
-                    "targets": [ 0, 1 ] },
-                    { "render": function ( data, type, row ) {
-                              return data +' ('+ row.revision +')';
-                          }, 
-                      "targets": 2 }
-                    ],
-                    "lengthMenu": [50, 100, 200, 500],          
+            </table>       
+            </div>
+            <script>
+              $(document).ready(function() {
+                  var mytable = $('#teamstaffs').DataTable({
+                      "ajax": "../api/teamstaffdata/?format=datatables",
+                      "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
+                          "<'row'<'col-sm-12 small'tr>>" +
+                          "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                      "columnDefs": [{
+                          "searchable": false,
+                          "orderable": false,
+                          "targets": 0,
+                          "defaultContent": "<i>Not set</i>"
+                      }, {
+                          "targets": 7,
+                          "render": function(data, type, row) {  
+                              var label = '';                                  
+                              if (row.approval == 'Draft') {
+                                  label = '<p class="text-info"><strong>' + row.approval + '</strong></p>';
+                              } else if (row.approval == 'In Progress') {
+                                  label = '<p class="text-warning"><strong>' + row.approval + '</strong></p>';
+                              } else if (row.approval == 'Approved') {
+                                  label = '<p class="text-success"><strong>' + row.approval + '</strong></p>';
+                              } else {
+                                  label = '<p class="text-danger"><strong>' + row.approval + '</strong></p>';
+                              }
+                              return label;
+                          }
+                      }, {
+                          "targets": -1,
+                          "data": null,
+                          "render": function(data, type, row) {
+                              if (row.approval == 'Draft' || row.approval == 'Rejected') {
+                                  return '<a href="../' + row.id + '/" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;<a href="../update/' + row.id + '/" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteStaffModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                              }else{
+                                  return '<a href="../' + row.id + '/" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
+                              }
+                          }
+                      }, {
+                          "visible": false,
+                          "targets": [1, 2]
+                      }, {
+                          "render": function(data, type, row) {
+                              return row.document_number + ' (' + row.revision + ')';
+                          },
+                          "targets": 3
+                      }],
+                      "lengthMenu": [50, 100, 200, 500],
                   });
-          
-                // $('#teammemos tbody').on( 'click', 'button', function () {
-                //     var data = table.row( $(this).parents('tr') ).data();
-                //     window.location.href = "../" + data.id + "/";
-                // });
-                });
-            </script>
+  
+                  mytable.on('order.dt search.dt', function() {
+                      mytable.column(0, {
+                          search: 'applied',
+                          order: 'applied'
+                      }).nodes().each(function(cell, i) {
+                          cell.innerHTML = i + 1;
+                      });
+                  }).draw();
+              });
+          </script>
         </div>
       </div>
     </div>

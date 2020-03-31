@@ -134,7 +134,7 @@ def py_update(request, pk):
     else:
         form = UpdatePaymentForm(instance=py)
         form_item = NewPYItemForm()
-        form_attachment = NewPYAttachmentForm
+        form_attachment = NewPYAttachmentForm()
     return render(request, 'pyupdate.html', {'py': py, 'form': form,'form_item':form_item ,'form_attachment':form_attachment})
 
 @login_required

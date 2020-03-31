@@ -11,9 +11,8 @@ class NewPOForm(forms.ModelForm):
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all(), empty_label="Not Assigned")
     transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.all(), empty_label="Not Assigned")
     submit_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput, disabled=True)
-    status = forms.CharField(initial="D")
     revision = forms.IntegerField(initial=1)
 
     class Meta:
         model = PurchaseOrder
-        fields = ['document_number', 'subject']
+        fields = ['document_number', 'subject', 'remarks', 'reference', 'sub_total','discount','tax_amount','total_amount']

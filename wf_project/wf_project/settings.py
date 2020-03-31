@@ -189,7 +189,6 @@ CKEDITOR_CONFIGS = {
             ['Bold', 'Italic', 'Underline','Table','BulletedList', 'NumberedList']
         ],
         'height':174,
-        'width': 300,
     },
     'details_memo': {
         'toolbar': 'Custom',

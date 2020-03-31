@@ -1,354 +1,351 @@
 {% extends 'main_template.html' %} 
 {% block content %} 
-{% load static %}
+{% load static %} 
 {% load widget_tweaks %}
 
 <form method="post">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Purchase Order</h1>
-      <div>
-          <a href="PO" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</a>
-          <a href="{% url 'po_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
-      </div>
-  </div>
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Purchase Order</h1>
+        <div>
+            <a href="PO" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</a>
+            <a href="{% url 'po_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
+        </div>
+    </div>
 
-  <div class="row">
-      <div class="col-xl-6 col-md-6 mb-4">
-          <div class="card shadow mb-4">
-              <a href="#GeneralCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="GeneralCard">
-                  <h6 class="m-0 font-weight-bold text-primary">General</h6>
-              </a>
-              <div class="collapse show" id="GeneralCard">
-                  <div class="card-body">
-                      <div class="form-group">
-                          <div class="form-row">
-                              <div class="col col-md-3">
-                                  {{form.vendor.label_tag}}
-                              </div>
-                              <div class="col col-md-8">
-                                  {% render_field form.vendor class="col-md-12 form-control form-control-use" %}
-                              </div>
-                          </div>
-                      </div>
-                      <div class="form-group">
-                        <div class="form-row">
-                            <div class="col col-md-3">
-                                {{form.currency.label_tag}}
-                            </div>
-                            <div class="col col-md-8">
-                                {% render_field form.currency class="col-md-12 form-control form-control-use" %}
+    <div class="row">
+        <div class="col-xl-6 col-md-6 mb-4">
+            <div class="card shadow mb-4">
+                <a href="#GeneralCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="GeneralCard">
+                    <h6 class="m-0 font-weight-bold text-primary">General</h6>
+                </a>
+                <div class="collapse show" id="GeneralCard">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-3">
+                                    {{form.vendor.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.vendor class="col-md-12 form-control form-control-use" %}
+                                </div>
                             </div>
                         </div>
-                      </div>
-                      <div class="form-group">
-                        <div class="form-row">
-                            <div class="col col-md-3">
-                                {{form.company.label_tag}}
-                            </div>
-                            <div class="col col-md-8">
-                                {% render_field form.company class="col-md-12 form-control form-control-use" %}
-                            </div>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <div class="form-row">
-                            <div class="col col-md-3">
-                                {{form.transaction_type.label_tag}}
-                            </div>
-                            <div class="col col-md-8">
-                                {% render_field form.transaction_type class="col-md-12 form-control form-control-use" %}
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-3">
+                                    {{form.currency.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.currency class="col-md-12 form-control form-control-use" %}
+                                </div>
                             </div>
                         </div>
-                      </div>
-                      <div class="form-group">
-                        <div class="form-row">
-                            <div class="col col-md-3">
-                                {{form.project.label_tag}}
-                            </div>
-                            <div class="col col-md-8">
-                                {% render_field form.project class="col-md-12 form-control form-control-use" %}
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-3">
+                                    {{form.company.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.company class="col-md-12 form-control form-control-use" %}
+                                </div>
                             </div>
                         </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-      <div class="col-xl-6 col-md-6 mb-4">
-          <div class="card shadow mb-4">
-              <a href="#DocInfoCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="DocInfoCard">
-                  <h6 class="m-0 font-weight-bold text-primary">Document Info</h6>
-              </a>
-              <div class="collapse show" id="DocInfoCard">
-                  <div class="card-body">
-                    <div class="form-group">
-                      <div class="form-row">
-                          <div class="col col-md-3">
-                              {{form.revision.label_tag}}
-                          </div>
-                          <div class="col col-md-8">
-                              {% render_field form.revision|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
-                          </div>
-                      </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-3">
+                                    {{form.transaction_type.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.transaction_type class="col-md-12 form-control form-control-use" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-3">
+                                    {{form.project.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.project class="col-md-12 form-control form-control-use" %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                      <div class="form-row">
-                          <div class="col col-md-3">
-                              {{form.document_number.label_tag}}
-                          </div>
-                          <div class="col col-md-8">
-                              {% render_field form.document_number|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
-                          </div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <div class="form-row">
-                          <div class="col col-md-3">
-                              Status
-                          </div>
-                          <div class="col col-md-8">
-                            <p class="text-info"><strong>New</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6 col-md-6 mb-4">
+            <div class="card shadow mb-4">
+                <a href="#DocInfoCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="DocInfoCard">
+                    <h6 class="m-0 font-weight-bold text-primary">Document Info</h6>
+                </a>
+                <div class="collapse show" id="DocInfoCard">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-3">
+                                    {{form.revision.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.revision|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                </div>
+                            </div>
                         </div>
-                      </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-3">
+                                    {{form.document_number.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.document_number|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-3">
+                                    Status
+                                </div>
+                                <div class="col col-md-8">
+                                    <p class="text-info"><strong>New</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-3">
+                                    {{form.submit_date.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.submit_date|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                      <div class="form-row">
-                          <div class="col col-md-3">
-                              {{form.submit_date.label_tag}}
-                          </div>
-                          <div class="col col-md-8">
-                              {% render_field form.submit_date|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
-                          </div>
-                      </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-md-12 mb-4">
+            <div class="card shadow mb-4">
+                <a href="#AddressCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="AddressCard">
+                    <h6 class="m-0 font-weight-bold text-primary">Address</h6>
+                </a>
+                <div class="collapse show" id="AddressCard">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="col col-md-3">
+                                            <label class="control-label">Delivery Address</label>
+                                        </div>
+                                        <div class="col col-md-8">
+                                            <input type="text" class="col-md-12 form-control form-control-user">
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="form-row">
+                                        <div class="col col-md-12">
+                                            <textarea name="message" rows="3" cols="30" class="col-md-12 form-control form-control-user"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="col col-md-3">
+                                            <label class="control-label">Billing Address</label>
+                                        </div>
+                                        <div class="col col-md-8">
+                                            <input type="text" class="col-md-12 form-control form-control-user">
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="form-row">
+                                        <div class="col col-md-12">
+                                            <textarea name="message" rows="3" cols="30" class="col-md-12 form-control form-control-user"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-  <div class="row">
-      <div class="col-xl-12 col-md-12 mb-4">
-          <div class="card shadow mb-4">
-              <a href="#AddressCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="AddressCard">
-                  <h6 class="m-0 font-weight-bold text-primary">Address</h6>
-              </a>
-              <div class="collapse show" id="AddressCard">
-                  <div class="card-body">
-                      <div class="row">
-                          <div class="col-md-6">
-                              <div class="form-group">
-                                  <div class="form-row">
-                                      <div class="col col-md-3">
-                                          <label class="control-label">Delivery Address</label>
-                                      </div>
-                                      <div class="col col-md-8">
-                                          <input type="text" class="col-md-12 form-control form-control-user">
-                                      </div>
-                                  </div>
-                                  <br/>
-                                  <div class="form-row">
-                                      <div class="col col-md-12">
-                                          <textarea name="message" rows="3" cols="30" class="col-md-12 form-control form-control-user"></textarea>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-md-6">
-                              <div class="form-group">
-                                  <div class="form-row">
-                                      <div class="col col-md-3">
-                                          <label class="control-label">Billing Address</label>
-                                      </div>
-                                      <div class="col col-md-8">
-                                          <input type="text" class="col-md-12 form-control form-control-user">
-                                      </div>
-                                  </div>
-                                  <br/>
-                                  <div class="form-row">
-                                      <div class="col col-md-12">
-                                          <textarea name="message" rows="3" cols="30" class="col-md-12 form-control form-control-user"></textarea>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  <div class="card shadow mb-4">
-      <div class="card-body">
-          <div class="d-sm-flex align-items-right justify-content-end mb-4">
-              <div>
-                  <a href="#" data-toggle="modal" data-target="#logoutModal" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add Detail</a>
-              </div>
-          </div>
-          <div class="table-responsive">
-              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                  <thead>
-                      <tr>
-                          <th>Item Code</th>
-                          <th>Item Description</th>
-                          <th>Quantity</th>
-                          <th>UoM</th>
-                          <th>Unit Price</th>
-                          <th>Amount</th>
-                          <th></th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      <tr>
-                          <td>MKTCAL</td>
-                          <td>CREATIVE AGENCY PITCH</td>
-                          <td>123</td>
-                          <td>Unit</td>
-                          <td>123.00</td>
-                          <td>15,129.00</td>
-                          <td>
-                              <a href="#" class="btn btn-info btn-circle btn-sm">
-                                  <i class="fas fa-pencil-alt"></i>
-                              </a>
-                              <a href="#" class="btn btn-danger btn-circle btn-sm">
-                                  <i class="fas fa-trash"></i>
-                              </a>
-                          </td>
-                      </tr>
-                      <tr>
-                          <td>STNRY-100073</td>
-                          <td>HP Laserjet-Q2612A</td>
-                          <td>100</td>
-                          <td>PC</td>
-                          <td>0.00</td>
-                          <td>0.00</td>
-                          <td>
-                              <a href="#" class="btn btn-info btn-circle btn-sm">
-                                  <i class="fas fa-pencil-alt"></i>
-                              </a>
-                              <a href="#" class="btn btn-danger btn-circle btn-sm">
-                                  <i class="fas fa-trash"></i>
-                              </a>
-                          </td>
-                      </tr>
-                      <tr>
-                          <td>EF-1000</td>
-                          <td>Superior Twin c/w Breakfast</td>
-                          <td>1</td>
-                          <td>Night</td>
-                          <td>0.00</td>
-                          <td>0.00</td>
-                          <td>
-                              <a href="#" class="btn btn-info btn-circle btn-sm">
-                                  <i class="fas fa-pencil-alt"></i>
-                              </a>
-                              <a href="#" class="btn btn-danger btn-circle btn-sm">
-                                  <i class="fas fa-trash"></i>
-                              </a>
-                          </td>
-                      </tr>
-                  </tbody>
-              </table>
-          </div>
-      </div>
-  </div>
-  <div class="row">
-      <div class="col-xl-4 col-md-4 mb-4">
-          <div class="card shadow mb-4">
-              <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Summary</h6>
-              </div>
-              <div class="card-body">
-                  <div class="form-group">
-                      <div class="form-row">
-                          <div class="col col-md-3">
-                              <label class="control-label">Sub Total</label>
-                          </div>
-                          <div class="col col-md-8">
-                              <input type="text" class="col-md-12 form-control form-control-user">
-                          </div>
-                      </div>
-                  </div>
-                  <div class="form-group">
-                      <div class="form-row">
-                          <div class="col col-md-3">
-                              <label class="control-label">Discount</label>
-                          </div>
-                          <div class="col col-md-8">
-                              <input type="text" class="col-md-12 form-control form-control-user">
-                          </div>
-                      </div>
-                  </div>
-                  <div class="form-group">
-                      <div class="form-row">
-                          <div class="col col-md-3">
-                              <label class="control-label">Tax Amount</label>
-                          </div>
-                          <div class="col col-md-8">
-                              <input type="text" class="col-md-12 form-control form-control-user">
-                          </div>
-                      </div>
-                  </div>
-                  <div class="form-group">
-                      <div class="form-row">
-                          <div class="col col-md-3">
-                              <label class="control-label">Total Amount</label>
-                          </div>
-                          <div class="col col-md-8">
-                              <input type="text" class="col-md-12 form-control form-control-user">
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-      <div class="col-xl-4 col-md-4 mb-4">
-          <div class="card shadow mb-4">
-              <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Remarks</h6>
-              </div>
-              <div class="card-body">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+              <div class="col-xl-6 col-md-6">
+                <div class="form-group">
                   <div class="form-row">
-                      <div class="col col-md-12">
-                          {% csrf_token %} {{form.media}} {{form.remarks}}
+                      <div class="col col-md-3">
+                          {{form.subject.label_tag}}
+                      </div>
+                      <div class="col col-md-8">
+                          {% render_field form.subject class="col-md-12 form-control form-control-use" %}
                       </div>
                   </div>
+                </div>
               </div>
-          </div>
-      </div>
-      <div class="col-xl-4 col-md-4 mb-4">
-          <div class="card shadow mb-4">
-              <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Payment Info</h6>
-              </div>
-              <div class="card-body">
-                  <div class="form-group">
-                      <div class="form-row">
-                          <div class="col col-md-12">
-                              <label class="control-label">Payment Term</label>
-                          </div>
+              <div class="col-xl-6 col-md-6">
+                <div class="form-group">
+                  <div class="form-row">
+                      <div class="col col-md-3">
+                          {{form.reference.label_tag}}
                       </div>
-                      <div class="form-row">
-                          <div class="col col-md-12">
-                              <textarea name="remarks" rows="1" cols="30" class="col-md-12 form-control form-control-user"></textarea>
-                          </div>
+                      <div class="col col-md-8">
+                          {% render_field form.reference class="col-md-12 form-control form-control-use" %}
                       </div>
                   </div>
-                  <div class="form-group">
-                      <div class="form-row">
-                          <div class="col col-md-12">
-                              <label class="control-label">Payment Schedule</label>
-                          </div>
-                      </div>
-                      <div class="form-row">
-                          <div class="col col-md-12">
-                              <textarea name="remarks" rows="4" cols="30" class="col-md-12 form-control form-control-user"></textarea>
-                          </div>
-                      </div>
-                  </div>
+                </div>
               </div>
-          </div>
-      </div>
-  </div>
+            </div> 
+            <hr/>
+            <div class="form-row">
+                <div class="col col-md-12">
+                    <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <a class="nav-item nav-link active" id="nav-details-tab" data-toggle="tab" href="#nav-details" role="tab" aria-controls="nav-details" aria-selected="true">Details</a>
+                            <a class="nav-item nav-link" id="nav-attachments-tab" data-toggle="tab" href="#nav-attachments" role="tab" aria-controls="nav-attachments" aria-selected="false">Comparison</a>
+                        </div>
+                    </nav>
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-details" role="tabpanel" aria-labelledby="nav-details-tab">
+                            <br/>
+                            <div class="form-group">
+                                <div class="form-row">
+                                    <div class="col col-md-12">
+                                        Please save this purchase order before entering items for this purchase order.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-attachments" role="tabpanel" aria-labelledby="nav-attachments-tab">
+                            <br/>
+                            <div class="form-group">
+                                <div class="form-row">
+                                    <div class="col col-md-12">
+                                        Please save this purchase order before entering items for this purchase order.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col col-md-12">
+                    <div class="row">
+                    <div class="col-xl-6 col-md-6 mb-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Summary</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                  <div class="form-row">
+                                      <div class="col col-md-3">
+                                          {{form.sub_total.label_tag}}
+                                      </div>
+                                      <div class="col col-md-8">
+                                          {% render_field form.sub_total|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                      </div>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <div class="form-row">
+                                      <div class="col col-md-3">
+                                          {{form.discount.label_tag}}
+                                      </div>
+                                      <div class="col col-md-8">
+                                          {% render_field form.discount class="col-md-12 form-control form-control-use" %}
+                                      </div>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <div class="form-row">
+                                      <div class="col col-md-3">
+                                          {{form.tax_amount.label_tag}}
+                                      </div>
+                                      <div class="col col-md-8">
+                                          {% render_field form.tax_amount|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                      </div>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <div class="form-row">
+                                      <div class="col col-md-3">
+                                          {{form.total_amount.label_tag}}
+                                      </div>
+                                      <div class="col col-md-8">
+                                          {% render_field form.total_amount|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                      </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-md-6 mb-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Payment Info</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="col col-md-12">
+                                            <label class="control-label">Payment Term</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col col-md-12">
+                                            <textarea name="remarks" rows="1" cols="30" class="col-md-12 form-control form-control-user"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="col col-md-12">
+                                            <label class="control-label">Payment Schedule</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col col-md-12">
+                                            <textarea name="remarks" rows="4" cols="30" class="col-md-12 form-control form-control-user"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-md-12 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Remarks</h6>
+                </div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="col col-md-12">
+                            {% csrf_token %} 
+                            {{form.media}} 
+                            {{form.remarks}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 {% endblock content %}

@@ -3,11 +3,11 @@
 {% load static %} 
 {% load widget_tweaks %}
 
-<form method="post">
+<form method="post" id="poForm" data-delivery-url="{% url 'ajax_load_delivery' %}" data-billing-url="{% url 'ajax_load_billing' %}" >
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Purchase Order</h1>
         <div>
-            <a href="PO" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</a>
+            <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
             <a href="{% url 'po_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
         </div>
     </div>
@@ -83,6 +83,16 @@
                     <div class="card-body">
                         <div class="form-group">
                             <div class="form-row">
+                                <div class="col col-md-3">                                    
+                                    {{form.status.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    <p class="text-info"><strong>New</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
                                 <div class="col col-md-3">
                                     {{form.revision.label_tag}}
                                 </div>
@@ -98,16 +108,6 @@
                                 </div>
                                 <div class="col col-md-8">
                                     {% render_field form.document_number|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-row">
-                                <div class="col col-md-3">
-                                    Status
-                                </div>
-                                <div class="col col-md-8">
-                                    <p class="text-info"><strong>New</strong></p>
                                 </div>
                             </div>
                         </div>
@@ -139,34 +139,36 @@
                                 <div class="form-group">
                                     <div class="form-row">
                                         <div class="col col-md-3">
-                                            <label class="control-label">Delivery Address</label>
+                                            {{form.delivery_receiver.label_tag}}
                                         </div>
                                         <div class="col col-md-8">
-                                            <input type="text" class="col-md-12 form-control form-control-user">
-                                        </div>
-                                    </div>
-                                    <br/>
-                                    <div class="form-row">
-                                        <div class="col col-md-12">
-                                            <textarea name="message" rows="3" cols="30" class="col-md-12 form-control form-control-user"></textarea>
+                                            {% render_field form.delivery_receiver class="col-md-12 form-control form-control-use" %}
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="col col-md-12">
+                                            {% render_field form.delivery_address class="col-md-12 form-control form-control-use" %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                            
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <div class="form-row">
                                         <div class="col col-md-3">
-                                            <label class="control-label">Billing Address</label>
+                                            {{form.billing_receiver.label_tag}}
                                         </div>
                                         <div class="col col-md-8">
-                                            <input type="text" class="col-md-12 form-control form-control-user">
+                                            {% render_field form.billing_receiver class="col-md-12 form-control form-control-use" %}
                                         </div>
                                     </div>
-                                    <br/>
+                                </div>
+                                <div class="form-group">
                                     <div class="form-row">
                                         <div class="col col-md-12">
-                                            <textarea name="message" rows="3" cols="30" class="col-md-12 form-control form-control-user"></textarea>
+                                            {% render_field form.billing_address class="col-md-12 form-control form-control-use" %}
                                         </div>
                                     </div>
                                 </div>
@@ -176,6 +178,42 @@
                 </div>
             </div>
         </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script>
+            $("#id_delivery_receiver").change(function () {
+            var url = $("#poForm").attr("data-delivery-url");  // get the url of the `load_cities` view
+            var deliveryId = $(this).val();  // get the selected country ID from the HTML input
+
+            $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+                data: {
+                'delivery_receiver': deliveryId       // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                $("#id_delivery_address").val(data);  // replace the contents of the city input with the data that came from the server
+                }
+            });
+
+            });
+        </script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script>
+            $("#id_billing_receiver").change(function () {
+            var url = $("#poForm").attr("data-billing-url");  // get the url of the `load_cities` view
+            var billingId = $(this).val();  // get the selected country ID from the HTML input
+
+            $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+                data: {
+                'billing_receiver': billingId       // add the country id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_cities` view function
+                $("#id_billing_address").val(data);  // replace the contents of the city input with the data that came from the server
+                }
+            });
+
+            });
+        </script>
     </div>
     <div class="card shadow mb-4">
         <div class="card-body">
@@ -299,25 +337,21 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <div class="form-row">
-                                        <div class="col col-md-12">
-                                            <label class="control-label">Payment Term</label>
+                                        <div class="col col-md-3">
+                                            {{form.payment_term.label_tag}}
                                         </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="col col-md-12">
-                                            <textarea name="remarks" rows="1" cols="30" class="col-md-12 form-control form-control-user"></textarea>
+                                        <div class="col col-md-8">
+                                            {% render_field form.payment_term class="col-md-12 form-control form-control-use" %}
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="form-row">
-                                        <div class="col col-md-12">
-                                            <label class="control-label">Payment Schedule</label>
+                                        <div class="col col-md-3">
+                                            {{form.payment_schedule.label_tag}}
                                         </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="col col-md-12">
-                                            <textarea name="remarks" rows="4" cols="30" class="col-md-12 form-control form-control-user"></textarea>
+                                        <div class="col col-md-8">
+                                            {% render_field form.payment_schedule class="col-md-12 form-control form-control-use" %}
                                         </div>
                                     </div>
                                 </div>
@@ -326,6 +360,23 @@
                     </div>
                 </div>
               </div>
+            </div>
+            <hr/>
+            Attachments
+            <div class="form-group">
+                <div class="form-row">
+                    <div class="col col-md-12">
+                        Please save this purchase order before uploading attachments for this purchase order.
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            {{form.delivery_instruction.label_tag}}
+            <div class="form-row">
+                <div class="col col-md-12">
+                    {{form.media}} 
+                    {{form.delivery_instruction}}
+                </div>
             </div>
         </div>
     </div>

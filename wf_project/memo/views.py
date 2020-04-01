@@ -113,9 +113,9 @@ def memo_update(request, pk):
         else:
             print(form.errors)
     else:
-        project = get_object_or_404(ProjectMaintenance, pk=2)
-        memo.project = project
-        memo.save()
+        #project = get_object_or_404(ProjectMaintenance, pk=2)
+        #memo.project = project
+        #memo.save()
         form = UpdateMemoForm(instance=memo)
     form_attachment = NewMemoAttachmentForm()
     return render(request, 'memo/update.html', {'memo': memo, 'form': form, 'form_attachment': form_attachment})

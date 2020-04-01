@@ -6,11 +6,23 @@ class MemoSerializer(serializers.ModelSerializer):
     submit_date = serializers.DateField(format='%d/%m/%Y')
     company = serializers.StringRelatedField(many=False)
     project = serializers.StringRelatedField(many=False)
-    approval = serializers.StringRelatedField(many=False)
+    approval_status = serializers.SerializerMethodField()
 
     class Meta:
         model = Memo
-        fields = ['id', 'revision', 'document_number', 'subject', 'submit_date', 'company', 'project', 'submit_by', 'approval']
+        fields = ['id', 'revision', 'document_number', 'subject', 
+        'submit_date', 'company', 'project', 'submit_by', 
+        'approval','approval_status']
+    
+    def get_approval_status(self, obj):     
+        if obj.approval.status == "D":
+            return "Draft"
+        elif obj.approval.status == "IP":
+            return "In Progress"
+        elif obj.approval.status == "A":
+            return "Approved"
+        else:
+            return "Rejected"
 
 class MemoAttachmentSerializer(serializers.ModelSerializer):
     attachment_date = serializers.DateField(format='%d/%m/%Y')

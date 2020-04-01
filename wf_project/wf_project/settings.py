@@ -190,6 +190,13 @@ CKEDITOR_CONFIGS = {
         ],
         'height':174,
     },
+    'del_ins_po': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline','Table','BulletedList', 'NumberedList']
+        ],
+        'height':100,
+    },
     'details_memo': {
         'toolbar': 'Custom',
         'toolbar_Custom': [

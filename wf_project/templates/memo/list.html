@@ -29,7 +29,8 @@
                                 <th data-data="subject">Subject</th>
                                 <th data-data="project">Project</th>
                                 <th data-data="submit_date">Submit Date</th>
-                                <th data-data="approval">Status</th>
+                                <th data-data="approval_status">Status</th>
+                                <th data-data="approval"></th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -51,16 +52,16 @@
                                 "targets": 8,
                                 "render": function(data, type, row) {  
                                     var label = '';                                  
-                                    if (row.approval == 'Draft') {
-                                        label = '<p class="text-info"><strong>' + row.approval + '</strong></p>';
-                                    } else if (row.approval == 'In Progress') {
-                                        label = '<p class="text-warning"><strong>' + row.approval + '</strong></p>';
-                                    } else if (row.approval == 'Approved') {
-                                        label = '<p class="text-success"><strong>' + row.approval + '</strong></p>';
+                                    if (row.approval_status == 'Draft') {
+                                        label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
+                                    } else if (row.approval_status == 'In Progress') {
+                                        label = '<p class="text-warning"><strong>' + row.approval_status + '</strong></p>';
+                                    } else if (row.approval_status == 'Approved') {
+                                        label = '<p class="text-success"><strong>' + row.approval_status + '</strong></p>';
                                     } else {
-                                        label = '<p class="text-danger"><strong>' + row.approval + '</strong></p>';
+                                        label = '<p class="text-danger"><strong>' + row.approval_status + '</strong></p>';
                                     }
-                                    return label;
+                                    return '<a href="../../../approval/history/' + row.approval + '">' + label + '</a>';
                                 }
                             }, {
                                 "targets": -1,
@@ -75,7 +76,7 @@
                                 }
                             }, {
                                 "visible": false,
-                                "targets": [1, 2]
+                                "targets": [1, 2, 9]
                             }, {
                                 "render": function(data, type, row) {
                                     return row.document_number + ' (' + row.revision + ')';

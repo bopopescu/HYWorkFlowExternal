@@ -1,0 +1,21 @@
+{% if address.address1 != None %}
+{{address.address1}},
+{% endif %}
+
+{% if address.address2 != None %}
+ {{address.address2}},
+{% endif %}
+
+{% if address.address3 != None %}
+ {{address.address3}},
+{% endif %}
+
+{% if address.address4 != None %}
+ {{address.address4}},
+{% endif %}
+
+{% if address.address_zip != None %}
+ {{address.address_zip}},
+{% endif %}
+
+{{address.state.state_name}}

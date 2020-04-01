@@ -10,7 +10,11 @@ from ckeditor_uploader.fields import RichTextUploadingField
 
 def documenttype_document_number():
     memo_type = DocumentTypeMaintenance.objects.filter(document_type_name="Memo")[0]
-    return '{0}-{1:05d}'.format(memo_type.document_type_code,memo_type.running_number)
+    document_number = memo_type.running_number + 1
+    memo_type.running_number = document_number 
+    memo_type.save()
+    
+    return '{0}-{1:05d}'.format(memo_type.document_type_code,document_number)
 
 class Memo(models.Model):
     revision = models.IntegerField(default=1)
@@ -18,7 +22,7 @@ class Memo(models.Model):
     company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE, blank=True, null=True)
     department = models.ForeignKey(DepartmentMaintenance, verbose_name="Department", on_delete=models.CASCADE, blank=True, null=True)
     project = models.ForeignKey(ProjectMaintenance, verbose_name="Project", on_delete=models.CASCADE)
-    approval = models.ForeignKey(ApprovalItem, verbose_name="Project", on_delete=models.CASCADE, blank=True, null=True)
+    approval = models.ForeignKey(ApprovalItem, on_delete=models.CASCADE, blank=True, null=True)
     status = models.CharField(default="D",max_length=1, blank=True, null=True)
     submit_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     submit_date = models.DateField(auto_now_add=True)

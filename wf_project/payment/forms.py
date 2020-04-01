@@ -10,6 +10,7 @@ from administration.models import TaxMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import PaymentmodeMaintenance
 from administration.models import EmployeeMaintenance
+from administration.models import DocumentTypeMaintenance
 
 
 class DetailPaymentForm(forms.ModelForm):
@@ -28,11 +29,12 @@ class DetailPaymentForm(forms.ModelForm):
         'sub_total','discount_amount','discount_rate','tax_amount','total_amount',
         'remarks']
 
+
 class NewPaymentForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.all(), empty_label="Not Assigned")
     vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.all(), empty_label="Not Assigned",required=False)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all(), empty_label="Not Assigned")
-    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.all(), empty_label="Not Assigned")
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_name="Payment Request")[0]), empty_label="Not Assigned")
     currency = forms.ModelChoiceField(queryset=CurrencyMaintenance.objects.all(), empty_label="Not Assigned")
     payment_mode = forms.ModelChoiceField(queryset=PaymentmodeMaintenance.objects.all(), empty_label="Not Assigned")
     employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.all(), empty_label="Not Assigned",required=False)

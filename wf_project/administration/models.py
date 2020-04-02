@@ -136,6 +136,14 @@ class DrawerMaintenance(models.Model):
     def __str__(self):
         return self.drawer_name
 
+class DrawerUserMaintenance(models.Model):
+    drawer = models.ForeignKey('DrawerMaintenance',on_delete=models.CASCADE)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.drawer.drawer_name
+
+
 class EmployeeBranchMaintenance(models.Model):
     employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
     branch = models.ForeignKey('BranchMaintenance', verbose_name="Branch",on_delete=models.CASCADE)

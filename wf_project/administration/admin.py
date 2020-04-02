@@ -36,6 +36,7 @@ from .models import RegionMaintenance
 from .models import TaxMaintenance
 from datetime import datetime
 from .models import DrawerMaintenance
+from .models import DrawerUserMaintenance
 from .models import TransactiontypeMaintenance
 from .models import PaymentmodeMaintenance
 from .models import MemoTemplateMaintenance
@@ -791,6 +792,13 @@ class TaxMaintenanceScreen(admin.ModelAdmin):
 
 admin.site.register(TaxMaintenance,TaxMaintenanceScreen)
 
+class DrawerUserInline(admin.StackedInline):
+    model = DrawerUserMaintenance
+    fieldsets = [
+        (None, {'fields': ['user']}),
+    ]
+    extra = 0
+
 class DrawerMaintenanceScreen(admin.ModelAdmin):
     list_display = ('drawer_name', 'open_year', 'open_month','drawer_status')
     list_filter = ('drawer_status',)
@@ -799,6 +807,7 @@ class DrawerMaintenanceScreen(admin.ModelAdmin):
         (None, {'fields': ['drawer_name','branch','open_year','open_month','limit','drawer_status']}),
     ]
     exclude = ['created_by','modified_by']
+    inlines = [DrawerUserInline]
 
     def save_model(self, request, obj, form, change):
         self.request = request

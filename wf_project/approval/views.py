@@ -57,14 +57,17 @@ def approval_update(request, pk):
         memo = get_object_or_404(Memo, pk=approval_item.document_pk)
         memo.status = "P"
         memo.save()
+        return redirect('memo_list')
     if document_type.document_type_name == "Payment Request":
         payment = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
         payment.status = "P"
         payment.save()
+        return redirect('py_list')
     if document_type.document_type_name == "Staff Recruitment Request":
         staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
         staff.status = "P"
         staff.save()
+        return redirect('staff_list')
 
     return redirect(approval_list)
 

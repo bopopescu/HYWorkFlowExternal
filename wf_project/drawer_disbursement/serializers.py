@@ -27,4 +27,4 @@ class ApprovedPaymentRequest(serializers.ModelSerializer):
 
     class Meta:
         model = PaymentRequest
-        fields = ['id', 'revision', 'document_number', 'subject', 'submit_date', 'company', 'project','submit_by', 'approval']
+        fields = ['id', 'revision', 'document_number', 'subject', 'submit_date', 'company', 'project','submit_by', 'approval','total_amount']

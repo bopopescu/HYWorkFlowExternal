@@ -11,32 +11,33 @@ from administration.models import DocumentTypeMaintenance
 from approval.models import ApprovalItem
 from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
+import datetime
 
 def documenttype_document_number():
-    document_type = DocumentTypeMaintenance.objects.filter(document_type_name="Payment Request")[0]
+    document_type = DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]
     return '{0}-{1:05d}'.format(document_type.document_type_code,document_type.running_number)
 
 class PaymentRequest(models.Model):
-    revision = models.IntegerField()
-    document_number = models.CharField(default=documenttype_document_number,max_length=100,verbose_name="Document No")
+    revision = models.IntegerField(default=1)
+    document_number = models.CharField(max_length=100,verbose_name="Document No",blank=True, null=True)
     vendor = models.ForeignKey(VendorMasterData,null=True, blank=True,verbose_name="Vendor", on_delete=models.CASCADE)
-    employee = models.ForeignKey(EmployeeMaintenance,null=True, blank=True, verbose_name="Vendor", on_delete=models.CASCADE)
-    company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE)
-    currency = models.ForeignKey(CurrencyMaintenance, verbose_name="Currency", on_delete=models.CASCADE)
-    project = models.ForeignKey(ProjectMaintenance, verbose_name="Project", on_delete=models.CASCADE)
-    transaction_type = models.ForeignKey(TransactiontypeMaintenance,verbose_name="Trans. Type", on_delete=models.CASCADE)
+    employee = models.ForeignKey(EmployeeMaintenance,null=True, blank=True, verbose_name="Employee", on_delete=models.CASCADE)
+    company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE,blank=True, null=True)
+    currency = models.ForeignKey(CurrencyMaintenance, verbose_name="Currency", on_delete=models.CASCADE,blank=True, null=True)
+    project = models.ForeignKey(ProjectMaintenance, verbose_name="Project", on_delete=models.CASCADE,blank=True, null=True)
+    transaction_type = models.ForeignKey(TransactiontypeMaintenance,verbose_name="Trans. Type", on_delete=models.CASCADE,blank=True, null=True)
     approval = models.ForeignKey(ApprovalItem, verbose_name="Approval", on_delete=models.CASCADE, blank=True, null=True)
-    payment_mode = models.ForeignKey(PaymentmodeMaintenance, verbose_name="Payment Mode", on_delete=models.CASCADE)
+    payment_mode = models.ForeignKey(PaymentmodeMaintenance, verbose_name="Payment Mode", on_delete=models.CASCADE,blank=True, null=True)
     status = models.CharField(max_length=1,default="D", blank=True, null=True)
     submit_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
-    submit_date = models.DateField(null=True, blank=True)
+    submit_date = models.DateField(null=True, blank=True,default=datetime.date.today)
     subject = models.CharField(max_length=250)
     reference = models.CharField(max_length=100)
-    sub_total = models.DecimalField(max_digits=10, decimal_places=2)
-    discount_amount = models.DecimalField(max_digits=10, decimal_places=2,verbose_name="Discount")
-    discount_rate = models.DecimalField(max_digits=5, decimal_places=2)
-    tax_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    sub_total = models.DecimalField(max_digits=10, decimal_places=2,default=0.00)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2,verbose_name="Discount",default=0.00)
+    discount_rate = models.DecimalField(max_digits=5, decimal_places=2,default=0.00)
+    tax_amount = models.DecimalField(max_digits=10, decimal_places=2,default=0.00)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2,default=0.00)
     remarks = RichTextUploadingField(config_name='remarks_py',null=True, blank=True)
     created_by = models.ForeignKey(User, related_name='paymentcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)

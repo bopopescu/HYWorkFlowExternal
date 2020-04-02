@@ -9,10 +9,24 @@ class PYSerializer(serializers.ModelSerializer):
     project = serializers.StringRelatedField(many=False)
     approval = serializers.StringRelatedField(many=False)
     submit_by = serializers.StringRelatedField(many=False)
+    approval_status = serializers.SerializerMethodField()
 
     class Meta:
         model = PaymentRequest
-        fields = ['id', 'revision', 'document_number', 'subject', 'submit_date', 'company', 'project','submit_by', 'approval']
+        fields = ['id', 'revision', 'document_number', 'subject', 'submit_date', 'company', 'project','submit_by', 'approval','approval_status']
+    
+    def get_approval_status(self, obj):     
+        if obj.approval != None:
+            if obj.approval.status == "D":
+                return "Draft"
+            elif obj.approval.status == "IP":
+                return "In Progress"
+            elif obj.approval.status == "A":
+                return "Approved"
+            else:
+                return "Rejected"
+        else:
+            return "Draft"
 
 class PYItemSerializer(serializers.ModelSerializer):
     tax = serializers.StringRelatedField(many=False)

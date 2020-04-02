@@ -299,7 +299,7 @@
                         <a href="#" data-toggle="modal" data-target="#additemModal" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
                       </div>
                       <div class="table-responsive">
-                        <table id="myitems" class="table table-striped table-bordered" style="width:100%" data-server-side="true">
+                        <table id="myitems" class="table table-striped table-bordered" style="width:100%" >
                           <thead>
                             <tr>
                               <th data-data="id"></th>
@@ -358,7 +358,7 @@
                       <a href="#" data-toggle="modal" data-target="#addPYAttachmentModal" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
                     </div>
                     <div class="table-responsive">
-                      <table id="myattachments" class="table table-striped table-bordered" style="width:100%" data-server-side="true">
+                      <table id="myattachments" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                           <tr>
                             <th data-data="id"></th>
@@ -573,7 +573,7 @@
   $(function () {
       $("#deletePYAttachmentButton").click(function () {
           var pyattachment_id = $(".modal-body #hiddenValue2").val();
-          window.location.href = "../../deleteattachment/" + pyattachment_id + "/";
+          window.location.href = "../deleteattachment_create/" + pyattachment_id + "/";
       })
   });
 </script>

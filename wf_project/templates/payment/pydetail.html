@@ -241,6 +241,8 @@
                       <strong>Pending Approval</strong>
                       {% elif py.status == "A" %}
                       <strong>Approved</strong>
+                      {% elif py.status == "C" %}
+                      <strong>Closed</strong>
                       {% else %}
                       <strong>Rejected</strong>
                   {% endif %}

@@ -38,7 +38,6 @@ class NewPaymentForm(forms.ModelForm):
     currency = forms.ModelChoiceField(queryset=CurrencyMaintenance.objects.all(), empty_label="Not Assigned")
     payment_mode = forms.ModelChoiceField(queryset=PaymentmodeMaintenance.objects.all(), empty_label="Not Assigned")
     employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.all(), empty_label="Not Assigned",required=False)
-    submit_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput)
     revision = forms.IntegerField(initial=0)
     sub_total = forms.DecimalField(initial=0.00)
     discount_amount = forms.DecimalField(initial=0.00)

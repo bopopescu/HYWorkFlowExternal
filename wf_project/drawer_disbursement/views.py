@@ -6,6 +6,7 @@ from .serializers import DrawerDisbursementSerializer,DrawerSelectionSerializer,
 from administration.models import DrawerMaintenance
 from administration.models import DrawerUserMaintenance
 from administration.models import TransactiontypeMaintenance
+from .models import DrawerDisbursement
 from payment.models import PaymentRequest
 
 # class TeamStaffViewSet(viewsets.ModelViewSet):
@@ -30,6 +31,14 @@ class DisbursementListViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequest.objects.filter(status='A',transaction_type=transaction)
     serializer_class = ApprovedPaymentRequest
 
+class DisbursedViewSet(viewsets.ModelViewSet):
+    queryset = DrawerDisbursement.objects.filter(status='R')
+    serializer_class = DrawerDisbursementSerializer
+
+class CancelledViewSet(viewsets.ModelViewSet):
+    queryset = DrawerDisbursement.objects.filter(status='C')
+    serializer_class = DrawerDisbursementSerializer
+
 @login_required
 def drawer_list(request):
     return render(request, 'drawer_selection.html')
@@ -37,4 +46,36 @@ def drawer_list(request):
 @login_required
 def drawer_disbursement_list(request,drawerpk):
     drawer = DrawerMaintenance.objects.get(pk=drawerpk)
+    return render(request, 'disbursement_list.html', {'drawer': drawer})
+
+@login_required
+def drawer_disbursement_disbursed(request,pk,drawerpk):
+    drawer = DrawerMaintenance.objects.get(pk=drawerpk)
+    payment = PaymentRequest.objects.get(pk=pk)
+    payment.status = "C"
+
+    disbursedrecord = DrawerDisbursement()
+    disbursedrecord.payment = payment
+    disbursedrecord.total_disbursed = payment.total_amount
+    disbursedrecord.status = 'R'
+    disbursedrecord.drawer = drawer
+    disbursedrecord.save()
+    payment.save()
+
+    return render(request, 'disbursement_list.html', {'drawer': drawer})
+
+@login_required
+def drawer_disbursement_cancel(request,pk,drawerpk):
+    drawer = DrawerMaintenance.objects.get(pk=drawerpk)
+    payment = PaymentRequest.objects.get(pk=pk)
+    payment.status = "C"
+
+    disbursedrecord = DrawerDisbursement()
+    disbursedrecord.payment = payment
+    disbursedrecord.total_disbursed = payment.total_amount
+    disbursedrecord.status = 'C'
+    disbursedrecord.drawer = drawer
+    disbursedrecord.save()
+    payment.save()
+
     return render(request, 'disbursement_list.html', {'drawer': drawer})

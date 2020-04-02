@@ -106,7 +106,7 @@ def py_create(request):
 def py_create_edit(request, pk):    
     py = get_object_or_404(PaymentRequest, pk=pk)
     if request.method == 'POST':
-        form = NewPaymentForm(request.POST, instance=PaymentRequest)
+        form = NewPaymentForm(request.POST, instance=py)
         if form.is_valid():
             payment_type = DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]
             document_number = payment_type.running_number + 1
@@ -121,6 +121,7 @@ def py_create_edit(request, pk):
             employee = form.cleaned_data['employee']
             payment_mode = form.cleaned_data['payment_mode']
             py = form.save(commit=False)
+            py.document_number = '{0}-{1:05d}'.format(payment_type.document_type_code,document_number)
             py.currency = currency
             py.vendor = vendor
             py.employee = employee
@@ -149,7 +150,8 @@ def py_create_edit(request, pk):
             py.save()
 
             return redirect(pylist)
-
+        else:
+            print(form.errors)
     else:
         form = NewPaymentForm(instance=py)
         form_attachment = NewPYAttachmentForm()

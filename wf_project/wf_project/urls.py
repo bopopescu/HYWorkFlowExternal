@@ -30,4 +30,5 @@ urlpatterns = [
     path('purchasing/', include('purchasing.urls')),
     path('staffrecruitment/', include('human_resource.urls')),
     path('report_builder/', include('report_builder.urls')),
+    path('drawer_disbursement/', include('drawer_disbursement.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -94,16 +94,27 @@ def po_detail(request, pk):
 
 @login_required
 def po_create(request):
+    po = PurchaseOrder.objects.create(submit_by=request.user)
+    return redirect(po_create_edit, po.pk)
+
+@login_required
+def po_create_edit(request, pk):
+    po =  get_object_or_404(PurchaseOrder, pk=pk)
     if request.method == 'POST':
-        form = NewPOForm(request.POST)
+        form = NewPOForm(request.POST, instance=po)
         if form.is_valid():
+            po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]
+            document_number = po_type.running_number + 1
+            po_type.running_number = document_number 
+            po_type.save()
+
             company = form.cleaned_data['company']
             vendor = form.cleaned_data['vendor']
             project = form.cleaned_data['project']
             transaction_type = form.cleaned_data['transaction_type']
             delivery_receiver = form.cleaned_data['delivery_receiver']
             billing_receiver = form.cleaned_data['billing_receiver']
-            po = form.save(commit=False)
+            po.document_number = '{0}-{1:05d}'.format(po_type.document_type_code,document_number)
             po.company = company
             po.vendor = vendor
             po.project = project
@@ -111,16 +122,13 @@ def po_create(request):
             po.submit_by = request.user
             po.save()
 
-            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_name="Purchase Order")
-            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name="Purchase Order", document_type=document_type)
-            #approval_level = get_object_or_404(WorkflowApprovalRule, document_amount_range__gte=po.total_amount, document_amount_range2__lte=po.total_amount)
-
+            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name="Purchase Order", document_type=po_type)
+            
             approval_item = ApprovalItem()        
             approval_item.document_number = po.document_number
             approval_item.document_pk = po.pk
-            approval_item.document_type = document_type
+            approval_item.document_type = po_type
             approval_item.transaction_type = transaction_type
-            #approval_item.approval_level = approval_level
             approval_item.notification = ""
             approval_item.status = "D"
             approval_item.save()
@@ -130,9 +138,100 @@ def po_create(request):
 
             return redirect(po_list)
     else:
-        po = PurchaseOrder
-        form = NewPOForm()
-    return render(request, 'po/create.html', {'po': po, 'form': form})
+        form = NewPOForm(instance=po)
+    form_attachment = NewPOAttachmentForm()
+    form_cov2_attachment = NewPOComparison2AttachmentForm()
+    form_cov3_attachment = NewPOComparison3AttachmentForm()
+    form_detail = NewPODetailForm()
+    return render(request, 'po/create.html', {'po': po, 'form': form, 'form_attachment': form_attachment, 'form_cov2_attachment': form_cov2_attachment, 'form_cov3_attachment': form_cov3_attachment, 'form_detail': form_detail})
+
+@login_required
+def po_attachment_create_fromcreate(request, pk):    
+    form = NewPOAttachmentForm(request.POST, request.FILES)
+    if form.is_valid():
+        po_attachment = form.save(commit=False)
+        po = get_object_or_404(PurchaseOrder, pk=pk)
+        po_attachment.po = po
+        po_attachment.save()
+    
+    return redirect(po_create_edit, pk=pk) 
+
+@login_required
+def po_attachment_delete_fromcreate(request, pk):
+    poattachment =  get_object_or_404(PurchaseOrderAttachment, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=poattachment.po.pk)
+    poattachment.delete()
+    return redirect(po_create_edit, pk=po.pk)
+
+@login_required
+def po_cov2_attachment_create_fromcreate(request, pk):    
+    form = NewPOComparison2AttachmentForm(request.POST, request.FILES)
+    if form.is_valid():
+        po_cov2_attachment = form.save(commit=False)
+        po = get_object_or_404(PurchaseOrder, pk=pk)
+        po_cov2_attachment.po = po
+        po_cov2_attachment.save()
+    
+    return redirect(po_create_edit, pk=pk) 
+
+@login_required
+def po_cov2_attachment_delete_fromcreate(request, pk):
+    pocov2attachment =  get_object_or_404(PurchaseOrderComparison2Attachment, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=pocov2attachment.po.pk)
+    pocov2attachment.delete()
+    return redirect(po_create_edit, pk=po.pk)
+
+@login_required
+def po_cov3_attachment_create_fromcreate(request, pk):    
+    form = NewPOComparison3AttachmentForm(request.POST, request.FILES)
+    if form.is_valid():
+        po_cov3_attachment = form.save(commit=False)
+        po = get_object_or_404(PurchaseOrder, pk=pk)
+        po_cov3_attachment.po = po
+        po_cov3_attachment.save()
+    
+    return redirect(po_create_edit, pk=pk) 
+
+@login_required
+def po_cov3_attachment_delete_fromcreate(request, pk):
+    pocov3attachment =  get_object_or_404(PurchaseOrderComparison3Attachment, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=pocov3attachment.po.pk)
+    pocov3attachment.delete()
+    return redirect(po_create_edit, pk=po.pk)
+
+@login_required
+def po_detail_create_fromcreate(request, pk):    
+    form = NewPODetailForm(request.POST)
+    if form.is_valid():
+        po_detail = form.save(commit=False)
+        item = form.cleaned_data['item']
+        uom = form.cleaned_data['uom']    
+        po = get_object_or_404(PurchaseOrder, pk=pk)
+        po_detail.po = po
+        po_detail.item = item
+        po_detail.uom = uom
+        po_detail.amount = po_detail.quantity * po_detail.unit_price
+        po_detail.save()
+        
+        po.sub_total = detail_subtotalamount(pk=pk)
+        po.save()
+
+        po.total_amount = detail_totalamount(pk=pk)
+        po.save()    
+    return redirect(po_create_edit, pk=pk) 
+
+@login_required
+def po_detail_delete_fromcreate(request, pk):
+    podetail=  get_object_or_404(PurchaseOrderDetail, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=podetail.po.pk)
+    podetail.delete()
+
+    po.sub_total = detail_subtotalamount(pk=po.pk)
+    po.save()
+
+    po.total_amount = detail_totalamount(pk=po.pk)
+    po.save()
+    return redirect(po_create_edit, pk=po.pk)
 
 @login_required
 def po_send_approval(request,pk):

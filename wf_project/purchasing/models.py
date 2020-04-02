@@ -34,11 +34,11 @@ def documenttype_document_number():
 
 class PurchaseOrder(models.Model):
     revision = models.IntegerField(default=1)
-    document_number = models.CharField(default=documenttype_document_number, max_length=100, blank=True, null=True)
+    document_number = models.CharField(max_length=100, blank=True, null=True)
     vendor = models.ForeignKey(VendorMasterData, verbose_name="Vendor", on_delete=models.CASCADE, blank=True, null=True)
     currency = models.ForeignKey(CurrencyMaintenance, verbose_name="Vendor", on_delete=models.CASCADE, blank=True, null=True)
     company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE, blank=True, null=True)
-    project = models.ForeignKey(ProjectMaintenance, verbose_name="Project", on_delete=models.CASCADE)
+    project = models.ForeignKey(ProjectMaintenance, verbose_name="Project", on_delete=models.CASCADE, blank=True, null=True)
     approval = models.ForeignKey(ApprovalItem, verbose_name="Approval", on_delete=models.CASCADE, blank=True, null=True)
     transaction_type = models.ForeignKey(TransactiontypeMaintenance, verbose_name="Transaction Type", on_delete=models.CASCADE, blank=True, null=True)
     status = models.CharField(default="D",max_length=1, blank=True, null=True)

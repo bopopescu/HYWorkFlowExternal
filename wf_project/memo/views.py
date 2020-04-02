@@ -41,41 +41,7 @@ class TeamMemoViewSet(viewsets.ModelViewSet):
 
 @login_required
 def memo_create(request):    
-    if request.method == 'POST':
-        form = NewMemoForm(request.POST)
-        if form.is_valid():
-            company = form.cleaned_data['company']
-            department = form.cleaned_data['department']
-            project = form.cleaned_data['project']
-            template = form.cleaned_data['template']
-            memo = form.save(commit=False)
-            memo.company = company
-            memo.department = department
-            memo.project = project
-            memo.template = template
-            memo.submit_by = request.user
-            memo.save()
-
-            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_name="Memo")
-            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name="BLANK", document_type=document_type)
-            approval_level = get_object_or_404(WorkflowApprovalRule,approval_level=2)
-
-            approval_item = ApprovalItem()        
-            approval_item.document_number = memo.document_number
-            approval_item.document_pk = memo.pk
-            approval_item.document_type = document_type
-            approval_item.transaction_type = transaction_type
-            approval_item.approval_level = approval_level
-            approval_item.notification = ""
-            approval_item.status = "D"
-            approval_item.save()
-
-            memo.approval = approval_item
-            memo.save()
-
-            return redirect(memo_list)
-    else:
-        memo = Memo.objects.create(submit_by=request.user)
+    memo = Memo.objects.create(submit_by=request.user)
     return redirect(memo_create_edit, memo.pk)
 
 @login_required

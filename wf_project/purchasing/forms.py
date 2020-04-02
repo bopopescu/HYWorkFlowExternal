@@ -15,12 +15,14 @@ class NewPOForm(forms.ModelForm):
     revision = forms.IntegerField(initial=1)
     delivery_receiver = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.all(), label="Delivery Address", empty_label="Not Assigned")
     billing_receiver = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.all(), label="Billing Address", empty_label="Not Assigned")
+    comparison_vendor_2 = forms.ModelChoiceField(queryset=VendorMasterData.objects.all(), label="Vendor", empty_label="Not Assigned", initial=PurchaseOrder.comparison_vendor_2)
+    comparison_vendor_3 = forms.ModelChoiceField(queryset=VendorMasterData.objects.all(), label="Vendor", empty_label="Not Assigned", initial=PurchaseOrder.comparison_vendor_3)
     
     class Meta:
         model = PurchaseOrder
         fields = ['document_number', 'status', 'subject', 'remarks', 'reference', 
         'sub_total','discount','tax_amount','total_amount','payment_term',
-        'payment_schedule', 'delivery_instruction', 'delivery_address', 'billing_address']
+        'payment_schedule', 'delivery_instruction', 'delivery_address', 'billing_address','comparison_vendor_2_amount', 'comparison_vendor_3_amount']
 
 class DetailPOForm(forms.ModelForm):
     vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.all(), empty_label="Not Assigned", initial=PurchaseOrder.vendor, disabled=True)

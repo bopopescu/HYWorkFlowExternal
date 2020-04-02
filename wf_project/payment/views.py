@@ -326,6 +326,32 @@ def py_item_delete(request, pk):
     py_item =  get_object_or_404(PaymentRequestDetail, pk=pk)
     py = get_object_or_404(PaymentRequest, pk=py_item.py.pk)
     py_item.delete()
+
+    sub_total = 0
+    price = 0
+    total_tax_amount = 0
+    payment_items = PaymentRequestDetail.objects.filter(py=py)
+    if(payment_items.count() !=0):
+        for payment_item in payment_items:
+            sub_total += payment_item.price
+            price += payment_item.line_total
+            total_tax_amount += payment_item.line_taxamount
+
+        discount_amount = py.discount_amount
+        total_amount_afterdiscount = (sub_total - discount_amount)
+        after_add_taxamount = total_amount_afterdiscount + total_tax_amount
+        discount_rate = (discount_amount / sub_total) * 100 
+        py.discount_rate = discount_rate
+        py.sub_total = sub_total
+        py.tax_amount = total_tax_amount
+        py.total_amount = after_add_taxamount
+        py.save()
+    else:
+        py.discount_rate = 0.00
+        py.sub_total = 0.00
+        py.tax_amount = 0.00
+        py.total_amount = 0.00
+        py.save()
     return redirect(py_update, pk=py.pk)
 
 @login_required

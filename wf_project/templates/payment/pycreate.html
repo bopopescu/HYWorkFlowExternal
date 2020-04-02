@@ -50,7 +50,27 @@
             }
         });
    });
-   </script> 
+   </script>
+   <script type="text/javascript">
+    $(document).ready(function(){
+     $("input[name='discount_amount']").keyup(function(){
+           var discount_amount = $("input[name='discount_amount']").val();
+           var sub_total =  $("input[name='sub_total']").val();
+           var tax_amount = $("input[name='tax_amount']").val();
+           if(sub_total > 0){
+              var total_amount_afterdiscount = (sub_total - discount_amount);
+              var after_add_taxamount = parseFloat(total_amount_afterdiscount) + parseFloat(tax_amount)
+              var discount_rate = (discount_amount/sub_total) * 100 ;
+    
+              $("input[name='total_amount']").val(parseFloat(after_add_taxamount).toFixed(2));
+              $("input[name='discount_rate']").val(parseFloat(discount_rate).toFixed(2));
+           }else{
+              alert("discount cannot be calculate because subtotal is 0");
+              var discount_amount = $("input[name='discount_amount']").val(0.00);
+           }
+         });
+    });
+   </script>  
   {% csrf_token %} 
     <div>
       <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
@@ -398,7 +418,7 @@
                 {% render_field form.discount_rate|append_attr:"readonly"  class="col-md-12 form-control form-control-user" %}
               </div>
               <div class="col col-md-6">
-                {% render_field form.discount_amount|append_attr:"readonly" class="col-md-12 form-control form-control-user" %}
+                {% render_field form.discount_amount class="col-md-12 form-control form-control-user" %}
               </div>
             </div>  
           </div>

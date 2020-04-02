@@ -39,12 +39,17 @@
           var discount_amount = $("input[name='discount_amount']").val();
           var sub_total =  $("input[name='sub_total']").val();
           var tax_amount = $("input[name='tax_amount']").val();
-          var total_amount_afterdiscount = (sub_total - discount_amount);
-          var after_add_taxamount = parseFloat(total_amount_afterdiscount) + parseFloat(tax_amount)
-          var discount_rate = (discount_amount /sub_total) * 100 ;
-
-          $("input[name='total_amount']").val(parseFloat(after_add_taxamount).toFixed(2)); 
-          $("input[name='discount_rate']").val(parseFloat(discount_rate).toFixed(2));
+          if(sub_total > 0){
+              var total_amount_afterdiscount = (sub_total - discount_amount);
+              var after_add_taxamount = parseFloat(total_amount_afterdiscount) + parseFloat(tax_amount)
+              var discount_rate = (discount_amount/sub_total) * 100 ;
+    
+              $("input[name='total_amount']").val(parseFloat(after_add_taxamount).toFixed(2));
+              $("input[name='discount_rate']").val(parseFloat(discount_rate).toFixed(2));
+           }else{
+              alert("discount cannot be calculate because subtotal is 0");
+              var discount_amount = $("input[name='discount_amount']").val(0.00);
+           }
           
         });
    });

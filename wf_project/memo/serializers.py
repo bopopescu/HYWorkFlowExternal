@@ -15,14 +15,17 @@ class MemoSerializer(serializers.ModelSerializer):
         'approval','approval_status']
     
     def get_approval_status(self, obj):     
-        if obj.approval.status == "D":
-            return "Draft"
-        elif obj.approval.status == "IP":
-            return "In Progress"
-        elif obj.approval.status == "A":
-            return "Approved"
+        if obj.approval != None:
+            if obj.approval.status == "D":
+                return "Draft"
+            elif obj.approval.status == "IP":
+                return "In Progress"
+            elif obj.approval.status == "A":
+                return "Approved"
+            else:
+                return "Rejected"
         else:
-            return "Rejected"
+            return "Draft"
 
 class MemoAttachmentSerializer(serializers.ModelSerializer):
     attachment_date = serializers.DateField(format='%d/%m/%Y')

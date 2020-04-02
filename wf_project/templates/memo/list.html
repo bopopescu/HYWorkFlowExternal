@@ -68,7 +68,7 @@
                                 "data": null,
                                 "render": function(data, type, row) {
                                     var label = '';                                  
-                                    if (row.approval == 'Draft' || row.approval == 'Rejected') {
+                                    if (row.approval_status == 'Draft' || row.approval_status == 'Rejected') {
                                         label = '<a href="../update/' + row.id + '/" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteMemoModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                     } 
 
@@ -149,8 +149,7 @@
                                 "targets": [1, 2]
                             }, {
                                 "render": function(data, type, row) {
-                                    return data + ' (' + row.revision + ')';
-                                },
+                                    return data + ' (' + row.revision + ')'                                },
                                 "targets": 3
                             }],
                             "lengthMenu": [50, 100, 200, 500],

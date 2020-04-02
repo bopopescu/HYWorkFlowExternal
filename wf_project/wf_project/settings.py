@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'dashboard.apps.DashboardConfig',
     #'contract_service.apps.ContractServiceConfig',
     #'drawer_reimbursement.apps.DrawerReimbursementConfig',
+    'drawer_disbursement.apps.DrawerDisbursementConfig',
     'human_resource.apps.HumanResourceConfig',
     'Inventory.apps.InventoryConfig',
     'memo.apps.MemoConfig',
@@ -80,7 +81,8 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates','memo'),
             os.path.join(BASE_DIR, 'templates','purchasing'),
             os.path.join(BASE_DIR, 'templates','payment'),
-            os.path.join(BASE_DIR, 'templates','human_resource')
+            os.path.join(BASE_DIR, 'templates','human_resource'),
+            os.path.join(BASE_DIR, 'templates','drawer_disbursement')
         ],
         'APP_DIRS': True,
         'OPTIONS': {

@@ -62,16 +62,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="form-row">
-                                <div class="col col-md-3">
-                                    {{form.subject.label_tag}}
-                                </div>
-                                <div class="col col-md-8">
-                                    {% render_field form.subject class="col-md-12 form-control form-control-use" %}
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -90,13 +80,13 @@
                                 </div>
                                 <div class="col col-md-8">
                                     {% if memo.status == "D" %}
-                                    <strong>Draft</strong>
+                                    <p class="text-info"><strong>Draft</strong></p>
                                     {% elif memo.status == "P" %}
-                                    <strong>Pending Approval</strong>
+                                    <p class="text-warning"><strong>Pending Approval</strong></p>
                                     {% elif memo.status == "A" %}
-                                    <strong>Approved</strong>
+                                    <p class="text-success"><strong>Approved</strong></p>
                                     {% else %}
-                                    <strong>Rejected</strong>
+                                    <p class="text-danger"><strong>Rejected</strong></p>
                                     {% endif %}
                                 </div>
                             </div>
@@ -139,6 +129,21 @@
 
     <div class="card shadow mb-4">
         <div class="card-body">
+            <div class="form-row">
+                <div class="col col-md-12">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-1">
+                                {{form.subject.label_tag}}
+                            </div>
+                            <div class="col col-md-11">
+                                {% render_field form.subject rows="3" class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+            <hr/>
             <div class="form-row">
                 <div class="col col-md-12">
                     <nav>
@@ -210,6 +215,8 @@
                                             cell.innerHTML = i + 1;
                                         });
                                     }).draw();
+
+                                    $('#id_subject').html("{{memo.subject}}");
                                 });
                             </script>
                         </div>
@@ -222,24 +229,27 @@
 
 <!-- Delete Modal-->
 <div class="modal fade" id="deleteMemoAttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Select "Delete" below if you are ready to delete.
-                <input type="hidden" name="hiddenValue" id="hiddenValue" value="" />
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-danger" href="#" id="deleteMemoAttachmentButton">Delete</a>
+    <form action="{% url 'memo_attachment_delete' memo.pk %}" method="POST" id="deleteMemoAttachment">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Select "Delete" below if you are ready to delete.
+                    <input type="hidden" name="hiddenValue" id="hiddenValue" value="" />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger" id="deleteMemoAttachmentButton">Delete</a>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <script type="text/javascript">
     function sendDelete(param) {
@@ -247,20 +257,39 @@
         deleteInput.value = param;
     }
 </script>
-<script type="text/javascript">
-    $(function() {
-        $("#deleteMemoAttachmentButton").click(function() {
-            var memoattachment_id = $(".modal-body #hiddenValue").val();
-            window.location.href = "../../deleteattachment/" + memoattachment_id + "/";
-        })
-    });
+<script>
+$("#deleteMemoAttachment").submit(function(e){
+    e.preventDefault(); //prevent default action 
+	proceed = true;
+		
+	var post_url = $(this).attr("action"); //get form action url
+	var request_method = $(this).attr("method"); //get form GET/POST method
+	var form_data = new FormData(this); //Creates new FormData object
+	
+	//if everything's ok, continue with Ajax form submit
+	if(proceed){ 
+		$.ajax({ //ajax form submit
+			url : post_url,
+			type: request_method,
+			data : form_data,
+			dataType : "json",
+			contentType: false,
+			cache: false,
+			processData:false
+		}).done(function(res){ 
+				var table = $('#myattachments').DataTable(); 
+                table.ajax.reload();
+                $('#deleteMemoAttachmentModal').modal('hide');
+		});
+	}
+});
 </script>
 
 <!-- Add Modal-->
 <div class="modal fade" id="addMemoAttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{% url 'memo_attachment_create' memo.pk %}" method="POST" enctype="multipart/form-data">
+            <form action="{% url 'memo_attachment_create' memo.pk %}" method="POST" id="addMemoAttachment" enctype="multipart/form-data">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">New Attachment</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
@@ -292,10 +321,37 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-success" id="addMemoAttachmentButton">Submit</a>
-                        <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<script>
+$("#addMemoAttachment").submit(function(e){
+    e.preventDefault(); //prevent default action 
+	proceed = true;
+		
+	var post_url = $(this).attr("action"); //get form action url
+	var request_method = $(this).attr("method"); //get form GET/POST method
+	var form_data = new FormData(this); //Creates new FormData object
+	
+	//if everything's ok, continue with Ajax form submit
+	if(proceed){ 
+		$.ajax({ //ajax form submit
+			url : post_url,
+			type: request_method,
+			data : form_data,
+			dataType : "json",
+			contentType: false,
+			cache: false,
+			processData:false
+		}).done(function(res){ 
+				var table = $('#myattachments').DataTable(); 
+                table.ajax.reload();
+                $('#addMemoAttachmentModal').modal('hide');
+		});
+	}
+});
+</script>
 {% endblock content %}

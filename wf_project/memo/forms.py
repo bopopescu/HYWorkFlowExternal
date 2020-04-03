@@ -13,10 +13,11 @@ class DetailMemoForm(forms.ModelForm):
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all(), empty_label="Not Assigned", initial=Memo.project, disabled=True)
     template = forms.ModelChoiceField(queryset=MemoTemplateMaintenance.objects.all(), empty_label="Not Assigned", initial=Memo.template, disabled=True)
     submit_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput, disabled=True)
+    subject = forms.CharField(widget=forms.Textarea)
     
     class Meta:
         model = Memo
-        fields = ['revision', 'details', 'status', 'document_number', 'subject']
+        fields = ['revision', 'details', 'status', 'document_number']
 
 class NewMemoForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.all(), empty_label="Not Assigned")
@@ -25,10 +26,11 @@ class NewMemoForm(forms.ModelForm):
     template = forms.ModelChoiceField(queryset=MemoTemplateMaintenance.objects.all(), empty_label="Not Assigned")
     submit_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput, disabled=True)
     revision = forms.IntegerField(initial=1)
+    subject = forms.CharField(widget=forms.Textarea)
 
     class Meta:
         model = Memo
-        fields = ['details', 'status', 'document_number', 'subject']
+        fields = ['details', 'status', 'document_number']
 
 class UpdateMemoForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.all(), empty_label="Not Assigned", initial=Memo.company)
@@ -36,10 +38,11 @@ class UpdateMemoForm(forms.ModelForm):
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all(), empty_label="Not Assigned", initial=Memo.project)
     template = forms.ModelChoiceField(queryset=MemoTemplateMaintenance.objects.all(), empty_label="Not Assigned", initial=Memo.template)
     submit_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput, disabled=True)
+    subject = forms.CharField(widget=forms.Textarea)
 
     class Meta:
         model = Memo
-        fields = ['revision', 'details', 'status', 'document_number', 'subject']
+        fields = ['revision', 'details', 'status', 'document_number']
 
 class NewMemoAttachmentForm(forms.ModelForm):
     attachment_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput)

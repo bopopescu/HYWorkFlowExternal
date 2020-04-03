@@ -10,6 +10,7 @@ from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
 from django.contrib.auth.models import User
 from approval.models import ApprovalItem
+from django.http import JsonResponse
 
 class MemoAttachmentViewSet(viewsets.ModelViewSet):
     queryset = MemoAttachment.objects.all()
@@ -40,12 +41,12 @@ class TeamMemoViewSet(viewsets.ModelViewSet):
         return Memo.objects.filter(submit_by__in=users)
 
 @login_required
-def memo_create(request):    
+def memo_init(request):    
     memo = Memo.objects.create(submit_by=request.user)
-    return redirect(memo_create_edit, memo.pk)
+    return redirect(memo_create, memo.pk)
 
 @login_required
-def memo_create_edit(request, pk):    
+def memo_create(request, pk):    
     memo = get_object_or_404(Memo, pk=pk)
     if request.method == 'POST':
         form = NewMemoForm(request.POST, instance=memo)
@@ -66,6 +67,7 @@ def memo_create_edit(request, pk):
             memo.project = project
             memo.template = template
             memo.submit_by = request.user
+            memo.subject = form.cleaned_data['subject']
             memo.save()
 
             transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name="BLANK", document_type=memo_type)
@@ -84,35 +86,34 @@ def memo_create_edit(request, pk):
             memo.approval = approval_item
             memo.save()
 
-            return redirect(memo_list)
+            return redirect(memo_update, pk=memo.pk)
     else:
         form = NewMemoForm(instance=memo)
     form_attachment = NewMemoAttachmentForm()
     return render(request, 'memo/create.html', {'memo': memo, 'form': form, 'form_attachment': form_attachment})
 
 @login_required
-def memo_attachment_create_fromcreate(request, pk):    
+def memo_attachment_create(request, pk):    
     form = NewMemoAttachmentForm(request.POST, request.FILES)
     if form.is_valid():
         memo_attachment = form.save(commit=False)
         memo = get_object_or_404(Memo, pk=pk)
         memo_attachment.memo = memo
-        memo_attachment.save()
-    
-    return redirect(memo_create_edit, pk=pk) 
+        memo_attachment.save()    
+    return JsonResponse({'message': 'Success'})
 
 @login_required
-def memo_attachment_delete_fromcreate(request, pk):
-    memoattachment =  get_object_or_404(MemoAttachment, pk=pk)
-    memo = get_object_or_404(Memo, pk=memoattachment.memo.pk)
-    memoattachment.delete()
-    return redirect(memo_create_edit, pk=memo.pk)
+def memo_attachment_delete(request, pk):    
+    memo_attachment =  get_object_or_404(MemoAttachment, pk=request.POST['hiddenValue'])
+    memo = get_object_or_404(Memo, pk=pk)
+    memo_attachment.delete()   
+    return JsonResponse({'message': 'Success'})
 
 @login_required
-def memo_delete(request, pk):
-    memo =  get_object_or_404(Memo, pk=pk)
-    memo.delete()
-    return redirect(memo_list)
+def memo_delete(request):
+    memo =  get_object_or_404(Memo, pk=request.POST['hiddenValue'])
+    memo.delete()    
+    return JsonResponse({'message': 'Success'})
 
 @login_required
 def memo_detail(request, pk):
@@ -132,37 +133,13 @@ def memo_list(request):
 def memo_update(request, pk): 
     memo = get_object_or_404(Memo, pk=pk)
     if request.method == 'POST':
-        form = UpdateMemoForm(request.POST, instance=memo)
-        if form.is_valid():
-            memo = form.save()
-            memo.revision = memo.revision + 1
-            memo.submit_by = request.user
-            memo.save()
-            return redirect(memo_detail, pk=memo.pk)
-        else:
-            print(form.errors)
+        form = UpdateMemoForm(request.POST, instance=memo) 
+        memo.revision = memo.revision + 1
+        memo.submit_by = request.user
+        memo.subject = request.POST['subject']
+        memo.save()
+        return redirect(memo_detail, pk=memo.pk)            
     else:
-        #project = get_object_or_404(ProjectMaintenance, pk=2)
-        #memo.project = project
-        #memo.save()
         form = UpdateMemoForm(instance=memo)
     form_attachment = NewMemoAttachmentForm()
     return render(request, 'memo/update.html', {'memo': memo, 'form': form, 'form_attachment': form_attachment})
-    
-@login_required
-def memo_attachment_create(request, pk):    
-    form = NewMemoAttachmentForm(request.POST, request.FILES)
-    if form.is_valid():
-        memo_attachment = form.save(commit=False)
-        memo = get_object_or_404(Memo, pk=pk)
-        memo_attachment.memo = memo
-        memo_attachment.save()
-    
-    return redirect(memo_update, pk=pk) 
-
-@login_required
-def memo_attachment_delete(request, pk):
-    memoattachment =  get_object_or_404(MemoAttachment, pk=pk)
-    memo = get_object_or_404(Memo, pk=memoattachment.memo.pk)
-    memoattachment.delete()
-    return redirect(memo_update, pk=memo.pk)

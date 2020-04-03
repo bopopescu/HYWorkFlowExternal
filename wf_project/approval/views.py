@@ -65,6 +65,15 @@ def approval_update(request, pk):
         status = StatusMaintenance.objects.filter(document_type=document_type,status_code='300')[0]
         payment.status = status
         payment.save()
+        trans_name = payment.transaction_type.transaction_type_name
+        if trans_name == "Other":
+            return redirect('pylist')
+        elif trans_name == "Petty Cash":
+            return redirect('pylist_pettycash')
+        elif trans_name == "CashBack n Rebates":
+            return redirect('pylist_cashback')
+        elif trans_name == "Sales Commission":
+            return redirect('pylist_salescommission')
         return redirect('pylist')
     if document_type.document_type_name == "Staff Recruitment Request":
         staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)

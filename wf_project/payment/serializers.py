@@ -29,8 +29,11 @@ class PYSerializer(serializers.ModelSerializer):
         else:
             return "Draft"
 
-    def get_approval_id(self, obj):     
-        return obj.approval.id
+    def get_approval_id(self, obj):  
+        if obj.approval is None:
+            return ""
+        else:       
+            return obj.approval.id
 
 class PYItemSerializer(serializers.ModelSerializer):
     tax = serializers.StringRelatedField(many=False)

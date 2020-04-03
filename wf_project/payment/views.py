@@ -239,7 +239,7 @@ def py_create_edit(request, pk):
             py.approval = approval_item
             py.save()
 
-            return redirect(pylist)
+            return redirect(py_update, py.pk)
         else:
             print(form.errors)
     else:

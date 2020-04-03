@@ -63,7 +63,7 @@
                                     label = '<p class="text-danger"><strong>' + row.approval_status + '</strong></p>';
                                 }
                                 if(row.approval_status == 'In Progress' || row.approval_status == 'Approved' || row.approval_status == 'Rejected'){
-                                    return '<a href="../../../approval/history/' + row.approval + '">' + label + '</a>';
+                                    return '<a href="../../../approval/history/' + row.approval_id + '">' + label + '</a>';
                                 }else{
                                     return label;
                                 }

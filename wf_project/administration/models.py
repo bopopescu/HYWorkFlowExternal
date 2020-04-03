@@ -327,7 +327,7 @@ class StatusMaintenance(models.Model):
     modified_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "%s - %s" % (self.status_code, self.status_name)
+        return self.status_name
 
 class StaffemploymentTypeMaintenance(models.Model):
     employment_type_name = models.CharField(max_length=250)

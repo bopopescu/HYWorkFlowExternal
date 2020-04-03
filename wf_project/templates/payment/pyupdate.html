@@ -5,7 +5,7 @@
 {% load widget_tweaks %}
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Payment Request(Update)</h1>
+    <h1 class="h3 mb-0 text-gray-800">Payment Request(Update) - {{py.transaction_type}}</h1>
 <form method="post" novalidate>
   <style>
     table#dataTable tbody tr td a#additem {
@@ -149,7 +149,7 @@
                 </div>
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
               <div class="form-row">
                 <div class="col col-md-3">
                   <label class="control-label">
@@ -228,7 +228,7 @@
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  {% if py.status == "D" %}
+                  <!-- {% if py.status == "D" %}
                   <strong>Draft</strong>
                   {% elif py.status == "P" %}
                   <strong>Pending Approval</strong>
@@ -236,7 +236,8 @@
                   <strong>Approved</strong>
                   {% else %}
                   <strong>Rejected</strong>
-              {% endif %}
+                  {% endif %} -->
+                  <strong>{{py.status}}</strong>
                 </div>
               </div>
             </div>

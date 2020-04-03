@@ -20,16 +20,80 @@ class MyPYViewSet(viewsets.ModelViewSet):
     serializer_class = PYSerializer
     
     def get_queryset(self):
-        return PaymentRequest.objects.filter(submit_by=self.request.user.id)
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Other", document_type=document_type)
+        return PaymentRequest.objects.filter(submit_by=self.request.user.id,transaction_type=transaction_type)
 
 class TeamPYViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequest.objects.all().order_by('-id')    
     serializer_class = PYSerializer
 
     def get_queryset(self):
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Other", document_type=document_type)
         groups = self.request.user.groups.values_list('id', flat=True)
         users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
-        return PaymentRequest.objects.filter(submit_by__in=users)
+        return PaymentRequest.objects.filter(submit_by__in=users,transaction_type=transaction_type)
+
+class MyPYViewSetPettyCash(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')
+    serializer_class = PYSerializer
+
+    def get_queryset(self):
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Petty Cash", document_type=document_type)
+        return PaymentRequest.objects.filter(submit_by=self.request.user.id,transaction_type=transaction_type)
+
+class TeamPYViewSetPettyCash(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')    
+    serializer_class = PYSerializer
+
+    def get_queryset(self):
+        groups = self.request.user.groups.values_list('id', flat=True)
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Petty Cash", document_type=document_type)
+        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        return PaymentRequest.objects.filter(submit_by__in=users,transaction_type=transaction_type)
+
+class MyPYViewSetCashBack(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')
+    serializer_class = PYSerializer
+    
+    def get_queryset(self):
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "CashBack n Rebates", document_type=document_type)
+        return PaymentRequest.objects.filter(submit_by=self.request.user.id,transaction_type=transaction_type)
+
+class TeamPYViewSetCashBack(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')    
+    serializer_class = PYSerializer
+
+    def get_queryset(self):
+        groups = self.request.user.groups.values_list('id', flat=True)
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "CashBack n Rebates", document_type=document_type)
+        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        return PaymentRequest.objects.filter(submit_by__in=users,transaction_type=transaction_type)
+
+class MyPYViewSetSalesCommissions(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')
+    serializer_class = PYSerializer
+    
+    def get_queryset(self):
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Sales Commission", document_type=document_type)
+        return PaymentRequest.objects.filter(submit_by=self.request.user.id,transaction_type=transaction_type)
+
+class TeamPYViewSetSalesCommissions(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')    
+    serializer_class = PYSerializer
+
+    def get_queryset(self):
+        groups = self.request.user.groups.values_list('id', flat=True)
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Sales Commission", document_type=document_type)
+        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        return PaymentRequest.objects.filter(submit_by__in=users,transaction_type=transaction_type)
 
 class PYItemViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequestDetail.objects.all()
@@ -56,7 +120,7 @@ class PYAttachmentViewSet(viewsets.ModelViewSet):
         return PaymentAttachment.objects.filter(py=py)
 
 @login_required
-def py_create(request):    
+def py_create(request,TransType):    
     if request.method == 'POST':
         form = NewPaymentForm(request.POST)
         if form.is_valid():
@@ -97,9 +161,35 @@ def py_create(request):
 
             return redirect(pylist)
         else:
-            py = PaymentRequest.objects.create(submit_by=request.user)
+            if TransType == "Other":
+                document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+                transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Other", document_type=document_type)
+            elif TransType == "Petty Cash":
+                document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+                transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Petty Cash", document_type=document_type)
+            elif TransType == "Cash Back":
+                document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+                transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "CashBack n Rebates", document_type=document_type)
+            elif TransType == "Sales Commissions":
+                document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+                transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Sales Commission", document_type=document_type)
+
+            py = PaymentRequest.objects.create(submit_by=request.user,transaction_type=transaction_type)
     else:
-        py = PaymentRequest.objects.create(submit_by=request.user)
+        if TransType == "Other":
+            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Other", document_type=document_type)
+        elif TransType == "Petty Cash":
+            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Petty Cash", document_type=document_type)
+        elif TransType == "Cash Back":
+            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "CashBack n Rebates", document_type=document_type)
+        elif TransType == "Sales Commissions":
+            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Sales Commission", document_type=document_type)
+        print(TransType)
+        py = PaymentRequest.objects.create(submit_by=request.user,transaction_type=transaction_type)
     return redirect(py_create_edit, py.pk)
 
 @login_required
@@ -265,6 +355,18 @@ def py_detail(request, pk):
 @login_required
 def pylist(request):
     return render(request, 'pylist.html')
+
+@login_required
+def pylist_pettycash(request):
+    return render(request, 'pylist_pettycash.html')
+
+@login_required
+def pylist_cashback(request):
+    return render(request, 'pylist_cashback.html')
+
+@login_required
+def pylist_salescommission(request):
+    return render(request, 'pylist_salecommisions.html')
 
 @login_required
 def py_update(request, pk): 

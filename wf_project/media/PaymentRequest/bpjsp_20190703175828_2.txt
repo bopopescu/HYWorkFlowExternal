@@ -1,0 +1,1269 @@
+<script src="ckeditor/ckeditor.js"></script>
+
+<%request.setAttribute("Title", "Business Partner Master Data "); %>
+<%@ include file="../../header.jsp"%>
+<script type="text/javascript">
+var reqbpName;
+function starting(){
+	 var checking = "${map.status}";
+	 var checkingtype = "${map.custtype}";
+	 var checkingstatus = "${map.bpstatus}";
+	 var checkingvaluation = "${map.valuation}";
+	 var checkinglockedstatus = "${map.lockedstatus}";
+	 var checkingbilllength = "${map.billlength}";
+	 var checkingshiplength = "${map.shiplength}";
+	 var checkingregtype = "${map.regtype}";
+	 var table = document.getElementById("approvaldetails");
+	 if(checking === "find")
+	 {
+		 
+		 document.getElementById("submit").innerHTML = "Find";
+	 	 document.getElementById("submit").value = "Find";
+	 	var form = document.getElementById('myform');
+	 	var elements = form.elements;
+	 	for (var i = 0, len = elements.length; i < len; ++i) {
+	 	    elements[i].readOnly = true;
+	 	}
+	 	
+	 	 document.getElementById("bpcode").readOnly = false;
+	 	document.getElementById("grade").disabled = true;
+		 document.getElementById("gender").disabled = true;
+		 document.getElementById("region").disabled = true;
+		 document.getElementById("lockedstatus").disabled =true;
+		 document.getElementById("valuation").disabled = true;
+		 document.getElementById("paymentterm").disabled = true;
+		 document.getElementById("regtype").disabled = true;
+		 document.getElementById("active").disabled= true;
+		 document.getElementById("inactive").disabled= true;
+		 document.getElementById("bpcode").value = "${map.bpcode}";
+		 document.getElementById("company").value = "${map.company}";
+		 document.getElementById("currency").value = "${map.currency}";
+		 document.getElementById("bpname").value = "${map.name}";
+		 document.getElementById("taxidno").value = "${map.taxidno1}";
+		 document.getElementById("taxidno2").value = "${map.taxidno2}";
+		 document.getElementById("businessidno").value = "${map.BRN}";
+		 document.getElementById("group").value = "${map.group}";
+		 document.getElementById("grade").value = "${map.grade}";
+		 document.getElementById("tel1").value = "${map.tel1}";
+		 document.getElementById("tel2").value = "${map.tel2}";
+		 document.getElementById("mobile").value = "${map.mobile}";
+		 document.getElementById("fax").value = "${map.fax}";
+		 document.getElementById("contactperson").value = "${map.contactname}";
+		 document.getElementById("email").value = "${map.email}";
+		 document.getElementById("birthdate").value = "${map.dob}";
+		 document.getElementById("position").value = "${map.position}";
+		 document.getElementById("gender").value = "${map.gender}";
+		 document.getElementById("icno").value = "${map.icno}";
+		 document.getElementById("region").value = "${map.region}";
+		 document.getElementById("lockedfrom").value = "${map.lockedfrom}";
+		 document.getElementById("lockedto").value = "${map.lockedto}";
+		 document.getElementById("paymentterm").value = "${map.paymentterm}";
+		 document.getElementById("creditlimit").value = "${map.creditlimit}";
+		 document.getElementById("vendor").value = "${map.vendorcategory}";
+		 document.getElementById("credno").value = "${map.creditno}";
+		 document.getElementById("credittypeid").value = "${map.credittypeid}";
+		 document.getElementById("credtype").value = "${map.credtype}";
+		 document.getElementById("bankaccno").value = "${map.accno}";
+		 document.getElementById("bankname").value = "${map.bankname}";
+		 document.getElementById("contactcode").value = "${map.contactcode}";
+		 var dfltbill = "${map.dfltbill}";
+		 var dfltship = "${map.dfltship}";
+		 
+		 var radioButtons = document.getElementsByName("bill");
+		 for(var i = 0; i < radioButtons.length; i++){
+			 if(radioButtons[i].value === dfltbill){
+				 radioButtons[i].checked = true;
+			 }
+		 }
+		 
+		 var radioButtons2 = document.getElementsByName("ship");
+		 for(var a = 0; a < radioButtons2.length; a++){
+			 if(radioButtons2[a].value === dfltship){
+				 radioButtons2[a].checked = true;
+			 }
+		 }
+		 
+		 if(checkingstatus == 1){
+			 document.getElementById("active").checked=true;
+		 }
+		 else if(checkingstatus == 0){
+			 document.getElementById("inactive").checked=true; 
+		 }
+		 
+		 if(checkingvaluation == 1){
+			 document.getElementById("valuation").value = "1";
+		 }
+		 else if(checkingvaluation == 0){
+			 document.getElementById("valuation").value = "0";
+		 }
+		 
+		 if(checkinglockedstatus == 1){
+			 document.getElementById("lockedstatus").value = "1";
+		 }
+		 else if(checkinglockedstatus == 0){
+			 document.getElementById("lockedstatus").value = "0";
+		 }
+		 
+		 if(checkingtype === "supplier"){
+			 document.getElementById("supplier").checked=true;
+		 }
+		 else if(checkingtype === "customer"){
+			 document.getElementById("customer").checked=true;
+		 }
+		 
+		 if(checkingregtype === "Company"){
+			 document.getElementById("regtype").value = "Company";
+		 }
+		 else if(checkingregtype === "No a company"){
+			 document.getElementById("regtype").value = "No a company";
+		 }
+		 
+		 document.getElementById("grade").disabled = true;
+		 document.getElementById("gender").disabled = true;
+		 document.getElementById("region").disabled = true;
+		 document.getElementById("lockedstatus").disabled =true;
+		 document.getElementById("valuation").disabled = true;
+		 document.getElementById("paymentterm").disabled = true;
+		 
+		 alert("success to retrieve data");	
+		 
+	 }
+	 else if(checking === "submit"){
+		 alert("success to insert record ,your bp code is "+"${map.bpcode}");
+	 }
+	 else if(checking === "update"){
+		 alert("success to update record");
+		 document.getElementById("submit").innerHTML = "Submit";
+		 document.getElementById("submit").value = "Submit";
+	 }
+	 else if(checking === "submitfailed"){
+		 alert("failed to insert record, bpcode, contact code or address code duplicate in database");
+	 }
+	 else if(checking === "findfailed"){
+		 alert("failed to find record");
+	 }
+	 else if(checking === "updatefailed"){
+		 alert("failed to uopdate record");
+	 }
+	 else if(checking === "failed"){
+		 alert("Operation failed");
+	 }
+	 else
+	 {
+	 	 
+	 }
+}
+
+function update() {
+	  	 document.getElementById("submit").innerHTML = "Update";
+	  	 document.getElementById("submit").value = "Update";
+	  	var form = document.getElementById('myform');
+	 	var elements = form.elements;
+	 	for (var i = 0, len = elements.length; i < len; ++i) {
+	 	    elements[i].readOnly = false;
+	 	    elements[i].disabled = false;
+	 	}
+	 	 document.getElementById("bpcode").readOnly = true;
+	 	document.getElementById("contactcode").readOnly = true;
+	 	
+	 	var table = document.getElementById("billaddressdetails");
+	 	var tr = table.getElementsByTagName("tr");
+	 	
+	 	for(var i = 1; i< tr.length-1 ;i++){
+	 		table.rows[i].cells[2].getElementsByTagName("input")[0].readOnly=true;
+	 	}
+	 	
+	 	var table2 = document.getElementById("shipaddressdetails");
+	 	var tr2 = table2.getElementsByTagName("tr");
+	 	
+	 	for(var i = 1; i< tr2.length-1 ;i++){
+	 		table2.rows[i].cells[2].getElementsByTagName("input")[0].readOnly=true;
+	 	}
+		 
+	  alert("you are in update mode now ,please enter your updated detail");
+}
+
+function find() {
+	 	document.getElementById("submit").innerHTML = "Find";
+	 	document.getElementById("submit").value = "Find";
+		document.getElementById("submit").removeAttribute("onclick");
+	 	var form = document.getElementById('myform');
+	 	var elements = form.elements;
+	 	for (var i = 0, len = elements.length; i < len; ++i) {
+	 	    elements[i].readOnly = true;
+	 	}
+	 	 document.getElementById("bpcode").readOnly = false;
+	 	document.getElementById("grade").disabled = true;
+		 document.getElementById("gender").disabled = true;
+		 document.getElementById("region").disabled = true;
+		 document.getElementById("lockedstatus").disabled =true;
+		 document.getElementById("valuation").disabled = true;
+		 document.getElementById("paymentterm").disabled = true;
+		 document.getElementById("regtype").disabled = true;
+	 	 
+
+	  alert("you are in find mode now ,please enter your BPCode to retrieve your detail");
+}
+
+function add(){
+ 	alert("add mode, please insert your record");
+ 	location.href = "BusinessPartnerMasterData.html";
+}
+
+function insertbillrow(tblElement) {
+
+	var rowIndex = tblElement.parentNode.parentNode.rowIndex
+	var cellIndex = tblElement.parentNode.cellIndex
+
+	var table = document.getElementById("billaddressdetails");
+	var rowCount = table.rows.length;
+
+
+	try {
+
+		var table = document.getElementById('billaddressdetails');
+		var value = table.rows[rowIndex].cells[1]
+				.getElementsByTagName('input')[0].value;
+		;
+		//var value = table.rows[rowIndex].cells[2].getElementsByTagName('select')[0].value;
+		//add row
+		if (rowIndex + 1 == rowCount) {
+			var row = table.insertRow(rowCount);
+			var colCount = table.rows[1].cells.length;
+			for (var i = 0; i < colCount; i++) {
+
+				var newcell = row.insertCell(i);
+
+				if (i == 0) {
+					table.rows[rowCount].cells[0].innerHTML = rowCount;
+				} else {
+					newcell.innerHTML = table.rows[1].cells[i].innerHTML;
+				}
+
+				//alert(newcell.childNodes);
+				switch (newcell.childNodes[0].type) {
+				case "text":
+					newcell.childNodes[0].value = "";
+					break;
+				case "checkbox":
+					newcell.childNodes[0].checked = false;
+					break;
+				case "select-one":
+					newcell.childNodes[0].selectedIndex = 0;
+					break;
+				}
+			}
+		}
+
+	} catch (e) {
+		alert("Exceptation Occured!" + e);
+	}
+}
+
+function insertshiprow(tblElement) {
+
+	var rowIndex = tblElement.parentNode.parentNode.rowIndex
+	var cellIndex = tblElement.parentNode.cellIndex
+
+	var table = document.getElementById("shipaddressdetails");
+	var rowCount = table.rows.length;
+
+
+	try {
+
+		var table = document.getElementById('shipaddressdetails');
+		var value = table.rows[rowIndex].cells[1]
+				.getElementsByTagName('input')[0].value;
+		;
+		//var value = table.rows[rowIndex].cells[2].getElementsByTagName('select')[0].value;
+		//add row
+		if (rowIndex + 1 == rowCount) {
+			var row = table.insertRow(rowCount);
+			var colCount = table.rows[1].cells.length;
+			for (var i = 0; i < colCount; i++) {
+
+				var newcell = row.insertCell(i);
+
+				if (i == 0) {
+					table.rows[rowCount].cells[0].innerHTML = rowCount;
+				} else {
+					newcell.innerHTML = table.rows[1].cells[i].innerHTML;
+				}
+
+				//alert(newcell.childNodes);
+				switch (newcell.childNodes[0].type) {
+				case "text":
+					newcell.childNodes[0].value = "";
+					break;
+				case "checkbox":
+					newcell.childNodes[0].checked = false;
+					break;
+				case "select-one":
+					newcell.childNodes[0].selectedIndex = 0;
+					break;
+				}
+			}
+		}
+
+	} catch (e) {
+		alert("Exceptation Occured!" + e);
+	}
+}
+
+
+function disablelockedtime(value) {
+	  if(value == 1){
+		  document.getElementById("lockedfrom").readOnly = false;
+		  document.getElementById("lockedto").readOnly = false;
+	  }
+	  else{
+		  document.getElementById("lockedfrom").readOnly = true;
+		  document.getElementById("lockedto").readOnly = true;
+	  }
+	}
+	
+function validationForm(event){
+	document.getElementById("bpcode").focus();
+
+	
+	var fromdate = document.getElementById("lockedfrom").value;
+	var todate = document.getElementById("lockedto").value;
+	var company = document.getElementById("company").value;
+	var error = 0;
+	if (company === null || company === "") {
+		alert("Company field blank");
+		error++;
+	}
+	
+	var name = document.getElementById("bpname").value;
+	
+	if (name === null || name === "") {
+		alert("BP name field blank");
+		error++;
+	}
+	var currency = document.getElementById("currency").value;
+	
+	if (currency === null || currency === "") {
+		alert("Currency field blank");
+		error++;
+	}
+	
+	var businessidno = document.getElementById("businessidno").value;
+	if (businessidno === null || businessidno === "") {
+		alert("Business Reg No field blank");
+		error++;
+	}
+	
+	var group = document.getElementById("group").value;
+	if (group === null || group === "") {
+		alert("Group field blank");
+		error++;
+	}
+	
+	
+	var category = document.getElementById("vendor").value;
+	if (category === null || category === "") {
+		alert("Category field blank");
+		error++;
+	}
+	
+	var contactcode = document.getElementById("contactcode").value;
+	if (contactcode === null || contactcode === "") {
+		alert("Contact Code field blank");
+		error++;
+	}
+	
+	
+	var tel1 = document.getElementById("tel1").value;
+	if (tel1 === null || tel1 === "") {
+		alert("Telephone 1 field blank");
+		error++;
+	}
+	
+	var contactperson = document.getElementById("contactperson").value;
+	if (contactperson === null || contactperson === "") {
+		alert("Contact Person field blank");
+		error++;
+	}
+	
+	var radiobutton = document.getElementsByName("bill");
+	var a = 0;
+	for(var i = 0; i < radiobutton.length; i++){
+		if(radiobutton[i].checked == true){
+			a++;
+		}
+	}
+	
+	if(a == 0){
+		alert("Please choose one default bill address");
+		error++;
+	}
+	
+	var radiobutton2 = document.getElementsByName("ship");
+	var b = 0;
+	for(var i = 0; i < radiobutton2.length; i++){
+		if(radiobutton2[i].checked == true){
+			b++;
+		}
+	}
+	
+	if(b == 0){
+		alert("Please choose one default ship address");
+		error++;
+	}
+	
+	var table = document.getElementById('billaddressdetails');
+	var rowCount = table.rows.length;
+	var table2 = document.getElementById('shipaddressdetails');
+	var rowCount2 = table2.rows.length;
+	
+	
+	if (fromdate < todate) {
+			alert("Post date earlier than Current date!");
+			error++;
+	}  
+
+	var chkAddrCde = 0;
+	for (var i = 1; i < rowCount; i++) {
+		var AddrCde = table.rows[i].cells[2].getElementsByTagName('input')[0].value;
+		var AddrNme = table.rows[i].cells[3].getElementsByTagName('input')[0].value;
+		var Addrline1 = table.rows[i].cells[4].getElementsByTagName('input')[0].value;
+		var Addrline2 = table.rows[i].cells[5].getElementsByTagName('input')[0].value;
+			if (AddrCde === null || AddrCde === "") {
+				chkAddrCde++;
+			} else if (AddrNme === null || AddrNme === "") {
+				alert("Bill Address Name field has blank on line " + i + "!");
+				error++;
+			} else if (Addrline1 === null || Addrline1 === "") {
+				alert("Bill Addresss line1 field has blank on line " + i + "!");
+				error++;
+			} else if (Addrline2 === null || Addrline2 === "") {
+				alert("Bill Address line2 field has blank on line " + i + "!");
+				error++;
+			}
+		
+	}
+	if(chkAddrCde === rowCount-1){
+		alert("please insert at least one bill address record");
+		error++;
+	}
+		
+		var chkAddrCde2 = 0;
+		for (var i = 1; i < rowCount2; i++) {
+			var shipAddrCde = table2.rows[i].cells[2].getElementsByTagName('input')[0].value;
+			var shipAddrNme = table2.rows[i].cells[3].getElementsByTagName('input')[0].value;
+			var shipAddrline1 = table2.rows[i].cells[4].getElementsByTagName('input')[0].value;
+			var shipAddrline2 = table2.rows[i].cells[5].getElementsByTagName('input')[0].value;
+				if (shipAddrCde === null || shipAddrCde === "") {
+					chkAddrCde2++;
+				} else if (shipAddrNme === null || shipAddrNme === "") {
+					alert("Ship Address Name field has blank on line " + i + "!");
+					error++;
+				} else if (shipAddrline1 === null || shipAddrline1 === "") {
+					alert("Ship Address line1 field has blank on line " + i + "!");
+					error++;
+				} else if (shipAddrline2 === null || shipAddrline2 === "") {
+					alert("Ship Address line2 field has blank on line " + i + "!");
+					error++;
+				}
+	}
+		if(chkAddrCde2 === rowCount2 - 1){
+			alert("please insert at least one ship address record");
+			error++;
+		}
+		
+
+	if (error === 0) {
+
+	} else {
+		alert("failed to submit!");
+		event.preventDefault();
+	}
+
+}
+
+
+window.onload = starting;
+</script>
+
+
+<form method="POST" id="myform">
+	<h5><%=request.getAttribute("Title") %></h5>
+	<hr/>
+	<input type=hidden name="shiprow" id="shiprow" value ="">
+	<input type=hidden name="billrow" id="billrow"  value ="">
+		
+	<div class="form-row">
+		<label for="BusinessPartnerType" class="col-sm-2 col-form-label">Business Partner Type</label>
+		<div class="form-group col-md-3">
+			<div class="form-check-inline">
+				<label class="form-check-label" for="radio1">
+					<input type="radio" class="form-check-input" id="customer" name="optradio" value="customer">Customer
+		   		</label>
+		    </div>
+			<div class="form-check-inline">
+				<label class="form-check-label" for="radio1">
+					<input type="radio" class="form-check-input" id="supplier" name="optradio" value="supplier" checked>Supplier
+		   		</label>
+		    </div>
+		</div>
+	</div>
+	
+	<hr/>
+		<div class="form-row" id="append">
+			<label for="bpcode" class="col-sm-1 col-form-label">BP Code</label> 
+			<div class="form-group col-md-3">
+			<input type="text" class="form-control form-control-sm" id="bpcode" name="bpcode" autocomplete="off">
+	
+			</div>
+			
+			
+		</div>
+
+		<div class="form-row">
+		<label for="company" class="col-sm-1 col-form-label">Company</label> 
+		<div class="form-group col-md-3">
+			<input name="company" id="company" class="form-control form-control-sm" list=companylst autocomplete="off">
+			<datalist id=companylst>
+			<%   ResultSet company = GenDataProcess.getcompanyCde("company");
+				while(company.next()){%>
+					<option value="<%=company.getString("company") %>"><%=company.getString("company") %></option>
+			<%}%>
+			</datalist>
+			
+		</div>
+		
+		
+		<div class="form-group col-md-4"></div>
+		
+		<label for="currency" class="col-sm-1 col-form-label">Currency</label>
+		
+			<div class="form-group col-md-3">
+			<input id="currency" name="currency"
+				class="form-control form-control-sm" list=currencyLst
+				 autocomplete="off">
+			<datalist id=currencyLst>
+				<%   ResultSet currency = GenDataProcess.getCurrencyCodeLst("currency");
+				while(currency.next()){%>
+					<option value="<%=currency.getString("currency") %>"><%=currency.getString("currency") %></option>
+			<%}%>
+			</datalist>
+		</div>
+			
+		
+	
+	</div>
+	
+	<div class="form-row">
+		<label class="col-sm-1 col-form-label">Name</label>
+		<div class="form-group col-md-3">
+			<input type="text" class="form-control form-control-sm" id="bpname" name="bpname" autocomplete="off">
+		</div>
+		
+		<div class="form-group col-md-4"></div>
+		
+		
+		<label class="col-sm-1 col-form-label">Tax Reg.No</label>
+		<div class="form-group col-md-3">
+			<input type="text" class="form-control form-control-sm" id="taxidno" name="taxidno" autocomplete="off">
+		</div>
+	
+	</div>
+		
+	<div class="form-row">
+	<label class="col-sm-1 col-form-label">Business Reg.No</label>
+		<div class="form-group col-md-3">
+			<input type="text" class="form-control form-control-sm" id="businessidno" name="businessidno" autocomplete="off">
+		</div>	
+		
+		<div class="form-group col-md-4"></div>
+		
+		<label class="col-sm-1 col-form-label">Tax Reg.No2</label>
+		<div class="form-group col-md-3">
+			<input type="text" class="form-control form-control-sm" id="taxidno2" name="taxidno2" autocomplete="off">
+		</div>
+	</div>
+	
+	<div class="form-row">
+		<label for="group" class="col-sm-1 col-form-label">Group</label> 
+		<div class="form-group col-md-3">
+		<input name="group" id="group" class="form-control form-control-sm" list=grouplst autocomplete="off">
+				<datalist id=grouplst>
+				<%   ResultSet group = GenDataProcess.getGroupCde("group1");
+				while(group.next()){%>
+					<option value="<%=group.getString("group1") %>"><%=group.getString("group1") %></option>
+				<%}%>
+				</datalist>
+		</div>
+	
+		
+		<div class="form-group col-md-4"></div>
+		
+		<label for="vendor" class="col-sm-1 col-form-label">Category</label> 
+		<div class="form-group col-md-3">
+		<input name="vendor" id="vendor" class="form-control form-control-sm" list=vendorlst autocomplete="off">
+				<datalist id=vendorlst>
+				<%   ResultSet vendor = GenDataProcess.getVendorCde("vendor");
+				while(vendor.next()){%>
+					<option value="<%=vendor.getString("vendor") %>"><%=vendor.getString("vendor") %></option>
+				<%}%>
+				</datalist>
+		</div>
+		
+		
+	</div>
+	
+	<div class="form-row">
+	<label for="regtype" class="col-sm-1 col-form-label">Is company?</label>
+		<div class="form-group col-md-3">
+			<select id="regtype" name="regtype" class="form-control form-control-sm">
+				<option value="Company" selected>Yes</option>
+				<option value="No a company">No</option>
+			</select>
+		</div>
+	
+	</div>
+	
+	
+	<hr/>
+	
+		
+	<br>
+	
+	<ul class="nav nav-tabs" id="myTab" role="tablist">
+		<li class="nav-item pill-items"><a class="nav-link active" id="details-tab"
+			data-toggle="tab" href="#details" role="tab" aria-controls="details"
+			aria-selected="true">Details</a></li>
+			
+		<li class="nav-item pill-items"><a class="nav-link" id="payment-tab"
+			data-toggle="tab" href="#payment" role="tab"
+			aria-controls="payment" aria-selected="false">Payment</a></li>
+			
+		<li class="nav-item pill-address"><a class="nav-link" id="address-tab"
+			data-toggle="tab" href="#address" role="tab"
+			aria-controls="address" aria-selected="false">Address</a></li>
+			
+			<li class="nav-item pill-summary"><a class="nav-link" id="summary-tab"
+			data-toggle="tab" href="#summary" role="tab"
+			aria-controls="summary" aria-selected="false">Summary</a></li>
+			
+		<li class="nav-item pill-remark"><a class="nav-link"
+			id="remark-tab" data-toggle="tab" href="#remark" role="tab"
+			aria-controls="remark" aria-selected="false">Remark</a></li>
+			
+		<li class="nav-item pill-attach"><a class="nav-link" id="attach-tab"
+			data-toggle="tab" href="#attach" role="tab"
+			aria-controls="attach" aria-selected="false">Attachment</a></li>
+	</ul>
+	
+	<div class="tab-content" id="myTabContent"> 	 	
+		<div class="tab-pane fade show active" id="details" role="tabpanel" style="overflow-y: scroll; height:400px;"
+			aria-labelledby="contens-tab">
+			<br>
+			<div class="form-row">
+				<label for="ContactCode" class="col-sm-1 col-form-label">Contact Code: </label>
+				<div class="form-group col-md-3">
+					<input type="text" pattern="[0-9]*" title="must be a number" class="form-control form-control-sm" id="contactcode" name="contactcode" autocomplete="off">
+				</div>
+				
+				<div class="form-group col-md-8"></div>
+				
+			</div>
+			
+			<div class="form-row">
+				<label for="tel1" class="col-sm-1 col-form-label">Tel 1</label>
+				<div class="form-group col-md-3">
+					<input type="text" class="form-control form-control-sm" id="tel1" name="tel1" autocomplete="off">
+				</div>
+				
+				<div class="form-group col-md-4"></div>
+				
+				<label for="contactperson" class="col-sm-1 col-form-label">Contact person</label>
+				<div class="form-group col-md-3">
+					<input type="text" class="form-control form-control-sm" id="contactperson" name="contactperson" autocomplete="off">
+				</div>
+				
+				
+			</div>
+			
+			<div class="form-row">
+			<label for="tel2" class="col-sm-1 col-form-label">Tel 2</label>
+				<div class="form-group col-md-3">
+					<input type="text" class="form-control form-control-sm" id="tel2" name="tel2" autocomplete="off">
+				</div>
+				
+				<div class="form-group col-md-4"></div>
+				
+				<label for="icno" class="col-sm-1 col-form-label">IC No.</label>
+				<div class="form-group col-md-3">
+					<input type="text" class="form-control form-control-sm" id="icno" name="icno" autocomplete="off">
+				</div>
+			</div>
+			
+			<div class="form-row">
+			<label for="mobile" class="col-sm-1 col-form-label">Mobile</label>
+				<div class="form-group col-md-3">
+					<input type="text" class="form-control form-control-sm" id="mobile" name="mobile" autocomplete="off">
+				</div>
+				
+				<div class="form-group col-md-4"></div>
+				
+				<label for="birthdate" class="col-sm-1 col-form-label">Birthdate</label>
+				<div class="form-group col-md-3">
+					<input type="date" class="form-control form-control-sm" id="birthdate" name="birthdate" autocomplete="off">
+				</div>
+			</div>
+			
+			<div class="form-row">
+			<label for="fax" class="col-sm-1 col-form-label">Fax</label>
+				<div class="form-group col-md-3">
+					<input type="text" class="form-control form-control-sm" id="fax" name="fax" autocomplete="off">
+				</div>
+				
+				<div class="form-group col-md-4"></div>
+				
+				<label for="position" class="col-sm-1 col-form-label">Position</label>
+				<div class="form-group col-md-3">
+					<input type="text" class="form-control form-control-sm" id="position" name="position" autocomplete="off">
+				</div>
+				
+			</div>
+			
+			<div class="form-row">
+			<label for="email" class="col-sm-1 col-form-label">Email</label>
+				<div class="form-group col-md-3">
+					<input type="email" class="form-control form-control-sm" id="email" name="email" autocomplete="off">
+				</div>
+				
+				<div class="form-group col-md-4"></div>
+				
+				<label for="gender" class="col-sm-1 col-form-label">Gender</label>
+				<div class="form-group col-md-3">
+					<select id="gender" name="gender" class="form-control form-control-sm" >
+					<option value="m" selected>male</option>
+					<option value="f">female</option>
+				</select>
+				</div>
+			</div>
+			
+			<div class="form-row">
+				<label for="region" class="col-sm-1 col-form-label">Region</label>
+				<div class="form-group col-md-3">
+				<input name="region" id="region" class="form-control form-control-sm" list=regionlst autocomplete="off">
+				<datalist id=regionlst>
+				<%   ResultSet region = GenDataProcess.getRegionCde("region");
+				while(region.next()){%>
+					<option value="<%=region.getString("region") %>"><%=region.getString("region") %></option>
+				<%}%>
+				</datalist>
+				</div>
+			</div>	
+			
+		</div>
+		
+		<div class="tab-pane fade" id="payment" role="tabpanel" style="overflow-y: scroll; height:400px;"
+			aria-labelledby="payment-tab">
+			<br>
+			<div class="form-row">
+			<label for="paymentterm" class="col-sm-1 col-form-label">Payment Term</label>
+			<div class="form-group col-md-3">
+			<select id="paymentterm" name="paymentterm" class="form-control form-control-sm">
+				<option selected disabled>Payment term</option>
+				<% List<String> term = new ArrayList<String>();
+				term = obj_genDB.selectSingleToList("TermDsc", "OPYT");
+				for(int i =0;i<term.size();i++){%>
+					<option value="<%= term.get(i)%>"><%= term.get(i)%></option>
+				<%}%>
+			</select>
+			</div>
+			
+			<div class="form-group col-md-4"></div>
+			
+			<label for="creditlimit" class="col-sm-1 col-form-label">Credit Limit</label>
+			<div class="form-group col-md-3">
+				<input type="number" step="0.01" min="1" class="form-control form-control-sm" id="creditlimit" name="creditlimit" autocomplete="off">
+			</div>
+			</div>
+		
+			<div class="form-row">
+			<label class="col-sm-1 col-form-label">Credit No</label>
+				<div class="form-group col-md-3">
+					<input type="text" class="form-control form-control-sm" id="credno" name="credno" autocomplete="off">
+				</div>	
+				
+				<div class="form-group col-md-4"></div>
+				
+				<label class="col-sm-1 col-form-label">Credit type Id</label>
+				<div class="form-group col-md-3">
+					<input type="text" class="form-control form-control-sm" id="credittypeid" name="credittypeid" autocomplete="off">
+				</div>
+			</div>
+			
+			<div class="form-row">
+			<label class="col-sm-1 col-form-label">Credit Type</label>
+				<div class="form-group col-md-3">
+					<input type="text" class="form-control form-control-sm" id="credtype" name="credtype" autocomplete="off">
+				</div>	
+				
+				<div class="form-group col-md-4"></div>
+				
+				<label class="col-sm-1 col-form-label">Bank accNo</label>
+				<div class="form-group col-md-3">
+					<input type="text" class="form-control form-control-sm" id="bankaccno" name="bankaccno" autocomplete="off">
+				</div>
+			</div>
+			
+			<div class="form-row">
+			<label class="col-sm-1 col-form-label">Bank Name</label>
+				<div class="form-group col-md-3">
+					<input type="text" class="form-control form-control-sm" id="bankname" name="bankname" autocomplete="off">
+				</div>	
+
+			</div>
+			
+		</div>
+		
+		<div class="tab-pane fade" id="address" role="tabpanel" style="overflow-y: scroll; height:400px;"
+			aria-labelledby="address-tab">
+			<br>
+			<div class="form-row">
+				<label for="billto" class="col-sm-1 col-form-label">Bill To :</label>
+			</div>
+			
+			<div class="form-row" style="overflow: auto; ">
+				<table id="billaddressdetails"
+					class="table table-sm table-bordered table-hover table-striped">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Default</th>
+							<th>Address code</th>
+							<th>Address name</th>
+							<th>Address 1</th>
+							<th>Address 2</th>
+							<th>Address 3</th>
+							<th>Address 4</th>
+							<th>Zip</th>
+							<th>State</th>
+							<th>Country</th>
+						</tr>
+					</thead>
+					<tbody>
+					    <%
+					    	GenDatabase database = new GenDatabase();
+							String mapStat = "";
+							mapStat = request.getAttribute("status").toString();	
+							if (mapStat.equals("find")) {
+								int i = 0;
+								ResultSet rs = null;
+								String ss_bpcode = request.getAttribute("bpcode").toString();
+								rs = stmt.executeQuery(
+										"SELECT * FROM OADR where BPCode = '"+ss_bpcode+"' and AddrTyp='1'");
+								while (rs.next()) {
+									String country1 =database.selectSingle("CountryCde","OCRY", "CountryID='"+rs.getString("Country")+"'","") +"~"+ database.selectSingle("CountryNme","OCRY", "CountryID='"+rs.getString("Country")+"'","");
+									String state1 =  database.selectSingle("StateCde","OSTT", "StateID='"+rs.getString("State")+"'","")+"~"+database.selectSingle("StateNme","OSTT", "StateID='"+rs.getString("State")+"'","");
+						%>
+						<tr>
+							<td><%=++i%></td>
+							<td><input type="radio" class="form-control form-control-sm" name="bill" value ="<%=i%>"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddresscode" name="billaddresscode" value="<%=rs.getString("AddrCde") %>" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddressname" name="billaddressname" value="<%=rs.getString("AddrNme") %>" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress1" name="billaddress1" value="<%=rs.getString("AddLine1") %>" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress2" name="billaddress2" value="<%=rs.getString("AddLine2") %>" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress3" name="billaddress3" value="<%=rs.getString("AddLine3") %>" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress4" name="billaddress4" value="<%=rs.getString("AddLine4")%>" autocomplete="off"> </td>
+							<td><input type="text" class="form-control form-control-sm" id="billzip" name="billzip" value="<%=rs.getString("Zip") %>" autocomplete="off"></td>
+							<td><input name="billstate" id="billstate" class="form-control form-control-sm" list=billstatelst  value="<%=state1%>" autocomplete="off">
+							<datalist id=billstatelst>
+							<%   ResultSet state = GenDataProcess.getStateCde("state");
+								while(state.next()){%>
+									<option value="<%=state.getString("state") %>"><%=state.getString("state") %></option>
+							<%}%>
+							</datalist></td>
+							
+							<td><input name="billcountry" id="billcountry" class="form-control form-control-sm" list=billcountrylst value="<%=country1%>" autocomplete="off">
+							<datalist id=billcountrylst>
+							<%   ResultSet country = GenDataProcess.getCountryCde("country");
+								while(country.next()){%>
+									<option value="<%=country.getString("country") %>"><%=country.getString("country") %></option>
+							<%}%>
+							</datalist></td>
+
+						</tr>
+						<%
+							}
+							for (; i < 1; i++) {
+						%>
+						<tr>
+						<td><%=i+1 %></td>
+						<td><input type="radio" class="form-control form-control-sm" name="bill" value ="<%=i+1%>"></td>
+						
+						<td><input type="text" class="form-control form-control-sm" id="billaddresscode" name="billaddresscode" autocomplete="off"></td>
+						<td><input type="text" class="form-control form-control-sm" id="billaddressname" name="billaddressname" autocomplete="off"></td>
+							
+							<td><input type="text" class="form-control form-control-sm" id="billaddress1" name="billaddress1" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress2" name="billaddress2" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress3" name="billaddress3" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress4" name="billaddress4" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billzip" name="billzip" autocomplete="off"></td>
+							<td><input name="billstate" id="billstate" class="form-control form-control-sm" list=billstatelst autocomplete="off">
+							<datalist id=billstatelst>
+							<%   ResultSet state = GenDataProcess.getStateCde("state");
+								while(state.next()){%>
+									<option value="<%=state.getString("state") %>"><%=state.getString("state") %></option>
+							<%}%>
+							</datalist></td>
+							<td><input name="billcountry" id="billcountry" class="form-control form-control-sm" list=billcountrylst autocomplete="off">
+							<datalist id=billcountrylst>
+							<%   ResultSet country = GenDataProcess.getCountryCde("country");
+								while(country.next()){%>
+									<option value="<%=country.getString("country") %>"><%=country.getString("country") %></option>
+							<%}%>
+							</datalist></td>
+							
+						</tr>
+						<%
+							}
+						%>
+						<tr>
+							<td><%=i+1%></td>
+							<td><input type="radio" class="form-control form-control-sm" name="bill" value ="<%=i+1%>"></td>
+							<td><input type="text" class="form-control form-control-sm" onchange="insertbillrow(this)" id="billaddresscode" name="billaddresscode" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddressname" name="billaddressname" autocomplete="off"></td>
+							
+							<td><input type="text" class="form-control form-control-sm" id="billaddress1" name="billaddress1" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress2" name="billaddress2" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress3" name="billaddress3" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress4" name="billaddress4" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billzip" name="billzip" autocomplete="off"></td>
+							<td><input name="billstate" id="billstate" class="form-control form-control-sm" list=billstatelst autocomplete="off">
+							<datalist id=billstatelst>
+							<%   ResultSet state = GenDataProcess.getStateCde("state");
+								while(state.next()){%>
+									<option value="<%=state.getString("state") %>"><%=state.getString("state") %></option>
+							<%}%>
+							</datalist></td>
+							<td><input name="billcountry" id="billcountry" class="form-control form-control-sm" list=billcountrylst autocomplete="off">
+							<datalist id=billcountrylst>
+							<%   ResultSet country = GenDataProcess.getCountryCde("country");
+								while(country.next()){%>
+									<option value="<%=country.getString("country") %>"><%=country.getString("country") %></option>
+							<%}%>
+							</datalist></td>
+						</tr>
+						<%
+							}else{
+						%>	
+							 
+						<% 
+							for (int x = 0; x < 2; x++) { 
+						%>
+							
+						<tr>
+							<td><%=x+1%></td>
+							<td><input type="radio" class="form-control form-control-sm" name="bill" value ="<%=x+1%>"></td>
+							<td><input type="text" class="form-control form-control-sm" onchange="insertbillrow(this)" id="billaddresscode" name="billaddresscode" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddressname" name="billaddressname" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress1" name="billaddress1" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress2" name="billaddress2" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress3" name="billaddress3" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billaddress4" name="billaddress4" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="billzip" name="billzip" autocomplete="off"></td>
+							<td><input name="billstate" id="billstate" class="form-control form-control-sm" list=billstatelst autocomplete="off">
+							<datalist id=billstatelst>
+							<%   ResultSet state = GenDataProcess.getStateCde("state");
+								while(state.next()){%>
+									<option value="<%=state.getString("state") %>"><%=state.getString("state") %></option>
+							<%}%>
+							</datalist></td>
+							<td><input name="billcountry" id="billcountry" class="form-control form-control-sm" list=billcountrylst autocomplete="off">
+							<datalist id=billcountrylst>
+							<%   ResultSet country = GenDataProcess.getCountryCde("country");
+								while(country.next()){%>
+									<option value="<%=country.getString("country") %>"><%=country.getString("country") %></option>
+							<%}%>
+							</datalist></td>
+						</tr>
+						<%
+							}
+							}
+						%>
+					</tbody>
+				</table>
+			</div>
+			<div class="form-row">
+				<label for="shipto" class="col-sm-1 col-form-label">Ship To :</label>
+			</div>
+			<div class="form-row" style="overflow: auto;">
+				<table id="shipaddressdetails"
+					class="table table-sm table-bordered table-hover table-striped">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Default</th>
+							<th>Address Code</th>
+							<th>Address name</th>
+							<th>Address 1</th>
+							<th>Address 2</th>
+							<th>Address 3</th>
+							<th>Address 4</th>
+							<th>Zip</th>
+							<th>State</th>
+							<th>Country</th>
+						</tr>
+					</thead>
+					<tbody>
+					<%
+							
+							if (mapStat.equals("find")) {
+								int i = 0;
+								ResultSet rs = null;
+								String ss_bpcode = request.getAttribute("bpcode").toString();
+								rs = stmt.executeQuery(
+										"SELECT * FROM OADR where BPCode = '"+ss_bpcode+ "' and AddrTyp='2'");
+								while (rs.next()) {
+									String country1 =database.selectSingle("CountryCde","OCRY", "CountryID='"+rs.getString("Country")+"'","") +"~"+ database.selectSingle("CountryNme","OCRY", "CountryID='"+rs.getString("Country")+"'","");
+									String state1 =  database.selectSingle("StateCde","OSTT", "StateID='"+rs.getString("State")+"'","")+"~"+database.selectSingle("StateNme","OSTT", "StateID='"+rs.getString("State")+"'","");
+						%>
+						<tr>
+							<td><%=++i%></td>
+							<td><input type="radio" class="form-control form-control-sm" name="ship" value="<%=i%>"></td>
+							
+							<td><input type="text" class="form-control form-control-sm" id="shipaddresscode" name="shipaddresscode" value="<%=rs.getString("AddrCde") %>" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddressname" name="shipaddressname" value="<%=rs.getString("AddrNme") %>" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress1" name="shipaddress1" value="<%=rs.getString("AddLine1") %>" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress2" name="shipaddress2" value="<%=rs.getString("AddLine2") %>" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress3" name="shipaddress3" value="<%=rs.getString("AddLine3") %>" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress4" name="shipaddress4" value="<%=rs.getString("AddLine4")%>" autocomplete="off"> </td>
+							<td><input type="text" class="form-control form-control-sm" id="shipzip" name="shipzip" value="<%=rs.getString("Zip") %>" autocomplete="off"></td>
+							<td><input name="shipstate" id="shipstate" class="form-control form-control-sm" list=shipstatelst value="<%=state1%>" autocomplete="off">
+							<datalist id=shipstatelst>
+							<%   ResultSet state = GenDataProcess.getStateCde("state");
+								while(state.next()){%>
+									<option value="<%=state.getString("state") %>"><%=state.getString("state") %></option>
+							<%}%>
+							</datalist></td>
+							
+							<td><input name="shipcountry" id="shipcountry" class="form-control form-control-sm" list=shipcountrylst value="<%=country1%>"autocomplete="off">
+							<datalist id=shipcountrylst>
+							<%   ResultSet country = GenDataProcess.getCountryCde("country");
+								while(country.next()){%>
+									<option value="<%=country.getString("country") %>"><%=country.getString("country") %></option>
+							<%}%>
+							</datalist></td>
+
+						</tr>
+						<%
+							}
+							for (; i < 1; i++) {
+						%>
+						<tr>
+						<td><%=i+1 %></td>
+						<td><input type="radio" class="form-control form-control-sm" name="ship" value="<%= i+1 %>"></td>
+						<td><input type="text" class="form-control form-control-sm" id="shipaddresscode" name="shipaddresscode" autocomplete="off"></td>
+						<td><input type="text" class="form-control form-control-sm" id="shipaddressname" name="shipaddressname" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress1" name="shipaddress1" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress2" name="shipaddress2" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress3" name="shipaddress3" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress4" name="shipaddress4" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipzip" name="shipzip" autocomplete="off"></td>
+							<td><input name="shipstate" id="shipstate" class="form-control form-control-sm" list=shipstatelst autocomplete="off">
+							<datalist id=shipstatelst>
+							<%   ResultSet state = GenDataProcess.getStateCde("state");
+								while(state.next()){%>
+									<option value="<%=state.getString("state") %>"><%=state.getString("state") %></option>
+							<%}%>
+							</datalist></td>
+							<td><input name="shipcountry" id="shipcountry" class="form-control form-control-sm" list=shipcountrylst autocomplete="off">
+							<datalist id=shipcountrylst>
+							<%   ResultSet country = GenDataProcess.getCountryCde("country");
+								while(country.next()){%>
+									<option value="<%=country.getString("country") %>"><%=country.getString("country") %></option>
+							<%}%>
+							</datalist></td>							
+						</tr>
+						<%
+							}
+						%>
+						<tr>
+							<td><%=i+1%></td>
+							<td><input type="radio" class="form-control form-control-sm" name="ship" value ="<%=i+1%>"></td>
+							<td><input type="text" class="form-control form-control-sm" onchange="insertshiprow(this)" id="shipaddresscode" name="shipaddresscode" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddressname" name="shipaddressname" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress1" name="shipaddress1" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress2" name="shipaddress2" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress3" name="shipaddress3" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress4" name="shipaddress4" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipzip" name="shipzip" autocomplete="off"></td>
+							<td><input name="shipstate" id="shipstate" class="form-control form-control-sm" list=shipstatelst autocomplete="off">
+							<datalist id=shipstatelst>
+							<%   ResultSet state = GenDataProcess.getStateCde("state");
+								while(state.next()){%>
+									<option value="<%=state.getString("state") %>"><%=state.getString("state") %></option>
+							<%}%>
+							</datalist></td>
+							<td><input name="shipcountry" id="shipcountry" class="form-control form-control-sm" list=shipcountrylst autocomplete="off">
+							<datalist id=shipcountrylst>
+							<%   ResultSet country = GenDataProcess.getCountryCde("country");
+								while(country.next()){%>
+									<option value="<%=country.getString("country") %>"><%=country.getString("country") %></option>
+							<%}%>
+							</datalist></td>
+							</tr>
+						<% 
+							}else{
+						%>
+						<%
+							for (int i = 0; i < 2; i++) {
+						%>
+						<tr>
+							<td><%=i+1%></td>
+							<td><input type="radio" class="form-control form-control-sm" name="ship" value ="<%=i+1%>"></td>
+							<td><input type="text" class="form-control form-control-sm" onchange="insertshiprow(this)" id="shipaddresscode" name="shipaddresscode" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddressname" name="shipaddressname" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress1" name="shipaddress1" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress2" name="shipaddress2" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress3" name="shipaddress3" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipaddress4" name="shipaddress4" autocomplete="off"></td>
+							<td><input type="text" class="form-control form-control-sm" id="shipzip" name="shipzip" autocomplete="off"></td>
+							<td><input name="shipstate" id="shipstate" class="form-control form-control-sm" list=shipstatelst autocomplete="off">
+							<datalist id=shipstatelst>
+							<%   ResultSet state = GenDataProcess.getStateCde("state");
+								while(state.next()){%>
+									<option value="<%=state.getString("state") %>"><%=state.getString("state") %></option>
+							<%}%>
+							</datalist></td>
+							<td><input name="shipcountry" id="shipcountry" class="form-control form-control-sm" list=shipcountrylst autocomplete="off">
+							<datalist id=shipcountrylst>
+							<%   ResultSet country = GenDataProcess.getCountryCde("country");
+								while(country.next()){%>
+									<option value="<%=country.getString("country") %>"><%=country.getString("country") %></option>
+							<%}%>
+							</datalist></td>
+							</tr>
+						<%
+							}
+							}
+						%>
+					</tbody>
+				</table>
+			</div>
+			
+			
+			
+		</div>
+		
+		<div class="tab-pane fade" id="summary" role="tabpanel" style="overflow-y: scroll; height:400px;"
+			aria-labelledby="summary-tab">
+			<br>
+		<div class="form-row">
+		<label for="bpStatus" class="col-sm-1 col-form-label">BP Status</label>
+		<div class="form-group col-md-3">
+			<div class="form-check-inline">
+				<label class="form-check-label" for="radio2">
+					<input type="radio" class="form-check-input" id="active" name="bpradio" value="1" disabled> Active
+		   		</label>
+		    </div>
+			<div class="form-check-inline">
+				<label class="form-check-label" for="radio2">
+					<input type="radio" class="form-check-input" id="inactive" name="bpradio" value="0" checked disabled> Inactive
+		   		</label>
+			</div>
+		</div>
+		
+		<div class="form-group col-md-4"></div>
+		
+		<label for="lockedstatus" class="col-sm-1 col-form-label">Lock Status</label>
+		<div class="form-group col-md-3">
+			<select id="lockedstatus" name="lockedstatus" class="form-control form-control-sm" onchange="disablelockedtime(this.value)">
+				<option value="1" >blacklist</option>
+				<option value="0" selected>whitelist</option>
+			</select>
+		</div>
+	</div>
+	
+	<div class="form-row">
+		<label for="valuation" class="col-sm-1 col-form-label">Valuation</label>
+		<div class="form-group col-md-3">
+			<select id="valuation" name="valuation" class="form-control form-control-sm">
+				<option value="1" selected>Yes</option>
+				<option value="0">No</option>
+			</select>
+		</div>
+		
+		<div class="form-group col-md-4"></div>
+		
+		<label for="lockedfrom" class="col-sm-1 col-form-label">Locked From</label>
+		<div class="form-group col-md-3">
+			<input type="date" class="form-control form-control-sm" id="lockedfrom" name="lockedfrom" readonly>
+		</div>
+	</div>
+	
+	<div class="form-row">
+	<label for="grade" class="col-sm-1 col-form-label">Grade</label> 
+		<div class="form-group col-md-3">
+			<select id="grade" name="grade" class="form-control form-control-sm">
+				<% List<String> grade = new ArrayList<String>();
+				grade = obj_genDB.selectSingleToList("GradeNme", "OGBP");
+				for(int i =0;i<grade.size();i++){%>
+					<option value="<%= grade.get(i)%>" selected><%= grade.get(i) %></option>
+				<%}%>
+			</select>
+		</div>
+	
+		<div class="form-group col-md-4"></div>
+		<label for="lockedto" class="col-sm-1 col-form-label">Locked To</label>
+		<div class="form-group col-md-3">
+			<input type="date" class="form-control form-control-sm" id="lockedto" name="lockedto" readonly>
+		</div>
+	</div>
+		</div>
+		
+		<div class="tab-pane fade" id="remark" role="tabpanel"
+			aria-labelledby="remark-tab">
+			<div class="form-row">
+				<div class="form-group col-md-12">
+					<textarea class="form-control" name="editor1" id="editor1" rows="2" cols="80" >
+
+					</textarea>
+					<script>
+					// Replace the <textarea id="editor1"> with a CKEditor
+					// instance, using default configuration.
+					CKEDITOR.replace('editor1');
+					</script>			
+				</div>
+			</div>
+		</div>
+		
+		<div class="tab-pane fade" id="attach" role="tabpanel"
+			aria-labelledby="attach-tab">
+			<div class="form-row" style="overflow: auto;">
+				<table id="attachdetails" class="table table-hover">
+					<thead>
+						<tr>
+							<th>Target Path</th>
+							<th>File Name</th>
+							<th>Attachment Date</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><input type="text" class="form-control form-control-sm" id="filepath"></td>
+							<td><input type="file" class="form-control-file" id="attachment"></td>
+							<td><input type="date" class="form-control form-control-sm" id="attachdate"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>	
+		</div>
+	</div>
+
+	<br>
+	<div class="form-row" id="btn_footer">
+		<div class="form-group col-md-10"></div>
+		<button type="reset" class="btn btn-outline-danger btn-block" style="width: 90px">Cancel</button>
+		<div class="form-group col-md-0"></div>
+		<button type="submit" class="btn btn-outline-primary btn-block" id="submit" name="btn_submit" value="Submit" onclick="validationForm(event)" style="width: 90px">Submit</button>
+	</div>
+</form>
+<%@ include file="../../footer.jsp"%>

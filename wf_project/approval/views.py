@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
+from administration.models import StatusMaintenance
 from .serializers import ApprovalItemSerializer, ApprovalApproverSerializer, ApprovalCCSerializer
 from rest_framework import viewsets
 from memo.models import Memo
@@ -60,9 +61,11 @@ def approval_update(request, pk):
         return redirect('memo_list')
     if document_type.document_type_name == "Payment Request":
         payment = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
-        payment.status = "P"
+        document_type = DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]
+        status = StatusMaintenance.objects.filter(document_type=document_type,status_code='300')[0]
+        payment.status = status
         payment.save()
-        return redirect('py_list')
+        return redirect('pylist')
     if document_type.document_type_name == "Staff Recruitment Request":
         staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
         staff.status = "P"
@@ -92,7 +95,9 @@ def approve(request, pk):
             memo.save()
         if document_type.document_type_name == "Payment Request":
             payment = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
-            payment.status = "A"
+            document_type = DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]
+            status = StatusMaintenance.objects.filter(document_type=document_type,status_code='400')[0]
+            payment.status = status
             payment.save()
         if document_type.document_type_name == "Staff Recruitment Request":
             staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
@@ -158,7 +163,9 @@ def reject(request):
         memo.save()
     if document_type.document_type_name == "Payment Request":
         payment = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
-        payment.status = "R"
+        document_type = DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]
+        status = StatusMaintenance.objects.filter(document_type=document_type,status_code='500')[0]
+        payment.status = status
         payment.save()
     if document_type.document_type_name == "Staff Recruitment Request":
         staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)

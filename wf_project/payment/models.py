@@ -8,6 +8,7 @@ from administration.models import TaxMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import PaymentmodeMaintenance
 from administration.models import DocumentTypeMaintenance
+from administration.models import StatusMaintenance
 from approval.models import ApprovalItem
 from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -16,6 +17,10 @@ import datetime
 def documenttype_document_number():
     document_type = DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]
     return '{0}-{1:05d}'.format(document_type.document_type_code,document_type.running_number)
+
+def default_status():
+    document_type = DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]
+    return StatusMaintenance.objects.filter(document_type=document_type,status_code='100')[0]
 
 class PaymentRequest(models.Model):
     revision = models.IntegerField(default=1)
@@ -28,7 +33,7 @@ class PaymentRequest(models.Model):
     transaction_type = models.ForeignKey(TransactiontypeMaintenance,verbose_name="Trans. Type", on_delete=models.CASCADE,blank=True, null=True)
     approval = models.ForeignKey(ApprovalItem, verbose_name="Approval", on_delete=models.CASCADE, blank=True, null=True)
     payment_mode = models.ForeignKey(PaymentmodeMaintenance, verbose_name="Payment Mode", on_delete=models.CASCADE,blank=True, null=True)
-    status = models.CharField(max_length=1,default="D", blank=True, null=True)
+    status = models.ForeignKey(StatusMaintenance,default=default_status,verbose_name="Status", on_delete=models.CASCADE,blank=True, null=True)
     submit_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     submit_date = models.DateField(null=True, blank=True,default=datetime.date.today)
     subject = models.CharField(max_length=250)

@@ -10,6 +10,7 @@ from administration.models import WorkflowApprovalRule
 from approval.models import ApprovalItem
 from django.contrib.auth.models import User
 import datetime
+from django.http import JsonResponse
 
 class PYViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequest.objects.all() #.order_by('rank')
@@ -20,16 +21,80 @@ class MyPYViewSet(viewsets.ModelViewSet):
     serializer_class = PYSerializer
     
     def get_queryset(self):
-        return PaymentRequest.objects.filter(submit_by=self.request.user.id)
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Other", document_type=document_type)
+        return PaymentRequest.objects.filter(submit_by=self.request.user.id,transaction_type=transaction_type)
 
 class TeamPYViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequest.objects.all().order_by('-id')    
     serializer_class = PYSerializer
 
     def get_queryset(self):
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Other", document_type=document_type)
         groups = self.request.user.groups.values_list('id', flat=True)
         users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
-        return PaymentRequest.objects.filter(submit_by__in=users)
+        return PaymentRequest.objects.filter(submit_by__in=users,transaction_type=transaction_type)
+
+class MyPYViewSetPettyCash(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')
+    serializer_class = PYSerializer
+
+    def get_queryset(self):
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Petty Cash", document_type=document_type)
+        return PaymentRequest.objects.filter(submit_by=self.request.user.id,transaction_type=transaction_type)
+
+class TeamPYViewSetPettyCash(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')    
+    serializer_class = PYSerializer
+
+    def get_queryset(self):
+        groups = self.request.user.groups.values_list('id', flat=True)
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Petty Cash", document_type=document_type)
+        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        return PaymentRequest.objects.filter(submit_by__in=users,transaction_type=transaction_type)
+
+class MyPYViewSetCashBack(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')
+    serializer_class = PYSerializer
+    
+    def get_queryset(self):
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "CashBack n Rebates", document_type=document_type)
+        return PaymentRequest.objects.filter(submit_by=self.request.user.id,transaction_type=transaction_type)
+
+class TeamPYViewSetCashBack(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')    
+    serializer_class = PYSerializer
+
+    def get_queryset(self):
+        groups = self.request.user.groups.values_list('id', flat=True)
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "CashBack n Rebates", document_type=document_type)
+        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        return PaymentRequest.objects.filter(submit_by__in=users,transaction_type=transaction_type)
+
+class MyPYViewSetSalesCommissions(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')
+    serializer_class = PYSerializer
+    
+    def get_queryset(self):
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Sales Commission", document_type=document_type)
+        return PaymentRequest.objects.filter(submit_by=self.request.user.id,transaction_type=transaction_type)
+
+class TeamPYViewSetSalesCommissions(viewsets.ModelViewSet):
+    queryset = PaymentRequest.objects.all().order_by('-id')    
+    serializer_class = PYSerializer
+
+    def get_queryset(self):
+        groups = self.request.user.groups.values_list('id', flat=True)
+        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Sales Commission", document_type=document_type)
+        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        return PaymentRequest.objects.filter(submit_by__in=users,transaction_type=transaction_type)
 
 class PYItemViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequestDetail.objects.all()
@@ -56,7 +121,7 @@ class PYAttachmentViewSet(viewsets.ModelViewSet):
         return PaymentAttachment.objects.filter(py=py)
 
 @login_required
-def py_create(request):    
+def py_create(request,TransType):    
     if request.method == 'POST':
         form = NewPaymentForm(request.POST)
         if form.is_valid():
@@ -97,9 +162,35 @@ def py_create(request):
 
             return redirect(pylist)
         else:
-            py = PaymentRequest.objects.create(submit_by=request.user)
+            if TransType == "Other":
+                document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+                transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Other", document_type=document_type)
+            elif TransType == "Petty Cash":
+                document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+                transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Petty Cash", document_type=document_type)
+            elif TransType == "Cash Back":
+                document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+                transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "CashBack n Rebates", document_type=document_type)
+            elif TransType == "Sales Commissions":
+                document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+                transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Sales Commission", document_type=document_type)
+
+            py = PaymentRequest.objects.create(submit_by=request.user,transaction_type=transaction_type)
     else:
-        py = PaymentRequest.objects.create(submit_by=request.user)
+        if TransType == "Other":
+            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Other", document_type=document_type)
+        elif TransType == "Petty Cash":
+            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Petty Cash", document_type=document_type)
+        elif TransType == "Cash Back":
+            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "CashBack n Rebates", document_type=document_type)
+        elif TransType == "Sales Commissions":
+            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Sales Commission", document_type=document_type)
+        print(TransType)
+        py = PaymentRequest.objects.create(submit_by=request.user,transaction_type=transaction_type)
     return redirect(py_create_edit, py.pk)
 
 @login_required
@@ -149,7 +240,7 @@ def py_create_edit(request, pk):
             py.approval = approval_item
             py.save()
 
-            return redirect(pylist)
+            return redirect(py_update, py.pk)
         else:
             print(form.errors)
     else:
@@ -187,15 +278,10 @@ def py_item_create_formcreate(request, pk):
         discount_amount = py.discount_amount
         total_amount_afterdiscount = (sub_total - discount_amount)
         after_add_taxamount = total_amount_afterdiscount + total_tax_amount
-        discount_rate = (discount_amount / sub_total) * 100 
-        py.discount_rate = discount_rate
-        py.sub_total = sub_total
-        py.tax_amount = total_tax_amount
-        py.total_amount = after_add_taxamount
-        py.save()
+        discount_rate = (discount_amount / sub_total) * 100
     else:
         print(form.errors)
-    return redirect(py_create_edit, pk=pk) 
+    return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
 
 @login_required
 def py_item_delete_formcreate(request, pk):
@@ -213,23 +299,15 @@ def py_item_delete_formcreate(request, pk):
             price += payment_item.line_total
             total_tax_amount += payment_item.line_taxamount
 
-        discount_amount = py.discount_amount
-        total_amount_afterdiscount = (sub_total - discount_amount)
-        after_add_taxamount = total_amount_afterdiscount + total_tax_amount
-        discount_rate = (discount_amount / sub_total) * 100 
-        py.discount_rate = discount_rate
-        py.sub_total = sub_total
-        py.tax_amount = total_tax_amount
-        py.total_amount = after_add_taxamount
-        py.save()
+        # total_amount_afterdiscount = (sub_total - discount_amount)
+        # after_add_taxamount = total_amount_afterdiscount + total_tax_amount
+        # discount_rate = (discount_amount / sub_total) * 100 
+        
     else:
-        py.discount_rate = 0.00
-        py.sub_total = 0.00
-        py.tax_amount = 0.00
-        py.total_amount = 0.00
-        py.save()
+        sub_total = 0.00
+        total_tax_amount = 0.00
 
-    return redirect(py_create_edit, pk=py.pk)
+    return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
 
 @login_required
 def py_attachment_create_formcreate(request, pk):    
@@ -241,14 +319,14 @@ def py_attachment_create_formcreate(request, pk):
         py_attachment.save()
     else:
         print(form.errors)
-    return redirect(py_create_edit, pk=pk) 
+    return JsonResponse({'message': 'Success'}) 
 
 @login_required
 def py_attachment_delete_formcreate(request, pk):
     py_attachment =  get_object_or_404(PaymentAttachment, pk=pk)
     py = get_object_or_404(PaymentRequest, pk=py_attachment.py.pk)
     py_attachment.delete()
-    return redirect(py_create_edit, pk=py.pk)
+    return JsonResponse({'message': 'Success'})
 
 @login_required
 def py_delete(request, pk):
@@ -265,6 +343,18 @@ def py_detail(request, pk):
 @login_required
 def pylist(request):
     return render(request, 'pylist.html')
+
+@login_required
+def pylist_pettycash(request):
+    return render(request, 'pylist_pettycash.html')
+
+@login_required
+def pylist_cashback(request):
+    return render(request, 'pylist_cashback.html')
+
+@login_required
+def pylist_salescommission(request):
+    return render(request, 'pylist_salecommisions.html')
 
 @login_required
 def py_update(request, pk): 
@@ -313,15 +403,10 @@ def py_item_create(request, pk):
         discount_amount = py.discount_amount
         total_amount_afterdiscount = (sub_total - discount_amount)
         after_add_taxamount = total_amount_afterdiscount + total_tax_amount
-        discount_rate = (discount_amount / sub_total) * 100 
-        py.discount_rate = discount_rate
-        py.sub_total = sub_total
-        py.tax_amount = total_tax_amount
-        py.total_amount = after_add_taxamount
-        py.save()
+        discount_rate = (discount_amount / sub_total) * 100
     else:
         print(form.errors)
-    return redirect(py_update, pk=pk) 
+    return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
 
 @login_required
 def py_item_delete(request, pk):
@@ -339,22 +424,15 @@ def py_item_delete(request, pk):
             price += payment_item.line_total
             total_tax_amount += payment_item.line_taxamount
 
-        discount_amount = py.discount_amount
-        total_amount_afterdiscount = (sub_total - discount_amount)
-        after_add_taxamount = total_amount_afterdiscount + total_tax_amount
-        discount_rate = (discount_amount / sub_total) * 100 
-        py.discount_rate = discount_rate
-        py.sub_total = sub_total
-        py.tax_amount = total_tax_amount
-        py.total_amount = after_add_taxamount
-        py.save()
+        # total_amount_afterdiscount = (sub_total - discount_amount)
+        # after_add_taxamount = total_amount_afterdiscount + total_tax_amount
+        # discount_rate = (discount_amount / sub_total) * 100 
+        
     else:
-        py.discount_rate = 0.00
-        py.sub_total = 0.00
-        py.tax_amount = 0.00
-        py.total_amount = 0.00
-        py.save()
-    return redirect(py_update, pk=py.pk)
+        sub_total = 0.00
+        total_tax_amount = 0.00
+
+    return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
 
 @login_required
 def py_attachment_create(request, pk):    
@@ -366,11 +444,11 @@ def py_attachment_create(request, pk):
         py_attachment.save()
     else:
         print(form.errors)
-    return redirect(py_update, pk=pk) 
+    return JsonResponse({'message': 'Success'}) 
 
 @login_required
 def py_attachment_delete(request, pk):
     py_attachment =  get_object_or_404(PaymentAttachment, pk=pk)
     py = get_object_or_404(PaymentRequest, pk=py_attachment.py.pk)
     py_attachment.delete()
-    return redirect(py_update, pk=py.pk)
+    return JsonResponse({'message': 'Success'})

@@ -843,7 +843,7 @@ admin.site.register(PaymentmodeMaintenance,PaymentmodeMaintenanceScreen)
 class TransactiontypeMaintenanceScreen(admin.ModelAdmin):
     list_display = ('transaction_type_name','document_type','is_active')
     list_filter = ('is_active',)
-    search_fields = ('transaction_type_name','document_type')
+    search_fields = ('transaction_type_name','document_type__document_type_name')
     fieldsets = [
         (None, {'fields': ['transaction_type_name','document_type','is_active']}),
     ]

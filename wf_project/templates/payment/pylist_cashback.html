@@ -4,8 +4,8 @@
 {% load static %}
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Payment Request - Other</h1>
-    <a href="{% url 'pycreate' 'Other' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
+    <h1 class="h3 mb-0 text-gray-800">Payment Request - Cash Back</h1>
+    <a href="{% url 'pycreate' 'Cash Back' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
   </div>
 
 <div class="card shadow mb-4">
@@ -40,7 +40,7 @@
         <script>
             $(document).ready(function() {
                 var mytable = $('#mypys').DataTable({
-                    "ajax": "../api/mypydata/?format=datatables",
+                    "ajax": "../api/mypycashbackdata/?format=datatables",
                     "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                         "<'row'<'col-sm-12 small'tr>>" +
                         "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -134,7 +134,7 @@
             <script>
                 $(document).ready(function() {
                     var teamtable = $('#teampys').DataTable({
-                        "ajax": "../api/teampydata/?format=datatables",
+                        "ajax": "../api/teampycashbackdata/?format=datatables",
                         "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                             "<'row'<'col-sm-12 small'tr>>" +
                             "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",

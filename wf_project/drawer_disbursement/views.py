@@ -6,6 +6,8 @@ from .serializers import DrawerDisbursementSerializer,DrawerSelectionSerializer,
 from administration.models import DrawerMaintenance
 from administration.models import DrawerUserMaintenance
 from administration.models import TransactiontypeMaintenance
+from administration.models import DocumentTypeMaintenance
+from administration.models import StatusMaintenance
 from .models import DrawerDisbursement
 from payment.models import PaymentRequest
 
@@ -27,16 +29,22 @@ class DrawerViewSet(viewsets.ModelViewSet):
         return DrawerMaintenance.objects.filter(id__in=drawer_user,drawer_status='O').order_by('-id')
 
 class DisbursementListViewSet(viewsets.ModelViewSet):
+    document_type = DocumentTypeMaintenance.objects.get(document_type_code='301')
+    document_status_approve = StatusMaintenance.objects.get(document_type=document_type,status_code='400')
     transaction = TransactiontypeMaintenance.objects.get(transaction_type_name="Petty Cash")
-    queryset = PaymentRequest.objects.filter(status='A',transaction_type=transaction)
+    queryset = PaymentRequest.objects.filter(status=document_status_approve,transaction_type=transaction)
     serializer_class = ApprovedPaymentRequest
 
 class DisbursedViewSet(viewsets.ModelViewSet):
-    queryset = DrawerDisbursement.objects.filter(status='R')
+    document_type = DocumentTypeMaintenance.objects.get(document_type_code='402')
+    document_status_disburse = StatusMaintenance.objects.get(document_type=document_type,status_code='700')
+    queryset = DrawerDisbursement.objects.filter(status=document_status_disburse)
     serializer_class = DrawerDisbursementSerializer
 
 class CancelledViewSet(viewsets.ModelViewSet):
-    queryset = DrawerDisbursement.objects.filter(status='C')
+    document_type = DocumentTypeMaintenance.objects.get(document_type_code='402')
+    document_status_cancel = StatusMaintenance.objects.get(document_type=document_type,status_code='999')
+    queryset = DrawerDisbursement.objects.filter(status=document_status_cancel)
     serializer_class = DrawerDisbursementSerializer
 
 @login_required
@@ -50,14 +58,19 @@ def drawer_disbursement_list(request,drawerpk):
 
 @login_required
 def drawer_disbursement_disbursed(request,pk,drawerpk):
+    document_type = DocumentTypeMaintenance.objects.get(document_type_code='301')
+    document_status_closed = StatusMaintenance.objects.get(document_type=document_type,status_code='600')
     drawer = DrawerMaintenance.objects.get(pk=drawerpk)
     payment = PaymentRequest.objects.get(pk=pk)
-    payment.status = "C"
+    payment.status = document_status_closed
+
+    document_type_disburse = DocumentTypeMaintenance.objects.get(document_type_code='402')
+    document_status_disburse = StatusMaintenance.objects.get(document_type=document_type_disburse,status_code='700')
 
     disbursedrecord = DrawerDisbursement()
     disbursedrecord.payment = payment
     disbursedrecord.total_disbursed = payment.total_amount
-    disbursedrecord.status = 'R'
+    disbursedrecord.status = document_status_disburse
     disbursedrecord.drawer = drawer
     disbursedrecord.save()
     payment.save()
@@ -66,14 +79,19 @@ def drawer_disbursement_disbursed(request,pk,drawerpk):
 
 @login_required
 def drawer_disbursement_cancel(request,pk,drawerpk):
+    document_type = DocumentTypeMaintenance.objects.get(document_type_code='301')
+    document_status_closed = StatusMaintenance.objects.get(document_type=document_type,status_code='600')
     drawer = DrawerMaintenance.objects.get(pk=drawerpk)
     payment = PaymentRequest.objects.get(pk=pk)
-    payment.status = "C"
+    payment.status = document_status_closed
+
+    document_type_disburse = DocumentTypeMaintenance.objects.get(document_type_code='402')
+    document_status_disburse = StatusMaintenance.objects.get(document_type=document_type_disburse,status_code='700')
 
     disbursedrecord = DrawerDisbursement()
     disbursedrecord.payment = payment
     disbursedrecord.total_disbursed = payment.total_amount
-    disbursedrecord.status = 'C'
+    disbursedrecord.status = document_status_disburse
     disbursedrecord.drawer = drawer
     disbursedrecord.save()
     payment.save()

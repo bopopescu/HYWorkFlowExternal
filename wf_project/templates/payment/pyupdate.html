@@ -35,11 +35,11 @@
  </style>
  <script type="text/javascript">
    $(document).ready(function(){
-    $("input[name='discount_amount']").keyup(function(){
-          var discount_amount = $("input[name='discount_amount']").val();
-          var sub_total =  $("input[name='sub_total']").val();
-          var tax_amount = $("input[name='tax_amount']").val();
-          if(sub_total > 0){
+     $("input[name='discount_amount']").keyup(function(){
+           var discount_amount = $("input[name='discount_amount']").val();
+           var sub_total =  $("input[name='sub_total']").val();
+           var tax_amount = $("input[name='tax_amount']").val();
+           if(sub_total > 0){
               var total_amount_afterdiscount = (sub_total - discount_amount);
               var after_add_taxamount = parseFloat(total_amount_afterdiscount) + parseFloat(tax_amount)
               var discount_rate = (discount_amount/sub_total) * 100 ;
@@ -48,17 +48,43 @@
               $("input[name='discount_rate']").val(parseFloat(discount_rate).toFixed(2));
            }else{
               alert("discount cannot be calculate because subtotal is 0");
-              var discount_amount = $("input[name='discount_amount']").val(0.00);
+              $("input[name='discount_amount']").val(0.00);
+              $("input[name='total_amount']").val(0.00);
+              $("input[name='discount_rate']").val(0.00);
            }
-          
-        });
-   });
+         });
+    });
+    function recalculate(){
+      var discount_amount = $("input[name='discount_amount']").val();
+           var sub_total =  $("input[name='sub_total']").val();
+           var tax_amount = $("input[name='tax_amount']").val();
+           if(sub_total > 0){
+              var total_amount_afterdiscount = (sub_total - discount_amount);
+              var after_add_taxamount = parseFloat(total_amount_afterdiscount) + parseFloat(tax_amount)
+              var discount_rate = (discount_amount/sub_total) * 100 ;
+    
+              $("input[name='total_amount']").val(parseFloat(after_add_taxamount).toFixed(2));
+              $("input[name='discount_rate']").val(parseFloat(discount_rate).toFixed(2));
+           }else{
+              $("input[name='discount_amount']").val(0.00);
+              $("input[name='total_amount']").val(0.00);
+              $("input[name='discount_rate']").val(0.00);
+           }
+    }
   </script> 
   {% csrf_token %} 
     <div>
       <a href="{% url 'approval_detail' py.approval.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
       <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
+      {% if py.transaction_type.transaction_type_name == "Other" %}
       <a href="{% url 'pylist' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
+      {% elif py.transaction_type.transaction_type_name == "Petty Cash" %}
+      <a href="{% url 'pylist_pettycash' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
+      {% elif py.transaction_type.transaction_type_name == "	CashBack n Rebates" %}
+      <a href="{% url 'pylist_cashback' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
+      {% elif py.transaction_type.transaction_type_name == "Sales Commission" %}
+      <a href="{% url 'pylist_salescommission' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
+      {% endif %}
     </div>    
   </div>
 
@@ -253,30 +279,6 @@
                 </div>
               </div>
             </div>
-            <div class="form-group">
-              <div class="form-row">
-                <div class="col col-md-3">
-                  <label class="control-label">
-                    {{form.subject.label_tag}}
-                  </label>
-                </div>
-                <div class="col col-md-8">
-                  {% render_field form.subject class="col-md-12 form-control form-control-user" placeholder=form.subject.label %}
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="form-row">
-                <div class="col col-md-3">
-                  <label class="control-label">
-                    {{form.reference.label_tag}}
-                  </label>
-                </div>
-                <div class="col col-md-8">
-                  {% render_field form.reference class="col-md-12 form-control form-control-user" placeholder=form.reference.label %}
-                </div>
-              </div>
-            </div>
           </div>
         </div>        
       </div>
@@ -284,6 +286,30 @@
   </div> 
   <div class="card shadow mb-4">    
     <div class="card-body">
+      <div class="form-group">
+        <div class="form-row">
+          <div class="col col-md-3">
+            <label class="control-label">
+              {{form.subject.label_tag}}
+            </label>
+          </div>
+          <div class="col col-md-8">
+            {% render_field form.subject class="col-md-12 form-control form-control-user" placeholder=form.subject.label %}
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-row">
+          <div class="col col-md-3">
+            <label class="control-label">
+              {{form.reference.label_tag}}
+            </label>
+          </div>
+          <div class="col col-md-8">
+            {% render_field form.reference class="col-md-12 form-control form-control-user" placeholder=form.reference.label %}
+          </div>
+        </div>
+      </div>
       <div class="form-row">
         <div class="col col-md-12">
           <nav>
@@ -329,7 +355,7 @@
                                   "targets": -1,
                                   "data": null,
                                   "render": function ( data, type, row ) {
-                                        return '<a href="' + row.item_description + '/" target="_blank" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePYItemModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                        return '<a href="#" data-toggle="modal" data-target="#deletePYItemModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                     }
                               },                  
                               { "visible": false, 
@@ -486,20 +512,44 @@
       deleteInput.value = param;
     }
   </script>
-  <script type="text/javascript">
-    $(function () {
-        $("#deletePYItemButton").click(function () {
-            var pyitem_id = $(".modal-body #hiddenValue").val();
-            window.location.href = "../../deleteitem/" + pyitem_id + "/";
-        })
+<script>
+  $("#deletePYItemButton").click(function(e){
+      e.preventDefault(); //prevent default action 
+      proceed = true;
+      var pyitem_id = $(".modal-body #hiddenValue").val();
+      var post_url = "../../deleteitem/" + pyitem_id + "/"; //get form action url
+      var request_method = "GET"; //get form GET/POST method
+      // var form_data = new FormData(this); //Creates new FormData object
+      
+      //if everything's ok, continue with Ajax form submit
+      if(proceed){ 
+        $.ajax({ //ajax form submit
+          url : post_url,
+          type: request_method,
+          dataType : "json",
+          contentType: false,
+          cache: false,
+          processData:false
+        }).done(function(res){ 
+            var table = $('#myitems').DataTable(); 
+                table.ajax.reload();
+                $('#deletePYItemModal').modal('hide');
+                var sub_total = res.sub_total;
+                var tax_amount = res.tax_amount;
+
+              $("input[name='sub_total']").val(parseFloat(sub_total).toFixed(2));
+              $("input[name='tax_amount']").val(parseFloat(tax_amount).toFixed(2));
+              recalculate();
+        });
+      }
     });
-  </script>
+</script>
 
   <!-- Add Modal-->
   <div class="modal fade" id="additemModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-          <form action="{% url 'py_item_create' py.pk %}" method="POST">
+          <form action="{% url 'py_item_create' py.pk %}" method="POST" id="addPYItem">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">New Payment Request Item</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
@@ -548,6 +598,41 @@
     </div>
   </div>
 
+  <script>
+    $("#addPYItem").submit(function(e){
+        e.preventDefault(); //prevent default action 
+      proceed = true;
+        
+      var post_url = $(this).attr("action"); //get form action url
+      var request_method = $(this).attr("method"); //get form GET/POST method
+      var form_data = new FormData(this); //Creates new FormData object
+      
+      //if everything's ok, continue with Ajax form submit
+      if(proceed){ 
+        $.ajax({ //ajax form submit
+          url : post_url,
+          type: request_method,
+          data : form_data,
+          dataType : "json",
+          contentType: false,
+          cache: false,
+          processData:false
+        }).done(function(res){ 
+            var table = $('#myitems').DataTable(); 
+                table.ajax.reload();
+                $('#additemModal').modal('hide');
+                $("#addPYItem")[0].reset();
+                var sub_total = res.sub_total;
+                var tax_amount = res.tax_amount;
+  
+                $("input[name='sub_total']").val(parseFloat(sub_total).toFixed(2));
+                $("input[name='tax_amount']").val(parseFloat(tax_amount).toFixed(2));
+                recalculate();
+        });
+      }
+    });
+    </script>
+
 <!-- Delete Modal-->
 <div class="modal fade" id="deletePYAttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -575,20 +660,38 @@
     deleteInput.value = param;
   }
 </script>
-<script type="text/javascript">
-  $(function () {
-      $("#deletePYAttachmentButton").click(function () {
-          var pyattachment_id = $(".modal-body #hiddenValue2").val();
-          window.location.href = "../deleteattachment_create/" + pyattachment_id + "/";
-      })
-  });
+<script>
+  $("#deletePYAttachmentButton").click(function(e){
+      e.preventDefault(); //prevent default action 
+      proceed = true;
+      var pyattachment_id = $(".modal-body #hiddenValue2").val();
+      var post_url = "../../deleteattachment/" + pyattachment_id + "/"; //get form action url
+      var request_method = "GET"; //get form GET/POST method
+      // var form_data = new FormData(this); //Creates new FormData object
+      
+      //if everything's ok, continue with Ajax form submit
+      if(proceed){ 
+        $.ajax({ //ajax form submit
+          url : post_url,
+          type: request_method,
+          dataType : "json",
+          contentType: false,
+          cache: false,
+          processData:false
+        }).done(function(res){ 
+            var table = $('#myattachments').DataTable(); 
+            table.ajax.reload();
+            $('#deletePYAttachmentModal').modal('hide');
+        });
+      }
+    });
 </script>
 
 <!-- Add Modal-->
 <div class="modal fade" id="addPYAttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-        <form action="{% url 'py_attachment_create' py.pk %}" method="POST" enctype="multipart/form-data">
+        <form action="{% url 'py_attachment_create' py.pk %}" method="POST" enctype="multipart/form-data" id="addPYAttachment">
               <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalLabel">New Attachment</h5>
                   <button class="close" type="button" data-dismiss="modal" aria-label="Close">
@@ -626,6 +729,35 @@
     </div>
   </div>
 </div>
+
+<script>
+  $("#addPYAttachment").submit(function(e){
+      e.preventDefault(); //prevent default action 
+    proceed = true;
+      
+    var post_url = $(this).attr("action"); //get form action url
+    var request_method = $(this).attr("method"); //get form GET/POST method
+    var form_data = new FormData(this); //Creates new FormData object
+    
+    //if everything's ok, continue with Ajax form submit
+    if(proceed){ 
+      $.ajax({ //ajax form submit
+        url : post_url,
+        type: request_method,
+        data : form_data,
+        dataType : "json",
+        contentType: false,
+        cache: false,
+        processData:false
+      }).done(function(res){ 
+          var table = $('#myattachments').DataTable(); 
+                  table.ajax.reload();
+                  $('#addPYAttachmentModal').modal('hide');
+                  $('#addPYAttachment')[0].reset();
+      });
+    }
+  });
+  </script>
   
 
 {% endblock content %}

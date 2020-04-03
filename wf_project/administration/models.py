@@ -303,7 +303,7 @@ class ProjectMaintenance(models.Model):
     modified_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.project_code
+        return "%s - %s" % (self.project_name, self.phase_name)   
 
 class RegionMaintenance(models.Model):
     region_name = models.CharField(max_length=250)

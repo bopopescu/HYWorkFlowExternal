@@ -10,6 +10,7 @@ from administration.models import WorkflowApprovalRule
 from approval.models import ApprovalItem
 from django.contrib.auth.models import User
 import datetime
+from django.http import JsonResponse
 
 class PYViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequest.objects.all() #.order_by('rank')
@@ -277,15 +278,10 @@ def py_item_create_formcreate(request, pk):
         discount_amount = py.discount_amount
         total_amount_afterdiscount = (sub_total - discount_amount)
         after_add_taxamount = total_amount_afterdiscount + total_tax_amount
-        discount_rate = (discount_amount / sub_total) * 100 
-        py.discount_rate = discount_rate
-        py.sub_total = sub_total
-        py.tax_amount = total_tax_amount
-        py.total_amount = after_add_taxamount
-        py.save()
+        discount_rate = (discount_amount / sub_total) * 100
     else:
         print(form.errors)
-    return redirect(py_create_edit, pk=pk) 
+    return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
 
 @login_required
 def py_item_delete_formcreate(request, pk):
@@ -303,23 +299,15 @@ def py_item_delete_formcreate(request, pk):
             price += payment_item.line_total
             total_tax_amount += payment_item.line_taxamount
 
-        discount_amount = py.discount_amount
-        total_amount_afterdiscount = (sub_total - discount_amount)
-        after_add_taxamount = total_amount_afterdiscount + total_tax_amount
-        discount_rate = (discount_amount / sub_total) * 100 
-        py.discount_rate = discount_rate
-        py.sub_total = sub_total
-        py.tax_amount = total_tax_amount
-        py.total_amount = after_add_taxamount
-        py.save()
+        # total_amount_afterdiscount = (sub_total - discount_amount)
+        # after_add_taxamount = total_amount_afterdiscount + total_tax_amount
+        # discount_rate = (discount_amount / sub_total) * 100 
+        
     else:
-        py.discount_rate = 0.00
-        py.sub_total = 0.00
-        py.tax_amount = 0.00
-        py.total_amount = 0.00
-        py.save()
+        sub_total = 0.00
+        total_tax_amount = 0.00
 
-    return redirect(py_create_edit, pk=py.pk)
+    return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
 
 @login_required
 def py_attachment_create_formcreate(request, pk):    
@@ -331,14 +319,14 @@ def py_attachment_create_formcreate(request, pk):
         py_attachment.save()
     else:
         print(form.errors)
-    return redirect(py_create_edit, pk=pk) 
+    return JsonResponse({'message': 'Success'}) 
 
 @login_required
 def py_attachment_delete_formcreate(request, pk):
     py_attachment =  get_object_or_404(PaymentAttachment, pk=pk)
     py = get_object_or_404(PaymentRequest, pk=py_attachment.py.pk)
     py_attachment.delete()
-    return redirect(py_create_edit, pk=py.pk)
+    return JsonResponse({'message': 'Success'})
 
 @login_required
 def py_delete(request, pk):
@@ -415,15 +403,10 @@ def py_item_create(request, pk):
         discount_amount = py.discount_amount
         total_amount_afterdiscount = (sub_total - discount_amount)
         after_add_taxamount = total_amount_afterdiscount + total_tax_amount
-        discount_rate = (discount_amount / sub_total) * 100 
-        py.discount_rate = discount_rate
-        py.sub_total = sub_total
-        py.tax_amount = total_tax_amount
-        py.total_amount = after_add_taxamount
-        py.save()
+        discount_rate = (discount_amount / sub_total) * 100
     else:
         print(form.errors)
-    return redirect(py_update, pk=pk) 
+    return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
 
 @login_required
 def py_item_delete(request, pk):
@@ -441,22 +424,15 @@ def py_item_delete(request, pk):
             price += payment_item.line_total
             total_tax_amount += payment_item.line_taxamount
 
-        discount_amount = py.discount_amount
-        total_amount_afterdiscount = (sub_total - discount_amount)
-        after_add_taxamount = total_amount_afterdiscount + total_tax_amount
-        discount_rate = (discount_amount / sub_total) * 100 
-        py.discount_rate = discount_rate
-        py.sub_total = sub_total
-        py.tax_amount = total_tax_amount
-        py.total_amount = after_add_taxamount
-        py.save()
+        # total_amount_afterdiscount = (sub_total - discount_amount)
+        # after_add_taxamount = total_amount_afterdiscount + total_tax_amount
+        # discount_rate = (discount_amount / sub_total) * 100 
+        
     else:
-        py.discount_rate = 0.00
-        py.sub_total = 0.00
-        py.tax_amount = 0.00
-        py.total_amount = 0.00
-        py.save()
-    return redirect(py_update, pk=py.pk)
+        sub_total = 0.00
+        total_tax_amount = 0.00
+
+    return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
 
 @login_required
 def py_attachment_create(request, pk):    
@@ -468,11 +444,11 @@ def py_attachment_create(request, pk):
         py_attachment.save()
     else:
         print(form.errors)
-    return redirect(py_update, pk=pk) 
+    return JsonResponse({'message': 'Success'}) 
 
 @login_required
 def py_attachment_delete(request, pk):
     py_attachment =  get_object_or_404(PaymentAttachment, pk=pk)
     py = get_object_or_404(PaymentRequest, pk=py_attachment.py.pk)
     py_attachment.delete()
-    return redirect(py_update, pk=py.pk)
+    return JsonResponse({'message': 'Success'})

@@ -22,7 +22,7 @@ class ApprovalViewSet(viewsets.ModelViewSet):
 class ApproverViewSet(viewsets.ModelViewSet):
     queryset = ApprovalItemApprover.objects.all()
     serializer_class = ApprovalApproverSerializer
-    
+
 class CCViewSet(viewsets.ModelViewSet):
     queryset = ApprovalItemCC.objects.all()  
     serializer_class = ApprovalCCSerializer

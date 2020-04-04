@@ -9,6 +9,7 @@ from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
 from approval.models import ApprovalItem
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 
 class StaffViewSet(viewsets.ModelViewSet):
     queryset = StaffRecruitmentRequest.objects.all() #.order_by('rank')
@@ -55,10 +56,21 @@ class StaffJobResponsibleViewSet(viewsets.ModelViewSet):
         return StaffJobResponsibilities.objects.filter(staff_recruitment=staff)
 
 @login_required
-def staff_create(request):    
+def staff_init(request):    
+    staff = StaffRecruitmentRequest.objects.create(submit_by=request.user)
+    return redirect(staff_create, staff.pk)
+
+@login_required
+def staff_create(request,pk):    
+    staff = get_object_or_404(StaffRecruitmentRequest, pk=pk)
     if request.method == 'POST':
-        form = NewStaffRecruimentForm(request.POST)
+        form = NewStaffRecruimentForm(request.POST,instance=staff)
         if form.is_valid():
+            staff_type = DocumentTypeMaintenance.objects.filter(document_type_code="501")[0]
+            document_number = staff_type.running_number + 1
+            staff_type.running_number = document_number 
+            staff_type.save()
+
             company = form.cleaned_data['company']
             reporting_to = form.cleaned_data['reporting_to']
             department = form.cleaned_data['department']
@@ -68,6 +80,7 @@ def staff_create(request):
             staff = form.save(commit=False)
             staff.reporting_to = reporting_to
             staff.department = department
+            staff.document_number = '{0}-{1:05d}'.format(staff_type.document_type_code,document_number)
             staff.company = company
             staff.submit_by = request.user
             staff.position_title = position_title
@@ -75,8 +88,8 @@ def staff_create(request):
             staff.position_grade = position_grade
             staff.save()
 
-            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_name="Staff Recruitment Request")
-            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name="Staff Recruitment Request", document_type=document_type)
+            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="501")
+            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name="Staff Requisition", document_type=document_type)
             approval_level = get_object_or_404(WorkflowApprovalRule,approval_level=2)
 
             approval_item = ApprovalItem()        
@@ -91,21 +104,21 @@ def staff_create(request):
 
             staff.approval = approval_item
             staff.save()
-            return redirect(staff_list)
+            return redirect(staff_update,staff.pk)
         else:
             print(form.errors)
-            staff = StaffRecruitmentRequest
-            form = NewStaffRecruimentForm()
+            return redirect(staff_list)
     else:
-        staff = StaffRecruitmentRequest
-        form = NewStaffRecruimentForm()
-    return render(request, 'staffrecruitmentcreate.html', {'staff': staff, 'form': form})
+        form = NewStaffRecruimentForm(instance=staff)
+        form_requirement = NewStaffJobRequirementForm()
+        form_responsible = NewStaffJobResponsibleForm()
+    return render(request, 'staffrecruitmentcreate.html', {'staff': staff, 'form': form,'form_requirement': form_requirement,'form_responsible':form_responsible})
 
 @login_required
 def staff_delete(request, pk):
     staff =  get_object_or_404(StaffRecruitmentRequest, pk=pk)
     staff.delete()
-    return redirect(staff_list)
+    return JsonResponse({'message': 'Success'})
 
 @login_required
 def staff_detail(request, pk):
@@ -145,14 +158,14 @@ def staff_requirement_create(request,pk):
     else: 
         print(form.errors)
     
-    return redirect(staff_update, pk=pk) 
+    return JsonResponse({'message': 'Success'})
 
 @login_required
 def staff_requirement_delete(request, pk):
     staff_requirement =  get_object_or_404(StaffJobRequirement, pk=pk)
     staff = get_object_or_404(StaffRecruitmentRequest, pk=staff_requirement.staff_recruitment.pk)
     staff_requirement.delete()
-    return redirect(staff_update, pk=staff.pk)
+    return JsonResponse({'message': 'Success'})
 
 def staff_responsible_create(request,pk):  
     form = NewStaffJobResponsibleForm(request.POST)
@@ -164,10 +177,10 @@ def staff_responsible_create(request,pk):
     else:
         print(form.errors)
     
-    return redirect(staff_update, pk=pk) 
+    return JsonResponse({'message': 'Success'})
 
 def staff_responsible_delete(request, pk):
     staff_responsible =  get_object_or_404(StaffJobResponsibilities, pk=pk)
     staff = get_object_or_404(StaffRecruitmentRequest, pk=staff_responsible.staff_recruitment.pk)
     staff_responsible.delete()
-    return redirect(staff_update, pk=staff.pk)
+    return JsonResponse({'message': 'Success'})

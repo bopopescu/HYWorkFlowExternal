@@ -12,12 +12,17 @@ router.register('staffjobresponsible',views.StaffJobResponsibleViewSet)
 urlpatterns = [ 
     path('api/', include(router.urls)), 
     path('list/', views.staff_list, name='staff_list'),
-    path('create/', views.staff_create, name='staff_create'),
+
+
+    path('create/', views.staff_init, name='staff_init'),
+    path('create/<int:pk>/', views.staff_create, name='staff_create'),
     path('<int:pk>/', views.staff_detail, name='staff_detail'),    
     path('delete/<int:pk>/', views.staff_delete, name='staff_delete'),
     path('update/<int:pk>/', views.staff_update, name='staff_update'),
+
     path('createrequirement/<int:pk>/', views.staff_requirement_create, name='staff_requirement_create'),
     path('deleterequirement/<int:pk>/', views.staff_requirement_delete, name='staff_requirement_delete'),
+
     path('createresponsible/<int:pk>/', views.staff_responsible_create, name='staff_responsible_create'),
     path('deleteresponsible/<int:pk>/', views.staff_responsible_delete, name='staff_responsible_delete'),
 ]

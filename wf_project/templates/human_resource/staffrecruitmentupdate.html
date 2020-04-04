@@ -223,7 +223,7 @@
                                   "targets": -1,
                                   "data": null,
                                   "render": function ( data, type, row ) {
-                                        return '<a href="' + row.responsible_description + '/" target="_blank" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteRequirementModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                        return '<a href="#" data-toggle="modal" data-target="#deleteRequirementModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                     }
                               },                  
                               { "visible": false, 
@@ -269,7 +269,7 @@
                                   "targets": -1,
                                   "data": null,
                                   "render": function ( data, type, row ) {
-                                        return '<a href="' + row.responsible_description + '/" target="_blank" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteResponsibleModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete2(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                        return '<a href="#" data-toggle="modal" data-target="#deleteResponsibleModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete2(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                     }
                               },                  
                               { "visible": false, 
@@ -318,19 +318,37 @@
   }
 </script>
 <script type="text/javascript">
-  $(function () {
-      $("#deleteRequirementButton").click(function () {
-          var requirement_id = $(".modal-body #hiddenValue").val();
-          window.location.href = "../../deleterequirement/" + requirement_id + "/";
-      })
-  });
+$("#deleteRequirementButton").click(function(e){
+      e.preventDefault(); //prevent default action 
+      proceed = true;
+      var staff_id = $(".modal-body #hiddenValue").val();
+      var post_url = "../../deleterequirement/" + staff_id + "/"; //get form action url
+      var request_method = "GET"; //get form GET/POST method
+      // var form_data = new FormData(this); //Creates new FormData object
+      
+      //if everything's ok, continue with Ajax form submit
+      if(proceed){ 
+        $.ajax({ //ajax form submit
+          url : post_url,
+          type: request_method,
+          dataType : "json",
+          contentType: false,
+          cache: false,
+          processData:false
+        }).done(function(res){ 
+            var table = $('#myrequirements').DataTable(); 
+                table.ajax.reload();
+                $('#deleteRequirementModal').modal('hide');
+        });
+      }
+    });
 </script>
 
 <!-- Add Modal-->
 <div class="modal fade" id="addRequirementModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-        <form action="{% url 'staff_requirement_create' staff.pk %}" method="POST">
+        <form action="{% url 'staff_requirement_create' staff.pk %}" method="POST" id="addRequirement">
               <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalLabel">New Job Requirement</h5>
                   <button class="close" type="button" data-dismiss="modal" aria-label="Close">
@@ -358,6 +376,35 @@
     </div>
   </div>
 </div>
+
+<script>
+  $("#addRequirement").submit(function(e){
+      e.preventDefault(); //prevent default action 
+      proceed = true;
+      
+    var post_url = $(this).attr("action"); //get form action url
+    var request_method = $(this).attr("method"); //get form GET/POST method
+    var form_data = new FormData(this); //Creates new FormData object
+    
+    //if everything's ok, continue with Ajax form submit
+    if(proceed){ 
+      $.ajax({ //ajax form submit
+        url : post_url,
+        type: request_method,
+        data : form_data,
+        dataType : "json",
+        contentType: false,
+        cache: false,
+        processData:false
+      }).done(function(res){ 
+          var table = $('#myrequirements').DataTable(); 
+              table.ajax.reload();
+              $('#addRequirementModal').modal('hide');
+              $("#addRequirement")[0].reset();
+      });
+    }
+  });
+</script>
 
 <!-- Delete Modal-->
 <div class="modal fade" id="deleteResponsibleModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -387,19 +434,38 @@
   }
 </script>
 <script type="text/javascript">
-  $(function () {
-      $("#deleteResponsibleButton").click(function () {
-          var responsible_id = $(".modal-body #hiddenValue2").val();
-          window.location.href = "../../deleteresponsible/" + responsible_id + "/";
-      })
-  });
+
+  $("#deleteResponsibleButton").click(function(e){
+      e.preventDefault(); //prevent default action 
+      proceed = true;
+      var staff_id = $(".modal-body #hiddenValue2").val();
+      var post_url = "../../deleteresponsible/" + staff_id + "/"; //get form action url
+      var request_method = "GET"; //get form GET/POST method
+      // var form_data = new FormData(this); //Creates new FormData object
+      
+      //if everything's ok, continue with Ajax form submit
+      if(proceed){ 
+        $.ajax({ //ajax form submit
+          url : post_url,
+          type: request_method,
+          dataType : "json",
+          contentType: false,
+          cache: false,
+          processData:false
+        }).done(function(res){ 
+            var table = $('#myresponsibles').DataTable(); 
+                table.ajax.reload();
+                $('#deleteResponsibleModal').modal('hide');
+        });
+      }
+    });
 </script>
 
 <!-- Add Modal-->
 <div class="modal fade" id="addResponsibleModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-        <form action="{% url 'staff_responsible_create' staff.pk %}" method="POST">
+        <form action="{% url 'staff_responsible_create' staff.pk %}" method="POST" id="addResponsible">
               <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalLabel">New Responsible</h5>
                   <button class="close" type="button" data-dismiss="modal" aria-label="Close">
@@ -427,5 +493,34 @@
     </div>
   </div>
 </div>
+
+<script>
+  $("#addResponsible").submit(function(e){
+      e.preventDefault(); //prevent default action 
+      proceed = true;
+      
+    var post_url = $(this).attr("action"); //get form action url
+    var request_method = $(this).attr("method"); //get form GET/POST method
+    var form_data = new FormData(this); //Creates new FormData object
+    
+    //if everything's ok, continue with Ajax form submit
+    if(proceed){ 
+      $.ajax({ //ajax form submit
+        url : post_url,
+        type: request_method,
+        data : form_data,
+        dataType : "json",
+        contentType: false,
+        cache: false,
+        processData:false
+      }).done(function(res){ 
+          var table = $('#myresponsibles').DataTable(); 
+              table.ajax.reload();
+              $('#addResponsibleModal').modal('hide');
+              $("#addResponsible")[0].reset();
+      });
+    }
+  });
+</script>
 
 {% endblock content %}

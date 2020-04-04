@@ -189,7 +189,6 @@ def py_create(request,TransType):
         elif TransType == "Sales Commissions":
             document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
             transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Sales Commission", document_type=document_type)
-        print(TransType)
         py = PaymentRequest.objects.create(submit_by=request.user,transaction_type=transaction_type)
     return redirect(py_create_edit, py.pk)
 
@@ -332,7 +331,7 @@ def py_attachment_delete_formcreate(request, pk):
 def py_delete(request, pk):
     py =  get_object_or_404(PaymentRequest, pk=pk)
     py.delete()
-    return redirect(pylist)
+    return JsonResponse({'message': 'Success'})
 
 @login_required
 def py_detail(request, pk):

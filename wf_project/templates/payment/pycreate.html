@@ -97,7 +97,7 @@
       <a href="{% url 'pylist' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
       {% elif py.transaction_type.transaction_type_name == "Petty Cash" %}
       <a href="{% url 'pylist_pettycash' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
-      {% elif py.transaction_type.transaction_type_name == "	CashBack n Rebates" %}
+      {% elif py.transaction_type.transaction_type_name == "CashBack n Rebates" %}
       <a href="{% url 'pylist_cashback' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
       {% elif py.transaction_type.transaction_type_name == "Sales Commission" %}
       <a href="{% url 'pylist_salescommission' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>

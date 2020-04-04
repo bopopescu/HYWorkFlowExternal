@@ -25,7 +25,7 @@ class POSerializer(serializers.ModelSerializer):
             else:
                 return "Rejected"
         else:
-            return "Draft"
+            return "Draft (New)"
 
 class PODetailSerializer(serializers.ModelSerializer):
     item_code =  serializers.SerializerMethodField()

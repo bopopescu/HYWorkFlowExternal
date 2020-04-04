@@ -202,7 +202,7 @@ CKEDITOR_CONFIGS = {
     'details_memo': {
         'toolbar': 'Custom',
         'toolbar_Custom': [
-            ['Bold', 'Italic', 'Underline','Table','BulletedList', 'NumberedList']
+            ['Bold', 'Italic', 'Underline','Table','BulletedList', 'NumberedList', 'Source']
         ],
     },
     'remarks_py': {

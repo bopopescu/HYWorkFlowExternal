@@ -56,6 +56,8 @@
                                     var label = '';                                  
                                     if (row.approval_status == 'Draft') {
                                         label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
+                                    } else if (row.approval_status == 'Draft (New)') {
+                                        label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
                                     } else if (row.approval_status == 'In Progress') {
                                         label = '<p class="text-warning"><strong>' + row.approval_status + '</strong></p>';
                                     } else if (row.approval_status == 'Approved') {
@@ -72,6 +74,8 @@
                                     var label = '';                                  
                                     if (row.approval_status == 'Draft' || row.approval_status == 'Rejected') {
                                         label = '<a href="../update/' + row.id + '/" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePOModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                    } else if (row.approval_status == 'Draft (New)') {
+                                        label = '<a href="../create/' + row.id + '/" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePOModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                     } 
 
                                     return '<a href="../' + row.id + '/" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;' + label;
@@ -137,6 +141,8 @@
                                     var label = '';                                  
                                     if (row.approval == 'Draft') {
                                         label = '<p class="text-info"><strong>' + row.approval + '</strong></p>';
+                                    } else if (row.approval == 'Draft (New)') {
+                                        label = '<p class="text-info"><strong>' + row.approval + '</strong></p>';
                                     } else if (row.approval == 'In Progress') {
                                         label = '<p class="text-warning"><strong>' + row.approval + '</strong></p>';
                                     } else if (row.approval == 'Approved') {
@@ -174,24 +180,27 @@
 </div>
 <!-- Delete Modal-->
 <div class="modal fade" id="deletePOModal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
-              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">×</span>
-              </button>
-          </div>
-          <div class="modal-body">
-              Select "Delete" below if you are ready to delete.
-              <input type="hidden" name="hiddenValue" id="hiddenValue" value="" />
-          </div>
-          <div class="modal-footer">
-              <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
-              <a class="btn btn-danger" href="#" id="deletePOButton">Delete</a>
-          </div>
-      </div>
-  </div>
+    <form action="{% url 'po_delete' %}" method="POST" id="deletePO">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Select "Delete" below if you are ready to delete.
+                    <input type="hidden" name="hiddenValue" id="hiddenValue" value="" />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger" id="deletePOButton">Delete</a>
+                </div>
+            </div>
+        </div>
+  </form>
 </div>
 <script type="text/javascript">
   function sendDelete(param) {
@@ -199,12 +208,34 @@
       deleteInput.value = param;
   }
 </script>
-<script type="text/javascript">
-  $(function() {
-      $("#deletePOButton").click(function() {
-          var po_id = $(".modal-body #hiddenValue").val();
-          window.location.href = "../delete/" + po_id + "/";
-      })
-  });
+<script>
+$("#deletePO").submit(function(e){
+    e.preventDefault(); //prevent default action 
+	proceed = true;
+		
+	var post_url = $(this).attr("action"); //get form action url
+	var request_method = $(this).attr("method"); //get form GET/POST method
+	var form_data = new FormData(this); //Creates new FormData object
+	
+	//if everything's ok, continue with Ajax form submit
+	if(proceed){ 
+		$.ajax({ //ajax form submit
+			url : post_url,
+			type: request_method,
+			data : form_data,
+			dataType : "json",
+			contentType: false,
+			cache: false,
+			processData:false
+		}).done(function(res){ 
+			if (res.message == 'Success'){
+                var table = $('#mypos').DataTable(); 
+                table.ajax.reload();
+            }
+            
+            $('#deletePOModal').modal('hide');
+		});
+	}
+});
 </script>
 {% endblock content %}

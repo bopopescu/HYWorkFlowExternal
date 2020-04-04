@@ -3,7 +3,7 @@
 {% load widget_tweaks %} 
 {% load static %}
 
-<form method="post">
+<form method="post" id="memoForm">
     {% csrf_token %}
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Memo (Update)</h1>
@@ -79,14 +79,14 @@
                                     {{form.status.label_tag}}
                                 </div>
                                 <div class="col col-md-8">
-                                    {% if memo.status == "D" %}
-                                    <p class="text-info"><strong>Draft</strong></p>
-                                    {% elif memo.status == "P" %}
-                                    <p class="text-warning"><strong>Pending Approval</strong></p>
-                                    {% elif memo.status == "A" %}
-                                    <p class="text-success"><strong>Approved</strong></p>
+                                    {% if memo.status.status_code == 100 %}
+                                    <p class="text-info"><strong>{{memo.status}}</strong></p>
+                                    {% elif memo.status.status_code == 300  %}
+                                    <p class="text-warning"><strong>{{memo.status}}</strong></p>
+                                    {% elif memo.status.status_code == 400 %}
+                                    <p class="text-success"><strong>{{memo.status}}</strong></p>
                                     {% else %}
-                                    <p class="text-danger"><strong>Rejected</strong></p>
+                                    <p class="text-danger"><strong>{{memo.status}}</strong></p>
                                     {% endif %}
                                 </div>
                             </div>
@@ -215,8 +215,6 @@
                                             cell.innerHTML = i + 1;
                                         });
                                     }).draw();
-
-                                    $('#id_subject').html("{{memo.subject}}");
                                 });
                             </script>
                         </div>
@@ -277,9 +275,12 @@ $("#deleteMemoAttachment").submit(function(e){
 			cache: false,
 			processData:false
 		}).done(function(res){ 
-				var table = $('#myattachments').DataTable(); 
+			if (res.message == 'Success'){
+                var table = $('#myattachments').DataTable(); 
                 table.ajax.reload();
-                $('#deleteMemoAttachmentModal').modal('hide');
+            }
+            
+            $('#deleteMemoAttachmentModal').modal('hide');
 		});
 	}
 });
@@ -347,9 +348,12 @@ $("#addMemoAttachment").submit(function(e){
 			cache: false,
 			processData:false
 		}).done(function(res){ 
-				var table = $('#myattachments').DataTable(); 
+            if (res.message == 'Success'){
+                var table = $('#myattachments').DataTable(); 
                 table.ajax.reload();
-                $('#addMemoAttachmentModal').modal('hide');
+            }
+
+            $('#addMemoAttachmentModal').modal('hide');
 		});
 	}
 });

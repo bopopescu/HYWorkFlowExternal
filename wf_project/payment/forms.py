@@ -14,9 +14,9 @@ from administration.models import DocumentTypeMaintenance
 
 
 class DetailPaymentForm(forms.ModelForm):
-    company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.company, disabled=True)
-    vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.vendor, disabled=True)
-    project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.project, disabled=True)
+    company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.all().order_by('company_name'), empty_label="Not Assigned",initial=PaymentRequest.company, disabled=True)
+    vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.all().order_by('vendor_name'), empty_label="Not Assigned",initial=PaymentRequest.vendor, disabled=True)
+    project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=PaymentRequest.project, disabled=True)
     transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_name="Payment Request")[0]), empty_label="Not Assigned",initial=PaymentRequest.transaction_type, disabled=True)
     currency = forms.ModelChoiceField(queryset=CurrencyMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.currency, disabled=True)
     payment_mode = forms.ModelChoiceField(queryset=PaymentmodeMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.payment_mode, disabled=True)

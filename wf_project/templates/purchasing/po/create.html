@@ -3,7 +3,7 @@
 {% load static %} 
 {% load widget_tweaks %}
 
-<form method="post" id="poForm" data-delivery-url="{% url 'ajax_load_delivery' %}" data-billing-url="{% url 'ajax_load_billing' %}">
+<form method="post" id="poForm" data-delivery-url="{% url 'ajax_load_delivery' %}" data-vendor-url="{% url 'ajax_load_vendor' %}">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Purchase Order</h1>
         <div>
@@ -139,6 +139,22 @@
                                 <div class="form-group">
                                     <div class="form-row">
                                         <div class="col col-md-3">
+                                            {{form.vendor_address.label_tag}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="col col-md-12">
+                                            {% render_field form.vendor_address|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="col col-md-3">
                                             {{form.delivery_receiver.label_tag}}
                                         </div>
                                         <div class="col col-md-8">
@@ -150,25 +166,6 @@
                                     <div class="form-row">
                                         <div class="col col-md-12">
                                             {% render_field form.delivery_address class="col-md-12 form-control form-control-use" %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="form-row">
-                                        <div class="col col-md-3">
-                                            {{form.billing_receiver.label_tag}}
-                                        </div>
-                                        <div class="col col-md-8">
-                                            {% render_field form.billing_receiver class="col-md-12 form-control form-control-use" %}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="form-row">
-                                        <div class="col col-md-12">
-                                            {% render_field form.billing_address class="col-md-12 form-control form-control-use" %}
                                         </div>
                                     </div>
                                 </div>
@@ -189,24 +186,24 @@
                         'delivery_receiver': deliveryId // add the country id to the GET parameters
                     },
                     success: function(data) { // `data` is the return of the `load_cities` view function
-                        $("#id_delivery_address").val(data); // replace the contents of the city input with the data that came from the server
+                        $("#id_delivery_address").html(data); // replace the contents of the city input with the data that came from the server
                     }
                 });
 
             });
         </script>
         <script>
-            $("#id_billing_receiver").change(function() {
-                var url = $("#poForm").attr("data-billing-url"); // get the url of the `load_cities` view
-                var billingId = $(this).val(); // get the selected country ID from the HTML input
+            $("#id_vendor").change(function() {
+                var url = $("#poForm").attr("data-vendor-url"); // get the url of the `load_cities` view
+                var vendorId = $(this).val(); // get the selected country ID from the HTML input
 
                 $.ajax({ // initialize an AJAX request
                     url: url, // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
                     data: {
-                        'billing_receiver': billingId // add the country id to the GET parameters
+                        'vendor': vendorId // add the country id to the GET parameters
                     },
                     success: function(data) { // `data` is the return of the `load_cities` view function
-                        $("#id_billing_address").val(data); // replace the contents of the city input with the data that came from the server
+                        $("#id_vendor_address").html(data); // replace the contents of the city input with the data that came from the server
                     }
                 });
 
@@ -214,16 +211,16 @@
         </script>
     </div>
     <div class="card shadow mb-4">
-        <div class="card-body">
+        <div class="card-body">            
             <div class="row">
                 <div class="col-xl-12 col-md-12">
                     <div class="form-group">
                         <div class="form-row">
                             <div class="col col-md-3">
-                                {{form.subject.label_tag}}
+                                {{form.reference.label_tag}}
                             </div>
                             <div class="col col-md-8">
-                                {% render_field form.subject class="col-md-12 form-control form-control-use" %}
+                                {% render_field form.reference class="col-md-12 form-control form-control-use" %}
                             </div>
                         </div>
                     </div>
@@ -234,10 +231,10 @@
                     <div class="form-group">
                         <div class="form-row">
                             <div class="col col-md-3">
-                                {{form.reference.label_tag}}
+                                {{form.subject.label_tag}}
                             </div>
                             <div class="col col-md-8">
-                                {% render_field form.reference class="col-md-12 form-control form-control-use" %}
+                                {% render_field form.subject rows="3" class="col-md-12 form-control form-control-use" %}
                             </div>
                         </div>
                     </div>
@@ -285,7 +282,7 @@
                                         <script>
                                             $(document).ready(function() {
                                                 var podtable = $('#podetails').DataTable({
-                                                    "ajax": "../../api/podetail/?format=datatables&pk={{po.pk}}",
+                                                    "ajax": "../../../api/podetail/?format=datatables&pk={{po.pk}}",
                                                     "dom": "<'row'<'col-sm-12 small'tr>>" +
                                                         "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                                     "columnDefs": [{
@@ -375,7 +372,7 @@
                                         <script>
                                             $(document).ready(function() {
                                                 var poac2table = $('#pocomparison2attachments').DataTable({
-                                                    "ajax": "../../api/pocomparison2attachment/?format=datatables&pk={{po.pk}}",
+                                                    "ajax": "../../../api/pocomparison2attachment/?format=datatables&pk={{po.pk}}",
                                                     "dom": "<'row'<'col-sm-12 small'tr>>" +
                                                         "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                                     "columnDefs": [{
@@ -455,7 +452,7 @@
                                         <script>
                                             $(document).ready(function() {
                                                 var poac3table = $('#pocomparison3attachments').DataTable({
-                                                    "ajax": "../../api/pocomparison3attachment/?format=datatables&pk={{po.pk}}",
+                                                    "ajax": "../../../api/pocomparison3attachment/?format=datatables&pk={{po.pk}}",
                                                     "dom": "<'row'<'col-sm-12 small'tr>>" +
                                                         "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                                     "columnDefs": [{
@@ -518,7 +515,14 @@
                                             {{form.discount.label_tag}}
                                         </div>
                                         <div class="col col-md-8">
-                                            {% render_field form.discount class="col-md-12 form-control form-control-use" %}
+                                            <div class="form-row">
+                                                <div class="col col-md-4">
+                                                    {% render_field form.discount class="col-md-12 form-control form-control-use" onchange="calculateTotal()" %}
+                                                </div>
+                                                <div class="col col-md-8">
+                                                    {% render_field form.discount_amount|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -528,7 +532,7 @@
                                             {{form.tax_amount.label_tag}}
                                         </div>
                                         <div class="col col-md-8">
-                                            {% render_field form.tax_amount|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                            {% render_field form.tax_amount class="col-md-12 form-control form-control-use" onchange="calculateTotal()" %}
                                         </div>
                                     </div>
                                 </div>
@@ -603,7 +607,7 @@
                     <script>
                         $(document).ready(function() {
                             var poatable = $('#poattachments').DataTable({
-                                "ajax": "../../api/poattachment/?format=datatables&pk={{po.pk}}",
+                                "ajax": "../../../api/poattachment/?format=datatables&pk={{po.pk}}",
                                 "dom": "<'row'<'col-sm-12 small'tr>>" +
                                     "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                 "columnDefs": [{
@@ -664,24 +668,27 @@
 
 <!-- Delete Modal-->
 <div class="modal fade" id="deletePOAttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Select "Delete" below if you are ready to delete.
-                <input type="hidden" name="hiddenValuePOA" id="hiddenValuePOA" value="" />
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-danger" href="#" id="deletePOAttachmentButton">Delete</a>
+    <form action="{% url 'po_attachment_delete' po.pk %}" method="POST" id="deletePOAttachment">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Select "Delete" below if you are ready to delete.
+                    <input type="hidden" name="hiddenValuePOA" id="hiddenValuePOA" value="" />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger" id="deletePOAttachmentButton">Delete</a>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <script type="text/javascript">
     function sendDeletePOA(param) {
@@ -689,20 +696,42 @@
         deleteInput.value = param;
     }
 </script>
-<script type="text/javascript">
-    $(function() {
-        $("#deletePOAttachmentButton").click(function() {
-            var POattachment_id = $(".modal-body #hiddenValuePOA").val();
-            window.location.href = "../deleteattachment_create/" + POattachment_id + "/";
-        })
-    });
+<script>
+$("#deletePOAttachment").submit(function(e){
+    e.preventDefault(); //prevent default action 
+	proceed = true;
+		
+	var post_url = $(this).attr("action"); //get form action url
+	var request_method = $(this).attr("method"); //get form GET/POST method
+	var form_data = new FormData(this); //Creates new FormData object
+	
+	//if everything's ok, continue with Ajax form submit
+	if(proceed){ 
+		$.ajax({ //ajax form submit
+			url : post_url,
+			type: request_method,
+			data : form_data,
+			dataType : "json",
+			contentType: false,
+			cache: false,
+			processData:false
+		}).done(function(res){ 
+			if (res.message == 'Success'){
+                var table = $('#poattachments').DataTable(); 
+                table.ajax.reload();
+            }
+            
+            $('#deletePOAttachmentModal').modal('hide');
+		});
+	}
+});
 </script>
 
 <!-- Add Modal-->
 <div class="modal fade" id="addPOAttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{% url 'po_attachment_create_fromcreate' po.pk %}" method="POST" enctype="multipart/form-data">
+            <form action="{% url 'po_attachment_create' po.pk %}" id="addPOAttachment" method="POST" enctype="multipart/form-data">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">New Attachment</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
@@ -741,26 +770,60 @@
     </div>
 </div>
 
+<script>
+    $("#addPOAttachment").submit(function(e){
+        e.preventDefault(); //prevent default action 
+        proceed = true;
+            
+        var post_url = $(this).attr("action"); //get form action url
+        var request_method = $(this).attr("method"); //get form GET/POST method
+        var form_data = new FormData(this); //Creates new FormData object
+        
+        //if everything's ok, continue with Ajax form submit
+        if(proceed){ 
+            $.ajax({ //ajax form submit
+                url : post_url,
+                type: request_method,
+                data : form_data,
+                dataType : "json",
+                contentType: false,
+                cache: false,
+                processData:false
+            }).done(function(res){ 
+                if (res.message == 'Success'){
+                    var table = $('#poattachments').DataTable(); 
+                    table.ajax.reload();
+                }
+    
+                $('#addPOAttachmentModal').modal('hide');
+            });
+        }
+    });
+</script>
+
 <!-- Delete Modal-->
 <div class="modal fade" id="deletePOCV2AttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Select "Delete" below if you are ready to delete.
-                <input type="hidden" name="hiddenValuePOCV2" id="hiddenValuePOCV2" value="" />
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-danger" href="#" id="deletePOCV2ttachmentButton">Delete</a>
+    <form action="{% url 'po_cov2_attachment_delete' po.pk %}" method="POST" id="deletePOCV2Attachment">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Select "Delete" below if you are ready to delete.
+                    <input type="hidden" name="hiddenValuePOCV2" id="hiddenValuePOCV2" value="" />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger" id="deletePOCV2ttachmentButton">Delete</a>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <script type="text/javascript">
     function sendDeletePOCV2(param) {
@@ -768,20 +831,42 @@
         deleteInput.value = param;
     }
 </script>
-<script type="text/javascript">
-    $(function() {
-        $("#deletePOCV2ttachmentButton").click(function() {
-            var POCV2ttachment_id = $(".modal-body #hiddenValuePOCV2").val();
-            window.location.href = "../deletecov2attachment_create/" + POCV2ttachment_id + "/";
-        })
-    });
+<script>
+$("#deletePOCV2Attachment").submit(function(e){
+    e.preventDefault(); //prevent default action 
+	proceed = true;
+		
+	var post_url = $(this).attr("action"); //get form action url
+	var request_method = $(this).attr("method"); //get form GET/POST method
+	var form_data = new FormData(this); //Creates new FormData object
+	
+	//if everything's ok, continue with Ajax form submit
+	if(proceed){ 
+		$.ajax({ //ajax form submit
+			url : post_url,
+			type: request_method,
+			data : form_data,
+			dataType : "json",
+			contentType: false,
+			cache: false,
+			processData:false
+		}).done(function(res){ 
+			if (res.message == 'Success'){
+                var table = $('#pocomparison2attachments').DataTable(); 
+                table.ajax.reload();
+            }
+            
+            $('#deletePOCV2AttachmentModal').modal('hide');
+		});
+	}
+});
 </script>
 
 <!-- Add Modal-->
 <div class="modal fade" id="addPOCV2AttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{% url 'po_cov2_attachment_create_fromcreate' po.pk %}" method="POST" enctype="multipart/form-data">
+            <form action="{% url 'po_cov2_attachment_create' po.pk %}" id="addPOCV2Attachment" method="POST" enctype="multipart/form-data">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">New Attachment</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
@@ -820,26 +905,60 @@
     </div>
 </div>
 
+<script>
+    $("#addPOCV2Attachment").submit(function(e){
+        e.preventDefault(); //prevent default action 
+        proceed = true;
+            
+        var post_url = $(this).attr("action"); //get form action url
+        var request_method = $(this).attr("method"); //get form GET/POST method
+        var form_data = new FormData(this); //Creates new FormData object
+        
+        //if everything's ok, continue with Ajax form submit
+        if(proceed){ 
+            $.ajax({ //ajax form submit
+                url : post_url,
+                type: request_method,
+                data : form_data,
+                dataType : "json",
+                contentType: false,
+                cache: false,
+                processData:false
+            }).done(function(res){ 
+                if (res.message == 'Success'){
+                    var table = $('#pocomparison2attachments').DataTable(); 
+                    table.ajax.reload();
+                }
+    
+                $('#addPOCV2AttachmentModal').modal('hide');
+            });
+        }
+    });
+</script>
+
 <!-- Delete Modal-->
 <div class="modal fade" id="deletePOCV3AttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Select "Delete" below if you are ready to delete.
-                <input type="hidden" name="hiddenValuePOCV3" id="hiddenValuePOCV3" value="" />
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-danger" href="#" id="deletePOCV3ttachmentButton">Delete</a>
+    <form action="{% url 'po_cov3_attachment_delete' po.pk %}" method="POST" id="deletePOCV3Attachment">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Select "Delete" below if you are ready to delete.
+                    <input type="hidden" name="hiddenValuePOCV3" id="hiddenValuePOCV3" value="" />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger" id="deletePOCV3ttachmentButton">Delete</a>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <script type="text/javascript">
     function sendDeletePOCV3(param) {
@@ -847,20 +966,42 @@
         deleteInput.value = param;
     }
 </script>
-<script type="text/javascript">
-    $(function() {
-        $("#deletePOCV3ttachmentButton").click(function() {
-            var POCV3ttachment_id = $(".modal-body #hiddenValuePOCV3").val();
-            window.location.href = "../deletecov3attachment_create/" + POCV3ttachment_id + "/";
-        })
-    });
+<script>
+$("#deletePOCV3Attachment").submit(function(e){
+    e.preventDefault(); //prevent default action 
+	proceed = true;
+		
+	var post_url = $(this).attr("action"); //get form action url
+	var request_method = $(this).attr("method"); //get form GET/POST method
+	var form_data = new FormData(this); //Creates new FormData object
+	
+	//if everything's ok, continue with Ajax form submit
+	if(proceed){ 
+		$.ajax({ //ajax form submit
+			url : post_url,
+			type: request_method,
+			data : form_data,
+			dataType : "json",
+			contentType: false,
+			cache: false,
+			processData:false
+		}).done(function(res){ 
+			if (res.message == 'Success'){
+                var table = $('#pocomparison3attachments').DataTable(); 
+                table.ajax.reload();
+            }
+            
+            $('#deletePOCV3AttachmentModal').modal('hide');
+		});
+	}
+});
 </script>
 
 <!-- Add Modal-->
 <div class="modal fade" id="addPOCV3AttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{% url 'po_cov3_attachment_create_fromcreate' po.pk %}" method="POST" enctype="multipart/form-data">
+            <form action="{% url 'po_cov3_attachment_create' po.pk %}" id="addPOCV3Attachment" method="POST" enctype="multipart/form-data">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">New Attachment</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
@@ -899,26 +1040,60 @@
     </div>
 </div>
 
+<script>
+    $("#addPOCV3Attachment").submit(function(e){
+        e.preventDefault(); //prevent default action 
+        proceed = true;
+            
+        var post_url = $(this).attr("action"); //get form action url
+        var request_method = $(this).attr("method"); //get form GET/POST method
+        var form_data = new FormData(this); //Creates new FormData object
+        
+        //if everything's ok, continue with Ajax form submit
+        if(proceed){ 
+            $.ajax({ //ajax form submit
+                url : post_url,
+                type: request_method,
+                data : form_data,
+                dataType : "json",
+                contentType: false,
+                cache: false,
+                processData:false
+            }).done(function(res){ 
+                if (res.message == 'Success'){
+                    var table = $('#pocomparison3attachments').DataTable(); 
+                    table.ajax.reload();
+                }
+    
+                $('#addPOCV3AttachmentModal').modal('hide');
+            });
+        }
+    });
+</script>
+
 <!-- Delete Modal-->
 <div class="modal fade" id="deleteDetailModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Select "Delete" below if you are ready to delete.
-                <input type="hidden" name="hiddenValueDetail" id="hiddenValueDetail" value="" />
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-danger" href="#" id="deleteDetailButton">Delete</a>
+    <form action="{% url 'po_detail_delete' po.pk %}" method="POST" id="deletePODetail">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Select "Delete" below if you are ready to delete.
+                    <input type="hidden" name="hiddenValueDetail" id="hiddenValueDetail" value="" />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger" id="deleteDetailButton">Delete</a>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 <script type="text/javascript">
     function sendDeleteDetail(param) {
@@ -926,20 +1101,44 @@
         deleteInput.value = param;
     }
 </script>
-<script type="text/javascript">
-    $(function() {
-        $("#deleteDetailButton").click(function() {
-            var detail_id = $(".modal-body #hiddenValueDetail").val();
-            window.location.href = "../deletedetail_create/" + detail_id + "/";
-        })
-    });
+<script>
+$("#deletePODetail").submit(function(e){
+    e.preventDefault(); //prevent default action 
+	proceed = true;
+		
+	var post_url = $(this).attr("action"); //get form action url
+	var request_method = $(this).attr("method"); //get form GET/POST method
+	var form_data = new FormData(this); //Creates new FormData object
+	
+	//if everything's ok, continue with Ajax form submit
+	if(proceed){ 
+		$.ajax({ //ajax form submit
+			url : post_url,
+			type: request_method,
+			data : form_data,
+			dataType : "json",
+			contentType: false,
+			cache: false,
+			processData:false
+		}).done(function(res){ 
+			if (res.message == 'Success'){
+                var table = $('#podetails').DataTable(); 
+                table.ajax.reload();
+                $("#id_sub_total").val(res.sub_total);
+                $("#id_total_amount").val(res.total_amount);
+            }
+            
+            $('#deleteDetailModal').modal('hide');
+		});
+	}
+});
 </script>
 
 <!-- Add Modal-->
 <div class="modal fade" id="addPODetailModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{% url 'po_detail_create_fromcreate' po.pk %}" method="POST">
+            <form action="{% url 'po_detail_create' po.pk %}" id="addPODetail" method="POST">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">New Item</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
@@ -1018,4 +1217,75 @@
         </div>
     </div>
 </div>
+
+<script>
+    $("#addPODetail").submit(function(e){
+        e.preventDefault(); //prevent default action 
+        proceed = true;
+            
+        var post_url = $(this).attr("action"); //get form action url
+        var request_method = $(this).attr("method"); //get form GET/POST method
+        var form_data = new FormData(this); //Creates new FormData object
+        
+        //if everything's ok, continue with Ajax form submit
+        if(proceed){ 
+            $.ajax({ //ajax form submit
+                url : post_url,
+                type: request_method,
+                data : form_data,
+                dataType : "json",
+                contentType: false,
+                cache: false,
+                processData:false
+            }).done(function(res){ 
+                if (res.message == 'Success'){
+                    var table = $('#podetails').DataTable(); 
+                    table.ajax.reload();
+                    $("#id_sub_total").val(res.sub_total);
+                    $("#id_total_amount").val(res.total_amount);
+                }
+    
+                $('#addPODetailModal').modal('hide');
+            });
+        }
+    });
+</script>
+<script>
+    function calculateTotal() {  
+	var subtotal=document.getElementById("id_sub_total").value;
+	var docDiscPerc = document.getElementById("id_discount").value;
+	if(docDiscPerc > 100 || docDiscPerc <= 0 || docDiscPerc == ""){
+		if(docDiscPerc >100){
+			alert("Discount Percentage should not be more than 100 percent");
+		}else if(docDiscPerc <0){
+			alert("Discount Percentage should not be less than 0 percent");			
+		}else if(docDiscPerc == ""){
+			alert("Discount Percentage should cannot be blank and must at least 0 percent");			
+		}
+		docDiscPerc=0;
+		document.getElementById("id_discount").value=0;
+	}
+
+	var taxamount = document.getElementById("id_tax_amount").value; 
+	var txtDocDiscAmt="0.00", txttaxamount="0.00";
+	var docDiscAmt = 0.00;	
+
+	if(!taxamount){
+		taxamount=0.00;
+	}
+	if (docDiscPerc){
+		docDiscAmt = (subtotal * (docDiscPerc / 100)).toFixed(2);
+		taxamount = (taxamount * ((100-docDiscPerc)/100)).toFixed(2);
+		txtDocDiscAmt= docDiscAmt;
+		txttaxamount = taxamount;
+	}
+	
+	 document.getElementById("id_discount").value= parseFloat(docDiscPerc).toFixed(2);
+	document.getElementById("id_discount_amount").value = txtDocDiscAmt;
+	document.getElementById("id_tax_amount").value = txttaxamount;
+	var totamt = parseFloat((subtotal - docDiscAmt + parseFloat(taxamount))).toFixed(2);
+	totamt=totamt;
+	document.getElementById("id_total_amount").value = totamt; 
+}
+</script>
 {% endblock content %}

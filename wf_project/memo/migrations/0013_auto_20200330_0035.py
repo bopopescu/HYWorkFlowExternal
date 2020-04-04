@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='memo',
             name='document_number',
-            field=models.CharField(blank=True, default=memo.models.documenttype_document_number, max_length=100, null=True),
+            field=models.CharField(blank=True, max_length=100, null=True),
         ),
         migrations.AlterField(
             model_name='memo',

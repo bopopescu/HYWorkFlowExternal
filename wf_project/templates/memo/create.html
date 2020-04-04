@@ -3,7 +3,7 @@
 {% load widget_tweaks %} 
 {% load static %}
 
-<form method="post">
+<form method="post" id="memoForm" data-template-url="{% url 'ajax_load_template' %}">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Memo (New)</h1>
         <div>
@@ -60,6 +60,22 @@
                                 </div>
                             </div>
                         </div>
+                        <script>
+                            $("#id_template").change(function() {
+                                var url = $("#memoForm").attr("data-template-url"); // get the url of the `load_cities` view
+                                var templateId = $(this).val(); // get the selected country ID from the HTML input
+
+                                $.ajax({ // initialize an AJAX request
+                                    url: url, // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+                                    data: {
+                                        'template': templateId // add the country id to the GET parameters
+                                    },
+                                    success: function(data) { // `data` is the return of the `load_cities` view function
+                                        CKEDITOR.instances.id_details.insertHtml(data); // replace the contents of the city input with the data that came from the server
+                                    }
+                                });
+                            });
+                        </script>
                     </div>
                 </div>
             </div>
@@ -273,9 +289,12 @@ $("#deleteMemoAttachment").submit(function(e){
 			cache: false,
 			processData:false
 		}).done(function(res){ 
-				var table = $('#myattachments').DataTable(); 
+			if (res.message == 'Success'){
+                var table = $('#myattachments').DataTable(); 
                 table.ajax.reload();
-                $('#deleteMemoAttachmentModal').modal('hide');
+            }
+            
+            $('#deleteMemoAttachmentModal').modal('hide');
 		});
 	}
 });
@@ -343,9 +362,12 @@ $("#addMemoAttachment").submit(function(e){
 			cache: false,
 			processData:false
 		}).done(function(res){ 
-				var table = $('#myattachments').DataTable(); 
+            if (res.message == 'Success'){
+                var table = $('#myattachments').DataTable(); 
                 table.ajax.reload();
-                $('#addMemoAttachmentModal').modal('hide');
+            }
+
+            $('#addMemoAttachmentModal').modal('hide');
 		});
 	}
 });

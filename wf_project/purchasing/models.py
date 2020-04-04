@@ -1,5 +1,5 @@
 from django.db import models
-from administration.models import EmployeeMaintenance, CompanyMaintenance, CompanyAddressDetail, CurrencyMaintenance, TransactiontypeMaintenance
+from administration.models import EmployeeMaintenance, CompanyMaintenance, CompanyAddressDetail, CurrencyMaintenance, TransactiontypeMaintenance, StatusMaintenance
 from administration.models import DepartmentMaintenance, DocumentTypeMaintenance, ProjectMaintenance, VendorMasterData, VendorAddressDetail, UOMMaintenance
 from Inventory.models import Item
 from approval.models import ApprovalItem
@@ -36,18 +36,20 @@ class PurchaseOrder(models.Model):
     revision = models.IntegerField(default=1)
     document_number = models.CharField(max_length=100, blank=True, null=True)
     vendor = models.ForeignKey(VendorMasterData, verbose_name="Vendor", on_delete=models.CASCADE, blank=True, null=True)
+    vendor_address = models.CharField(max_length=250, blank=True, null=True)
     currency = models.ForeignKey(CurrencyMaintenance, verbose_name="Vendor", on_delete=models.CASCADE, blank=True, null=True)
     company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE, blank=True, null=True)
     project = models.ForeignKey(ProjectMaintenance, verbose_name="Project", on_delete=models.CASCADE, blank=True, null=True)
     approval = models.ForeignKey(ApprovalItem, verbose_name="Approval", on_delete=models.CASCADE, blank=True, null=True)
     transaction_type = models.ForeignKey(TransactiontypeMaintenance, verbose_name="Transaction Type", on_delete=models.CASCADE, blank=True, null=True)
-    status = models.CharField(default="D",max_length=1, blank=True, null=True)
+    status = models.ForeignKey(StatusMaintenance, on_delete=models.CASCADE, blank=True, null=True)
     submit_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     submit_date = models.DateField(auto_now_add=True)
     subject = models.CharField(max_length=250, blank=True, null=True)
     reference = models.CharField(max_length=100, blank=True, null=True)
     sub_total = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
     discount = models.DecimalField(verbose_name="Discount (%)",default=0.0,decimal_places=2,max_digits=6)
+    discount_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
     tax_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
     total_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
     payment_term = models.CharField(max_length=100, blank=True, null=True)

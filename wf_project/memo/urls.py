@@ -20,4 +20,7 @@ urlpatterns = [
     path('<int:pk>/', views.memo_detail, name='memo_detail'),      
     path('delete/', views.memo_delete, name='memo_delete'),
     path('update/<int:pk>/', views.memo_update, name='memo_update'),
+
+    path('ajax/load-template/', views.load_template, name='ajax_load_template'),
+    
 ]

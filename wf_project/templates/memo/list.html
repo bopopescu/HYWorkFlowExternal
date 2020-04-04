@@ -178,7 +178,7 @@
 </div>
 <!-- Delete Modal-->
 <div class="modal fade" id="deleteMemoModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <form action="{% url 'memo_delete' %}" method="POST" id="deleteMemo">
+    <form action="{% url 'memo_delete' %}" method="POST" id="deletePO">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -226,9 +226,12 @@ $("#deleteMemo").submit(function(e){
 			cache: false,
 			processData:false
 		}).done(function(res){ 
-				var table = $('#mymemos').DataTable(); 
+            if (res.message == 'Success'){
+                var table = $('#mymemos').DataTable(); 
                 table.ajax.reload();
-                $('#deleteMemoModal').modal('hide');
+            }
+
+            $('#deleteMemoModal').modal('hide');
 		});
 	}
 });

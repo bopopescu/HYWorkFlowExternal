@@ -3,14 +3,12 @@ from .forms import NewMemoForm, DetailMemoForm, UpdateMemoForm, NewMemoAttachmen
 from django.contrib.auth.decorators import login_required
 from .models import Memo, MemoAttachment
 from administration.models import CompanyMaintenance, DepartmentMaintenance, ProjectMaintenance, MemoTemplateMaintenance
+from administration.models import DocumentTypeMaintenance, TransactiontypeMaintenance, WorkflowApprovalRule, StatusMaintenance
 from rest_framework import viewsets
 from .serializers import MemoSerializer, MemoAttachmentSerializer
-from administration.models import DocumentTypeMaintenance
-from administration.models import TransactiontypeMaintenance
-from administration.models import WorkflowApprovalRule
 from django.contrib.auth.models import User
 from approval.models import ApprovalItem
-from django.http import JsonResponse
+from django.http import HttpResponse,JsonResponse
 
 class MemoAttachmentViewSet(viewsets.ModelViewSet):
     queryset = MemoAttachment.objects.all()
@@ -52,7 +50,7 @@ def memo_create(request, pk):
         form = NewMemoForm(request.POST, instance=memo)
         if form.is_valid():
 
-            memo_type = DocumentTypeMaintenance.objects.filter(document_type_name="Memo")[0]
+            memo_type = DocumentTypeMaintenance.objects.filter(document_type_code="601")[0]
             document_number = memo_type.running_number + 1
             memo_type.running_number = document_number 
             memo_type.save()
@@ -61,16 +59,19 @@ def memo_create(request, pk):
             department = form.cleaned_data['department']
             project = form.cleaned_data['project']
             template = form.cleaned_data['template']
+            status = get_object_or_404(StatusMaintenance, document_type=memo_type, status_code="100")
+
             memo.document_number = '{0}-{1:05d}'.format(memo_type.document_type_code,document_number)
             memo.company = company
             memo.department = department
             memo.project = project
             memo.template = template
+            memo.status = status
             memo.submit_by = request.user
             memo.subject = form.cleaned_data['subject']
             memo.save()
 
-            transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name="BLANK", document_type=memo_type)
+            transaction_type = get_object_or_404(TransactiontypeMaintenance, transaction_type_name="Blank",document_type=memo_type)
             approval_level = get_object_or_404(WorkflowApprovalRule,approval_level=2)
 
             approval_item = ApprovalItem()        
@@ -79,7 +80,7 @@ def memo_create(request, pk):
             approval_item.document_type = memo_type
             approval_item.transaction_type = transaction_type
             approval_item.approval_level = approval_level
-            approval_item.notification = ""
+            approval_item.notification = "CEO will added by default"
             approval_item.status = "D"
             approval_item.save()
 
@@ -119,6 +120,11 @@ def memo_delete(request):
 def memo_detail(request, pk):
     memo =  get_object_or_404(Memo, pk=pk)
     form = DetailMemoForm(instance=memo)
+    form.fields['company'].initial = memo.company
+    form.fields['department'].initial = memo.department
+    form.fields['project'].initial = memo.project
+    form.fields['template'].initial = memo.template
+    form.fields['subject'].initial = memo.subject
     return render(request, 'memo/detail.html', {'memo': memo, 'form': form})
 
 @login_required
@@ -138,8 +144,18 @@ def memo_update(request, pk):
         memo.submit_by = request.user
         memo.subject = request.POST['subject']
         memo.save()
-        return redirect(memo_detail, pk=memo.pk)            
-    else:
-        form = UpdateMemoForm(instance=memo)
+        return redirect(memo_detail, pk=memo.pk)  
+        
+    form = UpdateMemoForm(instance=memo)
+    form.fields['company'].initial = memo.company
+    form.fields['department'].initial = memo.department
+    form.fields['project'].initial = memo.project
+    form.fields['template'].initial = memo.template
+    form.fields['subject'].initial = memo.subject
     form_attachment = NewMemoAttachmentForm()
     return render(request, 'memo/update.html', {'memo': memo, 'form': form, 'form_attachment': form_attachment})
+
+@login_required
+def load_template(request):
+    template = get_object_or_404(MemoTemplateMaintenance, pk=request.GET.get('template'))
+    return HttpResponse(template.template_htmldesign)

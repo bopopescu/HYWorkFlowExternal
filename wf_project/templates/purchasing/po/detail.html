@@ -3,11 +3,11 @@
 {% load static %} 
 {% load widget_tweaks %}
 
-<form method="post" id="poForm" data-delivery-url="{% url 'ajax_load_delivery' %}" data-billing-url="{% url 'ajax_load_billing' %}">
+<form method="post" id="poForm" data-delivery-url="{% url 'ajax_load_delivery' %}" data-billing-url="{% url 'ajax_load_vendor' %}">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Purchase Order</h1>
         <div>
-            {% if po.status == "D" or po.status == "R" %}
+            {% if po.status.status_code == 100 or po.status_code == 500 %}
             <a href="{% url 'po_send_approval' po.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
             <a href="{% url 'po_update' po.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-pencil-alt"></i> Edit</a> {% endif %}
             <a href="{% url 'po_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
@@ -89,14 +89,14 @@
                                     {{form.status.label_tag}}
                                 </div>
                                 <div class="col col-md-8">
-                                    {% if po.status == "D" %}
-                                    <p class="text-info"><strong>Draft</strong></p>
-                                    {% elif po.status == "P" %}
-                                    <p class="text-warning"><strong>Pending Approval</strong></p>
-                                    {% elif po.status == "A" %}
-                                    <p class="text-success"><strong>Approved</strong></p>
+                                    {% if po.status.status_code == 100 %}
+                                    <p class="text-info"><strong>{{po.status}}</strong></p>
+                                    {% elif po.status.status_code == 300  %}
+                                    <p class="text-warning"><strong>{{po.status}}</strong></p>
+                                    {% elif po.status.status_code == 400 %}
+                                    <p class="text-success"><strong>{{po.status}}</strong></p>
                                     {% else %}
-                                    <p class="text-danger"><strong>Rejected</strong></p>
+                                    <p class="text-danger"><strong>{{po.status}}</strong></p>
                                     {% endif %}
                                 </div>
                             </div>
@@ -149,6 +149,22 @@
                                 <div class="form-group">
                                     <div class="form-row">
                                         <div class="col col-md-3">
+                                            {{form.vendor_address.label_tag}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="col col-md-12">
+                                            {% render_field form.vendor_address|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="col col-md-3">
                                             {{form.delivery_receiver.label_tag}}
                                         </div>
                                         <div class="col col-md-8">
@@ -164,7 +180,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <!--<div class="col-md-6">
                                 <div class="form-group">
                                     <div class="form-row">
                                         <div class="col col-md-3">
@@ -182,7 +198,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>-->
                         </div>
                     </div>
                 </div>
@@ -206,17 +222,17 @@
             });
         </script>
         <script>
-            $("#id_billing_receiver").change(function() {
-                var url = $("#poForm").attr("data-billing-url"); // get the url of the `load_cities` view
-                var billingId = $(this).val(); // get the selected country ID from the HTML input
+            $("#id_vendor").change(function() {
+                var url = $("#poForm").attr("data-vendor-url"); // get the url of the `load_cities` view
+                var vendorId = $(this).val(); // get the selected country ID from the HTML input
 
                 $.ajax({ // initialize an AJAX request
                     url: url, // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
                     data: {
-                        'billing_receiver': billingId // add the country id to the GET parameters
+                        'vendor': vendorId // add the country id to the GET parameters
                     },
                     success: function(data) { // `data` is the return of the `load_cities` view function
-                        $("#id_billing_address").val(data); // replace the contents of the city input with the data that came from the server
+                        $("#id_vendor_address").html(data); // replace the contents of the city input with the data that came from the server
                     }
                 });
 
@@ -226,26 +242,28 @@
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="row">
-                <div class="col-xl-6 col-md-6">
-                    <div class="form-group">
-                        <div class="form-row">
-                            <div class="col col-md-3">
-                                {{form.subject.label_tag}}
-                            </div>
-                            <div class="col col-md-8">
-                                {% render_field form.subject|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-6 col-md-6">
+                <div class="col-xl-12 col-md-12">
                     <div class="form-group">
                         <div class="form-row">
                             <div class="col col-md-3">
                                 {{form.reference.label_tag}}
                             </div>
                             <div class="col col-md-8">
-                                {% render_field form.reference|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                {% render_field form.reference|append_attr:"readonly"  class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12 col-md-12">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-3">
+                                {{form.subject.label_tag}}
+                            </div>
+                            <div class="col col-md-8">
+                                {% render_field form.subject|append_attr:"readonly"  rows="3" class="col-md-12 form-control form-control-use" %}
                             </div>
                         </div>
                     </div>
@@ -509,7 +527,14 @@
                                                 {{form.discount.label_tag}}
                                             </div>
                                             <div class="col col-md-8">
-                                                {% render_field form.discount|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                                <div class="form-row">
+                                                    <div class="col col-md-4">
+                                                        {% render_field form.discount|append_attr:"readonly"  class="col-md-12 form-control form-control-use" onchange="calculateTotal()" %}
+                                                    </div>
+                                                    <div class="col col-md-8">
+                                                        {% render_field form.discount_amount|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

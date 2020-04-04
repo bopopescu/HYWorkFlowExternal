@@ -246,7 +246,7 @@ class CurrencyMaintenanceScreen(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('currency_name',)
     fieldsets = [
-        (None, {'fields': ['currency_name','alphabet','country','rate','is_active']}),
+        (None, {'fields': ['currency_name','alphabet','rate','is_active']}),
     ]
     exclude = ['created_by','modified_by']
 

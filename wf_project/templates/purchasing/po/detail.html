@@ -5,12 +5,12 @@
 
 <form method="post" id="poForm" data-delivery-url="{% url 'ajax_load_delivery' %}" data-billing-url="{% url 'ajax_load_vendor' %}">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Purchase Order</h1>
+        <h1 class="h3 mb-0 text-gray-800">{{po.transaction_type.transaction_type_name}}</h1>
         <div>
             {% if po.status.status_code == 100 or po.status_code == 500 %}
             <a href="{% url 'po_send_approval' po.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
             <a href="{% url 'po_update' po.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-pencil-alt"></i> Edit</a> {% endif %}
-            <a href="{% url 'po_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
+            <a href="{% url 'po_list' po.transaction_type.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
         </div>
     </div>
 
@@ -583,7 +583,7 @@
                                                 {{form.payment_schedule.label_tag}}
                                             </div>
                                             <div class="col col-md-8">
-                                                {% render_field form.payment_schedule|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                                {% render_field form.payment_schedule|append_attr:"readonly" rows="5" class="col-md-12 form-control form-control-use" %}
                                             </div>
                                         </div>
                                     </div>

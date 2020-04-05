@@ -1,0 +1,252 @@
+{% extends 'main_template.html' %} {% block content %} {% load widget_tweaks %} {% load static %}
+
+<form method="post" id="memoForm" data-template-url="{% url 'ajax_load_template' %}">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Fixed Asset</h1>
+        <div>
+            <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
+            <a href="{% url 'fixed_asset_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
+        </div>
+    </div>
+    {% csrf_token %} 
+    <div class="row">
+        <div class="col-xl-6 col-md-6 mb-4">
+            <div class="card shadow mb-4">
+                <a href="#GeneralCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="GeneralCard">
+                    <h6 class="m-0 font-weight-bold text-primary">General</h6>
+                </a>
+                <div class="collapse show" id="GeneralCard">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-4">
+                                    {{form.asset_number.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.asset_number class="col-md-12 form-control form-control-use" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-4">
+                                    {{form.company.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.company class="col-md-12 form-control form-control-use" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-4">
+                                    {{form.description.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.description class="col-md-12 form-control form-control-use" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-4">
+                                    {{form.asset_type_id.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.asset_type_id class="col-md-12 form-control form-control-use" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-4">
+                                    {{form.asset_category_id.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.asset_category_id class="col-md-12 form-control form-control-use" %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6 col-md-6 mb-4">
+            <div class="card shadow mb-4">
+                <a href="#DocInfoCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="DocInfoCard">
+                    <h6 class="m-0 font-weight-bold text-primary">Setup</h6>
+                </a>
+                <div class="collapse show" id="DocInfoCard">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-4">
+                                    {{form.tax_id.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.tax_id class="col-md-12 form-control form-control-use" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-4">
+                                    {{form.class_type_id.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.class_type_id class="col-md-12 form-control form-control-use" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-4">
+                                    {{form.floor_plan_ref.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.floor_plan_ref class="col-md-12 form-control form-control-use" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-4">
+                                    {{form.trustees.label_tag}}
+                                </div>
+                                <div class="col col-md-8">
+                                    {% render_field form.trustees class="form-control form-control-use" %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="form-row">
+                <div class="col col-md-6">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-4">
+                                {{form.cost_value.label_tag}}
+                            </div>
+                            <div class="col col-md-8">
+                                {% render_field form.cost_value class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-md-6">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-4">
+                                {{form.net_book_value.label_tag}}
+                            </div>
+                            <div class="col col-md-8">
+                                {% render_field form.net_book_value class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col col-md-6">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-4">
+                                {{form.proceeds_on_disposal.label_tag}}
+                            </div>
+                            <div class="col col-md-8">
+                                {% render_field form.proceeds_on_disposal class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-md-6">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-4">
+                                {{form.historical_cost.label_tag}}
+                            </div>
+                            <div class="col col-md-8">
+                                {% render_field form.historical_cost class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            <div class="form-row">
+                <div class="col col-md-6">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-4">
+                                {{form.active_lifetime.label_tag}}
+                            </div>
+                            <div class="col col-md-8">
+                                {% render_field form.active_lifetime class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-md-6">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-4">
+                                {{form.active_res_value.label_tag}}
+                            </div>
+                            <div class="col col-md-8">
+                                {% render_field form.active_res_value class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col col-md-6">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-4">
+                                {{form.tax_cost.label_tag}}
+                            </div>
+                            <div class="col col-md-8">
+                                {% render_field form.tax_cost class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-md-6">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-4">
+                                {{form.current_tax_percentage.label_tag}}
+                            </div>
+                            <div class="col col-md-81">
+                                {% render_field form.current_tax_percentage class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            <div class="form-row">
+                <div class="col col-md-12">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-1">
+                                {{form.remark.label_tag}}
+                            </div>
+                            <div class="col col-md-11">
+                                {% render_field form.remark rows="3" class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock content %}

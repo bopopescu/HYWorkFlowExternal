@@ -241,7 +241,7 @@
 
 <!-- Delete Modal-->
 <div class="modal fade" id="deleteMemoAttachmentModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <form action="{% url 'memo_attachment_delete' memo.pk %}" method="POST" id="deleteMemoAttachment">
+    <form action="{% url 'memo_attachment_delete' %}" method="POST" id="deleteMemoAttachment">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 {% csrf_token %}

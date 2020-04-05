@@ -104,9 +104,8 @@ def memo_attachment_create(request, pk):
     return JsonResponse({'message': 'Success'})
 
 @login_required
-def memo_attachment_delete(request, pk):    
+def memo_attachment_delete(request):    
     memo_attachment =  get_object_or_404(MemoAttachment, pk=request.POST['hiddenValue'])
-    memo = get_object_or_404(Memo, pk=pk)
     memo_attachment.delete()   
     return JsonResponse({'message': 'Success'})
 

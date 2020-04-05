@@ -33,7 +33,7 @@ class Item(models.Model):
         verbose_name_plural = 'Item Master Data'
 
     def __str__(self):
-        return self.item_code
+        return self.item_code + ' - ' + self.item_description
 
 class ItemCategoryMaintenance(models.Model):
     category_name = models.CharField(max_length=250)

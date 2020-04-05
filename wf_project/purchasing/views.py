@@ -85,8 +85,9 @@ def po_index(request):
     return redirect(po_list)
 
 @login_required
-def po_list(request):
-    return render(request, 'po/list.html')
+def po_list(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    return render(request, 'po/list.html', {'trans_type': transaction_type})
 
 @login_required
 def po_detail(request, pk):
@@ -101,12 +102,14 @@ def po_detail(request, pk):
     form.fields['comparison_vendor_2'].initial = po.comparison_vendor_2
     form.fields['comparison_vendor_3'].initial = po.comparison_vendor_3
     form.fields['subject'].initial = po.subject
+    form.fields['payment_schedule'].initial = po.payment_schedule
     form.fields['vendor_address'].initial = po.vendor_address
     return render(request, 'po/detail.html', {'po': po, 'form': form})
 
 @login_required
-def po_init(request):
-    po = PurchaseOrder.objects.create(submit_by=request.user)
+def po_init(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    po = PurchaseOrder.objects.create(submit_by=request.user, transaction_type=transaction_type)
     return redirect(po_create, po.pk)
 
 @login_required
@@ -165,6 +168,7 @@ def po_create(request, pk):
     else:
         form = NewPOForm(instance=po)
         form.fields['currency'].initial = get_object_or_404(CurrencyMaintenance, alphabet="MYR")
+        form.fields['transaction_type'].initial = po.transaction_type
     form_attachment = NewPOAttachmentForm()
     form_cov2_attachment = NewPOComparison2AttachmentForm()
     form_cov3_attachment = NewPOComparison3AttachmentForm()
@@ -225,6 +229,7 @@ def po_update(request, pk):
         form.fields['comparison_vendor_2'].initial = po.comparison_vendor_2
         form.fields['comparison_vendor_3'].initial = po.comparison_vendor_3
         form.fields['subject'].initial = po.subject
+        form.fields['payment_schedule'].initial = po.payment_schedule
         form.fields['vendor_address'].initial = po.vendor_address
     form_attachment = NewPOAttachmentForm()
     form_cov2_attachment = NewPOComparison2AttachmentForm()
@@ -326,9 +331,11 @@ def po_detail_create(request, pk):
         po_detail.amount = po_detail.quantity * po_detail.unit_price
         po_detail.save()
         
+        po = get_object_or_404(PurchaseOrder, pk=pk)
         po.sub_total = detail_subtotalamount(pk=pk)
         po.save()
 
+        po = get_object_or_404(PurchaseOrder, pk=pk)
         po.total_amount = detail_totalamount(pk=pk)
         po.save()    
     return JsonResponse({'message': 'Success', 'sub_total': po.sub_total, 'total_amount': po.total_amount})

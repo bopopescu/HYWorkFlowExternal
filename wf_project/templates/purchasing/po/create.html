@@ -5,10 +5,10 @@
 
 <form method="post" id="poForm" data-delivery-url="{% url 'ajax_load_delivery' %}" data-vendor-url="{% url 'ajax_load_vendor' %}">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Purchase Order</h1>
+        <h1 class="h3 mb-0 text-gray-800">{{po.transaction_type.transaction_type_name}}</h1>
         <div>
             <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
-            <a href="{% url 'po_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
+            <a href="{% url 'po_list' po.transaction_type.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
         </div>
     </div>
 
@@ -56,7 +56,7 @@
                                     {{form.transaction_type.label_tag}}
                                 </div>
                                 <div class="col col-md-8">
-                                    {% render_field form.transaction_type class="col-md-12 form-control form-control-use" %}
+                                    {% render_field form.transaction_type|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
                                 </div>
                             </div>
                         </div>
@@ -571,7 +571,7 @@
                                             {{form.payment_schedule.label_tag}}
                                         </div>
                                         <div class="col col-md-8">
-                                            {% render_field form.payment_schedule class="col-md-12 form-control form-control-use" %}
+                                            {% render_field form.payment_schedule rows="5" class="col-md-12 form-control form-control-use" %}
                                         </div>
                                     </div>
                                 </div>
@@ -700,6 +700,7 @@
 $("#deletePOAttachment").submit(function(e){
     e.preventDefault(); //prevent default action 
 	proceed = true;
+    $('#deletePOAttachmentModal').modal('hide');
 		
 	var post_url = $(this).attr("action"); //get form action url
 	var request_method = $(this).attr("method"); //get form GET/POST method
@@ -720,8 +721,6 @@ $("#deletePOAttachment").submit(function(e){
                 var table = $('#poattachments').DataTable(); 
                 table.ajax.reload();
             }
-            
-            $('#deletePOAttachmentModal').modal('hide');
 		});
 	}
 });
@@ -774,6 +773,7 @@ $("#deletePOAttachment").submit(function(e){
     $("#addPOAttachment").submit(function(e){
         e.preventDefault(); //prevent default action 
         proceed = true;
+        $('#addPOAttachmentModal').modal('hide');
             
         var post_url = $(this).attr("action"); //get form action url
         var request_method = $(this).attr("method"); //get form GET/POST method
@@ -794,8 +794,6 @@ $("#deletePOAttachment").submit(function(e){
                     var table = $('#poattachments').DataTable(); 
                     table.ajax.reload();
                 }
-    
-                $('#addPOAttachmentModal').modal('hide');
             });
         }
     });
@@ -835,6 +833,7 @@ $("#deletePOAttachment").submit(function(e){
 $("#deletePOCV2Attachment").submit(function(e){
     e.preventDefault(); //prevent default action 
 	proceed = true;
+    $('#deletePOCV2AttachmentModal').modal('hide');
 		
 	var post_url = $(this).attr("action"); //get form action url
 	var request_method = $(this).attr("method"); //get form GET/POST method
@@ -855,8 +854,6 @@ $("#deletePOCV2Attachment").submit(function(e){
                 var table = $('#pocomparison2attachments').DataTable(); 
                 table.ajax.reload();
             }
-            
-            $('#deletePOCV2AttachmentModal').modal('hide');
 		});
 	}
 });
@@ -909,6 +906,7 @@ $("#deletePOCV2Attachment").submit(function(e){
     $("#addPOCV2Attachment").submit(function(e){
         e.preventDefault(); //prevent default action 
         proceed = true;
+        $('#addPOCV2AttachmentModal').modal('hide');
             
         var post_url = $(this).attr("action"); //get form action url
         var request_method = $(this).attr("method"); //get form GET/POST method
@@ -929,8 +927,6 @@ $("#deletePOCV2Attachment").submit(function(e){
                     var table = $('#pocomparison2attachments').DataTable(); 
                     table.ajax.reload();
                 }
-    
-                $('#addPOCV2AttachmentModal').modal('hide');
             });
         }
     });
@@ -970,6 +966,7 @@ $("#deletePOCV2Attachment").submit(function(e){
 $("#deletePOCV3Attachment").submit(function(e){
     e.preventDefault(); //prevent default action 
 	proceed = true;
+    $('#deletePOCV3AttachmentModal').modal('hide');
 		
 	var post_url = $(this).attr("action"); //get form action url
 	var request_method = $(this).attr("method"); //get form GET/POST method
@@ -989,9 +986,7 @@ $("#deletePOCV3Attachment").submit(function(e){
 			if (res.message == 'Success'){
                 var table = $('#pocomparison3attachments').DataTable(); 
                 table.ajax.reload();
-            }
-            
-            $('#deletePOCV3AttachmentModal').modal('hide');
+            }            
 		});
 	}
 });
@@ -1044,6 +1039,7 @@ $("#deletePOCV3Attachment").submit(function(e){
     $("#addPOCV3Attachment").submit(function(e){
         e.preventDefault(); //prevent default action 
         proceed = true;
+        $('#addPOCV3AttachmentModal').modal('hide');
             
         var post_url = $(this).attr("action"); //get form action url
         var request_method = $(this).attr("method"); //get form GET/POST method
@@ -1063,9 +1059,7 @@ $("#deletePOCV3Attachment").submit(function(e){
                 if (res.message == 'Success'){
                     var table = $('#pocomparison3attachments').DataTable(); 
                     table.ajax.reload();
-                }
-    
-                $('#addPOCV3AttachmentModal').modal('hide');
+                }    
             });
         }
     });
@@ -1105,6 +1099,7 @@ $("#deletePOCV3Attachment").submit(function(e){
 $("#deletePODetail").submit(function(e){
     e.preventDefault(); //prevent default action 
 	proceed = true;
+    $('#deleteDetailModal').modal('hide');
 		
 	var post_url = $(this).attr("action"); //get form action url
 	var request_method = $(this).attr("method"); //get form GET/POST method
@@ -1122,13 +1117,12 @@ $("#deletePODetail").submit(function(e){
 			processData:false
 		}).done(function(res){ 
 			if (res.message == 'Success'){
-                var table = $('#podetails').DataTable(); 
-                table.ajax.reload();
                 $("#id_sub_total").val(res.sub_total);
                 $("#id_total_amount").val(res.total_amount);
-            }
-            
-            $('#deleteDetailModal').modal('hide');
+            }            
+
+            var table = $('#podetails').DataTable(); 
+            table.ajax.reload();
 		});
 	}
 });
@@ -1210,8 +1204,8 @@ $("#deletePODetail").submit(function(e){
                     <input type="hidden" name="id_ppo" id="id_po" value="{{po.pk}}" />
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-success" id="addPODetailButton">Submit</a>
-                        <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                    <input type="submit" class="btn btn-success" id="addPODetailButton"></a>
+                    <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
                 </div>
             </form>
         </div>
@@ -1220,6 +1214,7 @@ $("#deletePODetail").submit(function(e){
 
 <script>
     $("#addPODetail").submit(function(e){
+        $('#addPODetailModal').modal('hide');
         e.preventDefault(); //prevent default action 
         proceed = true;
             
@@ -1239,13 +1234,12 @@ $("#deletePODetail").submit(function(e){
                 processData:false
             }).done(function(res){ 
                 if (res.message == 'Success'){
-                    var table = $('#podetails').DataTable(); 
-                    table.ajax.reload();
                     $("#id_sub_total").val(res.sub_total);
                     $("#id_total_amount").val(res.total_amount);
-                }
-    
-                $('#addPODetailModal').modal('hide');
+                } 
+
+                var table = $('#podetails').DataTable(); 
+                table.ajax.reload();             
             });
         }
     });
@@ -1282,7 +1276,7 @@ $("#deletePODetail").submit(function(e){
 	
 	 document.getElementById("id_discount").value= parseFloat(docDiscPerc).toFixed(2);
 	document.getElementById("id_discount_amount").value = txtDocDiscAmt;
-	document.getElementById("id_tax_amount").value = txttaxamount;
+	document.getElementById("id_tax_amount").value = taxamount;
 	var totamt = parseFloat((subtotal - docDiscAmt + parseFloat(taxamount))).toFixed(2);
 	totamt=totamt;
 	document.getElementById("id_total_amount").value = totamt; 

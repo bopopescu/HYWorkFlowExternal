@@ -48,8 +48,9 @@
             </a>
             <div id="collapsePurchasing" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
               <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{% url 'po_list' pk=83 %}">Letter of Award</a>
-                <a class="collapse-item" href="{% url 'po_list' pk=84 %}">Purchase Order</a>
+                {% for trans_type in po_trans_type%}
+                  <a class="collapse-item" href="{% url 'po_list' trans_type.pk %}">{{trans_type.transaction_type_name}}</a>
+                {% endfor %}
               </div>
             </div>
           </li>

@@ -63,7 +63,8 @@ class MyPOViewSet(viewsets.ModelViewSet):
     serializer_class = POSerializer
     
     def get_queryset(self):
-        return PurchaseOrder.objects.filter(submit_by=self.request.user.id)
+        transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
+        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, transaction_type=transaction_type)
 
 class TeamPOViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.all().order_by('-id')    
@@ -72,7 +73,8 @@ class TeamPOViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         groups = self.request.user.groups.values_list('id', flat=True)
         users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
-        return PurchaseOrder.objects.filter(submit_by__in=users)
+        transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
+        return PurchaseOrder.objects.filter(submit_by__in=users, transaction_type=transaction_type)
 
 @login_required
 def po_delete(request):

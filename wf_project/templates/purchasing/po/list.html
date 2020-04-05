@@ -41,7 +41,7 @@
                 <script>
                     $(document).ready(function() {
                         var mytable = $('#mypos').DataTable({
-                            "ajax": "../../../api/mypodata/?format=datatables",
+                            "ajax": "../../../api/mypodata/?format=datatables&trans_type={{trans_type.pk}}",
                             "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                                 "<'row'<'col-sm-12 small'tr>>" +
                                 "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -126,7 +126,7 @@
                 <script>
                     $(document).ready(function() {
                         var teamtable = $('#teampos').DataTable({
-                            "ajax": "../../../api/teampodata/?format=datatables",
+                            "ajax": "../../../api/teampodata/?format=datatables&trans_type={{trans_type.pk}}",
                             "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                                 "<'row'<'col-sm-12 small'tr>>" +
                                 "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",

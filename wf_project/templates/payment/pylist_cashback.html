@@ -32,7 +32,7 @@
                         <th data-data="project">Project</th>
                         <th data-data="submit_date">Submit Date</th>
                         <th data-data="approval_status">Status</th>
-                        <th></th>
+                        <th style="width:10%"></th>
                     </tr>
                 </thead>
             </table>
@@ -210,12 +210,30 @@
       deleteInput.value = param;
     }
 </script>
-  <script type="text/javascript">
-    $(function () {
-        $("#deletePyButton").click(function () {
-            var py_id = $(".modal-body #hiddenValue").val();
-            window.location.href = "../delete/" + py_id + "/";
-        })
+<script type="text/javascript">
+    $("#deletePyButton").click(function(e){
+      e.preventDefault(); //prevent default action 
+      proceed = true;
+      var py_id = $(".modal-body #hiddenValue").val();
+      var post_url = "../delete/" + py_id + "/"; //get form action url
+      var request_method = "GET"; //get form GET/POST method
+      // var form_data = new FormData(this); //Creates new FormData object
+      
+      //if everything's ok, continue with Ajax form submit
+      if(proceed){ 
+        $.ajax({ //ajax form submit
+          url : post_url,
+          type: request_method,
+          dataType : "json",
+          contentType: false,
+          cache: false,
+          processData:false
+        }).done(function(res){ 
+            var table = $('#mypys').DataTable(); 
+            table.ajax.reload();
+            $('#deletePYModal').modal('hide');
+        });
+      }
     });
 </script>
 {% endblock content %}

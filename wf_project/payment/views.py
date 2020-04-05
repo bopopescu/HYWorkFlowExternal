@@ -7,6 +7,7 @@ from .serializers import PYSerializer,PYItemSerializer,PYAttachmentSerializer
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
+from administration.models import PaymentmodeMaintenance
 from approval.models import ApprovalItem
 from django.contrib.auth.models import User
 import datetime
@@ -189,8 +190,12 @@ def py_create(request,TransType):
         elif TransType == "Sales Commissions":
             document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
             transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name = "Sales Commission", document_type=document_type)
-        print(TransType)
-        py = PaymentRequest.objects.create(submit_by=request.user,transaction_type=transaction_type)
+        
+        if TransType == "Petty Cash":
+            payment_mode = get_object_or_404(PaymentmodeMaintenance,payment_mode_name="Petty Cash")
+            py = PaymentRequest.objects.create(submit_by=request.user,transaction_type=transaction_type,payment_mode=payment_mode)
+        else:
+            py = PaymentRequest.objects.create(submit_by=request.user,transaction_type=transaction_type)
     return redirect(py_create_edit, py.pk)
 
 @login_required
@@ -256,6 +261,7 @@ def py_item_create_formcreate(request, pk):
         py_item = form.save(commit=False)
         tax = form.cleaned_data['tax']
         py = get_object_or_404(PaymentRequest, pk=pk)
+        payment_items = PaymentRequestDetail.objects.filter(py=py)
         py_item.py = py
         py_item.tax= tax
         line_total = 0
@@ -263,7 +269,7 @@ def py_item_create_formcreate(request, pk):
         py_item.line_taxamount = taxamount
         line_total = py_item.price + taxamount
         py_item.line_total = line_total
-        # py_item.line_num = py_item.line_num + 1
+        py_item.linenum = payment_items.count() + 1
         py_item.save()
         
         sub_total = 0
@@ -275,10 +281,11 @@ def py_item_create_formcreate(request, pk):
             price += payment_item.line_total
             total_tax_amount += payment_item.line_taxamount
 
-        discount_amount = py.discount_amount
-        total_amount_afterdiscount = (sub_total - discount_amount)
-        after_add_taxamount = total_amount_afterdiscount + total_tax_amount
-        discount_rate = (discount_amount / sub_total) * 100
+        py.sub_total = sub_total
+        py.tax_amount = total_tax_amount
+        py.total_amount = price
+        py.save()
+
     else:
         print(form.errors)
     return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
@@ -302,10 +309,19 @@ def py_item_delete_formcreate(request, pk):
         # total_amount_afterdiscount = (sub_total - discount_amount)
         # after_add_taxamount = total_amount_afterdiscount + total_tax_amount
         # discount_rate = (discount_amount / sub_total) * 100 
+        py.sub_total = sub_total
+        py.tax_amount = total_tax_amount
+        py.total_amount = price
+        py.save()
         
     else:
         sub_total = 0.00
         total_tax_amount = 0.00
+        price=0.00
+        py.sub_total = sub_total
+        py.tax_amount = total_tax_amount
+        py.total_amount = price
+        py.save()
 
     return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
 
@@ -332,7 +348,7 @@ def py_attachment_delete_formcreate(request, pk):
 def py_delete(request, pk):
     py =  get_object_or_404(PaymentRequest, pk=pk)
     py.delete()
-    return redirect(pylist)
+    return JsonResponse({'message': 'Success'})
 
 @login_required
 def py_detail(request, pk):
@@ -381,6 +397,7 @@ def py_item_create(request, pk):
         py_item = form.save(commit=False)
         tax = form.cleaned_data['tax']
         py = get_object_or_404(PaymentRequest, pk=pk)
+        payment_items = PaymentRequestDetail.objects.filter(py=py)
         py_item.py = py
         py_item.tax= tax
         line_total = 0
@@ -388,7 +405,7 @@ def py_item_create(request, pk):
         py_item.line_taxamount = taxamount
         line_total = py_item.price + taxamount
         py_item.line_total = line_total
-        # py_item.line_num = py_item.line_num + 1
+        py_item.linenum = payment_items.count() + 1
         py_item.save()
         
         sub_total = 0
@@ -404,6 +421,11 @@ def py_item_create(request, pk):
         total_amount_afterdiscount = (sub_total - discount_amount)
         after_add_taxamount = total_amount_afterdiscount + total_tax_amount
         discount_rate = (discount_amount / sub_total) * 100
+
+        py.sub_total = sub_total
+        py.tax_amount = total_tax_amount
+        py.total_amount = price
+        py.save()
     else:
         print(form.errors)
     return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
@@ -427,10 +449,19 @@ def py_item_delete(request, pk):
         # total_amount_afterdiscount = (sub_total - discount_amount)
         # after_add_taxamount = total_amount_afterdiscount + total_tax_amount
         # discount_rate = (discount_amount / sub_total) * 100 
+        py.sub_total = sub_total
+        py.tax_amount = total_tax_amount
+        py.total_amount = price
+        py.save()
         
     else:
         sub_total = 0.00
         total_tax_amount = 0.00
+        price = 0.00
+        py.sub_total = sub_total
+        py.tax_amount = total_tax_amount
+        py.total_amount = price
+        py.save()
 
     return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
 

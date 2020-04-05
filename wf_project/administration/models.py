@@ -144,6 +144,12 @@ class DrawerUserMaintenance(models.Model):
     def __str__(self):
         return self.drawer.drawer_name
 
+class EmployeeCompanyMaintenance(models.Model):
+    employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
+    company = models.ForeignKey('CompanyMaintenance', verbose_name="Company",on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.company.company_name
 
 class EmployeeBranchMaintenance(models.Model):
     employee = models.ForeignKey('EmployeeMaintenance', default=0, verbose_name="Employee",on_delete=models.CASCADE)
@@ -185,6 +191,7 @@ class EmployeeMaintenance(models.Model):
     gender = models.CharField(max_length=25,choices=gender_option)
     dob = models.DateField(verbose_name="Date of Birth",null=True,blank=True)
     email = models.EmailField(null=True,blank=True)
+    user = models.ForeignKey(User,null=True,blank=True,on_delete=models.CASCADE)
     position_id = models.ForeignKey('EmployeePositionMaintenance',default=0,verbose_name="Position",on_delete=models.CASCADE)
     employee_group = models.ForeignKey('EmployeeGroupMaintenance',default=0,verbose_name="Employee Group",on_delete=models.CASCADE)
     reporting_officer_id = models.ForeignKey('self',default=0,verbose_name="Reporting Officer",null=True, blank=True,on_delete=models.CASCADE)

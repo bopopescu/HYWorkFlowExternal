@@ -22,6 +22,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='staffrecruitmentrequest',
             name='document_number',
-            field=models.CharField(default=human_resource.models.documenttype_document_number, max_length=100, verbose_name='Document No.'),
+            field=models.CharField(max_length=100, verbose_name='Document No.'),
         ),
     ]

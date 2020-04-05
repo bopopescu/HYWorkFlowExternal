@@ -39,7 +39,7 @@ class PYItemSerializer(serializers.ModelSerializer):
     tax = serializers.StringRelatedField(many=False)
     class Meta:
         model = PaymentRequestDetail
-        fields = ['id', 'py', 'item_description', 'price','tax','line_total']
+        fields = ['id', 'py', 'item_description', 'price','tax','line_total','linenum']
 
 class PYAttachmentSerializer(serializers.ModelSerializer):
     attachment_date = serializers.DateField(format='%d/%m/%Y')

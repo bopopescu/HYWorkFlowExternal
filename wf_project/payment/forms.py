@@ -21,6 +21,7 @@ class DetailPaymentForm(forms.ModelForm):
     currency = forms.ModelChoiceField(queryset=CurrencyMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.currency, disabled=True)
     payment_mode = forms.ModelChoiceField(queryset=PaymentmodeMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.payment_mode, disabled=True)
     employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.all(), empty_label="Not Assigned",initial=PaymentRequest.employee, disabled=True)
+    subject = forms.CharField(widget=forms.Textarea)
 
     class Meta:
         model = PaymentRequest
@@ -44,6 +45,8 @@ class NewPaymentForm(forms.ModelForm):
     discount_rate = forms.DecimalField(initial=0.00)
     tax_amount = forms.DecimalField(initial=0.00)
     total_amount = forms.DecimalField(initial=0.00)
+    subject = forms.CharField(widget=forms.Textarea)
+
     class Meta:
         model = PaymentRequest
         fields = ['company','vendor','project','transaction_type','currency','payment_mode','employee',
@@ -64,6 +67,8 @@ class UpdatePaymentForm(forms.ModelForm):
     discount_rate = forms.DecimalField(initial=PaymentRequest.discount_rate)
     tax_amount = forms.DecimalField(initial=PaymentRequest.tax_amount)
     total_amount = forms.DecimalField(initial=PaymentRequest.total_amount)
+    subject = forms.CharField(widget=forms.Textarea)
+    
     class Meta:
         model = PaymentRequest
         fields = ['company','vendor','project','transaction_type','currency','payment_mode','employee',

@@ -28,6 +28,10 @@
    i.fas.fa-trash{
       color:white;
    }
+   select[readonly]
+    {
+        pointer-events: none;
+    }
  </style>
  <script type="text/javascript">
    $(document).ready(function(){
@@ -53,7 +57,7 @@
    </script>
    <script type="text/javascript">
     $(document).ready(function(){
-     $("input[name='discount_amount']").keyup(function(){
+     $("input[name='discount_amount']").change(function(){
            var discount_amount = $("input[name='discount_amount']").val();
            var sub_total =  $("input[name='sub_total']").val();
            var tax_amount = $("input[name='tax_amount']").val();
@@ -197,6 +201,20 @@
                 </div>
               </div>
             </div>
+            {%if py.transaction_type.transaction_type_name == "Petty Cash"%}
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.payment_mode.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.payment_mode|append_attr:"readonly" class="col-md-12 form-control form-control-user" placeholder=form.payment_mode.label %}
+                </div>
+              </div>
+            </div>
+            {%else%}
             <div class="form-group">
               <div class="form-row">
                 <div class="col col-md-3">
@@ -209,6 +227,7 @@
                 </div>
               </div>
             </div>
+            {%endif%}
           </div>
         </div>        
       </div>
@@ -279,11 +298,11 @@
         <div class="form-row">
           <div class="col col-md-3">
             <label class="control-label">
-              {{form.subject.label_tag}}
+              {{form.reference.label_tag}}
             </label>
           </div>
           <div class="col col-md-8">
-            {% render_field form.subject class="col-md-12 form-control form-control-user" placeholder=form.subject.label %}
+            {% render_field form.reference class="col-md-12 form-control form-control-user" placeholder=form.reference.label %}
           </div>
         </div>
       </div>
@@ -291,11 +310,11 @@
         <div class="form-row">
           <div class="col col-md-3">
             <label class="control-label">
-              {{form.reference.label_tag}}
+              {{form.subject.label_tag}}
             </label>
           </div>
           <div class="col col-md-8">
-            {% render_field form.reference class="col-md-12 form-control form-control-user" placeholder=form.reference.label %}
+            {% render_field form.subject rows="3" class="col-md-12 form-control form-control-user" placeholder=form.subject.label %}
           </div>
         </div>
       </div>
@@ -325,6 +344,7 @@
                             <tr>
                               <th data-data="id"></th>
                               <th data-data="py"></th>
+                              <th data-data="linenum">No.</th>
                               <th data-data="item_description">Item Description</th> 
                               <th data-data="price">Price</th>
                               <th data-data="tax">Tax</th> 

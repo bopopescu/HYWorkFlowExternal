@@ -32,6 +32,7 @@ from .models import EmployeeBranchMaintenance
 from .models import EmployeeDepartmentMaintenance
 from .models import EmployeeGroupMaintenance
 from .models import EmployeeProjectMaintenance
+from .models import EmployeeCompanyMaintenance
 from .models import RegionMaintenance
 from .models import TaxMaintenance
 from datetime import datetime
@@ -288,6 +289,13 @@ class EmployeeBranchInline(admin.StackedInline):
            obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
+class EmployeeCompanyInline(admin.StackedInline):
+    model = EmployeeCompanyMaintenance
+    fieldsets = [
+        (None, {'fields': ['company']}),
+    ]
+    extra = 0
+
 class EmployeeProjectInline(admin.StackedInline):
     model = EmployeeProjectMaintenance
     exclude = ['created_by','modified_by']
@@ -307,10 +315,10 @@ class EmployeeMaintenanceScreen(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('nick_name', 'employee_name','position_id__position_name')
     fieldsets = [
-        (None, {'fields': ['employee_name','nick_name','gender','email','dob','position_id','employee_group','reporting_officer_id','employee_signature','is_active']}),
+        (None, {'fields': ['employee_name','nick_name','gender','email','user','dob','position_id','employee_group','reporting_officer_id','employee_signature','is_active']}),
     ]
     exclude = ['created_by','modified_by']
-    inlines = [EmployeeDepartmentInline,EmployeeBranchInline,EmployeeProjectInline]
+    inlines = [EmployeeDepartmentInline,EmployeeBranchInline,EmployeeProjectInline,EmployeeCompanyInline]
 
     def save_model(self, request, obj, form, change):
         self.request = request

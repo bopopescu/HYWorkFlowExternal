@@ -66,7 +66,7 @@ class CompanyAddressDetail(models.Model):
 
 class CountryMaintenance(models.Model):
     country_name = models.CharField(max_length=250)
-    currency = models.ForeignKey('CurrencyMaintenance', verbose_name="Currency",on_delete=models.CASCADE)
+    currency = models.ForeignKey('CurrencyMaintenance', verbose_name="Currency",on_delete=models.CASCADE, null=True, blank=True, )
     alpha_2 = models.CharField(max_length=2)
     alpha_3 = models.CharField(max_length=3)
     iso3166_2 = models.CharField(max_length=20)
@@ -532,7 +532,9 @@ class WorkflowApprovalRule(models.Model):
     approval_rule_name = models.CharField(max_length=250)
     document_amount_range= models.DecimalField(max_digits=10, decimal_places=2,verbose_name="Document Amount Range From (RM)")
     document_amount_range2= models.DecimalField(max_digits=10, decimal_places=2,verbose_name="To")
-    supervisor_approve = models.BooleanField(verbose_name="Supervisor Approve?")
+    supervisor_approve = models.BooleanField(verbose_name="Reporting Officer Approval")
+    ceo_approve = models.BooleanField(verbose_name="CEO Approval")
+    ceo_approve_overwrite = models.BooleanField(verbose_name="CEO Approval Overwrite")
     is_active = models.BooleanField()
     created_by = models.ForeignKey(User, related_name='workflowapprovalrulecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)

@@ -419,11 +419,11 @@ class WorkflowApprovalRuleGroupMaintenanceInline(admin.StackedInline):
         return super().save_model(request, obj, form, change)
 
 class WorkflowApprovalRuleScreen(admin.ModelAdmin):
-    list_display = ('approval_level', 'approval_rule_name','supervisor_approve','is_active')
+    list_display = ('approval_level', 'approval_rule_name','ceo_approve','ceo_approve_overwrite','supervisor_approve','is_active')
     list_filter = ('is_active',)
     search_fields = ('approval_level', 'approval_rule_name')
     fieldsets = [
-        (None, {'fields': ['approval_level', 'approval_rule_name', ('document_amount_range', 'document_amount_range2'),'supervisor_approve','is_active']}),
+        (None, {'fields': ['approval_level', 'approval_rule_name', ('document_amount_range', 'document_amount_range2'),'ceo_approve', 'ceo_approve_overwrite', 'supervisor_approve','is_active']}),
     ]
     exclude = ['created_by','modified_by']
     inlines = [WorkflowApprovalRuleGroupMaintenanceInline]

@@ -350,6 +350,13 @@ $("#addMemoAttachment").submit(function(e){
 	var post_url = $(this).attr("action"); //get form action url
 	var request_method = $(this).attr("method"); //get form GET/POST method
 	var form_data = new FormData(this); //Creates new FormData object
+    var d = new Date();
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+    var output = d.getFullYear() + '-' + (month<10 ? '0' : '') + month + '-' + (day<10 ? '0' : '') + day;
+
+    $("#addMemoAttachment #id_attachment").val("");
+    $("#addMemoAttachment #id_attachment_date").val(output);
 	
 	//if everything's ok, continue with Ajax form submit
 	if(proceed){ 

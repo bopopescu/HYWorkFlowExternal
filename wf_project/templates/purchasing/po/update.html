@@ -54,16 +54,6 @@
                         <div class="form-group">
                             <div class="form-row">
                                 <div class="col col-md-3">
-                                    {{form.transaction_type.label_tag}}
-                                </div>
-                                <div class="col col-md-8">
-                                    {% render_field form.transaction_type|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-row">
-                                <div class="col col-md-3">
                                     {{form.project.label_tag}}
                                 </div>
                                 <div class="col col-md-8">
@@ -736,6 +726,7 @@
             </div>
         </div>
     </div>
+    {% render_field form.transaction_type|append_attr:"readonly" class="col-md-12 form-control form-control-use" style="visibility:hidden"%}
 </form>
 
 <!-- Delete Modal-->
@@ -850,6 +841,13 @@ $("#deletePOAttachment").submit(function(e){
         var post_url = $(this).attr("action"); //get form action url
         var request_method = $(this).attr("method"); //get form GET/POST method
         var form_data = new FormData(this); //Creates new FormData object
+        var d = new Date();
+        var month = d.getMonth()+1;
+        var day = d.getDate();
+        var output = d.getFullYear() + '-' + (month<10 ? '0' : '') + month + '-' + (day<10 ? '0' : '') + day;
+
+        $("#addPOAttachment #id_attachment").val("");
+        $("#addPOAttachment #id_attachment_date").val(output);
         
         //if everything's ok, continue with Ajax form submit
         if(proceed){ 
@@ -910,6 +908,13 @@ $("#deletePOCV2Attachment").submit(function(e){
 	var post_url = $(this).attr("action"); //get form action url
 	var request_method = $(this).attr("method"); //get form GET/POST method
 	var form_data = new FormData(this); //Creates new FormData object
+    var d = new Date();
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+    var output = d.getFullYear() + '-' + (month<10 ? '0' : '') + month + '-' + (day<10 ? '0' : '') + day;
+
+    $("#addPOCV2Attachment #id_attachment").val("");
+    $("#addPOCV2Attachment #id_attachment_date").val(output);
 	
 	//if everything's ok, continue with Ajax form submit
 	if(proceed){ 
@@ -1043,6 +1048,13 @@ $("#deletePOCV3Attachment").submit(function(e){
 	var post_url = $(this).attr("action"); //get form action url
 	var request_method = $(this).attr("method"); //get form GET/POST method
 	var form_data = new FormData(this); //Creates new FormData object
+    var d = new Date();
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+    var output = d.getFullYear() + '-' + (month<10 ? '0' : '') + month + '-' + (day<10 ? '0' : '') + day;
+
+    $("#addPOCV3Attachment #id_attachment").val("");
+    $("#addPOCV3Attachment #id_attachment_date").val(output);
 	
 	//if everything's ok, continue with Ajax form submit
 	if(proceed){ 
@@ -1293,6 +1305,13 @@ $("#deletePODetail").submit(function(e){
         var post_url = $(this).attr("action"); //get form action url
         var request_method = $(this).attr("method"); //get form GET/POST method
         var form_data = new FormData(this); //Creates new FormData object
+
+        $("#addPODetail #id_item").prop('selectedIndex',0);
+        $("#addPODetail #id_additional_description").val("");
+        $("#addPODetail #id_quantity").val(0)
+        $("#addPODetail #id_uom").prop('selectedIndex',0);
+        $("#addPODetail #id_unit_price").val(0);
+        $("#addPODetail #id_remarks").val("");
         
         //if everything's ok, continue with Ajax form submit
         if(proceed){ 

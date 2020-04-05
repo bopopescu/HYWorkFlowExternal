@@ -83,10 +83,6 @@ def po_delete(request):
     return JsonResponse({'message': 'Success'})
 
 @login_required
-def po_index(request):
-    return redirect(po_list)
-
-@login_required
 def po_list(request, pk):
     transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
     return render(request, 'po/list.html', {'trans_type': transaction_type})
@@ -258,7 +254,9 @@ def po_attachment_create(request, pk):
         po_attachment = form.save(commit=False)
         po = get_object_or_404(PurchaseOrder, pk=pk)
         po_attachment.po = po
+        po_attachment.attachment_date = request.POST['attachment_date']
         po_attachment.save()
+        
     return JsonResponse({'message': 'Success'})
 
 @login_required
@@ -275,6 +273,7 @@ def po_cov2_attachment_create(request, pk):
         po_cov2_attachment = form.save(commit=False)
         po = get_object_or_404(PurchaseOrder, pk=pk)
         po_cov2_attachment.po = po
+        po_cov2_attachment.attachment_date = request.POST['attachment_date']
         po_cov2_attachment.save()
     return JsonResponse({'message': 'Success'})
 
@@ -292,6 +291,7 @@ def po_cov3_attachment_create(request, pk):
         po_cov3_attachment = form.save(commit=False)
         po = get_object_or_404(PurchaseOrder, pk=pk)
         po_cov3_attachment.po = po
+        po_cov3_attachment.attachment_date = request.POST['attachment_date']
         po_cov3_attachment.save()
     return JsonResponse({'message': 'Success'})
 

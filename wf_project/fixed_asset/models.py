@@ -3,25 +3,6 @@ from datetime import *
 from administration.models import CompanyMaintenance
 
 # Create your models here.
-class AssetType(models.Model):
-    class Meta:
-        verbose_name_plural = 'AssetTypes'
-
-    asset_type = models.CharField(max_length = 5)
-    description = models.CharField(max_length = 100)
-    status = models.BooleanField(default = True)
-    created_by = models.CharField(max_length = 120)
-    created_date = models.DateTimeField(auto_now_add = True)
-    modify_by = models.CharField(max_length = 120)
-    modify_date = models.DateTimeField(default = datetime.now, blank = True)
-    is_deleted = models.BooleanField(default = False, null = True)
-    delete_by = models.CharField(max_length = 120)
-    delete_date = models.DateTimeField(default = datetime.now, blank = True)
-
-    def __str__(self):
-        return self.description
-
-
 class AssetCategory(models.Model):
     class Meta:
         verbose_name_plural = 'AssetCategories'
@@ -40,12 +21,11 @@ class AssetCategory(models.Model):
     def __str__(self):
         return self.description
 
-
-class Tax(models.Model):
+class AssetType(models.Model):
     class Meta:
-        verbose_name_plural = 'Taxes'
+        verbose_name_plural = 'AssetTypes'
 
-    tax_code = models.CharField(max_length = 5)
+    asset_type = models.CharField(max_length = 5)
     description = models.CharField(max_length = 100)
     status = models.BooleanField(default = True)
     created_by = models.CharField(max_length = 120)
@@ -58,7 +38,6 @@ class Tax(models.Model):
 
     def __str__(self):
         return self.description
-
 
 class ClassType(models.Model):
     class Meta:
@@ -78,6 +57,23 @@ class ClassType(models.Model):
     def __str__(self):
         return self.description
 
+class Tax(models.Model):
+    class Meta:
+        verbose_name_plural = 'Taxes'
+
+    tax_code = models.CharField(max_length = 5)
+    description = models.CharField(max_length = 100)
+    status = models.BooleanField(default = True)
+    created_by = models.CharField(max_length = 120)
+    created_date = models.DateTimeField(auto_now_add = True)
+    modify_by = models.CharField(max_length = 120)
+    modify_date = models.DateTimeField(default = datetime.now, blank = True)
+    is_deleted = models.BooleanField(default = False, null = True)
+    delete_by = models.CharField(max_length = 120)
+    delete_date = models.DateTimeField(default = datetime.now, blank = True)
+
+    def __str__(self):
+        return self.description
 
 class AssetMaster(models.Model):
     class Meta:
@@ -111,14 +107,13 @@ class AssetMaster(models.Model):
     created_by = models.CharField(max_length = 120,  null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add = True,  null=True, blank=True)
     modify_by = models.CharField(max_length = 120, null=True, blank=True)
-    modify_date = models.DateTimeField(default = datetime.now, null=True, blank=True)
+    modify_date = models.DateTimeField(auto_now=True, null=True, blank=True)
     is_deleted = models.BooleanField(default = False, null = True)
     delete_by = models.CharField(max_length = 120, null=True, blank=True)
     delete_date = models.DateTimeField(default = datetime.now, null=True, blank=True)
 
     def __str__(self):
         return self.description
-
 
 class Statistics(models.Model):
     class Meta:

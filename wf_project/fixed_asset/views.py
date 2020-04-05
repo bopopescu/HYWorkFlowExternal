@@ -5,6 +5,7 @@ from django.views.generic import DetailView
 from .serializers import AssetMasterSerializer
 from rest_framework import viewsets
 from django.http import JsonResponse
+import datetime
 
 class MyAssetViewSet(viewsets.ModelViewSet):
     queryset = AssetMaster.objects.filter(is_deleted=False).order_by('-id')
@@ -48,6 +49,8 @@ def fixed_asset_update(request, pk):
 def fixed_asset_delete(request):
     asset = get_object_or_404(AssetMaster, pk=request.POST['hiddenValue'])
     asset.is_deleted = True
+    asset.delete_by=request.user.username
+    asset.delete_date=datetime.now
     asset.save()
     return JsonResponse({'message': 'Success'})
 

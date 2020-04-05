@@ -12,7 +12,6 @@ router.register('podetail', views.PODetailViewSet)
 
 urlpatterns = [    
     path('api/', include(router.urls)),
-    path('po/', views.po_index, name='po_index'),
     path('po/list/<int:pk>/', views.po_list, name='po_list'),
     
     path('po/init/<int:pk>/', views.po_init, name='po_init'),

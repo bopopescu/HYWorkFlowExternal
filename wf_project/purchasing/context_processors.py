@@ -4,5 +4,5 @@ from administration.models import DocumentTypeMaintenance, TransactiontypeMainte
 def po_trans_type(request):
     document_type = get_object_or_404(DocumentTypeMaintenance, document_type_code="205")
     return {
-        'po_trans_type': TransactiontypeMaintenance.objects.filter(document_type=document_type)
+        'po_trans_type': TransactiontypeMaintenance.objects.filter(document_type=document_type).order_by('transaction_type_name')
     }

@@ -100,6 +100,7 @@ def memo_attachment_create(request, pk):
         memo_attachment = form.save(commit=False)
         memo = get_object_or_404(Memo, pk=pk)
         memo_attachment.memo = memo
+        memo_attachment.attachment_date = request.POST['attachment_date']
         memo_attachment.save()    
     return JsonResponse({'message': 'Success'})
 

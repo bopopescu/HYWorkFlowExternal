@@ -48,6 +48,7 @@
             </a>
             <div id="collapsePurchasing" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
               <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Purchase Order:</h6>
                 {% for trans_type in po_trans_type%}
                   <a class="collapse-item" href="{% url 'po_list' trans_type.pk %}">{{trans_type.transaction_type_name}}</a>
                 {% endfor %}
@@ -70,7 +71,7 @@
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'memo_list' %}">
+            <a class="nav-link collapsed" href="{% url 'memo_list' %}">
                 <i class="far fa-sticky-note"></i>
               <span>Memo</span>
             </a>

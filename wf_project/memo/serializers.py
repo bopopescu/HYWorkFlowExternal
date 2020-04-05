@@ -25,7 +25,7 @@ class MemoSerializer(serializers.ModelSerializer):
             else:
                 return "Rejected"
         else:
-            return "Draft"
+            return "Draft (New)"
 
 class MemoAttachmentSerializer(serializers.ModelSerializer):
     attachment_date = serializers.DateField(format='%d/%m/%Y')

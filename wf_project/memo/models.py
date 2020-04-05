@@ -32,7 +32,7 @@ def documenttype_directory_path(instance, filename):
 
 class MemoAttachment(models.Model):
     attachment = models.FileField(upload_to=documenttype_directory_path,verbose_name="File Name", blank=True, null=True)
-    attachment_date = models.DateField(auto_now_add=True)
+    attachment_date = models.DateField()
     memo = models.ForeignKey('Memo', verbose_name="Memo", on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:

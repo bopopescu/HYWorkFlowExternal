@@ -34,7 +34,7 @@ def documenttype_document_number():
 
 class PurchaseOrder(models.Model):
     revision = models.IntegerField(default=1)
-    document_number = models.CharField(max_length=100, blank=True, null=True)
+    document_number = models.CharField(verbose_name="Doc. No.", max_length=100, blank=True, null=True)
     vendor = models.ForeignKey(VendorMasterData, verbose_name="Vendor", on_delete=models.CASCADE, blank=True, null=True)
     vendor_address = models.CharField(max_length=250, blank=True, null=True)
     currency = models.ForeignKey(CurrencyMaintenance, verbose_name="Vendor", on_delete=models.CASCADE, blank=True, null=True)
@@ -90,7 +90,7 @@ def documenttype_directory_path(instance, filename):
 
 class PurchaseOrderAttachment(models.Model):
     attachment = models.FileField(upload_to=documenttype_directory_path,verbose_name="File Name", blank=True, null=True)
-    attachment_date = models.DateField(auto_now_add=True)
+    attachment_date = models.DateField()
     po = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
@@ -98,7 +98,7 @@ class PurchaseOrderAttachment(models.Model):
 
 class PurchaseOrderComparison2Attachment(models.Model):
     attachment = models.FileField(upload_to=documenttype_directory_path,verbose_name="File Name", blank=True, null=True)
-    attachment_date = models.DateField(auto_now_add=True)
+    attachment_date = models.DateField()
     po = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
@@ -106,7 +106,7 @@ class PurchaseOrderComparison2Attachment(models.Model):
 
 class PurchaseOrderComparison3Attachment(models.Model):
     attachment = models.FileField(upload_to=documenttype_directory_path,verbose_name="File Name", blank=True, null=True)
-    attachment_date = models.DateField(auto_now_add=True)
+    attachment_date = models.DateField()
     po = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:

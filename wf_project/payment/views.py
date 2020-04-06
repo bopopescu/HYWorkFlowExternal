@@ -12,6 +12,7 @@ from approval.models import ApprovalItem
 from django.contrib.auth.models import User
 import datetime
 from django.http import JsonResponse
+from administration.models import CurrencyMaintenance
 
 class PYViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequest.objects.all() #.order_by('rank')
@@ -123,6 +124,7 @@ def py_create_edit(request, pk):
             print(form.errors)
     else:
         form = NewPaymentForm(instance=py)
+        form.fields['currency'].initial = get_object_or_404(CurrencyMaintenance, alphabet="MYR")
         form_attachment = NewPYAttachmentForm()
         form_item = NewPYItemForm()
     return render(request, 'payment/create.html', {'py': py, 'form': form,'form_item':form_item ,'form_attachment': form_attachment})

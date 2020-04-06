@@ -11,12 +11,12 @@ from administration.models import StaffPositionGradeMaintenance
 
 
 class DetailStaffRecruimentForm(forms.ModelForm):
-    company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.all(), empty_label="Not Assigned",initial=StaffRecruitmentRequest.company, disabled=True)
-    reporting_to = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.all(), empty_label="Not Assigned",initial=StaffRecruitmentRequest.reporting_to, disabled=True)
-    department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.all(), empty_label="Not Assigned",initial=StaffRecruitmentRequest.department, disabled=True)
-    position_title = forms.ModelChoiceField(queryset=StaffPositionTitleMaintenance.objects.all(), empty_label="Not Assigned",initial=StaffRecruitmentRequest.position_title, disabled=True)
-    employment_type = forms.ModelChoiceField(queryset=StaffemploymentTypeMaintenance.objects.all(), empty_label="Not Assigned",initial=StaffRecruitmentRequest.employment_type, disabled=True)
-    position_grade = forms.ModelChoiceField(queryset=StaffPositionGradeMaintenance.objects.all(), empty_label="Not Assigned",initial=StaffRecruitmentRequest.position_grade, disabled=True)
+    company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True), empty_label="Not Assigned",initial=StaffRecruitmentRequest.company, disabled=True)
+    reporting_to = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.filter(is_active=True), empty_label="Not Assigned",initial=StaffRecruitmentRequest.reporting_to, disabled=True)
+    department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True), empty_label="Not Assigned",initial=StaffRecruitmentRequest.department, disabled=True)
+    position_title = forms.ModelChoiceField(queryset=StaffPositionTitleMaintenance.objects.filter(is_active=True), empty_label="Not Assigned",initial=StaffRecruitmentRequest.position_title, disabled=True)
+    employment_type = forms.ModelChoiceField(queryset=StaffemploymentTypeMaintenance.objects.filter(is_active=True), empty_label="Not Assigned",initial=StaffRecruitmentRequest.employment_type, disabled=True)
+    position_grade = forms.ModelChoiceField(queryset=StaffPositionGradeMaintenance.objects.filter(is_active=True), empty_label="Not Assigned",initial=StaffRecruitmentRequest.position_grade, disabled=True)
     class Meta:
         model = StaffRecruitmentRequest
         fields = ['position_title','company','reporting_to','department','employment_type','position_grade',
@@ -24,13 +24,13 @@ class DetailStaffRecruimentForm(forms.ModelForm):
         'budgeted','no_of_pax','month_to_be_filled']
 
 class NewStaffRecruimentForm(forms.ModelForm):
-    company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.all().order_by('company_name'), empty_label="Not Assigned")
-    reporting_to = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.all().order_by('employee_name'), empty_label="Not Assigned")
-    department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.all().order_by('department_name'), empty_label="Not Assigned")
-    position_title = forms.ModelChoiceField(queryset=StaffPositionTitleMaintenance.objects.all().order_by('position_title_name'), empty_label="Not Assigned")
-    employment_type = forms.ModelChoiceField(queryset=StaffemploymentTypeMaintenance.objects.all().order_by('employment_type_name'), empty_label="Not Assigned")
+    company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned")
+    reporting_to = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.filter(is_active=True).order_by('employee_name'), empty_label="Not Assigned")
+    department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned")
+    position_title = forms.ModelChoiceField(queryset=StaffPositionTitleMaintenance.objects.filter(is_active=True).order_by('position_title_name'), empty_label="Not Assigned")
+    employment_type = forms.ModelChoiceField(queryset=StaffemploymentTypeMaintenance.objects.filter(is_active=True).order_by('employment_type_name'), empty_label="Not Assigned")
     request_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput)
-    position_grade = forms.ModelChoiceField(queryset=StaffPositionGradeMaintenance.objects.all().order_by('position_grade_name'), empty_label="Not Assigned")
+    position_grade = forms.ModelChoiceField(queryset=StaffPositionGradeMaintenance.objects.filter(is_active=True).order_by('position_grade_name'), empty_label="Not Assigned")
     revision = forms.IntegerField(initial=0)
     budgeted = forms.BooleanField(initial=False)
     class Meta:
@@ -39,12 +39,12 @@ class NewStaffRecruimentForm(forms.ModelForm):
         'budgeted','no_of_pax','month_to_be_filled']
 
 class UpdateStaffRecruimentForm(forms.ModelForm):
-    company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.all().order_by('company_name'), empty_label="Not Assigned",initial=StaffRecruitmentRequest.company)
-    reporting_to = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.all().order_by('employee_name'), empty_label="Not Assigned",initial=StaffRecruitmentRequest.reporting_to)
-    department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.all().order_by('department_name'), empty_label="Not Assigned",initial=StaffRecruitmentRequest.department)
-    position_title = forms.ModelChoiceField(queryset=StaffPositionTitleMaintenance.objects.all().order_by('position_title_name'), empty_label="Not Assigned",initial=StaffRecruitmentRequest.position_title)
-    employment_type = forms.ModelChoiceField(queryset=StaffemploymentTypeMaintenance.objects.all().order_by('employment_type_name'), empty_label="Not Assigned",initial=StaffRecruitmentRequest.employment_type)
-    position_grade = forms.ModelChoiceField(queryset=StaffPositionGradeMaintenance.objects.all().order_by('position_grade_name'), empty_label="Not Assigned",initial=StaffRecruitmentRequest.position_grade)
+    company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned",initial=StaffRecruitmentRequest.company)
+    reporting_to = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.filter(is_active=True).order_by('employee_name'), empty_label="Not Assigned",initial=StaffRecruitmentRequest.reporting_to)
+    department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned",initial=StaffRecruitmentRequest.department)
+    position_title = forms.ModelChoiceField(queryset=StaffPositionTitleMaintenance.objects.filter(is_active=True).order_by('position_title_name'), empty_label="Not Assigned",initial=StaffRecruitmentRequest.position_title)
+    employment_type = forms.ModelChoiceField(queryset=StaffemploymentTypeMaintenance.objects.filter(is_active=True).order_by('employment_type_name'), empty_label="Not Assigned",initial=StaffRecruitmentRequest.employment_type)
+    position_grade = forms.ModelChoiceField(queryset=StaffPositionGradeMaintenance.objects.filter(is_active=True).order_by('position_grade_name'), empty_label="Not Assigned",initial=StaffRecruitmentRequest.position_grade)
     class Meta:
         model = StaffRecruitmentRequest
         fields = ['position_title','company','reporting_to','department','employment_type','position_grade',

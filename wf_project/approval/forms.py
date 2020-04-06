@@ -18,7 +18,7 @@ class ApprovalForm(forms.ModelForm):
 class ApproverForm(forms.ModelForm):
     class Meta:
         model = ApprovalItemApprover
-        fields = ['stage', 'user']
+        fields = ['user']
 
 class CCForm(forms.ModelForm):
     class Meta:

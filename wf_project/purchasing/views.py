@@ -179,6 +179,10 @@ def po_send_approval(request,pk):
     approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=po.total_amount, document_amount_range__lte= po.total_amount)[0]
     approval_item = get_object_or_404(ApprovalItem, pk=po.approval.pk)       
     approval_item.approval_level = approval_level
+
+    if approval_level.ceo_approve == True:
+        approval_item.notification = "CEO will added by default"
+
     approval_item.save()
 
     return redirect('approval_detail', pk=approval_item.pk)

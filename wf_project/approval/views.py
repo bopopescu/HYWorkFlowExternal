@@ -4,13 +4,14 @@ from .models import ApprovalItem, ApprovalItemApprover, ApprovalItemCC
 from django.contrib.auth.decorators import login_required
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
-from administration.models import WorkflowApprovalRule
+from administration.models import WorkflowApprovalRule, WorkflowApprovalGroup, WorkflowApprovalRuleGroupMaintenance
 from administration.models import StatusMaintenance
 from .serializers import ApprovalItemSerializer, ApprovalApproverSerializer, ApprovalCCSerializer
 from rest_framework import viewsets
 from memo.models import Memo
 from payment.models import PaymentRequest
 from human_resource.models import StaffRecruitmentRequest
+from django.http import JsonResponse
 
 class ApprovalViewSet(viewsets.ModelViewSet):
     queryset = ApprovalItem.objects.all().order_by('-id')
@@ -30,11 +31,17 @@ class CCViewSet(viewsets.ModelViewSet):
 
 @login_required
 def approval_detail(request, pk):
-    approval_item =  get_object_or_404(ApprovalItem, pk=pk)
+    approval_item = get_object_or_404(ApprovalItem, pk=pk)
+    approval_rule = get_object_or_404(WorkflowApprovalRule, pk=approval_item.approval_level.pk)
+    approval_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule).order_by('id')
+    first_tab_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule)[0]
+    
     form = ApprovalForm(instance=approval_item)
     form_approver = ApproverForm()
     form_cc = CCForm()
-    return render(request, 'approval/detail.html', {'approval_item': approval_item, 'form': form, 'form_approver': form_approver, 'form_cc': form_cc})
+
+    return render(request, 'approval/detail.html', {'approval_item': approval_item, 'approval_rule': approval_rule, 'first_tab': first_tab_group,
+    'approval_rule_group': approval_rule_group, 'form': form, 'form_approver': form_approver, 'form_cc': form_cc})
 
 @login_required
 def approval_history(request, pk):
@@ -125,14 +132,13 @@ def approver_create(request, pk):
         approver.status = "P"
         approver.save()
     
-    return redirect(approval_detail, pk)
+    return JsonResponse({'message': 'Success'})
 
 @login_required
-def approver_delete(request, pk):
-    approver =  get_object_or_404(ApprovalItemApprover, pk=pk)
-    approval_item = get_object_or_404(ApprovalItem, pk=approver.approval_item.pk)
+def approver_delete(request):
+    approver =  get_object_or_404(ApprovalItemApprover, pk=request.POST['hiddenValueApprover'])
     approver.delete()
-    return redirect(approval_detail, pk=approver.approval_item.pk)
+    return JsonResponse({'message': 'Success'})
 
 @login_required
 def cc_create(request, pk):
@@ -143,14 +149,13 @@ def cc_create(request, pk):
         cc.approval_item = approval_item
         cc.save()
 
-    return redirect(approval_detail, pk)
+    return JsonResponse({'message': 'Success'})
 
 @login_required
-def cc_delete(request, pk):
-    cc =  get_object_or_404(ApprovalItemCC, pk=pk)
-    approval_item = get_object_or_404(ApprovalItem, pk=cc.approval_item.pk)
+def cc_delete(request):
+    cc =  get_object_or_404(ApprovalItemCC, pk=request.POST['hiddenValueCC'])
     cc.delete()
-    return redirect(approval_detail, pk=cc.approval_item.pk)
+    return JsonResponse({'message': 'Success'})
 
 @login_required
 def reject(request):

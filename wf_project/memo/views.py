@@ -72,7 +72,7 @@ def memo_create(request, pk):
             memo.save()
 
             transaction_type = get_object_or_404(TransactiontypeMaintenance, transaction_type_name="Blank",document_type=memo_type)
-            approval_level = get_object_or_404(WorkflowApprovalRule,approval_level=2)
+            approval_level = get_object_or_404(WorkflowApprovalRule,document_amount_range=0,document_amount_range2=0)
 
             approval_item = ApprovalItem()        
             approval_item.document_number = memo.document_number
@@ -80,7 +80,12 @@ def memo_create(request, pk):
             approval_item.document_type = memo_type
             approval_item.transaction_type = transaction_type
             approval_item.approval_level = approval_level
-            approval_item.notification = "CEO will added by default"
+
+            if approval_level.ceo_approve == True:
+                approval_item.notification = "CEO will added by default"
+            else:
+                approval_item.notification = ""
+                
             approval_item.status = "D"
             approval_item.save()
 

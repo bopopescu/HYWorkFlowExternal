@@ -350,6 +350,9 @@ $("#addMemoAttachment").submit(function(e){
 	var post_url = $(this).attr("action"); //get form action url
 	var request_method = $(this).attr("method"); //get form GET/POST method
 	var form_data = new FormData(this); //Creates new FormData object
+
+    $('#addMemoAttachmentModal').modal('hide');
+    
     var d = new Date();
     var month = d.getMonth()+1;
     var day = d.getDate();
@@ -373,8 +376,6 @@ $("#addMemoAttachment").submit(function(e){
                 var table = $('#myattachments').DataTable(); 
                 table.ajax.reload();
             }
-
-            $('#addMemoAttachmentModal').modal('hide');
 		});
 	}
 });

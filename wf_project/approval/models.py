@@ -24,7 +24,7 @@ class ApprovalItem(models.Model):
             return "Rejected"
 
 class ApprovalItemApprover(models.Model):
-    stage = models.IntegerField(default=0)
+    stage = models.IntegerField(default=1)
     user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE,  blank=True, null=True)
     approval_item = models.ForeignKey('ApprovalItem', on_delete=models.CASCADE)
     status = models.CharField(max_length=2, blank=True, null=True)

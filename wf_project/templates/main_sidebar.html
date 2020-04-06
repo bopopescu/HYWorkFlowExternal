@@ -63,10 +63,9 @@
             <div id="collapsePayment" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
               <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Payment Request:</h6>
-                <a class="collapse-item" href="{% url 'pylist' %}">Other</a>
-                <a class="collapse-item" href="{% url 'pylist_pettycash' %}">Petty Cash</a>
-                <a class="collapse-item" href="{% url 'pylist_cashback' %}">Cash Back/Rebates</a>
-                <a class="collapse-item" href="{% url 'pylist_salescommission' %}">Sales Commission</a>
+                {% for trans_type in py_trans_type%}
+                  <a class="collapse-item" href="{% url 'pylist' trans_type.pk %}">{{trans_type.transaction_type_name}}</a>
+                {% endfor %}
               </div>
             </div>
           </li>

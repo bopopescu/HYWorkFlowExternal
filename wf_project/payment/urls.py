@@ -3,18 +3,10 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-#other
+
 router.register('mypydata', views.MyPYViewSet)
 router.register('teampydata', views.TeamPYViewSet)
-#pettycash
-router.register('mypypettycashdata', views.MyPYViewSetPettyCash)
-router.register('teampypettycashdata', views.TeamPYViewSetPettyCash)
-#cashback
-router.register('mypycashbackdata', views.MyPYViewSetCashBack)
-router.register('teampycashbackdata', views.TeamPYViewSetCashBack)
-#sales commission
-router.register('mypysalecommissiondata', views.MyPYViewSetSalesCommissions)
-router.register('teampysalecommissiondata', views.TeamPYViewSetSalesCommissions)
+
 #item & attachment
 router.register('pydata', views.PYViewSet)
 router.register('pyitem', views.PYItemViewSet)
@@ -22,19 +14,16 @@ router.register('pyattachment',views.PYAttachmentViewSet)
 
 urlpatterns = [ 
     path('api/', include(router.urls)), 
-    path('list/', views.pylist, name='pylist'),
-    path('pettycashlist/', views.pylist_pettycash, name='pylist_pettycash'),
-    path('cashbacklist/', views.pylist_cashback, name='pylist_cashback'),
-    path('salescommissionlist/', views.pylist_salescommission, name='pylist_salescommission'),
+    path('list/<int:pk>/', views.pylist, name='pylist'),
 
-
-    path('createnew/<str:TransType>/', views.py_create, name='pycreate'),
+    path('createnew/<int:TransType>/', views.py_create, name='pycreate'),
     path('create/<int:pk>/', views.py_create_edit, name='py_create_edit'),
     path('createattachment_create/<int:pk>/', views.py_attachment_create_formcreate, name='py_attachment_create_formcreate'),
     path('deleteattachment_create/<int:pk>/', views.py_attachment_delete_formcreate, name='py_attachment_delete_formcreate'),
     path('createitem_create/<int:pk>/', views.py_item_create_formcreate, name='py_item_create_formcreate'),
     path('deleteitem_create/<int:pk>/', views.py_item_delete_formcreate, name='py_item_delete_formcreate'),
 
+    path('sendapproval/<int:pk>/', views.py_send_approval, name='py_send_approval'),
     path('<int:pk>/', views.py_detail, name='py_detail'),    
     path('delete/<int:pk>/', views.py_delete, name='py_delete'),
     path('update/<int:pk>/', views.py_update, name='py_update'),

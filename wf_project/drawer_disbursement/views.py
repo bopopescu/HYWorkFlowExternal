@@ -10,6 +10,7 @@ from administration.models import DocumentTypeMaintenance
 from administration.models import StatusMaintenance
 from .models import DrawerDisbursement
 from payment.models import PaymentRequest
+from django.http import JsonResponse
 
 # class TeamStaffViewSet(viewsets.ModelViewSet):
 #     queryset = StaffRecruitmentRequest.objects.all().order_by('-id')    
@@ -75,7 +76,7 @@ def drawer_disbursement_disbursed(request,pk,drawerpk):
     disbursedrecord.save()
     payment.save()
 
-    return render(request, 'disbursement_list.html', {'drawer': drawer})
+    return JsonResponse({'message': 'Success'})
 
 @login_required
 def drawer_disbursement_cancel(request,pk,drawerpk):
@@ -86,14 +87,14 @@ def drawer_disbursement_cancel(request,pk,drawerpk):
     payment.status = document_status_closed
 
     document_type_disburse = DocumentTypeMaintenance.objects.get(document_type_code='402')
-    document_status_disburse = StatusMaintenance.objects.get(document_type=document_type_disburse,status_code='700')
+    document_status_disbursecancel = StatusMaintenance.objects.get(document_type=document_type_disburse,status_code='999')
 
     disbursedrecord = DrawerDisbursement()
     disbursedrecord.payment = payment
     disbursedrecord.total_disbursed = payment.total_amount
-    disbursedrecord.status = document_status_disburse
+    disbursedrecord.status = document_status_disbursecancel
     disbursedrecord.drawer = drawer
     disbursedrecord.save()
     payment.save()
 
-    return render(request, 'disbursement_list.html', {'drawer': drawer})
+    return JsonResponse({'message': 'Success'})

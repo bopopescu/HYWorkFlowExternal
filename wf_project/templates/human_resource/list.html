@@ -53,7 +53,7 @@
                           "targets": 8,
                           "render": function(data, type, row) {  
                             var label = '';                                  
-                                if (row.approval_status == 'Draft') {
+                                if (row.approval_status == 'Draft' || row.approval_status == 'Draft(New)') {
                                     label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
                                 } else if (row.approval_status == 'In Progress') {
                                     label = '<p class="text-warning"><strong>' + row.approval_status + '</strong></p>';
@@ -73,7 +73,7 @@
                           "data": null,
                           "render": function(data, type, row) {
                             var label = '';                      
-                            if (row.approval_status == 'Draft' || row.approval_status == 'Rejected') {
+                            if (row.approval_status == 'Draft' || row.approval_status == 'Rejected' || row.approval_status == 'Draft(New)') {
                                 if(row.approval !== null){    
                                     label = '<a href="../update/' + row.id + '/" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteStaffModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                 }else{

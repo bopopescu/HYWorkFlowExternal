@@ -205,13 +205,36 @@
   }
 </script>
 <script type="text/javascript">
-  $(function() {
-      $("#approveButton").click(function() {
-          var payment_id = $(".modal-body #hiddenValueApprove").val();
-          var drawer_id = $(".modal-body #hiddenValueApprove2").val();
-          window.location.href = "/drawer_disbursement/disbursement_disbursed/" + payment_id + "&"+drawer_id+"/";
-      })
-  });
+  
+  $("#approveButton").click(function(e){
+      e.preventDefault(); //prevent default action 
+      proceed = true;
+      $('#approveModal').modal('hide');
+      var payment_id = $(".modal-body #hiddenValueApprove").val();
+      var drawer_id = $(".modal-body #hiddenValueApprove2").val();
+      var post_url = "/drawer_disbursement/disbursement_disbursed/" + payment_id + "&"+drawer_id+"/"; //get form action url
+      var request_method = "GET"; //get form GET/POST method
+      // var form_data = new FormData(this); //Creates new FormData object
+      
+      //if everything's ok, continue with Ajax form submit
+      if(proceed){ 
+        $.ajax({ //ajax form submit
+          url : post_url,
+          type: request_method,
+          dataType : "json",
+          contentType: false,
+          cache: false,
+          processData:false
+        }).done(function(res){ 
+            var table = $('#mystaffs').DataTable(); 
+            table.ajax.reload();
+            var table2 = $('#disbursed').DataTable(); 
+            table2.ajax.reload();
+            var table3 = $('#cancelled').DataTable(); 
+            table3.ajax.reload();
+        });
+      }
+    });
 </script>
 <!-- Reject Modal-->
 <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -244,12 +267,34 @@ function sendReject(param) {
 }
 </script>
 <script type="text/javascript">
-  $(function() {
-      $("#cancelButton").click(function() {
-        var payment_id = $(".modal-body #hiddenValueApprove").val();
-          var drawer_id = $(".modal-body #hiddenValueApprove2").val();
-          window.location.href = "/drawer_disbursement/disbursement_cancelled/" + payment_id + "&"+drawer_id+"/";
-      })
-  });
+  $("#cancelButton").click(function(e){
+      e.preventDefault(); //prevent default action 
+      proceed = true;
+      $('#rejectModal').modal('hide');
+      var payment_id = $(".modal-body #hiddenValueReject").val();
+      var drawer_id = $(".modal-body #hiddenValueReject2").val();
+      var post_url = "/drawer_disbursement/disbursement_cancelled/" + payment_id + "&"+drawer_id+"/"; //get form action url
+      var request_method = "GET"; //get form GET/POST method
+      // var form_data = new FormData(this); //Creates new FormData object
+      
+      //if everything's ok, continue with Ajax form submit
+      if(proceed){ 
+        $.ajax({ //ajax form submit
+          url : post_url,
+          type: request_method,
+          dataType : "json",
+          contentType: false,
+          cache: false,
+          processData:false
+        }).done(function(res){ 
+            var table = $('#mystaffs').DataTable(); 
+            table.ajax.reload();
+            var table2 = $('#disbursed').DataTable(); 
+            table2.ajax.reload();
+            var table3 = $('#cancelled').DataTable(); 
+            table3.ajax.reload();
+        });
+      }
+    });
 </script>
 {% endblock content %}

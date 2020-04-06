@@ -74,17 +74,9 @@
   </script> 
   {% csrf_token %} 
     <div>
-      <a href="{% url 'approval_detail' py.approval.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
+      <a href="{% url 'py_send_approval' py.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
       <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
-      {% if py.transaction_type.transaction_type_name == "Other" %}
-      <a href="{% url 'pylist' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
-      {% elif py.transaction_type.transaction_type_name == "Petty Cash" %}
-      <a href="{% url 'pylist_pettycash' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
-      {% elif py.transaction_type.transaction_type_name == "CashBack n Rebates" %}
-      <a href="{% url 'pylist_cashback' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
-      {% elif py.transaction_type.transaction_type_name == "Sales Commission" %}
-      <a href="{% url 'pylist_salescommission' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
-      {% endif %}
+      <a href="{% url 'pylist' py.transaction_type.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
     </div>    
   </div>
 
@@ -532,6 +524,7 @@
   $("#deletePYItemButton").click(function(e){
       e.preventDefault(); //prevent default action 
       proceed = true;
+      $('#deletePYItemModal').modal('hide');
       var pyitem_id = $(".modal-body #hiddenValue").val();
       var post_url = "../../deleteitem/" + pyitem_id + "/"; //get form action url
       var request_method = "GET"; //get form GET/POST method
@@ -549,7 +542,6 @@
         }).done(function(res){ 
             var table = $('#myitems').DataTable(); 
                 table.ajax.reload();
-                $('#deletePYItemModal').modal('hide');
                 var sub_total = res.sub_total;
                 var tax_amount = res.tax_amount;
 
@@ -619,6 +611,7 @@
         e.preventDefault(); //prevent default action 
       proceed = true;
         
+      $('#additemModal').modal('hide');
       var post_url = $(this).attr("action"); //get form action url
       var request_method = $(this).attr("method"); //get form GET/POST method
       var form_data = new FormData(this); //Creates new FormData object
@@ -636,7 +629,6 @@
         }).done(function(res){ 
             var table = $('#myitems').DataTable(); 
                 table.ajax.reload();
-                $('#additemModal').modal('hide');
                 $("#addPYItem")[0].reset();
                 var sub_total = res.sub_total;
                 var tax_amount = res.tax_amount;
@@ -680,6 +672,7 @@
   $("#deletePYAttachmentButton").click(function(e){
       e.preventDefault(); //prevent default action 
       proceed = true;
+      $('#deletePYAttachmentModal').modal('hide');
       var pyattachment_id = $(".modal-body #hiddenValue2").val();
       var post_url = "../../deleteattachment/" + pyattachment_id + "/"; //get form action url
       var request_method = "GET"; //get form GET/POST method
@@ -697,7 +690,6 @@
         }).done(function(res){ 
             var table = $('#myattachments').DataTable(); 
             table.ajax.reload();
-            $('#deletePYAttachmentModal').modal('hide');
         });
       }
     });
@@ -749,8 +741,9 @@
 <script>
   $("#addPYAttachment").submit(function(e){
       e.preventDefault(); //prevent default action 
-    proceed = true;
+      proceed = true;
       
+    $('#addPYAttachmentModal').modal('hide');
     var post_url = $(this).attr("action"); //get form action url
     var request_method = $(this).attr("method"); //get form GET/POST method
     var form_data = new FormData(this); //Creates new FormData object
@@ -768,7 +761,6 @@
       }).done(function(res){ 
           var table = $('#myattachments').DataTable(); 
                   table.ajax.reload();
-                  $('#addPYAttachmentModal').modal('hide');
                   $('#addPYAttachment')[0].reset();
       });
     }

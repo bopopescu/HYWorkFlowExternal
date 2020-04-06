@@ -25,7 +25,7 @@ class StaffRecruitmentSerializer(serializers.ModelSerializer):
             else:
                 return "Rejected"
         else:
-            return "Draft"
+            return "Draft(New)"
 
     def get_approval_id(self, obj):  
         if obj.approval is None:

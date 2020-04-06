@@ -95,7 +95,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.static',
                 'django.template.context_processors.media',
-                'purchasing.context_processors.po_trans_type'
+                'purchasing.context_processors.po_trans_type',
+                'payment.context_processors.py_trans_type'
             ],
         },
     },

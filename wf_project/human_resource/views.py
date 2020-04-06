@@ -112,7 +112,7 @@ def staff_create(request,pk):
         form = NewStaffRecruimentForm(instance=staff)
         form_requirement = NewStaffJobRequirementForm()
         form_responsible = NewStaffJobResponsibleForm()
-    return render(request, 'staffrecruitmentcreate.html', {'staff': staff, 'form': form,'form_requirement': form_requirement,'form_responsible':form_responsible})
+    return render(request, 'human_resource/create.html', {'staff': staff, 'form': form,'form_requirement': form_requirement,'form_responsible':form_responsible})
 
 @login_required
 def staff_delete(request, pk):
@@ -124,11 +124,11 @@ def staff_delete(request, pk):
 def staff_detail(request, pk):
     staff =  get_object_or_404(StaffRecruitmentRequest, pk=pk)
     form = DetailStaffRecruimentForm(instance=staff)
-    return render(request, 'staffrecruitmentdetail.html', {'staff': staff, 'form': form})
+    return render(request, 'human_resource/detail.html', {'staff': staff, 'form': form})
 
 @login_required
 def staff_list(request):
-    return render(request, 'staffrecruitmentlist.html')
+    return render(request, 'human_resource/list.html')
 
 @login_required
 def staff_update(request, pk): 
@@ -146,7 +146,7 @@ def staff_update(request, pk):
         form = UpdateStaffRecruimentForm(instance=staff)
         form_requirement = NewStaffJobRequirementForm()
         form_responsible = NewStaffJobResponsibleForm()
-    return render(request, 'staffrecruitmentupdate.html', {'staff': staff, 'form': form,'form_requirement': form_requirement,'form_responsible':form_responsible})
+    return render(request, 'human_resource/update.html', {'staff': staff, 'form': form,'form_requirement': form_requirement,'form_responsible':form_responsible})
 
 def staff_requirement_create(request,pk):  
     form = NewStaffJobRequirementForm(request.POST)

@@ -184,3 +184,12 @@ def staff_responsible_delete(request, pk):
     staff = get_object_or_404(StaffRecruitmentRequest, pk=staff_responsible.staff_recruitment.pk)
     staff_responsible.delete()
     return JsonResponse({'message': 'Success'})
+
+@login_required
+def staff_send_approval(request,pk):
+    staff = get_object_or_404(StaffRecruitmentRequest, pk=pk)
+    approval_item = get_object_or_404(ApprovalItem, pk=staff.approval.pk)       
+    approval_item.approval_level = 2
+    approval_item.save()
+
+    return redirect('approval_detail', pk=approval_item.pk)

@@ -19,6 +19,7 @@ urlpatterns = [
     path('<int:pk>/', views.staff_detail, name='staff_detail'),    
     path('delete/<int:pk>/', views.staff_delete, name='staff_delete'),
     path('update/<int:pk>/', views.staff_update, name='staff_update'),
+    path('sendapproval/<int:pk>/', views.staff_send_approval, name='staff_send_approval'),
 
     path('createrequirement/<int:pk>/', views.staff_requirement_create, name='staff_requirement_create'),
     path('deleterequirement/<int:pk>/', views.staff_requirement_delete, name='staff_requirement_delete'),

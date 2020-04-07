@@ -133,8 +133,9 @@ def py_create_edit(request, pk):
 def py_send_approval(request,pk):
     py = get_object_or_404(PaymentRequest, pk=pk)
     if py.transaction_type.transaction_type_name == "Petty Cash":
+        approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte= py.total_amount)[0]
         approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)       
-        approval_item.approval_level = 2
+        approval_item.approval_level = approval_level
         approval_item.save()
     else:
         approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte= py.total_amount)[0]

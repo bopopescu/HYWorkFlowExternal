@@ -46,6 +46,8 @@ from .models import StaffemploymentTypeMaintenance
 from .models import StaffPositionTitleMaintenance
 from .models import StaffPositionGradeMaintenance
 from .models import UtiliyAccountTypeMaintenance
+from .models import OTRateMaintenance
+from .models import HolidayEventMaintenance
 
 admin.site.register(WorkflowPattern)
 admin.site.register(WorkflowInstance)
@@ -331,6 +333,45 @@ class EmployeeMaintenanceScreen(admin.ModelAdmin):
 
 admin.site.register(EmployeeMaintenance,EmployeeMaintenanceScreen)
 #admin.site.register(UserMaintenance)
+class HolidayEventMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('event_name','event_date','is_public_holiday','is_active')
+    list_filter = ('is_active','is_public_holiday',)
+    search_fields = ('event_name','event_date')
+    fieldsets = [
+        (None, {'fields': ['event_name','event_date','is_public_holiday','is_active']}),
+    ]
+    exclude = ['created_by','modified_by']
+
+    def save_model(self, request, obj, form, change):
+        self.request = request
+        if not obj.pk:
+            # Only set added_by during the first save.
+            obj.created_by = self.request.user
+        else:
+            obj.modified_by = self.request.user
+        return super().save_model(request, obj, form, change)
+
+admin.site.register(HolidayEventMaintenance,HolidayEventMaintenanceScreen)
+
+class OTRateMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('ot_rate_name','ot_rate','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('ot_rate_name','ot_rate')
+    fieldsets = [
+        (None, {'fields': ['ot_rate_name','ot_rate','is_active']}),
+    ]
+    exclude = ['created_by','modified_by']
+
+    def save_model(self, request, obj, form, change):
+        self.request = request
+        if not obj.pk:
+            # Only set added_by during the first save.
+            obj.created_by = self.request.user
+        else:
+            obj.modified_by = self.request.user
+        return super().save_model(request, obj, form, change)
+
+admin.site.register(OTRateMaintenance,OTRateMaintenanceScreen)
 
 class PaymentTermMaintenanceScreen(admin.ModelAdmin):
     list_display = ('description','is_active')

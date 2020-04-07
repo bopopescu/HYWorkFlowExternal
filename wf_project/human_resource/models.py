@@ -59,5 +59,5 @@ class StaffJobResponsibilities(models.Model):
     responsible_description = models.CharField(max_length=250,verbose_name="Responsible")
 
     def __str__(self):
-        return self.reponsible_description
+        return self.responsible_description
 

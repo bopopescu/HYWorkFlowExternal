@@ -228,6 +228,19 @@ class EmployeePositionMaintenance(models.Model):
     def __str__(self):
         return self.position_name
 
+class HolidayEventMaintenance(models.Model):
+    event_name = models.CharField(max_length=255)
+    event_date = models.DateField()
+    is_public_holiday = models.BooleanField()
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='holidaycreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='holidaymodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.event_name
+
 class ItemClassesMaintenance(models.Model):
     item_class_name = models.CharField(max_length=250)
     is_active = models.BooleanField()
@@ -273,6 +286,18 @@ class MemoTemplateMaintenance(models.Model):
 
     def __str__(self):
         return self.memo_template_name
+
+class OTRateMaintenance(models.Model):
+    ot_rate_name = models.CharField(max_length=250)
+    ot_rate = models.DecimalField(max_digits=10, decimal_places=2,verbose_name="OT Rate(%)")
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='otratecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='otratemodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.ot_rate_name
 
 class PaymentmodeMaintenance(models.Model):
     payment_mode_name = models.CharField(max_length=250)

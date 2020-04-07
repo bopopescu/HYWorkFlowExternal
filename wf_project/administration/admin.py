@@ -311,7 +311,7 @@ class EmployeeProjectInline(admin.StackedInline):
         return super().save_model(request, obj, form, change)
 
 class EmployeeMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('nick_name', 'employee_name','position_id')
+    list_display = ('employee_name','nick_name','position_id')
     list_filter = ('is_active',)
     search_fields = ('nick_name', 'employee_name','position_id__position_name')
     fieldsets = [

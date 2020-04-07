@@ -296,7 +296,7 @@
                                         <script>
                                             $(document).ready(function() {
                                                 var podtable = $('#podetails').DataTable({
-                                                    "ajax": "../../api/podetail/?format=datatables&pk={{po.pk}}",
+                                                    "ajax": "{% url 'podetail-list' %}?format=datatables&pk={{po.pk}}",
                                                     "dom": "<'row'<'col-sm-12 small'tr>>" +
                                                         "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                                     "columnDefs": [{
@@ -376,7 +376,7 @@
                                         <script>
                                             $(document).ready(function() {
                                                 var poac2table = $('#pocomparison2attachments').DataTable({
-                                                    "ajax": "../../api/pocomparison2attachment/?format=datatables&pk={{po.pk}}",
+                                                    "ajax": "{% url 'pocv2attachment-list' %}?format=datatables&pk={{po.pk}}",
                                                     "dom": "<'row'<'col-sm-12 small'tr>>" +
                                                         "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                                     "columnDefs": [{
@@ -454,7 +454,7 @@
                                         <script>
                                             $(document).ready(function() {
                                                 var poac3table = $('#pocomparison3attachments').DataTable({
-                                                    "ajax": "../../api/pocomparison3attachment/?format=datatables&pk={{po.pk}}",
+                                                    "ajax": "{% url 'pocv3attachment-list' %}?format=datatables&pk={{po.pk}}",
                                                     "dom": "<'row'<'col-sm-12 small'tr>>" +
                                                         "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                                     "columnDefs": [{
@@ -605,7 +605,7 @@
                         <script>
                             $(document).ready(function() {
                                 var poatable = $('#poattachments').DataTable({
-                                    "ajax": "../../api/poattachment/?format=datatables&pk={{po.pk}}",
+                                    "ajax": "{% url 'poattachment-list' %}?format=datatables&pk={{po.pk}}",
                                     "dom": "<'row'<'col-sm-12 small'tr>>" +
                                         "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                     "columnDefs": [{

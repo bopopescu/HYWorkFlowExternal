@@ -3,9 +3,10 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register('approvaldata', views.ApprovalViewSet)
-router.register('approverdata', views.ApproverViewSet)
-router.register('ccdata', views.CCViewSet)
+router.register('approvaldata', views.ApprovalViewSet, basename='approvaldata')
+router.register('approverdata', views.ApproverViewSet, basename='approverdata')
+router.register('allapproverdata', views.AllApproverViewSet, basename='allapproverdata')
+router.register('ccdata', views.CCViewSet, basename='ccdata')
 
 urlpatterns = [    
     path('api/', include(router.urls)),
@@ -17,6 +18,6 @@ urlpatterns = [
     path('approver/delete/', views.approver_delete, name='approver_delete'),
     path('cc/create/<int:pk>/', views.cc_create, name='cc_create'),    
     path('cc/delete/', views.cc_delete, name='cc_delete'),
-    path('approve/<int:pk>/', views.approve, name='approve'),
+    path('approve/', views.approve, name='approve'),
     path('reject/', views.reject, name='reject'),
 ]

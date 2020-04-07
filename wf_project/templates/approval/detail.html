@@ -119,9 +119,8 @@
                         <script>
                             $(document).ready(function() {
                                 var approvertable = $('#approvers{{group.approval_group.id}}').DataTable({
-                                    "ajax": "../../api/approverdata/?format=datatables&pk={{approval_item.pk}}&group={{group.approval_group.id}}",
-                                    "dom": "<'row'<'col-sm-12 small'tr>>" +
-                                        "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                                    "ajax": "{% url 'approverdata-list' %}?format=datatables&pk={{approval_item.pk}}&group={{group.approval_group.user_group.id}}",
+                                    "dom": "<'row'<'col-sm-12 small'tr>>",
                                     "columnDefs": [{
                                         "targets": -1,
                                         "data": null,
@@ -152,11 +151,12 @@
                                         </div>
                                         <div class="modal-body">
                                             Select "Delete" below if you are ready to delete.
+                                            <input type="hidden" name="hiddenDeleteGroupId" id="hiddenDeleteGroupId" value="{{group.approval_group.id}}"/>
                                             <input type="hidden" name="hiddenValueApprover{{group.approval_group.id}}" id="hiddenValueApprover{{group.approval_group.id}}" value="" />
                                         </div>
                                         <div class="modal-footer">
                                             <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
-                                            <a class="btn btn-danger" href="#" id="deleteApprover{{group.approval_group.id}}Button">Delete</a>
+                                            <button class="btn btn-danger" id="deleteApprover{{group.approval_group.id}}Button">Delete</a>
                                         </div>
                                     </div>
                                 </form>
@@ -201,9 +201,9 @@
                         <div class="modal fade" id="addApprover{{group.approval_group.id}}Modal" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
-                                    <form action="{% url 'approver_create' approval_item.pk %}" method="POST">
+                                    <form action="{% url 'approver_create' approval_item.pk %}" method="POST" id="addApprover{{group.approval_group.id}}">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Add Approver</h5>
+                                            <h5 class="modal-title" id="exampleModalLabel">Add Approver - {{group.approval_group.user_group.group_name}}</h5>
                                             <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">×</span>
                                             </button>
@@ -212,12 +212,32 @@
                                             {% csrf_token %}
                                             <div class="form-group">
                                                 <div class="form-row">
-                                                    <div class="col col-md-3">
-                                                        {{form_approver.user.label_tag}}
-                                                    </div>
-                                                    <div class="col col-md-8">
-                                                        {% render_field form_approver.user class="form-control form-control-use" %}
-                                                    </div>
+                                                    <input type="hidden" name="hiddenGroupId" id="hiddenGroupId" value="{{group.approval_group.id}}"/>
+                                                    <input type="hidden" name="hiddenGroupName" id="hiddenGroupName" value="{{group.approval_group.user_group.group_name}}"/>
+                                                    {% if first_tab.approval_group.user_group.group_name == "Group A"%}
+                                                        <div class="col col-md-3">
+                                                            {{form_approver_a.user.label_tag}}
+                                                        </div>
+                                                        <div class="col col-md-8">
+                                                            {% render_field form_approver_a.user class="form-control form-control-use" %}
+                                                        </div>
+                                                    {% else %}
+                                                        {% if group.approval_group.user_group.group_name == "Group A"%}
+                                                            <div class="col col-md-3">
+                                                                {{form_approver_a.user.label_tag}}
+                                                            </div>
+                                                            <div class="col col-md-8">
+                                                                {% render_field form_approver_a.user class="form-control form-control-use" %}
+                                                            </div>
+                                                        {% else %}
+                                                            <div class="col col-md-3">
+                                                                {{form_approver_b.user.label_tag}}
+                                                            </div>
+                                                            <div class="col col-md-8">
+                                                                {% render_field form_approver_b.user class="form-control form-control-use" %}
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </div>
@@ -255,6 +275,8 @@
                                         if (res.message == 'Success'){
                                             var table = $('#approvers{{group.approval_group.id}}').DataTable(); 
                                             table.ajax.reload();
+                                        } else {
+                                            alert(res.message);
                                         }
                                     });
                                 }
@@ -291,7 +313,7 @@
             <script>
                 $(document).ready(function() {
                     var cctable = $('#ccs').DataTable({
-                        "ajax": "../../api/ccdata/?format=datatables&pk={{approval_item.pk}}",
+                        "ajax": "{% url 'ccdata-list' %}?format=datatables&pk={{approval_item.pk}}",
                         "dom": "<'row'<'col-sm-12 small'tr>>" +
                             "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                         "columnDefs": [{
@@ -301,7 +323,7 @@
                                 return '<a href="#" data-toggle="modal" data-target="#deleteCCModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDeleteCC(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                             }
                         }, {
-                            "targets": 1,
+                            "targets": 2,
                             "defaultContent": "<i>Not set</i>"
                         }, {
                             "visible": false,

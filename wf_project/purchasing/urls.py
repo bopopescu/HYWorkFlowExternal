@@ -3,19 +3,19 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register('mypodata', views.MyPOViewSet)
-router.register('teampodata', views.TeamPOViewSet)
-router.register('poattachment', views.POAttachmentViewSet)
-router.register('pocomparison2attachment', views.POComparison2AttachmentViewSet)
-router.register('pocomparison3attachment', views.POComparison3AttachmentViewSet)
-router.register('podetail', views.PODetailViewSet)
+router.register('mypodata', views.MyPOViewSet, basename='mypo')
+router.register('teampodata', views.TeamPOViewSet, basename='teampo')
+router.register('poattachment', views.POAttachmentViewSet, basename='poattachment')
+router.register('pocomparison2attachment', views.POComparison2AttachmentViewSet, basename='pocv2attachment')
+router.register('pocomparison3attachment', views.POComparison3AttachmentViewSet, basename='pocv3attachment')
+router.register('podetail', views.PODetailViewSet, basename='podetail')
 
 urlpatterns = [    
     path('api/', include(router.urls)),
     path('po/list/<int:pk>/', views.po_list, name='po_list'),
     
     path('po/init/<int:pk>/', views.po_init, name='po_init'),
-    path('po/create/<int:pk>/', views.po_create, name='po_create_edit'),
+    path('po/create/<int:pk>/', views.po_create, name='po_create'),
     
     path('po/sendapproval/<int:pk>', views.po_send_approval, name='po_send_approval'),
     path('po/<int:pk>/', views.po_detail, name='po_detail'), 

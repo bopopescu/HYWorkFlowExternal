@@ -12,6 +12,7 @@ class ApprovalItem(models.Model):
     approval_level = models.ForeignKey(WorkflowApprovalRule, verbose_name="Approval Level", on_delete=models.CASCADE,  blank=True, null=True)
     notification = models.CharField(max_length=250, blank=True, null=True)
     status = models.CharField(max_length=2, blank=True, null=True)
+    submit_by = models.ForeignKey(User, verbose_name="Approver", on_delete=models.CASCADE,  blank=True, null=True)
 
     def __str__(self):        
         if self.status == "D":
@@ -25,7 +26,7 @@ class ApprovalItem(models.Model):
 
 class ApprovalItemApprover(models.Model):
     stage = models.IntegerField(default=1)
-    user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE,  blank=True, null=True)
+    user = models.ForeignKey(User, verbose_name="Approver", on_delete=models.CASCADE,  blank=True, null=True)
     approval_item = models.ForeignKey('ApprovalItem', on_delete=models.CASCADE)
     status = models.CharField(max_length=2, blank=True, null=True)
     reason = models.CharField(max_length=250, blank=True, null=True)

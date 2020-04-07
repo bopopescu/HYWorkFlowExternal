@@ -1,6 +1,7 @@
 from django.db import models
-from administration.models import EmployeeMaintenance, CompanyMaintenance, CompanyAddressDetail, CurrencyMaintenance, TransactiontypeMaintenance, StatusMaintenance
-from administration.models import DepartmentMaintenance, DocumentTypeMaintenance, ProjectMaintenance, VendorMasterData, VendorAddressDetail, UOMMaintenance
+from administration.models import EmployeeMaintenance, CompanyMaintenance, CompanyAddressDetail, CurrencyMaintenance, StatusMaintenance
+from administration.models import DepartmentMaintenance, DocumentTypeMaintenance, ProjectMaintenance, UOMMaintenance
+from administration.models import PaymentTermMaintenance, VendorMasterData, VendorAddressDetail, TransactiontypeMaintenance
 from Inventory.models import Item
 from approval.models import ApprovalItem
 from django.contrib.auth.models import User
@@ -52,7 +53,7 @@ class PurchaseOrder(models.Model):
     discount_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
     tax_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
     total_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
-    payment_term = models.CharField(max_length=100, blank=True, null=True)
+    payment_term = models.ForeignKey(PaymentTermMaintenance, verbose_name="Payment Term", on_delete=models.CASCADE, blank=True, null=True)
     payment_schedule = models.CharField(max_length=100, blank=True, null=True)
     remarks = RichTextUploadingField(config_name='remarks_po', blank=True, null=True)
     delivery_instruction = RichTextUploadingField(config_name='del_ins_po', blank=True, null=True)

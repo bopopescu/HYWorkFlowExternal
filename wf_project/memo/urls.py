@@ -3,9 +3,9 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register('mymemodata', views.MyMemoViewSet)
-router.register('teammemodata', views.TeamMemoViewSet)
-router.register('memoattachment', views.MemoAttachmentViewSet)
+router.register('mymemodata', views.MyMemoViewSet, basename='mymemo')
+router.register('teammemodata', views.TeamMemoViewSet, basename='teammemo')
+router.register('memoattachment', views.MemoAttachmentViewSet, basename='memoattachment')
 
 urlpatterns = [    
     path('api/', include(router.urls)),

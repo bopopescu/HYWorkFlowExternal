@@ -198,7 +198,7 @@
                                         <script>
                                             $(document).ready(function() {
                                                 var mytable = $('#myattachments').DataTable({
-                                                    "ajax": "../../api/memoattachment/?format=datatables&pk={{memo.pk}}",
+                                                    "ajax": "{% url 'memoattachment-list' %}?format=datatables&pk={{memo.pk}}",
                                                     "dom": "<'row'<'col-sm-12 small'tr>>" +
                                                         "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                                     "columnDefs": [{

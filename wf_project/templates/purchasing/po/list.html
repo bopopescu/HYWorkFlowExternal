@@ -15,7 +15,7 @@
                 <a class="nav-item nav-link active" id="nav-my-tab" data-toggle="tab" href="#nav-mypo" role="tab" aria-controls="nav-mypo" aria-selected="true">My Task</a>
                 <a class="nav-item nav-link" id="nav-teampo-tab" data-toggle="tab" href="#nav-teampo" role="tab" aria-controls="nav-teampo" aria-selected="false">Team Task</a>
             </div>
-        </nav>
+        </nav>        
         <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane fade show active" id="nav-mypo" role="tabpanel" aria-labelledby="nav-mypo-tab">
                 <br/>
@@ -41,7 +41,7 @@
                 <script>
                     $(document).ready(function() {
                         var mytable = $('#mypos').DataTable({
-                            "ajax": "../../../api/mypodata/?format=datatables&trans_type={{trans_type.pk}}",
+                            "ajax": "{% url 'mypo-list' %}?format=datatables&trans_type={{trans_type.pk}}",
                             "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                                 "<'row'<'col-sm-12 small'tr>>" +
                                 "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -53,19 +53,26 @@
                             }, {
                                 "targets": 8,
                                 "render": function(data, type, row) {  
-                                    var label = '';                                  
+                                    var label = '';   
+                                    var approval_url = "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval);
+                                                                   
                                     if (row.approval_status == 'Draft') {
                                         label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
+                                        label = '<a href="' + approval_url + '">' + label + '</a>'
                                     } else if (row.approval_status == 'Draft (New)') {
                                         label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
                                     } else if (row.approval_status == 'In Progress') {
                                         label = '<p class="text-warning"><strong>' + row.approval_status + '</strong></p>';
+                                        label = '<a href="' + approval_url + '">' + label + '</a>'
                                     } else if (row.approval_status == 'Approved') {
                                         label = '<p class="text-success"><strong>' + row.approval_status + '</strong></p>';
+                                        label = '<a href="' + approval_url + '">' + label + '</a>'
                                     } else {
                                         label = '<p class="text-danger"><strong>' + row.approval_status + '</strong></p>';
+                                        label = '<a href="' + approval_url + '">' + label + '</a>'
                                     }
-                                    return '<a href="../../../approval/history/' + row.approval + '">' + label + '</a>';
+
+                                    return label;
                                 }
                             }, {
                                 "targets": -1,
@@ -73,12 +80,12 @@
                                 "render": function(data, type, row) {
                                     var label = '';                                  
                                     if (row.approval_status == 'Draft' || row.approval_status == 'Rejected') {
-                                        label = '<a href="../../update/' + row.id + '/" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePOModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                        label = '<a href="' + "{% url 'po_update' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePOModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                     } else if (row.approval_status == 'Draft (New)') {
-                                        label = '<a href="../../create/' + row.id + '/" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePOModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                        label = '<a href="' + "{% url 'po_create' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePOModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                     } 
-
-                                    return '<a href="../' + row.id + '/" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;' + label;
+                                    
+                                    return '<a href="' + "{% url 'po_detail' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;' + label;
                                 }
                             }, {
                                 "visible": false,
@@ -126,7 +133,7 @@
                 <script>
                     $(document).ready(function() {
                         var teamtable = $('#teampos').DataTable({
-                            "ajax": "../../../api/teampodata/?format=datatables&trans_type={{trans_type.pk}}",
+                            "ajax": "{% url 'teampo-list' %}?format=datatables&trans_type={{trans_type.pk}}",
                             "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                                 "<'row'<'col-sm-12 small'tr>>" +
                                 "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",

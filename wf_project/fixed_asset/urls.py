@@ -3,7 +3,7 @@ from . import views
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register('myassetdata', views.MyAssetViewSet)
+router.register('myassetdata', views.MyAssetViewSet, basename='myasset')
 
 urlpatterns = [
     path('api/', include(router.urls)),

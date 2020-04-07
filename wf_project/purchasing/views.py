@@ -7,6 +7,7 @@ from .serializers import POSerializer, PODetailSerializer, POAttachmentSerialize
 from django.contrib.auth.models import User
 from administration.models import CompanyMaintenance, CompanyAddressDetail, CurrencyMaintenance, DocumentTypeMaintenance
 from administration.models import StatusMaintenance, TransactiontypeMaintenance, WorkflowApprovalRule, ProjectMaintenance
+from administration.models import PaymentTermMaintenance
 from approval.models import ApprovalItem
 from django.http import JsonResponse
 
@@ -100,6 +101,7 @@ def po_detail(request, pk):
     form.fields['comparison_vendor_2'].initial = po.comparison_vendor_2
     form.fields['comparison_vendor_3'].initial = po.comparison_vendor_3
     form.fields['subject'].initial = po.subject
+    form.fields['payment_term'].initial = po.payment_term
     form.fields['payment_schedule'].initial = po.payment_schedule
     form.fields['vendor_address'].initial = po.vendor_address
     return render(request, 'po/detail.html', {'po': po, 'form': form})
@@ -137,7 +139,7 @@ def po_create(request, pk):
         po.sub_total = request.POST['sub_total']
         po.tax_amount = request.POST['tax_amount']
         po.total_amount = request.POST['total_amount']
-        po.payment_term = request.POST['payment_term']
+        po.payment_term = get_object_or_404(PaymentTermMaintenance, pk=request.POST['payment_term'])
         po.payment_schedule = request.POST['payment_schedule']
         po.vendor_address = request.POST['vendor_address']
         po.delivery_address = request.POST['delivery_address']
@@ -206,7 +208,7 @@ def po_update(request, pk):
         po.sub_total = request.POST['sub_total']
         po.tax_amount = request.POST['tax_amount']
         po.total_amount = request.POST['total_amount']
-        po.payment_term = request.POST['payment_term']
+        po.payment_term = get_object_or_404(PaymentTermMaintenance, pk=request.POST['payment_term'])
         po.payment_schedule = request.POST['payment_schedule']
         po.vendor_address = request.POST['vendor_address']
         po.delivery_address = request.POST['delivery_address']
@@ -231,6 +233,7 @@ def po_update(request, pk):
         form.fields['comparison_vendor_2'].initial = po.comparison_vendor_2
         form.fields['comparison_vendor_3'].initial = po.comparison_vendor_3
         form.fields['subject'].initial = po.subject
+        form.fields['payment_term'].initial = po.payment_term
         form.fields['payment_schedule'].initial = po.payment_schedule
         form.fields['vendor_address'].initial = po.vendor_address
     form_attachment = NewPOAttachmentForm()

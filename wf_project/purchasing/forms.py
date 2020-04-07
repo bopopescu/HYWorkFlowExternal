@@ -1,7 +1,7 @@
 from django import forms
 from .models import PurchaseOrder, PurchaseOrderAttachment, PurchaseOrderComparison2Attachment, PurchaseOrderComparison3Attachment, PurchaseOrderDetail
 from administration.models import CompanyMaintenance, CompanyAddressDetail, CurrencyMaintenance, DepartmentMaintenance, DocumentTypeMaintenance
-from administration.models import ProjectMaintenance, VendorMasterData, TransactiontypeMaintenance, UOMMaintenance
+from administration.models import ProjectMaintenance, VendorMasterData, TransactiontypeMaintenance, UOMMaintenance, PaymentTermMaintenance
 from Inventory.models import Item
 import datetime
 
@@ -15,12 +15,13 @@ class NewPOForm(forms.ModelForm):
     revision = forms.IntegerField(initial=1)
     delivery_receiver = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), label="Delivery Address", empty_label="Not Assigned")
     billing_receiver = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), label="Billing Address", empty_label="Not Assigned")
-    comparison_vendor_2 = forms.ModelChoiceField(queryset=VendorMasterData.objects.filter(is_active=True).order_by('vendor_name'), label="Vendor", empty_label="Not Assigned", initial=PurchaseOrder.comparison_vendor_2)
-    comparison_vendor_3 = forms.ModelChoiceField(queryset=VendorMasterData.objects.filter(is_active=True).order_by('vendor_name'), label="Vendor", empty_label="Not Assigned", initial=PurchaseOrder.comparison_vendor_3)
+    comparison_vendor_2 = forms.ModelChoiceField(queryset=VendorMasterData.objects.filter(is_active=True).order_by('vendor_name'), label="Vendor", empty_label="Not Assigned")
+    comparison_vendor_3 = forms.ModelChoiceField(queryset=VendorMasterData.objects.filter(is_active=True).order_by('vendor_name'), label="Vendor", empty_label="Not Assigned")
     delivery_address = forms.CharField(widget=forms.Textarea)
     vendor_address = forms.CharField(widget=forms.Textarea)
     subject = forms.CharField(widget=forms.Textarea)
     payment_schedule = forms.CharField(widget=forms.Textarea)
+    payment_term = forms.ModelChoiceField(queryset=PaymentTermMaintenance.objects.filter(is_active=True).order_by('days'), empty_label="Not Assigned")
 
     class Meta:
         model = PurchaseOrder
@@ -43,6 +44,7 @@ class DetailPOForm(forms.ModelForm):
     vendor_address = forms.CharField(widget=forms.Textarea)
     subject = forms.CharField(widget=forms.Textarea)
     payment_schedule = forms.CharField(widget=forms.Textarea)
+    payment_term = forms.ModelChoiceField(queryset=PaymentTermMaintenance.objects.filter(is_active=True).order_by('days'), empty_label="Not Assigned", initial=PurchaseOrder.payment_term)
 
     class Meta:
         model = PurchaseOrder
@@ -65,6 +67,7 @@ class UpdatePOForm(forms.ModelForm):
     vendor_address = forms.CharField(widget=forms.Textarea)
     subject = forms.CharField(widget=forms.Textarea)
     payment_schedule = forms.CharField(widget=forms.Textarea)
+    payment_term = forms.ModelChoiceField(queryset=PaymentTermMaintenance.objects.filter(is_active=True).order_by('days'), empty_label="Not Assigned", initial=PurchaseOrder.payment_term)
 
     class Meta:
         model = PurchaseOrder

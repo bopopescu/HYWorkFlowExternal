@@ -72,7 +72,7 @@ def memo_create(request, pk):
             memo.save()
 
             transaction_type = get_object_or_404(TransactiontypeMaintenance, transaction_type_name="Blank",document_type=memo_type)
-            approval_level = get_object_or_404(WorkflowApprovalRule,document_amount_range=0,document_amount_range2=0)
+            approval_level = get_object_or_404(WorkflowApprovalRule,document_amount_range=0,document_amount_range2=0, supervisor_approve=False)
 
             approval_item = ApprovalItem()        
             approval_item.document_number = memo.document_number

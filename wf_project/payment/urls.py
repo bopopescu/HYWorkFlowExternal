@@ -4,13 +4,13 @@ from . import views
 
 router = routers.DefaultRouter()
 
-router.register('mypydata', views.MyPYViewSet)
-router.register('teampydata', views.TeamPYViewSet)
+router.register('mypydata', views.MyPYViewSet,basename="mypy")
+router.register('teampydata', views.TeamPYViewSet,basename="teampy")
 
 #item & attachment
 router.register('pydata', views.PYViewSet)
-router.register('pyitem', views.PYItemViewSet)
-router.register('pyattachment',views.PYAttachmentViewSet)
+router.register('pyitem', views.PYItemViewSet,basename="pyitem")
+router.register('pyattachment',views.PYAttachmentViewSet,basename="pyattachment")
 
 urlpatterns = [ 
     path('api/', include(router.urls)), 

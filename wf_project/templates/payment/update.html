@@ -356,7 +356,7 @@
                         <script>
                           $(document).ready(function() {
                             var table = $('#myitems').DataTable( {
-                              "ajax": "../../api/pyitem/?format=datatables&pk={{py.pk}}",
+                              "ajax": "{% url 'pyitem-list'%}?format=datatables&pk={{py.pk}}",
                               "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                       "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                               "columnDefs": [ {
@@ -413,7 +413,7 @@
                       <script>
                         $(document).ready(function() {
                           var table = $('#myattachments').DataTable( {
-                            "ajax": "../../api/pyattachment/?format=datatables&pk={{py.pk}}",
+                            "ajax": "{% url 'pyattachment-list'%}?format=datatables&pk={{py.pk}}",
                             "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                     "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                             "columnDefs": [ {

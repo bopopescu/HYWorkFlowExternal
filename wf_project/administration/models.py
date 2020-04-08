@@ -594,6 +594,7 @@ class WorkflowApprovalRuleGroupMaintenance(models.Model):
     approval_rule = models.ForeignKey('WorkflowApprovalRule',default=0,verbose_name="Approval Level",on_delete=models.CASCADE)
     approval_group = models.ForeignKey('WorkflowApprovalGroup',default=0,verbose_name="Approval Group",on_delete=models.CASCADE)
     next_condition = models.CharField(max_length=15,choices=condition_option,null=True, blank=True)
+    submitter_group = models.ForeignKey('EmployeeGroupMaintenance',related_name="submitter_group", verbose_name="Submitter Group",on_delete=models.CASCADE, null=True, blank=True, )
     created_by = models.ForeignKey(User, related_name='workflowapprovalrulegroupcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)
     modified_by = models.ForeignKey(User, related_name='workflowapprovalrulegroupmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)

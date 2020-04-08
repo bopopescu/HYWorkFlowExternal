@@ -56,7 +56,12 @@ def approval_detail(request, pk):
     approval_rule = get_object_or_404(WorkflowApprovalRule, pk=approval_item.approval_level.pk)
     approval_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule).order_by('id')
     first_tab_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule)[0]
-    
+
+    if first_tab_group.next_condition == 'Or':
+        submitter_as_emp = get_object_or_404(EmployeeMaintenance, user=request.user)
+        approval_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)
+        first_tab_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)[0]
+
     form = ApprovalForm(instance=approval_item)
     form_approver_a = ApproverGroupAForm()
     form_approver_b = ApproverGroupBForm()
@@ -190,8 +195,12 @@ def approver_create(request, pk):
     approval_item = get_object_or_404(ApprovalItem, pk=pk)
     approval_rule = get_object_or_404(WorkflowApprovalRule, pk=approval_item.approval_level.pk)
     approval_group = get_object_or_404(WorkflowApprovalGroup, pk=request.POST['hiddenGroupId'])
-    
     first_tab_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule)[0]
+    
+    if first_tab_rule_group.next_condition == 'Or':
+        submitter_as_emp = get_object_or_404(EmployeeMaintenance, user=request.user)
+        first_tab_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)[0]
+    
     previous_approval_group = first_tab_rule_group.approval_group
     
     previous_groups = Group.objects.filter(name=previous_approval_group.user_group.group_name).values_list('id', flat=True)

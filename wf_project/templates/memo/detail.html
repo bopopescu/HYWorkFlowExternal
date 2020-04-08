@@ -6,7 +6,7 @@
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Memo</h1>
     <div>
-        {% if memo.status.status_code == 100 or memo.status_code == 500 %}
+        {% if memo.status.status_code == 100 or memo.status.status_code == 500 %}
             <a href="{% url 'approval_detail' memo.approval.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>             
             <a href="{% url 'memo_update' memo.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-pencil-alt"></i> Edit</a>
         {% endif %}  

@@ -62,6 +62,37 @@ def approval_detail(request, pk):
         approval_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)
         first_tab_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)[0]
 
+    if approval_item != 'D':
+        approvers =  ApprovalItemApprover.objects.filter(approval_item=approval_item)
+        approval_item.status = 'D'
+        approval_item.save()
+
+        for approver in approvers:
+            approver.delete()
+
+        document_type = get_object_or_404(DocumentTypeMaintenance, pk=approval_item.document_type.pk)
+        if document_type.document_type_code == "601":
+            memo = get_object_or_404(Memo, pk=approval_item.document_pk)
+            status = StatusMaintenance.objects.filter(document_type=document_type,status_code='100')[0]
+            memo.status = status
+            memo.save()
+        elif document_type.document_type_code == "205":
+            po = get_object_or_404(PurchaseOrder, pk=approval_item.document_pk)
+            status = StatusMaintenance.objects.filter(document_type=document_type,status_code='100')[0]
+            po.status = status
+            po.save()
+        elif document_type.document_type_code == "301":
+            payment = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
+            document_type = DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]
+            status = StatusMaintenance.objects.filter(document_type=document_type,status_code='100')[0]
+            payment.status = status
+            payment.save()
+        elif document_type.document_type_code == "501":
+            staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
+            status = StatusMaintenance.objects.filter(document_type=document_type,status_code='100')[0]
+            staff.status = status
+            staff.save()
+
     form = ApprovalForm(instance=approval_item)
     form_approver_a = ApproverGroupAForm()
     form_approver_b = ApproverGroupBForm()
@@ -126,7 +157,8 @@ def approval_update(request, pk):
         return redirect('pylist',payment.transaction_type.pk)
     if document_type.document_type_code == "501":
         staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
-        staff.status = "P"
+        status = StatusMaintenance.objects.filter(document_type=document_type,status_code='300')[0]
+        staff.status = status
         staff.save()
         return redirect('staff_list')
 
@@ -165,7 +197,8 @@ def approve(request):
             payment.save()
         elif document_type.document_type_code == "501":
             staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
-            staff.status = "A"
+            status = StatusMaintenance.objects.filter(document_type=document_type,status_code='400')[0]
+            staff.status = status            
             staff.save()
     else:
         next_approver = get_object_or_404(ApprovalItemApprover, stage=approver_item.stage + 1, approval_item=request.POST['hiddenValueApprove'])

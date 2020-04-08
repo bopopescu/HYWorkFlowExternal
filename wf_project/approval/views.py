@@ -221,7 +221,7 @@ def approver_create(request, pk):
 
                 approver = form.save(commit=False)
                 approver.approval_item = approval_item
-                approver.stage = current_approvers + 1
+                approver.stage = previous_approver_count + current_approvers + 1
                 approver.user = user
                 approver.save()
 

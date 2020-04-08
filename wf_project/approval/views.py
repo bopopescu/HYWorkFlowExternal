@@ -118,15 +118,7 @@ def approval_update(request, pk):
         payment.status = status
         payment.save()
         trans_name = payment.transaction_type.transaction_type_name
-        if trans_name == "Other":
-            return redirect('pylist')
-        elif trans_name == "Petty Cash":
-            return redirect('pylist_pettycash')
-        elif trans_name == "CashBack n Rebates":
-            return redirect('pylist_cashback')
-        elif trans_name == "Sales Commission":
-            return redirect('pylist_salescommission')
-        return redirect('pylist')
+        return redirect('pylist',payment.transaction_type.pk)
     if document_type.document_type_code == "501":
         staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
         staff.status = "P"
@@ -201,7 +193,11 @@ def approver_create(request, pk):
     
     first_tab_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule)[0]
     previous_approval_group = first_tab_rule_group.approval_group
-    previous_approver_count = stage_count(approval_item, previous_approval_group, approval_group)
+    
+    previous_groups = Group.objects.filter(name=previous_approval_group.user_group.group_name).values_list('id', flat=True)
+    previous_users = User.objects.filter(groups__in = previous_groups).values_list('id', flat=True)
+    
+    previous_approver_count = ApprovalItemApprover.objects.filter(approval_item=approval_item).count()
 
     if previous_approver_count == 0 and previous_approval_group.user_group.group_name != group_name:
         return JsonResponse({'message': 'Need ' + previous_approval_group.approval_group_name + ' approver(s) to proceed'})
@@ -216,7 +212,7 @@ def approver_create(request, pk):
 
                 approver = form.save(commit=False)
                 approver.approval_item = approval_item
-                approver.stage = previous_approver_count + current_approvers + 1
+                approver.stage = current_approvers + 1
                 approver.user = user
                 approver.save()
 

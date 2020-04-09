@@ -238,44 +238,44 @@ def approver_create(request, pk):
     if first_tab_rule_group.next_condition == 'Or':
         submitter_as_emp = get_object_or_404(EmployeeMaintenance, user=request.user)
         first_tab_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)[0]
-
-    if previous_approver_count == 0 and previous_approval_group.user_group.group_name != group_name:
-        return JsonResponse({'message': 'Need ' + previous_approval_group.approval_group_name + ' approver(s) to proceed'})
     else:
-        groups = Group.objects.filter(name=group_name).values_list('id', flat=True)
-        users = User.objects.filter(groups__in = groups).values_list('id', flat=True)
-        current_approvers = ApprovalItemApprover.objects.filter(approval_item=approval_item,user__in=users).count()
+        if previous_approver_count == 0 and previous_approval_group.user_group.group_name != group_name:
+            return JsonResponse({'message': 'Need ' + previous_approval_group.approval_group_name + ' approver(s) to proceed'})
+       
+    groups = Group.objects.filter(name=group_name).values_list('id', flat=True)
+    users = User.objects.filter(groups__in = groups).values_list('id', flat=True)
+    current_approvers = ApprovalItemApprover.objects.filter(approval_item=approval_item,user__in=users).count()
 
-        if first_tab_rule_group.next_condition == 'Or':
-             previous_approver_count = 0
+    if first_tab_rule_group.next_condition == 'Or':
+            previous_approver_count = 0
 
-        if current_approvers < approval_group.no_of_person:  
-            if form.is_valid():
-                user = get_object_or_404(User, pk=request.POST['user'])
+    if current_approvers < approval_group.no_of_person:  
+        if form.is_valid():
+            user = get_object_or_404(User, pk=request.POST['user'])
 
-                approver = form.save(commit=False)
-                approver.approval_item = approval_item
-                approver.stage = previous_approver_count + current_approvers + 1
-                approver.user = user
+            approver = form.save(commit=False)
+            approver.approval_item = approval_item
+            approver.stage = previous_approver_count + current_approvers + 1
+            approver.user = user
+            approver.save()
+
+            group_order = Group.objects.all().values_list('id', flat=True)
+            users_order = User.objects.filter(groups__in = groups).values_list('id', flat=True).order_by('group.id')
+            approvers = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('stage')
+            count = 1
+
+            for approver in approvers:
+                if count == 1:
+                    approver.status = "P"
+                else:
+                    approver.status = "Q"
+                
                 approver.save()
+                count = count + 1
 
-                group_order = Group.objects.all().values_list('id', flat=True)
-                users_order = User.objects.filter(groups__in = groups).values_list('id', flat=True).order_by('group.id')
-                approvers = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('stage')
-                count = 1
-
-                for approver in approvers:
-                    if count == 1:
-                        approver.status = "P"
-                    else:
-                        approver.status = "Q"
-                    
-                    approver.save()
-                    count = count + 1
-
-            return JsonResponse({'message': 'Success'})
-        else:
-            return JsonResponse({'message': 'Only ' + approval_group.approval_group_name + ' approver(s) needed for approval'})
+        return JsonResponse({'message': 'Success'})
+    else:
+        return JsonResponse({'message': 'Only ' + approval_group.approval_group_name + ' approver(s) needed for approval'})
 
 @login_required
 def approver_delete(request):

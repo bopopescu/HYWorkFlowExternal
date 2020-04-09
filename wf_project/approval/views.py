@@ -230,16 +230,16 @@ def approver_create(request, pk):
     approval_group = get_object_or_404(WorkflowApprovalGroup, pk=request.POST['hiddenGroupId'])
     first_tab_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule)[0]
     
-    if first_tab_rule_group.next_condition == 'Or':
-        submitter_as_emp = get_object_or_404(EmployeeMaintenance, user=request.user)
-        first_tab_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)[0]
-    
     previous_approval_group = first_tab_rule_group.approval_group
-    
     previous_groups = Group.objects.filter(name=previous_approval_group.user_group.group_name).values_list('id', flat=True)
     previous_users = User.objects.filter(groups__in = previous_groups).values_list('id', flat=True)
     
-    previous_approver_count = ApprovalItemApprover.objects.filter(approval_item=approval_item).count()
+    if first_tab_rule_group.next_condition == 'Or':
+        submitter_as_emp = get_object_or_404(EmployeeMaintenance, user=request.user)
+        first_tab_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)[0]
+        previous_approver_count = 0
+    else:
+        previous_approver_count = ApprovalItemApprover.objects.filter(approval_item=approval_item).count()
 
     if previous_approver_count == 0 and previous_approval_group.user_group.group_name != group_name:
         return JsonResponse({'message': 'Need ' + previous_approval_group.approval_group_name + ' approver(s) to proceed'})

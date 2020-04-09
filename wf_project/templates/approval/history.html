@@ -88,6 +88,7 @@
                 <table id="approvers" class="table table-striped table-bordered" style="width:100%">
                     <thead>
                         <tr>
+                            <th>No.</th>
                             <th data-data="id"></th>
                             <th data-data="stage">Stage</th>
                             <th data-data="user_name">Approver</th>
@@ -104,10 +105,15 @@
                         "dom": "<'row'<'col-sm-12 small'tr>>" +
                             "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                         "columnDefs": [{
-                            "targets": 3,
+                                "searchable": false,
+                                "orderable": false,
+                                "targets": 0,
+                                "defaultContent": "<i>Not set</i>"
+                            }, {
+                            "targets": 4,
                             "defaultContent": "<i>Not set</i>"
                         }, {
-                            "targets": 3,
+                            "targets": 4,
                             "render": function(data, type, row) {
                                 var label = '';
                                 if (row.status == 'P') {
@@ -123,9 +129,18 @@
                             }
                         }, {
                             "visible": false,
-                            "targets": [0]
+                            "targets": [1]
                         }]
                     });
+
+                    approvertable.on('order.dt search.dt', function() {
+                        approvertable.column(0, {
+                                search: 'applied',
+                                order: 'applied'
+                            }).nodes().each(function(cell, i) {
+                                cell.innerHTML = i + 1;
+                            });
+                        }).draw();
                 });
             </script>
         </div>

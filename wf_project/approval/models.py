@@ -5,10 +5,10 @@ from administration.models import WorkflowApprovalRule
 from django.contrib.auth.models import User
 
 class ApprovalItem(models.Model):
-    document_number = models.CharField(max_length=100)
-    document_type = models.ForeignKey(DocumentTypeMaintenance, verbose_name="Document Type", on_delete=models.CASCADE,  blank=True, null=True)
+    document_number = models.CharField(max_length=100,verbose_name="Doc. No.")
+    document_type = models.ForeignKey(DocumentTypeMaintenance, verbose_name="Doc.Type", on_delete=models.CASCADE,  blank=True, null=True)
     document_pk = models.IntegerField(default=0)
-    transaction_type = models.ForeignKey(TransactiontypeMaintenance, verbose_name="Transaction Type", on_delete=models.CASCADE,  blank=True, null=True)
+    transaction_type = models.ForeignKey(TransactiontypeMaintenance, verbose_name="Trans. Type", on_delete=models.CASCADE,  blank=True, null=True)
     approval_level = models.ForeignKey(WorkflowApprovalRule, verbose_name="Approval Level", on_delete=models.CASCADE,  blank=True, null=True)
     notification = models.CharField(max_length=250, blank=True, null=True)
     status = models.CharField(max_length=2, blank=True, null=True)

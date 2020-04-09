@@ -9,8 +9,8 @@ from administration.models import EmployeeMaintenance, EmployeePositionMaintenan
 from django.contrib.auth.models import User, Group
 
 class ApprovalForm(forms.ModelForm):
-    document_type = forms.ModelChoiceField(queryset=DocumentTypeMaintenance.objects.all(), empty_label="Not Assigned", initial=ApprovalItem.document_type)
-    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.all(), empty_label="Not Assigned", initial=ApprovalItem.transaction_type)
+    document_type = forms.ModelChoiceField(queryset=DocumentTypeMaintenance.objects.all(), label="Doc. Type", empty_label="Not Assigned", initial=ApprovalItem.document_type)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.all(), label="Trans. Type", empty_label="Not Assigned", initial=ApprovalItem.transaction_type)
     approval_level = forms.ModelChoiceField(queryset=WorkflowApprovalRule.objects.all(), empty_label="Not Assigned", initial=ApprovalItem.approval_level)
 
     class Meta:

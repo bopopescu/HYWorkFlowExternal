@@ -133,14 +133,19 @@ def py_create_edit(request, pk):
 def py_send_approval(request,pk):
     py = get_object_or_404(PaymentRequest, pk=pk)
     if py.transaction_type.transaction_type_name == "Petty Cash":
-        approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte= py.total_amount)[0]
+        approval_level = WorkflowApprovalRule.objects.filter(approval_level=0)[0]
         approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)       
         approval_item.approval_level = approval_level
+        if approval_level.ceo_approve == True:
+            approval_item.notification = "CEO will added by default"
+
         approval_item.save()
     else:
         approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte= py.total_amount)[0]
         approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)       
         approval_item.approval_level = approval_level
+        if approval_level.ceo_approve == True:
+            approval_item.notification = "CEO will added by default"
         approval_item.save()
 
     return redirect('approval_detail', pk=approval_item.pk)

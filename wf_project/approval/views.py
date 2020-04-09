@@ -233,13 +233,11 @@ def approver_create(request, pk):
     previous_approval_group = first_tab_rule_group.approval_group
     previous_groups = Group.objects.filter(name=previous_approval_group.user_group.group_name).values_list('id', flat=True)
     previous_users = User.objects.filter(groups__in = previous_groups).values_list('id', flat=True)
+    previous_approver_count = ApprovalItemApprover.objects.filter(approval_item=approval_item).count()
     
     if first_tab_rule_group.next_condition == 'Or':
         submitter_as_emp = get_object_or_404(EmployeeMaintenance, user=request.user)
         first_tab_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)[0]
-        previous_approver_count = 0
-    else:
-        previous_approver_count = ApprovalItemApprover.objects.filter(approval_item=approval_item).count()
 
     if previous_approver_count == 0 and previous_approval_group.user_group.group_name != group_name:
         return JsonResponse({'message': 'Need ' + previous_approval_group.approval_group_name + ' approver(s) to proceed'})
@@ -247,6 +245,9 @@ def approver_create(request, pk):
         groups = Group.objects.filter(name=group_name).values_list('id', flat=True)
         users = User.objects.filter(groups__in = groups).values_list('id', flat=True)
         current_approvers = ApprovalItemApprover.objects.filter(approval_item=approval_item,user__in=users).count()
+
+        if first_tab_rule_group.next_condition == 'Or':
+             previous_approver_count = 0
 
         if current_approvers < approval_group.no_of_person:  
             if form.is_valid():

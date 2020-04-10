@@ -122,7 +122,7 @@ def approval_update(request, pk):
     approval_rule = get_object_or_404(WorkflowApprovalRule, pk=approval_item.approval_level.pk)
 
     if approval_rule.supervisor_approve == True:
-        submiter = get_object_or_404(EmployeeMaintenance, user=approval_item.user)
+        submiter = get_object_or_404(EmployeeMaintenance, user=request.user)
         supervisor = get_object_or_404(EmployeeMaintenance, id=submiter.reporting_officer_id.id)
         last_approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-stage')[0]
         stage_count = last_approver.stage + 1

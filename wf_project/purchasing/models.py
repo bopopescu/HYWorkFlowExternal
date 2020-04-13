@@ -7,24 +7,6 @@ from approval.models import ApprovalItem
 from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
 
-class GoodsReceiptNote(models.Model):
-    revision = models.CharField(max_length=100)
-    document_number = models.CharField(max_length=100)
-    supplier = models.ForeignKey(EmployeeMaintenance, verbose_name="Vendor", on_delete=models.CASCADE)
-    company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE)
-    currency = models.ForeignKey(CurrencyMaintenance, verbose_name="Currency", on_delete=models.CASCADE)
-    project = models.ForeignKey(ProjectMaintenance, verbose_name="Project", on_delete=models.CASCADE)
-    status = models.CharField(max_length=1)
-    submit_date = models.DateField()
-    subject = models.CharField(max_length=250)
-    reference = models.CharField(max_length=100)
-
-    class Meta:
-        verbose_name = 'Goods Receipt Note'
-
-    def __str__(self):
-        return self.document_number
-
 def documenttype_document_number():
     po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]
     document_number = po_type.running_number + 1
@@ -112,3 +94,45 @@ class PurchaseOrderComparison3Attachment(models.Model):
 
     class Meta:
         verbose_name = 'Attachment'
+
+class GoodsReceiptNote(models.Model):
+    document_number = models.CharField(max_length=100, blank=True, null=True)
+    receive_date = models.DateField(auto_now_add=True, blank=True, null=True)
+    po = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Goods Receipt Note'
+
+    def __str__(self):
+        return self.document_number
+
+class PurchaseInvoice(models.Model):
+    invoice_number = models.CharField(max_length=100, blank=True, null=True)
+    invoice_date = models.DateField(auto_now_add=True, blank=True, null=True)
+    po = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Purchase Invoice'
+
+    def __str__(self):
+        return self.invoice_number
+
+class PurchaseCreditNote(models.Model):
+    document_number = models.CharField(max_length=100, blank=True, null=True)
+    po = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Credit Note'
+
+    def __str__(self):
+        return self.document_number
+
+class PurchaseDebitNote(models.Model):
+    document_number = models.CharField(max_length=100, blank=True, null=True)
+    po = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Credit Note'
+
+    def __str__(self):
+        return self.document_number

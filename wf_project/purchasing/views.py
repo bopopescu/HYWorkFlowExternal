@@ -361,3 +361,63 @@ def po_detail_delete(request, pk):
     po.total_amount = detail_totalamount(pk=po.pk)
     po.save()
     return JsonResponse({'message': 'Success', 'sub_total': po.sub_total, 'total_amount': po.total_amount})
+
+@login_required
+def grn_list(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    return render(request, 'grn/list.html', {'trans_type': transaction_type})
+
+@login_required
+def grn_init(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    return render(request, 'grn/list.html', {'trans_type': transaction_type})
+
+@login_required
+def grn_create(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    return render(request, 'grn/list.html', {'trans_type': transaction_type})
+
+@login_required
+def grn_detail(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    return render(request, 'grn/list.html', {'trans_type': transaction_type})
+
+@login_required
+def grn_delete(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    return render(request, 'grn/list.html', {'trans_type': transaction_type})
+
+@login_required
+def grn_update(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    return render(request, 'grn/list.html', {'trans_type': transaction_type})
+
+@login_required
+def pi_list(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    return render(request, 'pi/list.html', {'trans_type': transaction_type})
+
+@login_required
+def pi_detail(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    return render(request, 'pi/list.html', {'trans_type': transaction_type})
+
+@login_required
+def pcn_list(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    return render(request, 'pcn/list.html', {'trans_type': transaction_type})
+
+@login_required
+def pcn_detail(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    return render(request, 'pcn/list.html', {'trans_type': transaction_type})
+
+@login_required
+def pdn_list(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    return render(request, 'pdn/list.html', {'trans_type': transaction_type})
+
+@login_required
+def pdn_detail(request, pk):
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
+    return render(request, 'pdn/list.html', {'trans_type': transaction_type})

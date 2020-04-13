@@ -52,6 +52,19 @@
                 {% for trans_type in po_trans_type%}
                   <a class="collapse-item" href="{% url 'po_list' trans_type.pk %}">{{trans_type.transaction_type_name}}</a>
                 {% endfor %}
+                <h6 class="collapse-header">Others:</h6>
+                {% for trans_type in grn_trans_type%}
+                  <a class="collapse-item" href="{% url 'grn_list' trans_type.pk %}">{{trans_type.transaction_type_name}}</a>
+                {% endfor %}
+                {% for trans_type in pi_trans_type%}
+                  <a class="collapse-item" href="{% url 'pi_list' trans_type.pk %}">{{trans_type.transaction_type_name}}</a>
+                {% endfor %}
+                {% for trans_type in pcn_trans_type%}
+                  <a class="collapse-item" href="{% url 'pcn_list' trans_type.pk %}">{{trans_type.transaction_type_name}}</a>
+                {% endfor %}
+                {% for trans_type in pdn_trans_type%}
+                  <a class="collapse-item" href="{% url 'pdn_list' trans_type.pk %}">{{trans_type.transaction_type_name}}</a>
+                {% endfor %}
               </div>
             </div>
           </li>

@@ -211,7 +211,7 @@
                               <th data-data="ot_date">OT Date</th> 
                               <th data-data="ot_time_in">OT Time In</th>
                               <th data-data="ot_time_out">OT Time Out</th> 
-                              <th data-data="total_ot_time">Total OT Time</th>
+                              <th data-data="total_ot_time">Total OT Time(Minute)</th>
                               <th data-data="meal_allowance">Meal Allowance</th>
                               <th data-data="is_holiday">Holiday</th>
                               <th data-data="remark">Remarks</th>
@@ -235,7 +235,7 @@
                                   "targets": -1,
                                   "data": null,
                                   "render": function ( data, type, row ) {
-                                        return '<a href="#" data-toggle="modal" data-target="#deletePYItemModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                        return '<a href="#" data-toggle="modal" data-target="#deleteStaffDetailModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                     }
                               },                  
                               { "visible": false, 
@@ -319,60 +319,64 @@
   {% render_field form.transaction_type|append_attr:"readonly" class="col-md-12 form-control form-control-use" style="visibility:hidden"%} 
 </form>
 
-  <!-- Delete Modal-->
-  <div class="modal fade" id="deletePYItemModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
-          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          Select "Delete" below if you are ready to delete.
-          <input type="hidden" name="hiddenValue" id="hiddenValue" value="" />
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-danger" href="#" id="deletePYItemButton">Delete</a>
-        </div>
+ <!-- Delete Modal-->
+ <div class="modal fade" id="deleteStaffDetailModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <form action="{% url 'staff_ot_detail_delete' %}" method="POST" id="deletestaffotdetail">
+    {% csrf_token %} 
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Select "Delete" below if you are ready to delete.
+        <input type="hidden" name="hiddenValue" id="hiddenValue" value="" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+        <button class="btn btn-danger" id="deleteDetailButton">Delete</button>
       </div>
     </div>
   </div>
-  <script type="text/javascript">
-    function sendDelete(param) {
-      var deleteInput = document.getElementById("hiddenValue"); 
-      deleteInput.value = param;
-    }
-  </script>
+</form>
+</div>
+<script type="text/javascript">
+  function sendDelete(param) {
+    var deleteInput = document.getElementById("hiddenValue"); 
+    deleteInput.value = param;
+  }
+</script>
 
-<script>
-  $("#deletePYItemButton").click(function(e){
-      e.preventDefault(); //prevent default action 
-      proceed = true;
-      $('#deletePYItemModal').modal('hide');
-      var pyitem_id = $(".modal-body #hiddenValue").val();
-      var post_url = "../../deleteitem_create/" + pyitem_id + "/"; //get form action url
-      var request_method = "GET"; //get form GET/POST method
-      // var form_data = new FormData(this); //Creates new FormData object
-      
-      //if everything's ok, continue with Ajax form submit
-      if(proceed){ 
-        $.ajax({ //ajax form submit
-          url : post_url,
-          type: request_method,
-          dataType : "json",
-          contentType: false,
-          cache: false,
-          processData:false
-        }).done(function(res){ 
-            var table = $('#mydetails').DataTable(); 
-                table.ajax.reload();
-        });
-      }
+<script type="text/javascript">
+$("#deletestaffotdetail").submit(function(e){
+    e.preventDefault(); //prevent default action 
+    proceed = true;
+    var post_url = $(this).attr("action"); //get form action url
+    var request_method = $(this).attr("method"); //get form GET/POST method
+    var form_data = new FormData(this); //Creates new FormData object
+    
+    //if everything's ok, continue with Ajax form submit
+    if(proceed){ 
+      $.ajax({ //ajax form submit
+        url : post_url,
+        type: request_method,
+        dataType : "json",
+        data : form_data,
+        contentType: false,
+        cache: false,
+        processData:false
+      }).done(function(res){ 
+          var table = $('#mydetails').DataTable(); 
+          table.ajax.reload();
+          $('#deleteStaffDetailModal').modal('hide');
+      });
+    }
     });
 </script>
+
 
   <!-- Add Modal-->
   <div class="modal fade" id="additemModal" tabindex="-1" role="dialog" aria-hidden="true">

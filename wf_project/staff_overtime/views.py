@@ -14,6 +14,7 @@ from approval.models import ApprovalItem
 from django.contrib.auth.models import User
 import datetime
 from django.http import JsonResponse
+from django.utils.datetime_safe import date
 
 class MyStaffOTViewSet(viewsets.ModelViewSet):
 
@@ -159,25 +160,31 @@ def staff_ot_detail_create(request, pk):
         staff_ot_detail = form.save(commit=False)
         staff_ot = get_object_or_404(StaffOT, pk=pk)
 
+        
+        time_out = datetime.datetime.combine(date.today(),staff_ot_detail.ot_time_out)
+        time_in = datetime.datetime.combine(date.today(),staff_ot_detail.ot_time_in)
+        total_ot_time = time_out - time_in
+        total_ot_hours = 0
         holiday_event = HolidayEventMaintenance.objects.filter(event_date=staff_ot_detail.ot_date)
         if(holiday_event.count() == 0):
             is_holiday = False
         else:
             is_holiday = True
+            total_ot_hours = total_ot_time.days * 24 + total_ot_time.seconds // 3600
 
-        # print(staff_ot_detail.ot_time_out - staff_ot_detail.ot_time_in)
+        print(total_ot_hours)
         staff_ot_detail.staff_ot = staff_ot
         staff_ot_detail.is_holiday = is_holiday
         # staff_ot_detail.total_ot_time = total_ot_time
-        staff_ot_detail.total_ot_time = 1
+        staff_ot_detail.total_ot_time = total_ot_time.seconds / 60
         staff_ot_detail.save()
     else:
         print(form.errors)
     return JsonResponse({'message': 'Success'}) 
 
 @login_required
-def staff_ot_detail_delete(request, pk):
-    staff_ot_detail =  get_object_or_404(StaffOTDetail, pk=pk)
+def staff_ot_detail_delete(request):
+    staff_ot_detail =  get_object_or_404(StaffOTDetail, pk=request.POST['hiddenValue'])
     staff_ot = get_object_or_404(StaffOT, pk=staff_ot_detail.staff_ot.pk)
     staff_ot_detail.delete()
     return JsonResponse({'message': 'Success'})

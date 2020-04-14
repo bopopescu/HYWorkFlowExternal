@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from payment.models import PaymentRequest
 from human_resource.models import StaffRecruitmentRequest
 from purchasing.models import PurchaseOrder
+from staff_overtime.models import StaffOT
 
 class ApprovalApproverSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(many=False)
@@ -64,9 +65,13 @@ class ApprovalItemSerializer(serializers.ModelSerializer):
             py = get_object_or_404(PaymentRequest, pk=obj.document_pk)
             user = get_object_or_404(User, pk=py.submit_by.id)
             return user.username
-        elif document_type.document_type_type_code == "501":
+        elif document_type.document_type_code == "501":
             staff = get_object_or_404(StaffRecruitmentRequest, pk=obj.document_pk)
             user = get_object_or_404(User, pk=staff.submit_by.id)
+            return user.username
+        elif document_type.document_type_code == "504":
+            staff_ot = get_object_or_404(StaffOT, pk=obj.document_pk)
+            user = get_object_or_404(User, pk=staff_ot.submit_by.id)
             return user.username
     
     def get_attachment_path(self, obj):  
@@ -84,9 +89,12 @@ class ApprovalItemSerializer(serializers.ModelSerializer):
         elif document_type.document_type_code == "301":
             py = get_object_or_404(PaymentRequest, pk=obj.document_pk)
             return py.subject
-        elif document_type.document_type_type_code == "501":
+        elif document_type.document_type_code == "501":
             staff = get_object_or_404(StaffRecruitmentRequest, pk=obj.document_pk)
             return '{0}: {1}'.format("Staff Recruiment Request for Position",staff.position_title)
+        elif document_type.document_type_code == "504":
+            staff_ot = get_object_or_404(StaffOT, pk=obj.document_pk)
+            return '{0}: {1}'.format("Staff Overtime -",staff_ot.transaction_type)
 
     def get_submit_date(self, obj):  
         document_type = get_object_or_404(DocumentTypeMaintenance, pk=obj.document_type.pk)
@@ -99,6 +107,9 @@ class ApprovalItemSerializer(serializers.ModelSerializer):
         elif document_type.document_type_code == "301":
             py = get_object_or_404(PaymentRequest, pk=obj.document_pk)
             return py.submit_date
-        elif document_type.document_type_type_code == "501":
+        elif document_type.document_type_code == "501":
             staff = get_object_or_404(StaffRecruitmentRequest, pk=obj.document_pk)
             return staff.request_date
+        elif document_type.document_type_code == "504":
+            staff_ot = get_object_or_404(StaffOT, pk=obj.document_pk)
+            return staff_ot.submit_date

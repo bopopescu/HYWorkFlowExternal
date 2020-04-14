@@ -12,6 +12,7 @@ from memo.models import Memo
 from purchasing.models import PurchaseOrder
 from payment.models import PaymentRequest
 from human_resource.models import StaffRecruitmentRequest
+from staff_overtime.models import StaffOT
 from django.contrib.auth.models import User, Group
 from django.http import JsonResponse
 
@@ -92,6 +93,11 @@ def approval_detail(request, pk):
             status = StatusMaintenance.objects.filter(document_type=document_type,status_code='100')[0]
             staff.status = status
             staff.save()
+        elif document_type.document_type_code == "504":
+            staff_ot = get_object_or_404(StaffOT, pk=approval_item.document_pk)
+            status = StatusMaintenance.objects.filter(document_type=document_type,status_code='100')[0]
+            staff_ot.status = status
+            staff_ot.save()
 
     form = ApprovalForm(instance=approval_item)
     form_approver_a = ApproverGroupAForm()
@@ -155,12 +161,19 @@ def approval_update(request, pk):
         payment.save()
         trans_name = payment.transaction_type.transaction_type_name
         return redirect('pylist',payment.transaction_type.pk)
-    if document_type.document_type_code == "501":
+    elif document_type.document_type_code == "501":
         staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
         status = StatusMaintenance.objects.filter(document_type=document_type,status_code='300')[0]
         staff.status = status
         staff.save()
         return redirect('staff_list')
+    elif document_type.document_type_code == "504":
+        staff_ot = get_object_or_404(StaffOT, pk=approval_item.document_pk)
+        status = StatusMaintenance.objects.filter(document_type=document_type,status_code='300')[0]
+        staff_ot.status = status
+        staff_ot.save()
+        return redirect('staff_list')
+    
 
     return redirect(approval_list)
 
@@ -200,6 +213,11 @@ def approve(request):
             status = StatusMaintenance.objects.filter(document_type=document_type,status_code='400')[0]
             staff.status = status            
             staff.save()
+        elif document_type.document_type_code == "504":
+            staff_ot = get_object_or_404(StaffOT, pk=approval_item.document_pk)
+            status = StatusMaintenance.objects.filter(document_type=document_type,status_code='400')[0]
+            staff_ot.status = status            
+            staff_ot.save()
     else:
         next_approver = get_object_or_404(ApprovalItemApprover, stage=approver_item.stage + 1, approval_item=request.POST['hiddenValueApprove'])
         next_approver.status = "P"
@@ -338,5 +356,10 @@ def reject(request):
         status = StatusMaintenance.objects.filter(document_type=document_type,status_code='500')[0]
         staff.status = status
         staff.save()
+    if document_type.document_type_code == "504":
+        staff_ot = get_object_or_404(StaffOT, pk=approval_item.document_pk)
+        status = StatusMaintenance.objects.filter(document_type=document_type,status_code='500')[0]
+        staff_ot.status = status
+        staff_ot.save()
 
     return JsonResponse({'message': 'Success'})

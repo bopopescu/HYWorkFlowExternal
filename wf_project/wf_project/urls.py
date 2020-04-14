@@ -29,6 +29,7 @@ urlpatterns = [
     path('payment/', include('payment.urls')),
     path('purchasing/', include('purchasing.urls')),
     path('staffrecruitment/', include('human_resource.urls')),
+    path('staffovertime/', include('staff_overtime.urls')),
     path('report_builder/', include('report_builder.urls')),
     path('drawer_disbursement/', include('drawer_disbursement.urls')),
     path('fixed_asset/', include('fixed_asset.urls')),

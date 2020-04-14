@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'memo.apps.MemoConfig',
     'payment.apps.PaymentConfig',
     'purchasing.apps.PurchasingConfig',
+    'staff_overtime.apps.StaffOvertimeConfig',
     #'sales.apps.SalesConfig',
     #'vendor.apps.VendorConfig',
 
@@ -85,7 +86,8 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates','human_resource'),
             os.path.join(BASE_DIR, 'templates','memo'),
             os.path.join(BASE_DIR, 'templates','payment'),
-            os.path.join(BASE_DIR, 'templates','purchasing')            
+            os.path.join(BASE_DIR, 'templates','purchasing'),  
+            os.path.join(BASE_DIR, 'templates','staff_overtime')          
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -101,7 +103,8 @@ TEMPLATES = [
                 'purchasing.context_processors.pi_trans_type',
                 'purchasing.context_processors.pcn_trans_type',
                 'purchasing.context_processors.pdn_trans_type',
-                'payment.context_processors.py_trans_type'
+                'payment.context_processors.py_trans_type',
+                'staff_overtime.context_processors.staff_ot_trans_type'
             ],
         },
     },

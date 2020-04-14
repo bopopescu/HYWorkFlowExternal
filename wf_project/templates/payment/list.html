@@ -50,27 +50,27 @@
                         "targets": 0,
                         "defaultContent": "<i>Not set</i>"
                     }, {
-                            "targets": 8,
-                            "render": function(data, type, row) {  
-                                var label = '';                                  
-                                var approval_url = "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id);
-                                                                   
-                                if (row.approval_status == 'Draft') {
-                                    label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
-                                } else if (row.approval_status == 'Draft(New)') {
-                                    label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
-                                } else if (row.approval_status == 'In Progress') {
-                                    label = '<p class="text-warning"><strong>' + row.approval_status + '</strong></p>';
-                                    label = '<a href="' + approval_url + '">' + label + '</a>'
-                                } else if (row.approval_status == 'Approved') {
-                                    label = '<p class="text-success"><strong>' + row.approval_status + '</strong></p>';
-                                    label = '<a href="' + approval_url + '">' + label + '</a>'
-                                } else {
-                                    label = '<p class="text-danger"><strong>' + row.approval_status + '</strong></p>';
-                                    label = '<a href="' + approval_url + '">' + label + '</a>'
-                                }
+                        "targets": 8,
+                        "render": function(data, type, row) {  
+                            var label = '';                                  
+                            var approval_url = "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id);
+                                                                
+                            if (row.approval_status == 'Draft') {
+                                label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
+                            } else if (row.approval_status == 'Draft(New)') {
+                                label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
+                            } else if (row.approval_status == 'In Progress') {
+                                label = '<p class="text-warning"><strong>' + row.approval_status + '</strong></p>';
+                                label = '<a href="' + approval_url + '">' + label + '</a>'
+                            } else if (row.approval_status == 'Approved') {
+                                label = '<p class="text-success"><strong>' + row.approval_status + '</strong></p>';
+                                label = '<a href="' + approval_url + '">' + label + '</a>'
+                            } else {
+                                label = '<p class="text-danger"><strong>' + row.approval_status + '</strong></p>';
+                                label = '<a href="' + approval_url + '">' + label + '</a>'
+                            }
 
-                                return label;
+                            return label;
                             }
                             }, {
                         "targets": -1,

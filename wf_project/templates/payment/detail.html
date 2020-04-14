@@ -235,18 +235,15 @@
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  <!-- {% if py.status == "D" %}
-                      <strong>Draft</strong>
-                      {% elif py.status == "P" %}
-                      <strong>Pending Approval</strong>
-                      {% elif py.status == "A" %}
-                      <strong>Approved</strong>
-                      {% elif py.status == "C" %}
-                      <strong>Closed</strong>
-                      {% else %}
-                      <strong>Rejected</strong>
-                  {% endif %} -->
-                  <strong>{{py.status}}</strong>
+                  {% if py.status.status_code == 100 %}
+                  <p class="text-info"><strong>{{py.status}}</strong></p>
+                  {% elif py.status.status_code == 300  %}
+                  <p class="text-warning"><strong>{{py.status}}</strong></p>
+                  {% elif py.status.status_code == 400 %}
+                  <p class="text-success"><strong>{{py.status}}</strong></p>
+                  {% else %}
+                  <p class="text-danger"><strong>{{py.status}}</strong></p>
+                  {% endif %}
                 </div>
               </div>
             </div>

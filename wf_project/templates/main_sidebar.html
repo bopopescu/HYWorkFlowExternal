@@ -105,6 +105,21 @@
               </div>
             </div>
           </li>
+          
+          <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsestaffOT" aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-file-invoice-dollar"></i>
+              <span>Staff Overtime</span>
+            </a>
+            <div id="collapsestaffOT" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+              <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Staff Overtime:</h6>
+                {% for trans_type in staff_ot_trans_type%}
+                  <a class="collapse-item" href="{% url 'staff_ot_list' trans_type.pk %}">{{trans_type.transaction_type_name}}</a>
+                {% endfor %}
+              </div>
+            </div>
+          </li>
           <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDrawer" aria-expanded="true" aria-controls="collapseDrawer">
                 <i class="fas fa-list-alt"></i>

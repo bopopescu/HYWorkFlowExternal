@@ -188,7 +188,7 @@ def staff_responsible_delete(request, pk):
 @login_required
 def staff_send_approval(request,pk):
     staff = get_object_or_404(StaffRecruitmentRequest, pk=pk)
-    approval_level = WorkflowApprovalRule.objects.filter(approvel_level=2)[0]
+    approval_level = WorkflowApprovalRule.objects.filter(approval_level=0)[0]
     approval_item = get_object_or_404(ApprovalItem, pk=staff.approval.pk)       
     approval_item.approval_level = approval_level
     if approval_level.ceo_approve == True:

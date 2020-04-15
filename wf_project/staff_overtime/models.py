@@ -34,4 +34,6 @@ class StaffOTDetail(models.Model):
     total_ot_time = models.IntegerField()
     meal_allowance = models.BooleanField()
     is_holiday = models.BooleanField()
+    ot_rate_per_hours = models.DecimalField(max_digits=6, decimal_places=2,null=True, blank=True)
+    total_ot_rate = models.DecimalField(max_digits=8, decimal_places=2,null=True, blank=True)
     remark = models.CharField(max_length=200)

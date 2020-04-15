@@ -290,7 +290,7 @@ class MemoTemplateMaintenance(models.Model):
 
 class OTRateMaintenance(models.Model):
     ot_rate_name = models.CharField(max_length=250)
-    ot_rate = models.DecimalField(max_digits=10, decimal_places=2,verbose_name="OT Rate(%)")
+    ot_rate = models.DecimalField(max_digits=10, decimal_places=2,verbose_name="OT Rate")
     is_active = models.BooleanField()
     created_by = models.ForeignKey(User, related_name='otratecreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)

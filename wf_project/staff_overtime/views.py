@@ -10,6 +10,7 @@ from administration.models import WorkflowApprovalRule
 from administration.models import StatusMaintenance
 from administration.models import EmployeeMaintenance
 from administration.models import HolidayEventMaintenance
+from administration.models import OTRateMaintenance
 from approval.models import ApprovalItem
 from django.contrib.auth.models import User
 import datetime
@@ -165,18 +166,27 @@ def staff_ot_detail_create(request, pk):
         time_in = datetime.datetime.combine(date.today(),staff_ot_detail.ot_time_in)
         total_ot_time = time_out - time_in
         total_ot_hours = 0
+        ot_rate = 0.0
+        total_ot_rate = 0.0
         holiday_event = HolidayEventMaintenance.objects.filter(event_date=staff_ot_detail.ot_date)
+        total_ot_hours = total_ot_time.days * 24 + total_ot_time.seconds // 3600
+
         if(holiday_event.count() == 0):
             is_holiday = False
+            ot_rate_object = OTRateMaintenance.objects.filter(ot_rate_name="Normal Working Day")[0]
+            ot_rate = ot_rate_object.ot_rate
+            total_ot_rate = total_ot_hours * ot_rate
         else:
             is_holiday = True
-            total_ot_hours = total_ot_time.days * 24 + total_ot_time.seconds // 3600
-
-        print(total_ot_hours)
+            ot_rate_object = holiday_event.first().ot_rate
+            ot_rate = ot_rate_object.ot_rate
+            total_ot_rate = total_ot_hours * ot_rate
+            
         staff_ot_detail.staff_ot = staff_ot
         staff_ot_detail.is_holiday = is_holiday
-        # staff_ot_detail.total_ot_time = total_ot_time
         staff_ot_detail.total_ot_time = total_ot_time.seconds / 60
+        staff_ot_detail.ot_rate_per_hours = ot_rate
+        staff_ot_detail.total_ot_rate = total_ot_rate
         staff_ot_detail.save()
     else:
         print(form.errors)
@@ -188,5 +198,3 @@ def staff_ot_detail_delete(request):
     staff_ot = get_object_or_404(StaffOT, pk=staff_ot_detail.staff_ot.pk)
     staff_ot_detail.delete()
     return JsonResponse({'message': 'Success'})
-
-    

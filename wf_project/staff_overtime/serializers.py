@@ -38,5 +38,5 @@ class StaffOTDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = StaffOTDetail
-        fields = ['id', 'staff_ot', 'ot_date', 'ot_time_in','ot_time_out','total_ot_time','meal_allowance','is_holiday','remark']
+        fields = ['id', 'staff_ot', 'ot_date', 'ot_time_in','ot_time_out','total_ot_time','meal_allowance','is_holiday','remark','ot_rate_per_hours','total_ot_rate']
 

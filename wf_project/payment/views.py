@@ -104,14 +104,13 @@ def py_create_edit(request, pk):
 
             document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
             transaction_type = get_object_or_404(TransactiontypeMaintenance,pk = transaction_type.pk, document_type=document_type)
-            approval_level = get_object_or_404(WorkflowApprovalRule,approval_level=2)
+       
 
             approval_item = ApprovalItem()        
             approval_item.document_number = py.document_number
             approval_item.document_pk = py.pk
             approval_item.document_type = document_type
             approval_item.transaction_type = transaction_type
-            approval_item.approval_level = approval_level
             approval_item.notification = ""
             approval_item.status = "D"
             approval_item.save()

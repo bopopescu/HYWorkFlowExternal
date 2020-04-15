@@ -232,6 +232,7 @@ class HolidayEventMaintenance(models.Model):
     event_name = models.CharField(max_length=255)
     event_date = models.DateField()
     is_public_holiday = models.BooleanField()
+    ot_rate = models.ForeignKey("OTRateMaintenance",verbose_name="OT Rate",on_delete=models.CASCADE)
     is_active = models.BooleanField()
     created_by = models.ForeignKey(User, related_name='holidaycreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)

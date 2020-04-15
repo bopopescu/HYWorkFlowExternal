@@ -334,11 +334,11 @@ class EmployeeMaintenanceScreen(admin.ModelAdmin):
 admin.site.register(EmployeeMaintenance,EmployeeMaintenanceScreen)
 #admin.site.register(UserMaintenance)
 class HolidayEventMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('event_name','event_date','is_public_holiday','is_active')
+    list_display = ('event_name','event_date','ot_rate','is_public_holiday','is_active')
     list_filter = ('is_active','is_public_holiday',)
     search_fields = ('event_name','event_date')
     fieldsets = [
-        (None, {'fields': ['event_name','event_date','is_public_holiday','is_active']}),
+        (None, {'fields': ['event_name','event_date','is_public_holiday','ot_rate','is_active']}),
     ]
     exclude = ['created_by','modified_by']
 

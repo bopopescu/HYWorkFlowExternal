@@ -45,7 +45,7 @@ class StaffOTDetailViewSet(viewsets.ModelViewSet):
         the maker passed in the URL
         """
         staff_ot = get_object_or_404(StaffOT,pk=self.request.query_params.get('pk', None))
-        return StaffOTDetail.objects.filter(staff_ot=staff_ot)
+        return StaffOTDetail.objects.filter(staff_ot=staff_ot).order_by("ot_date")
 
 @login_required
 def staff_ot_init(request ,pk):    

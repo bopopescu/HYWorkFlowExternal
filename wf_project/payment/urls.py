@@ -22,6 +22,7 @@ urlpatterns = [
     path('deleteattachment_create/<int:pk>/', views.py_attachment_delete_formcreate, name='py_attachment_delete_formcreate'),
     path('createitem_create/<int:pk>/', views.py_item_create_formcreate, name='py_item_create_formcreate'),
     path('deleteitem_create/<int:pk>/', views.py_item_delete_formcreate, name='py_item_delete_formcreate'),
+    path('print/<int:pk>/', views.py_print, name='py_print'),
 
     path('sendapproval/<int:pk>/', views.py_send_approval, name='py_send_approval'),
     path('<int:pk>/', views.py_detail, name='py_detail'),    

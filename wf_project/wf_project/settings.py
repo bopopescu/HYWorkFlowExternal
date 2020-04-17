@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'payment.apps.PaymentConfig',
     'purchasing.apps.PurchasingConfig',
     'staff_overtime.apps.StaffOvertimeConfig',
+    'PDFreport.apps.PdfreportConfig',
     #'sales.apps.SalesConfig',
     #'vendor.apps.VendorConfig',
 
@@ -87,7 +88,8 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates','memo'),
             os.path.join(BASE_DIR, 'templates','payment'),
             os.path.join(BASE_DIR, 'templates','purchasing'),  
-            os.path.join(BASE_DIR, 'templates','staff_overtime')          
+            os.path.join(BASE_DIR, 'templates','staff_overtime'),     
+            os.path.join(BASE_DIR, 'templates','report')       
         ],
         'APP_DIRS': True,
         'OPTIONS': {

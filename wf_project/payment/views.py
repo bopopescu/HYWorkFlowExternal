@@ -13,6 +13,8 @@ from django.contrib.auth.models import User
 import datetime
 from django.http import JsonResponse
 from administration.models import CurrencyMaintenance
+from PDFreport.render import Render
+from django.http import HttpResponse
 
 class PYViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequest.objects.all() #.order_by('rank')
@@ -379,3 +381,24 @@ def py_attachment_delete(request, pk):
     py = get_object_or_404(PaymentRequest, pk=py_attachment.py.pk)
     py_attachment.delete()
     return JsonResponse({'message': 'Success'})
+
+@login_required
+def py_print(request, pk): 
+    py = get_object_or_404(PaymentRequest, pk=pk)
+    py_item = PaymentRequestDetail.objects.filter(py=py).order_by("linenum")
+    # return render(request, 'report/PYReport/PDF_base_site.html', {'py': py,'py_item':py_item})
+    params = {
+        'py': py,
+        'py_item': py_item,
+        'request': request
+    }
+    
+    pdf = Render.render('report/PYReport/PaymentReport.html', params)
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = "PaymentVoucher_%s.pdf" %(py.document_number)
+        content = "attachment; filename=%s" %(filename)
+        response['Content-Disposition'] = content
+        return response
+    else:
+        return response("errors")

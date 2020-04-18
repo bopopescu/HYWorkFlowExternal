@@ -228,6 +228,28 @@
                               "orderable": false,
                               "targets": 0,
                               "defaultContent": "<i>Not set</i>"
+                              },
+                              {
+                                "targets": 7,
+                                "data": null,
+                                "render": function ( data, type, row ) {
+                                    if(row.meal_allowance ==  true){
+                                        return '<img src="/static/admin/img/icon-yes.svg" alt="True">'
+                                    }else{
+                                        return '<img src="/static/admin/img/icon-no.svg" alt="False">'
+                                    }
+                                }
+                              },
+                              {
+                                "targets": 8,
+                                "data": null,
+                                "render": function ( data, type, row ) {
+                                    if(row.is_holiday ==  true){
+                                        return '<img src="/static/admin/img/icon-yes.svg" alt="True">'
+                                    }else{
+                                        return '<img src="/static/admin/img/icon-no.svg" alt="False">'
+                                    }
+                                }
                               },                 
                               { "visible": false, 
                               "targets": [ 1,2 ] }
@@ -253,7 +275,7 @@
       </div>  
     </div>
   </div>
-  <!-- <div class="row">
+  <div class="row">
     <div class="col-xl-6 col-md-6 mb-4">
       <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -263,50 +285,27 @@
           <div class="form-group">
             <div class="form-row">
               <div class="col col-md-3">
-                <label class="control-label">{{form.sub_total.label_tag}}</label>
+                <label class="control-label">{{form.total_ot_hours.label_tag}}</label>
               </div>
               <div class="col col-md-8">
-                {% render_field form.sub_total|append_attr:"readonly"  class="col-md-12 form-control form-control-user" placeholder=form.sub_total.label %}
+                {% render_field form.total_ot_hours|append_attr:"readonly"  class="col-md-12 form-control form-control-user" placeholder=form.total_ot_hours.label %}
               </div>
             </div> 
           </div>
           <div class="form-group">
             <div class="form-row">
               <div class="col col-md-3">
-                <label class="control-label">{{form.discount_amount.label_tag}}</label>
+                <label class="control-label">{{form.total_ot_rate.label_tag}}</label>
               </div>
-              <div class="col col-md-2">
-                {% render_field form.discount_rate|append_attr:"readonly"  class="col-md-12 form-control form-control-user" %}
-              </div>
-              <div class="col col-md-6">
-                {% render_field form.discount_amount class="col-md-12 form-control form-control-user" %}
+              <div class="col col-md-8">
+                {% render_field form.total_ot_rate|append_attr:"readonly" class="col-md-12 form-control form-control-user" %}
               </div>
             </div>  
-          </div>
-          <div class="form-group">
-            <div class="form-row">
-              <div class="col col-md-3">
-                <label class="control-label">{{form.tax_amount.label_tag}}</label>
-              </div>
-              <div class="col col-md-8">
-                {% render_field form.tax_amount|append_attr:"readonly" class="col-md-12 form-control form-control-user" placeholder=form.tax_amount.label %}
-              </div>
-            </div> 
-          </div>
-          <div class="form-group">
-            <div class="form-row">
-              <div class="col col-md-3">
-                <label class="control-label">{{form.total_amount.label_tag}}</label>
-              </div>
-              <div class="col col-md-8">
-                {% render_field form.total_amount|append_attr:"readonly" class="col-md-12 form-control form-control-user" placeholder=form.total_amount.label %}
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
   {% render_field form.transaction_type|append_attr:"readonly" class="col-md-12 form-control form-control-use" style="visibility:hidden"%} 
 </form>
 {% endblock content %}

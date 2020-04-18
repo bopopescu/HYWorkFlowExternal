@@ -16,6 +16,7 @@ from django.contrib.auth.models import User
 import datetime
 from django.http import JsonResponse
 from django.utils.datetime_safe import date
+import decimal
 
 class MyStaffOTViewSet(viewsets.ModelViewSet):
 
@@ -188,13 +189,43 @@ def staff_ot_detail_create(request, pk):
         staff_ot_detail.ot_rate_per_hours = ot_rate
         staff_ot_detail.total_ot_rate = total_ot_rate
         staff_ot_detail.save()
+        staff_ot_rate = 0.00
+        staff_ot_hours = 0
+
+        staff_ot_detail_items = StaffOTDetail.objects.filter(staff_ot=staff_ot)
+        for staff_ot_detail_item in staff_ot_detail_items:
+            staff_ot_rate = decimal.Decimal(staff_ot_rate) + staff_ot_detail_item.total_ot_rate
+            staff_ot_hours = staff_ot_hours + (staff_ot_detail_item.total_ot_time // 60)
+
+        staff_ot.total_ot_hours = staff_ot_hours
+        staff_ot.total_ot_rate = staff_ot_rate
+        staff_ot.save()
+        
     else:
         print(form.errors)
-    return JsonResponse({'message': 'Success'}) 
+    return JsonResponse({'message': 'Success','total_ot_hours': staff_ot_hours,'total_ot_rate':staff_ot_rate}) 
 
 @login_required
 def staff_ot_detail_delete(request):
     staff_ot_detail =  get_object_or_404(StaffOTDetail, pk=request.POST['hiddenValue'])
     staff_ot = get_object_or_404(StaffOT, pk=staff_ot_detail.staff_ot.pk)
     staff_ot_detail.delete()
-    return JsonResponse({'message': 'Success'})
+
+    staff_ot_items = StaffOTDetail.objects.filter(staff_ot=staff_ot)
+    staff_ot_rate = 0.0
+    staff_ot_hours = 0
+    if(staff_ot_items.count() !=0):
+        for staff_ot_detail_item in staff_ot_detail:
+            staff_ot_rate = staff_ot_rate + staff_ot_detail_item.total_ot_rate
+            staff_ot_hours = staff_ot_hours + (staff_ot_detail_item.total_ot_time // 60)
+
+        staff_ot.total_ot_hours = staff_ot_hours
+        staff_ot.total_ot_rate = staff_ot_rate
+        staff_ot.save()
+    else:
+        staff_ot_rate = 0.0
+        staff_ot_hours = 0
+        staff_ot.total_ot_hours = staff_ot_hours
+        staff_ot.total_ot_rate = staff_ot_rate
+        staff_ot.save()
+    return JsonResponse({'message': 'Success','total_ot_hours': staff_ot_hours,'total_ot_rate':staff_ot_rate})

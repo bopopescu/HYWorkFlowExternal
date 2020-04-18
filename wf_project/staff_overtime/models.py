@@ -19,6 +19,9 @@ class StaffOT(models.Model):
     status = models.ForeignKey(StatusMaintenance, verbose_name="Status",blank=True,null=True, on_delete=models.CASCADE)
     submit_date = models.DateField(default=datetime.date.today)
     submit_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    total_ot_hours = models.IntegerField(default=0)
+    total_ot_rate = models.DecimalField(max_digits=8, decimal_places=2,null=True, blank=True,default=0.0)
+
 
     class Meta:
         verbose_name = 'Staff OT'

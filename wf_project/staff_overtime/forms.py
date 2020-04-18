@@ -22,7 +22,7 @@ class DetailStaffOTForm(forms.ModelForm):
     # employee_position = forms.ModelChoiceField(queryset=EmployeePositionMaintenance.objects.filter(is_active=True).order_by('position_name'), empty_label="Not Assigned",required=False)
     class Meta:
         model = StaffOT
-        fields = ['company','project','transaction_type','employee','department','revision','document_number','employee_position','status','submit_date']
+        fields = ['company','project','transaction_type','employee','department','revision','document_number','employee_position','status','submit_date','total_ot_hours','total_ot_rate']
 
 
 class NewStaffOTForm(forms.ModelForm):
@@ -32,10 +32,12 @@ class NewStaffOTForm(forms.ModelForm):
     employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.filter(is_active=True).order_by('employee_name'), empty_label="Not Assigned",required=False)
     department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned",required=False)
     revision = forms.IntegerField(initial=0)
+    total_ot_hours = forms.IntegerField(initial=0)
+    total_ot_rate = forms.DecimalField(initial=0.0)
     # employee_position = forms.ModelChoiceField(queryset=EmployeePositionMaintenance.objects.filter(is_active=True).order_by('position_name'), empty_label="Not Assigned",required=False)
     class Meta:
         model = StaffOT
-        fields = ['company','project','revision','transaction_type','employee','employee_position','department','document_number','status','submit_date']
+        fields = ['company','project','revision','transaction_type','employee','employee_position','department','document_number','status','submit_date','total_ot_hours','total_ot_rate']
 
 class UpdateStaffOTForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned",initial=StaffOT.company)
@@ -46,7 +48,7 @@ class UpdateStaffOTForm(forms.ModelForm):
 
     class Meta:
         model = StaffOT
-        fields = ['company','project','transaction_type','revision','employee','employee_position','department','document_number','status','submit_date']
+        fields = ['company','project','transaction_type','revision','employee','employee_position','department','document_number','status','submit_date','total_ot_hours','total_ot_rate']
 
 
 class NewStaffOTDetailForm(forms.ModelForm):

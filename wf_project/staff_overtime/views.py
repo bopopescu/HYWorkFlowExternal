@@ -112,7 +112,8 @@ def staff_ot_create(request, pk):
 @login_required
 def staff_ot_send_approval(request,pk):
     staff_ot = get_object_or_404(StaffOT, pk=pk)
-    approval_level = WorkflowApprovalRule.objects.filter(approval_level=0)[0]
+    print(staff_ot.transaction_type)
+    approval_level = WorkflowApprovalRule.objects.filter(transaction_type=staff_ot.transaction_type)[0]
     approval_item = get_object_or_404(ApprovalItem, pk=staff_ot.approval.pk)       
     approval_item.approval_level = approval_level
     if approval_level.ceo_approve == True:

@@ -137,19 +137,20 @@ def approval_update(request, pk):
         submiter = get_object_or_404(EmployeeMaintenance, user=request.user)
         supervisor = get_object_or_404(EmployeeMaintenance, id=submiter.reporting_officer_id.id)
         supervisor_included = ApprovalItemApprover.objects.filter(approval_item=approval_item, user=supervisor.user).count()
-        
-        if approval_rule_group.count() >0:
+
+        if approval_rule_group.count() > 0:
             if supervisor_included == 0:
                 last_approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-stage')[0]
                 stage_count = last_approver.stage + 1
                 ApprovalItemApprover.objects.create(stage=stage_count, user=supervisor.user, approval_item=approval_item, status="Q") 
+            else:
+                return redirect('approval_detail', pk=pk)
         else:
             if supervisor_included == 0:
-                return(approval_detail,pk)
-            else:
                 stage_count = 1
                 ApprovalItemApprover.objects.create(stage=stage_count, user=supervisor.user, approval_item=approval_item, status="P")
-
+            else:
+                return redirect('approval_detail', pk=pk)
    
     if approval_rule.ceo_approve:
         ceo_position = get_object_or_404(EmployeePositionMaintenance, position_name='CHIEF EXECUTIVE OFFICER')
@@ -192,7 +193,7 @@ def approval_update(request, pk):
         status = StatusMaintenance.objects.filter(document_type=document_type, status_code='300')[0]
         staff_ot.status = status
         staff_ot.save()
-        return redirect('staff_list')
+        return redirect('staff_ot_list',staff_ot.transaction_type)
     
     return redirect(approval_list)
 
@@ -267,6 +268,14 @@ def approver_create(request, pk):
     approval_group = get_object_or_404(WorkflowApprovalGroup, pk=request.POST['hiddenGroupId'])
     first_tab_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule)[0]
     
+    if approval_rule.supervisor_approve:
+        selected_user = get_object_or_404(User, pk=request.POST['user'])
+        submiter = get_object_or_404(EmployeeMaintenance, user=request.user)
+        supervisor = get_object_or_404(EmployeeMaintenance, id=submiter.reporting_officer_id.id)
+        supervisor_user = get_object_or_404(User, pk=supervisor.user.id)
+        if supervisor_user == selected_user:
+            return JsonResponse({'message': 'The selected approver cannot be your reporting officer.'})
+
     previous_approval_group = first_tab_rule_group.approval_group
     previous_groups = Group.objects.filter(name=previous_approval_group.user_group.group_name).values_list('id', flat=True)
     previous_users = User.objects.filter(groups__in=previous_groups).values_list('id', flat=True)

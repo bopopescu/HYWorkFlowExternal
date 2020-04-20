@@ -78,12 +78,12 @@
                                 "render": function(data, type, row) {
                                     var label = '';                                  
                                     if (row.approval_status == 'Draft' || row.approval_status == 'Rejected') {
-                                        label = '<a href="' + "{% url 'memo_update' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteMemoModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                        label = '<a href="' + "{% url 'memo_update' pk_value=123 %}".replace(/123/, row.id) + '" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteMemoModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                     } else if (row.approval_status == 'Draft (New)') {
-                                        label = '<a href="' + "{% url 'memo_create' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteMemoModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                        label = '<a href="' + "{% url 'memo_create' pk_value=123 %}".replace(/123/, row.id) + '" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deleteMemoModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                     }
 
-                                    return '<a href="' + "{% url 'memo_detail' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;' + label;
+                                    return '<a href="' + "{% url 'memo_detail' pk_value=123 %}".replace(/123/, row.id) + '" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;' + label;
                                 }
                             }, {
                                 "visible": false,
@@ -143,17 +143,17 @@
                             }, {
                                 "targets": 9,
                                 "render": function(data, type, row) {  
-                                    var label = '';                                  
-                                    if (row.approval == 'Draft') {
-                                        label = '<p class="text-info"><strong>' + row.approval + '</strong></p>';
-                                    } else if (row.approval == 'Draft (New)') {
-                                        label = '<p class="text-info"><strong>' + row.approval + '</strong></p>';
-                                    } else if (row.approval == 'In Progress') {
-                                        label = '<p class="text-warning"><strong>' + row.approval + '</strong></p>';
-                                    } else if (row.approval == 'Approved') {
-                                        label = '<p class="text-success"><strong>' + row.approval + '</strong></p>';
+                                    var label = '';
+                                    if (row.approval_status== 'Draft') {
+                                        label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
+                                    } else if (row.approval_status == 'Draft (New)') {
+                                        label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
+                                    } else if (row.approval_status == 'In Progress') {
+                                        label = '<p class="text-warning"><strong>' + row.approval_status + '</strong></p>';
+                                    } else if (row.approval_status == 'Approved') {
+                                        label = '<p class="text-success"><strong>' + row.approval_status + '</strong></p>';
                                     } else {
-                                        label = '<p class="text-danger"><strong>' + row.approval + '</strong></p>';
+                                        label = '<p class="text-danger"><strong>' + row.approval_status + '</strong></p>';
                                     }
                                     return label;
                                 }

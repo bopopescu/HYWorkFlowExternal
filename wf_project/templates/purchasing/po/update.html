@@ -290,7 +290,9 @@
                                                         <th data-data="quantity">Qty</th>
                                                         <th data-data="uom">UoM</th>
                                                         <th data-data="unit_price">Unit Price</th>
-                                                        <th data-data="amount">Amount</th>
+                                                        <th data-data="amount">Sub-Total</th>
+                                                        <th data-data="line_taxamount">Tax</th>
+                                                        <th data-data="line_total">Total</th>
                                                         <th data-data="remarks">Remarks</th>
                                                         <th></th>
                                                     </tr>
@@ -330,6 +332,8 @@
                                                         cell.innerHTML = i + 1;
                                                     });
                                                 }).draw();
+                                                
+                                                $("#addPODetail #id_tax_exclude").prop("checked", true);
                                             });
                                         </script>
                                     </div>
@@ -554,7 +558,7 @@
                                                 {{form.tax_amount.label_tag}}
                                             </div>
                                             <div class="col col-md-8">
-                                                {% render_field form.tax_amount class="col-md-12 form-control form-control-use" onchange="calculateTotal()" %}
+                                                {% render_field form.tax_amount|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
                                             </div>
                                         </div>
                                     </div>
@@ -1202,7 +1206,8 @@ $("#deletePODetail").submit(function(e){
 		}).done(function(res){ 
 			if (res.message == 'Success'){
                 $("#id_sub_total").val(res.sub_total);
-                $("#id_total_amount").val(res.total_amount);
+                $("#id_total_amount").val(res.total_amount);                
+                $("#id_tax_amount").val(res.tax_amount);
             }            
 
             var table = $('#podetails').DataTable(); 
@@ -1278,6 +1283,26 @@ $("#deletePODetail").submit(function(e){
                     <div class="form-group">
                         <div class="form-row">
                             <div class="col col-md-3">
+                                {{form_detail.tax.label_tag}}
+                            </div>
+                            <div class="col col-md-8">
+                                {% render_field form_detail.tax class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-3">
+                                {{form_detail.tax_exclude.label_tag}}
+                            </div>
+                            <div class="col col-md-1">
+                                {% render_field form_detail.tax_exclude class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-3">
                                 {{form_detail.remarks.label_tag}}
                             </div>
                             <div class="col col-md-8">
@@ -1312,6 +1337,8 @@ $("#deletePODetail").submit(function(e){
         $("#addPODetail #id_uom").prop('selectedIndex',0);
         $("#addPODetail #id_unit_price").val(0);
         $("#addPODetail #id_remarks").val("");
+        $("#addPODetail #id_tax").prop('selectedIndex',0);
+        $("#addPODetail #id_tax_exclude").prop("checked", true);
         
         //if everything's ok, continue with Ajax form submit
         if(proceed){ 
@@ -1325,8 +1352,9 @@ $("#deletePODetail").submit(function(e){
                 processData:false
             }).done(function(res){ 
                 if (res.message == 'Success'){
-                    $("#id_sub_total").val(res.sub_total);
-                    $("#id_total_amount").val(res.total_amount);
+                $("#id_sub_total").val(res.sub_total);
+                $("#id_total_amount").val(res.total_amount);                
+                $("#id_tax_amount").val(res.tax_amount);
                 } 
 
                 var table = $('#podetails').DataTable(); 
@@ -1360,12 +1388,12 @@ $("#deletePODetail").submit(function(e){
 	}
 	if (docDiscPerc){
 		docDiscAmt = (subtotal * (docDiscPerc / 100)).toFixed(2);
-		taxamount = (taxamount * ((100-docDiscPerc)/100)).toFixed(2);
+		//taxamount = (taxamount * ((100-docDiscPerc)/100)).toFixed(2);
 		txtDocDiscAmt= docDiscAmt;
 		txttaxamount = taxamount;
 	}
 	
-	 document.getElementById("id_discount").value= parseFloat(docDiscPerc).toFixed(2);
+	document.getElementById("id_discount").value= parseFloat(docDiscPerc).toFixed(2);
 	document.getElementById("id_discount_amount").value = txtDocDiscAmt;
 	document.getElementById("id_tax_amount").value = taxamount;
 	var totamt = parseFloat((subtotal - docDiscAmt + parseFloat(taxamount))).toFixed(2);

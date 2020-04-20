@@ -57,7 +57,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV 'C:\Users\abs93588\OneDrive - GSK\Aziatek\Huayang\HYWorkFlow\venv'
+set -gx VIRTUAL_ENV 'C:\Users\s_kha\OneDrive\Documents\GitHub\HYWorkFlow\venv'
 
 # https://github.com/fish-shell/fish-shell/issues/436 altered PATH handling
 if test (echo $FISH_VERSION | head -c 1) -lt 3
@@ -90,7 +90,7 @@ if test -z "$VIRTUAL_ENV_DISABLE_PROMPT"
         if test -n ''
             printf '%s%s' '' (set_color normal)
         else
-            printf '%s(%s) ' (set_color normal) (basename '$VIRTUAL_ENV')
+            printf '%s(%s) ' (set_color normal) (basename "$VIRTUAL_ENV")
         end
 
         string join -- \n $prompt # handle multi-line prompts

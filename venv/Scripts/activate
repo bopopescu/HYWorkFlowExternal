@@ -46,7 +46,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV='C:\Users\abs93588\OneDrive - GSK\Aziatek\Huayang\HYWorkFlow\venv'
+VIRTUAL_ENV='C:\Users\s_kha\OneDrive\Documents\GitHub\HYWorkFlow\venv'
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

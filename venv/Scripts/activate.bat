@@ -1,6 +1,6 @@
 @echo off
 
-set "VIRTUAL_ENV=C:\Users\abs93588\OneDrive - GSK\Aziatek\Huayang\HYWorkFlow\venv"
+set "VIRTUAL_ENV=C:\Users\s_kha\OneDrive\Documents\GitHub\HYWorkFlow\venv"
 
 if defined _OLD_VIRTUAL_PROMPT (
     set "PROMPT=%_OLD_VIRTUAL_PROMPT%"
@@ -13,7 +13,12 @@ if defined _OLD_VIRTUAL_PROMPT (
     )
 )
 if not defined VIRTUAL_ENV_DISABLE_PROMPT (
-    set "PROMPT=%PROMPT%"
+    set "ENV_PROMPT="
+    if NOT DEFINED ENV_PROMPT (
+        for %%d in ("%VIRTUAL_ENV%") do set "ENV_PROMPT=(%%~nxd) "
+    )
+    )
+    set "PROMPT=%ENV_PROMPT%%PROMPT%"
 )
 
 REM Don't use () to avoid problems with them in %PATH%

@@ -145,17 +145,17 @@
                             }, {
                                 "targets": 9,
                                 "render": function(data, type, row) {  
-                                    var label = '';                                  
-                                    if (row.approval == 'Draft') {
-                                        label = '<p class="text-info"><strong>' + row.approval + '</strong></p>';
-                                    } else if (row.approval == 'Draft (New)') {
-                                        label = '<p class="text-info"><strong>' + row.approval + '</strong></p>';
-                                    } else if (row.approval == 'In Progress') {
-                                        label = '<p class="text-warning"><strong>' + row.approval + '</strong></p>';
-                                    } else if (row.approval == 'Approved') {
-                                        label = '<p class="text-success"><strong>' + row.approval + '</strong></p>';
+                                    var label = '';
+                                    if (row.approval_status== 'Draft') {
+                                        label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
+                                    } else if (row.approval_status == 'Draft (New)') {
+                                        label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
+                                    } else if (row.approval_status == 'In Progress') {
+                                        label = '<p class="text-warning"><strong>' + row.approval_status + '</strong></p>';
+                                    } else if (row.approval_status == 'Approved') {
+                                        label = '<p class="text-success"><strong>' + row.approval_status + '</strong></p>';
                                     } else {
-                                        label = '<p class="text-danger"><strong>' + row.approval + '</strong></p>';
+                                        label = '<p class="text-danger"><strong>' + row.approval_status + '</strong></p>';
                                     }
                                     return label;
                                 }

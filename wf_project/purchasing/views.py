@@ -7,7 +7,7 @@ from .serializers import POSerializer, PODetailSerializer, POAttachmentSerialize
 from django.contrib.auth.models import User
 from administration.models import CompanyMaintenance, CompanyAddressDetail, CurrencyMaintenance, DocumentTypeMaintenance
 from administration.models import StatusMaintenance, TransactiontypeMaintenance, WorkflowApprovalRule, ProjectMaintenance
-from administration.models import PaymentTermMaintenance
+from administration.models import PaymentTermMaintenance, EmployeeMaintenance, EmployeeDepartmentMaintenance
 from approval.models import ApprovalItem
 from django.http import JsonResponse
 
@@ -56,7 +56,7 @@ class PODetailViewSet(viewsets.ModelViewSet):
         This view should return a list of all models by
         the maker passed in the URL
         """
-        po = get_object_or_404(PurchaseOrder,pk=self.request.query_params.get('pk', None))
+        po = get_object_or_404(PurchaseOrder, pk=self.request.query_params.get('pk', None))
         return PurchaseOrderDetail.objects.filter(po=po)
 
 class MyPOViewSet(viewsets.ModelViewSet):
@@ -72,14 +72,18 @@ class TeamPOViewSet(viewsets.ModelViewSet):
     serializer_class = POSerializer
 
     def get_queryset(self):
-        groups = self.request.user.groups.values_list('id', flat=True)
-        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        employee = get_object_or_404(EmployeeMaintenance, user=self.request.user)
+        depts = EmployeeDepartmentMaintenance.objects.filter(employee=employee).values_list('department_id', flat=True)
+        employees_indept = EmployeeDepartmentMaintenance.objects.filter(department_id__in=depts).values_list('employee_id', flat=True)
+        
+        employees_as_user = EmployeeMaintenance.objects.filter(id__in=employees_indept).values_list('user_id', flat=True)
+        users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)   
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
         return PurchaseOrder.objects.filter(submit_by__in=users, transaction_type=transaction_type)
 
 @login_required
 def po_delete(request):
-    po =  get_object_or_404(PurchaseOrder, pk=request.POST['hiddenValue'])
+    po = get_object_or_404(PurchaseOrder, pk=request.POST['hiddenValue'])
     po.delete()
     return JsonResponse({'message': 'Success'})
 
@@ -90,7 +94,7 @@ def po_list(request, pk):
 
 @login_required
 def po_detail(request, pk):
-    po =  get_object_or_404(PurchaseOrder, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=pk)
     form = DetailPOForm(instance=po)
     form.fields['vendor'].initial = po.vendor
     form.fields['company'].initial = po.company
@@ -114,7 +118,7 @@ def po_init(request, pk):
 
 @login_required
 def po_create(request, pk):
-    po =  get_object_or_404(PurchaseOrder, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=pk)
     if request.method == 'POST':
         form = NewPOForm(request.POST, instance=po)
         po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]
@@ -145,9 +149,15 @@ def po_create(request, pk):
         po.delivery_address = request.POST['delivery_address']
         po.delivery_instruction = request.POST['delivery_instruction']
         po.remarks = request.POST['remarks']
-        po.comparison_vendor_2 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_2'])
+
+        if request.POST['comparison_vendor_2'] != '':
+            po.comparison_vendor_2 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_2'])
+        
         po.comparison_vendor_2_amount = request.POST['comparison_vendor_2_amount']
-        po.comparison_vendor_3 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_3'])
+        
+        if request.POST['comparison_vendor_3'] != '':
+            po.comparison_vendor_3 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_3'])
+        
         po.comparison_vendor_3_amount = request.POST['comparison_vendor_3_amount']
         po.submit_by = request.user
         po.save()
@@ -191,7 +201,7 @@ def po_send_approval(request,pk):
 
 @login_required
 def po_update(request, pk):
-    po =  get_object_or_404(PurchaseOrder, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=pk)
     if request.method == 'POST':
         form = UpdatePOForm(request.POST, instance=po)
         po.document_number = request.POST['document_number']
@@ -268,7 +278,7 @@ def po_attachment_create(request, pk):
 
 @login_required
 def po_attachment_delete(request, pk):
-    poattachment =  get_object_or_404(PurchaseOrderAttachment, pk=request.POST['hiddenValuePOA'])
+    poattachment = get_object_or_404(PurchaseOrderAttachment, pk=request.POST['hiddenValuePOA'])
     po = get_object_or_404(PurchaseOrder, pk=pk)
     poattachment.delete()
     return JsonResponse({'message': 'Success'})
@@ -286,7 +296,7 @@ def po_cov2_attachment_create(request, pk):
 
 @login_required
 def po_cov2_attachment_delete(request, pk):
-    pocov2attachment =  get_object_or_404(PurchaseOrderComparison2Attachment, pk=request.POST['hiddenValuePOCV2'])
+    pocov2attachment = get_object_or_404(PurchaseOrderComparison2Attachment, pk=request.POST['hiddenValuePOCV2'])
     po = get_object_or_404(PurchaseOrder, pk=pk)
     pocov2attachment.delete()
     return JsonResponse({'message': 'Success'})
@@ -304,10 +314,19 @@ def po_cov3_attachment_create(request, pk):
 
 @login_required
 def po_cov3_attachment_delete(request, pk):
-    pocov3attachment =  get_object_or_404(PurchaseOrderComparison3Attachment, pk=request.POST['hiddenValuePOCV3'])
+    pocov3attachment = get_object_or_404(PurchaseOrderComparison3Attachment, pk=request.POST['hiddenValuePOCV3'])
     po = get_object_or_404(PurchaseOrder, pk=pk)
     pocov3attachment.delete()
     return JsonResponse({'message': 'Success'})
+
+def detail_taxamount(pk):
+    po = get_object_or_404(PurchaseOrder, pk=pk)
+    po_details = PurchaseOrderDetail.objects.filter(po=po)
+    tax_total = 0
+    for detail in po_details:
+        tax_total = tax_total + detail.line_taxamount
+
+    return tax_total
 
 def detail_subtotalamount(pk):
     po = get_object_or_404(PurchaseOrder, pk=pk)
@@ -323,44 +342,55 @@ def detail_totalamount(pk):
     sub_total = po.sub_total
     discount = sub_total * (po.discount / 100)
     total_amount = (sub_total - discount) + po.tax_amount
-    
+
     return total_amount
 
 @login_required
-def po_detail_create(request, pk):    
+def po_detail_create(request, pk):
     form = NewPODetailForm(request.POST)
     if form.is_valid():
         po_detail = form.save(commit=False)
         item = form.cleaned_data['item']
-        uom = form.cleaned_data['uom']    
+        uom = form.cleaned_data['uom']
+        tax = form.cleaned_data['tax']
         po = get_object_or_404(PurchaseOrder, pk=pk)
         po_detail.po = po
         po_detail.item = item
         po_detail.uom = uom
         po_detail.amount = po_detail.quantity * po_detail.unit_price
+        po_detail.tax = tax
         po_detail.save()
-        
-        po = get_object_or_404(PurchaseOrder, pk=pk)
+
+        if po_detail.tax_exclude:
+            po_detail.line_taxamount = po_detail.amount * (tax.rate/100)
+            po_detail.line_total = po_detail.amount + po_detail.line_taxamount
+        else:
+            po_detail.line_taxamount = po_detail.amount - (po_detail.amount / (1 + (tax.rate/100)))
+            po_detail.line_total = po_detail.amount
+            
+        po_detail.save()
+
         po.sub_total = detail_subtotalamount(pk=pk)
+        po.tax_amount = detail_taxamount(pk=pk)
+        po.save()
+        
+        po.total_amount = detail_totalamount(pk=pk)
         po.save()
 
-        po = get_object_or_404(PurchaseOrder, pk=pk)
-        po.total_amount = detail_totalamount(pk=pk)
-        po.save()    
-    return JsonResponse({'message': 'Success', 'sub_total': po.sub_total, 'total_amount': po.total_amount})
+    return JsonResponse({'message': 'Success', 'sub_total': po.sub_total, 'total_amount': po.total_amount, 'tax_amount': po.tax_amount})
 
 @login_required
 def po_detail_delete(request, pk):
-    podetail=  get_object_or_404(PurchaseOrderDetail, pk=request.POST['hiddenValueDetail'])
+    podetail = get_object_or_404(PurchaseOrderDetail, pk=request.POST['hiddenValueDetail'])
     po = get_object_or_404(PurchaseOrder, pk=pk)
     podetail.delete()
 
     po.sub_total = detail_subtotalamount(pk=po.pk)
-    po.save()
-
+    po.tax_amount = detail_taxamount(pk=po.pk)
     po.total_amount = detail_totalamount(pk=po.pk)
     po.save()
-    return JsonResponse({'message': 'Success', 'sub_total': po.sub_total, 'total_amount': po.total_amount})
+
+    return JsonResponse({'message': 'Success', 'sub_total': po.sub_total, 'total_amount': po.total_amount, 'tax_amount': po.tax_amount})
 
 @login_required
 def grn_list(request, pk):

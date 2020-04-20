@@ -35,8 +35,8 @@ class PODetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseOrderDetail
         fields = ['id', 'item_code', 'item_description',
-        'additional_description', 'po','quantity', 'uom',
-        'unit_price','amount','remarks']
+        'additional_description', 'po', 'quantity', 'uom',
+        'unit_price', 'amount', 'line_taxamount', 'line_total', 'remarks', ]
 
     def get_item_code(self, obj):                
         return obj.item.item_code

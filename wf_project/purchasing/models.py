@@ -1,6 +1,6 @@
 from django.db import models
 from administration.models import EmployeeMaintenance, CompanyMaintenance, CompanyAddressDetail, CurrencyMaintenance, StatusMaintenance
-from administration.models import DepartmentMaintenance, DocumentTypeMaintenance, ProjectMaintenance, UOMMaintenance
+from administration.models import DepartmentMaintenance, DocumentTypeMaintenance, ProjectMaintenance, UOMMaintenance, TaxMaintenance
 from administration.models import PaymentTermMaintenance, VendorMasterData, VendorAddressDetail, TransactiontypeMaintenance
 from Inventory.models import Item
 from approval.models import ApprovalItem
@@ -30,11 +30,11 @@ class PurchaseOrder(models.Model):
     submit_date = models.DateField(auto_now_add=True)
     subject = models.CharField(max_length=250, blank=True, null=True)
     reference = models.CharField(max_length=100, blank=True, null=True)
-    sub_total = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
-    discount = models.DecimalField(verbose_name="Discount (%)",default=0.0,decimal_places=2,max_digits=6)
-    discount_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
-    tax_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
-    total_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
+    sub_total = models.DecimalField(default=0.0, decimal_places=2, max_digits=15)
+    discount = models.DecimalField(verbose_name="Discount (%)",default=0.0, decimal_places=2, max_digits=15)
+    discount_amount = models.DecimalField(default=0.0, decimal_places=2 ,max_digits=15)
+    tax_amount = models.DecimalField(default=0.0, decimal_places=2, max_digits=15)
+    total_amount = models.DecimalField(default=0.0, decimal_places=2, max_digits=15)
     payment_term = models.ForeignKey(PaymentTermMaintenance, verbose_name="Payment Terms", on_delete=models.CASCADE, blank=True, null=True)
     payment_schedule = models.CharField(max_length=100, blank=True, null=True)
     remarks = RichTextUploadingField(config_name='remarks_po', blank=True, null=True)
@@ -43,10 +43,10 @@ class PurchaseOrder(models.Model):
     delivery_address =  models.CharField(max_length=250, blank=True, null=True)
     billing_receiver = models.ForeignKey(CompanyMaintenance, related_name='billing', verbose_name='Billing Address', null=True, blank=True, on_delete=models.SET_NULL)
     billing_address = models.CharField(max_length=250, blank=True, null=True)
-    comparison_vendor_2 = models.ForeignKey(VendorMasterData, related_name="comparison2",verbose_name="Vendor", on_delete=models.CASCADE, blank=True, null=True)
-    comparison_vendor_2_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6, verbose_name="Total Amount")
-    comparison_vendor_3 = models.ForeignKey(VendorMasterData, related_name="comparison3",verbose_name="Vendor", on_delete=models.CASCADE, blank=True, null=True)
-    comparison_vendor_3_amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6, verbose_name="Total Amount")
+    comparison_vendor_2 = models.ForeignKey(VendorMasterData, related_name="comparison2", verbose_name="Vendor", on_delete=models.CASCADE, blank=True, null=True)
+    comparison_vendor_2_amount = models.DecimalField(default=0.0, decimal_places=2, max_digits=15, verbose_name="Total Amount")
+    comparison_vendor_3 = models.ForeignKey(VendorMasterData, related_name="comparison3", verbose_name="Vendor", on_delete=models.CASCADE, blank=True, null=True)
+    comparison_vendor_3_amount = models.DecimalField(default=0.0, decimal_places=2, max_digits=15, verbose_name="Total Amount")
 
     class Meta:
         verbose_name = 'Purchase Order'
@@ -60,8 +60,12 @@ class PurchaseOrderDetail(models.Model):
     po = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, blank=True, null=True)
     quantity = models.IntegerField(verbose_name="Qty")
     uom = models.ForeignKey(UOMMaintenance, verbose_name="Item", on_delete=models.CASCADE, blank=True, null=True)
-    unit_price = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
-    amount = models.DecimalField(default=0.0,decimal_places=2,max_digits=6)
+    unit_price = models.DecimalField(default=0.0, decimal_places=2, max_digits=15)
+    amount = models.DecimalField(default=0.0, decimal_places=2, max_digits=15)
+    tax = models.ForeignKey(TaxMaintenance, blank=True, null=True, on_delete=models.CASCADE)
+    line_taxamount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    line_total = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    tax_exclude = models.BooleanField(verbose_name="exclude tax", default=True, blank=True, null=True)
     remarks = models.CharField(max_length=250, blank=True, null=True)
 
     class Meta:

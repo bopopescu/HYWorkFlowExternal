@@ -100,7 +100,7 @@ class NewPODetailForm(forms.ModelForm):
     item = forms.ModelChoiceField(queryset=Item.objects.filter(is_active=True).order_by('item_code'), empty_label="Not Assigned")
     uom = forms.ModelChoiceField(queryset=UOMMaintenance.objects.filter(is_active=True).order_by('uom_name'), empty_label="Not Assigned")
     tax = forms.ModelChoiceField(queryset=TaxMaintenance.objects.all().order_by('tax_name'), empty_label="Not Assigned")
-    tax_exclude = forms.BooleanField(widget=forms.CheckboxInput)
+    tax_exclude = forms.BooleanField(required=False, label="Tax Exclusive", widget=forms.CheckboxInput)
 
     class Meta:
         model = PurchaseOrderDetail

@@ -224,9 +224,15 @@ def po_update(request, pk):
         po.delivery_address = request.POST['delivery_address']
         po.delivery_instruction = request.POST['delivery_instruction']
         po.remarks = request.POST['remarks']
-        po.comparison_vendor_2 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_2'])
+
+        if request.POST['comparison_vendor_2'] != '':
+            po.comparison_vendor_2 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_2'])
+        
         po.comparison_vendor_2_amount = request.POST['comparison_vendor_2_amount']
-        po.comparison_vendor_3 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_3'])
+        
+        if request.POST['comparison_vendor_3'] != '':
+            po.comparison_vendor_3 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_3'])
+            
         po.comparison_vendor_3_amount = request.POST['comparison_vendor_3_amount']
         po.revision = po.revision + 1
         po.submit_by = request.user
@@ -339,9 +345,13 @@ def detail_subtotalamount(pk):
 
 def detail_totalamount(pk):
     po = get_object_or_404(PurchaseOrder, pk=pk)
-    sub_total = po.sub_total
-    discount = sub_total * (po.discount / 100)
-    total_amount = (sub_total - discount) + po.tax_amount
+    #sub_total = po.sub_total
+    #discount = sub_total * (po.discount / 100)
+    #total_amount = (sub_total - discount) + po.tax_amount
+    po_details = PurchaseOrderDetail.objects.filter(po=po)
+    total_amount = 0
+    for detail in po_details:
+        total_amount = total_amount + detail.line_total
 
     return total_amount
 
@@ -361,7 +371,7 @@ def po_detail_create(request, pk):
         po_detail.tax = tax
         po_detail.save()
 
-        if po_detail.tax_exclude:
+        if form.cleaned_data['tax_exclude']:
             po_detail.line_taxamount = po_detail.amount * (tax.rate/100)
             po_detail.line_total = po_detail.amount + po_detail.line_taxamount
         else:
@@ -387,6 +397,8 @@ def po_detail_delete(request, pk):
 
     po.sub_total = detail_subtotalamount(pk=po.pk)
     po.tax_amount = detail_taxamount(pk=po.pk)
+    po.save()
+
     po.total_amount = detail_totalamount(pk=po.pk)
     po.save()
 

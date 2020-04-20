@@ -186,7 +186,7 @@
           </div>
           <div class="modal-body">
               Please input the user id before disbursed
-              <br>
+              <br><br>
               <div class="form-group">
                 <div class="form-row">
                   <div class="col col-md-3">
@@ -203,7 +203,7 @@
                     User Password:
                   </div>
                   <div class="col col-md-8">
-                    <input type="input" name="disburseduserpassword" id="id_disburseduserpassword" class="col-md-12 form-control form-control-use" value="" /> 
+                    <input type="password" name="disburseduserpassword" id="id_disburseduserpassword" class="col-md-12 form-control form-control-use" value="" /> 
                   </div>
                 </div>
               </div>
@@ -264,6 +264,8 @@
               table2.ajax.reload();
               var table3 = $('#cancelled').DataTable(); 
               table3.ajax.reload();
+              $(".modal-body #id_disburseduserid").val("");
+              $(".modal-body #id_disburseduserpassword").val("");
             }
         });
       }

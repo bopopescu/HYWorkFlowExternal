@@ -577,7 +577,7 @@ class WorkflowApprovalRule(models.Model):
     modified_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "Level %s - %s" % (self.approval_level, self.approval_rule_name)    
+        return " %s" % (self.approval_rule_name)    
 
 class WorkflowApprovalGroup(models.Model):
     approval_group_name = models.CharField(max_length=250)

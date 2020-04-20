@@ -136,6 +136,21 @@
           </li>
 
           <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDrawerReimbursed" aria-expanded="true" aria-controls="collapseDrawer">
+                <i class="fas fa-list-alt"></i>
+              <span>Drawer Reimbursement</span>
+            </a>
+            <div id="collapseDrawerReimbursed" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+              <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Drawer Reimbursement:</h6>
+                {% for trans_type in reimbursement_trans_type%}
+                  <a class="collapse-item" href="#">{{trans_type.transaction_type_name}}</a>
+                {% endfor %}
+              </div>
+            </div>
+          </li>
+
+          <li class="nav-item">
             <a class="nav-link collapsed" href="{% url 'fixed_asset_list' %}">
               <i class="fas fa-industry"></i>
               <span>Fixed Asset</span>

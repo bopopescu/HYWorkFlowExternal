@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from .serializers import DrawerDisbursementSerializer,DrawerSelectionSerializer,ApprovedPaymentRequest
 from administration.models import DrawerMaintenance
 from administration.models import DrawerUserMaintenance
+from django.contrib.auth.hashers import check_password
 from administration.models import TransactiontypeMaintenance
 from administration.models import DocumentTypeMaintenance
 from administration.models import StatusMaintenance
@@ -58,28 +59,45 @@ def drawer_disbursement_list(request,drawerpk):
     return render(request, 'disbursement_list.html', {'drawer': drawer})
 
 @login_required
-def drawer_disbursement_disbursed(request,pk,drawerpk):
+def drawer_disbursement_disbursed(request,pk,drawerpk,userid,password):
     document_type = DocumentTypeMaintenance.objects.get(document_type_code='301')
     document_status_closed = StatusMaintenance.objects.get(document_type=document_type,status_code='600')
     drawer = DrawerMaintenance.objects.get(pk=drawerpk)
     payment = PaymentRequest.objects.get(pk=pk)
-    payment.status = document_status_closed
+    user = User.objects.filter(username=userid)
+    uservalidation = False
+    process = False
+    if user.count() == 0:
+        return JsonResponse({'message': 'User Login ID or Password invalid','valid':False})
+    else:
+        user = user.first()
+        if payment.submit_by == user:
+            if user.check_password(password) == True:
+                process = True
+            else:
+                return JsonResponse({'message': 'User Login ID or Password invalid','valid':False})
+        else:
+            return JsonResponse({'message': 'User ID is not matched the user submit this petty cash','valid':False})
+        
 
-    document_type_disburse = DocumentTypeMaintenance.objects.get(document_type_code='402')
-    document_status_disburse = StatusMaintenance.objects.get(document_type=document_type_disburse,status_code='700')
+    if process == True:
+        payment.status = document_status_closed
 
-    disbursedrecord = DrawerDisbursement()
-    disbursedrecord.payment = payment
-    disbursedrecord.total_disbursed = payment.total_amount
-    disbursedrecord.status = document_status_disburse
-    disbursedrecord.drawer = drawer
-    disbursedrecord.save()
-    payment.save()
+        document_type_disburse = DocumentTypeMaintenance.objects.get(document_type_code='402')
+        document_status_disburse = StatusMaintenance.objects.get(document_type=document_type_disburse,status_code='700')
 
-    return JsonResponse({'message': 'Success'})
+        disbursedrecord = DrawerDisbursement()
+        disbursedrecord.payment = payment
+        disbursedrecord.total_disbursed = payment.total_amount
+        disbursedrecord.status = document_status_disburse
+        disbursedrecord.drawer = drawer
+        disbursedrecord.save()
+        payment.save()
+        return JsonResponse({'message': 'Success','valid' : True})
 
 @login_required
 def drawer_disbursement_cancel(request,pk,drawerpk):
+    
     document_type = DocumentTypeMaintenance.objects.get(document_type_code='301')
     document_status_closed = StatusMaintenance.objects.get(document_type=document_type,status_code='600')
     drawer = DrawerMaintenance.objects.get(pk=drawerpk)

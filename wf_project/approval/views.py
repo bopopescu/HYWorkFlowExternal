@@ -56,12 +56,6 @@ def approval_detail(request, pk):
     approval_item = get_object_or_404(ApprovalItem, pk=pk)
     approval_rule = get_object_or_404(WorkflowApprovalRule, pk=approval_item.approval_level.pk)
     approval_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule).order_by('id')
-    first_tab_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule)[0]
-
-    if first_tab_group.next_condition == 'Or':
-        submitter_as_emp = get_object_or_404(EmployeeMaintenance, user=request.user)
-        approval_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)
-        first_tab_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)[0]
 
     if approval_item != 'D':
         approvers =  ApprovalItemApprover.objects.filter(approval_item=approval_item)
@@ -104,8 +98,19 @@ def approval_detail(request, pk):
     form_approver_b = ApproverGroupBForm()
     form_cc = CCForm()
 
-    return render(request, 'approval/detail.html', {'approval_item': approval_item, 'approval_rule': approval_rule, 'first_tab': first_tab_group,
-    'approval_rule_group': approval_rule_group, 'form': form, 'form_approver_a': form_approver_a, 'form_approver_b': form_approver_b, 'form_cc': form_cc})
+    if approval_rule_group.count() > 0:
+        first_tab_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule)[0]
+        if first_tab_group.next_condition == 'Or':
+            submitter_as_emp = get_object_or_404(EmployeeMaintenance, user=request.user)
+            approval_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)
+            first_tab_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)[0]
+
+    if approval_rule_group.count() > 0:
+        return render(request, 'approval/detail.html', {'approval_item': approval_item, 'approval_rule': approval_rule, 'first_tab': first_tab_group,
+        'approval_rule_group': approval_rule_group, 'form': form, 'form_approver_a': form_approver_a, 'form_approver_b': form_approver_b, 'form_cc': form_cc})
+    else:
+        return render(request, 'approval/detail.html', {'approval_item': approval_item, 'approval_rule': approval_rule,
+        'approval_rule_group': approval_rule_group, 'form': form, 'form_approver_a': form_approver_a, 'form_approver_b': form_approver_b, 'form_cc': form_cc})
 
 @login_required
 def approval_history(request, pk):
@@ -126,16 +131,25 @@ def approval_update(request, pk):
     approval_item.save()
 
     approval_rule = get_object_or_404(WorkflowApprovalRule, pk=approval_item.approval_level.pk)
-
+    approval_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule)
+    
     if approval_rule.supervisor_approve:
         submiter = get_object_or_404(EmployeeMaintenance, user=request.user)
         supervisor = get_object_or_404(EmployeeMaintenance, id=submiter.reporting_officer_id.id)
         supervisor_included = ApprovalItemApprover.objects.filter(approval_item=approval_item, user=supervisor.user).count()
+        
+        if approval_rule_group.count() >0:
+            if supervisor_included == 0:
+                last_approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-stage')[0]
+                stage_count = last_approver.stage + 1
+                ApprovalItemApprover.objects.create(stage=stage_count, user=supervisor.user, approval_item=approval_item, status="Q") 
+        else:
+            if supervisor_included == 0:
+                return(approval_detail,pk)
+            else:
+                stage_count = 1
+                ApprovalItemApprover.objects.create(stage=stage_count, user=supervisor.user, approval_item=approval_item, status="P")
 
-        if supervisor_included == 0:
-            last_approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-stage')[0]
-            stage_count = last_approver.stage + 1
-            ApprovalItemApprover.objects.create(stage=stage_count, user=supervisor.user, approval_item=approval_item, status="Q") 
    
     if approval_rule.ceo_approve:
         ceo_position = get_object_or_404(EmployeePositionMaintenance, position_name='CHIEF EXECUTIVE OFFICER')

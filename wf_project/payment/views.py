@@ -26,7 +26,7 @@ class MyPYViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
-        return PaymentRequest.objects.filter(submit_by=self.request.user.id, transaction_type=transaction_type)
+        return PaymentRequest.objects.filter(submit_by=self.request.user.id, transaction_type=transaction_type).order_by('-id')  
 
 class TeamPYViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequest.objects.all().order_by('-id')    
@@ -37,7 +37,7 @@ class TeamPYViewSet(viewsets.ModelViewSet):
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
         groups = self.request.user.groups.values_list('id', flat=True)
         users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
-        return PaymentRequest.objects.filter(submit_by__in=users,transaction_type=transaction_type)
+        return PaymentRequest.objects.filter(submit_by__in=users,transaction_type=transaction_type).order_by('-id')  
 
 class PYItemViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequestDetail.objects.all()
@@ -134,7 +134,7 @@ def py_create_edit(request, pk):
 def py_send_approval(request,pk):
     py = get_object_or_404(PaymentRequest, pk=pk)
     if py.transaction_type.transaction_type_name == "Petty Cash":
-        approval_level = WorkflowApprovalRule.objects.filter(approval_level=0)[0]
+        approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte=py.total_amount,transaction_type=py.transaction_type)[0]
         approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)       
         approval_item.approval_level = approval_level
         if approval_level.ceo_approve == True:

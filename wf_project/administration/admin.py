@@ -472,7 +472,7 @@ class WorkflowApprovalRuleScreen(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('approval_level', 'approval_rule_name')
     fieldsets = [
-        (None, {'fields': ['approval_level', 'approval_rule_name', ('document_amount_range', 'document_amount_range2'),'ceo_approve', 'ceo_approve_overwrite', 'supervisor_approve','is_active']}),
+        (None, {'fields': ['approval_level', 'approval_rule_name', ('document_amount_range', 'document_amount_range2'),'ceo_approve', 'ceo_approve_overwrite', 'supervisor_approve','transaction_type','is_active']}),
     ]
     exclude = ['created_by','modified_by']
     inlines = [WorkflowApprovalRuleGroupMaintenanceInline]
@@ -890,11 +890,11 @@ class PaymentmodeMaintenanceScreen(admin.ModelAdmin):
 admin.site.register(PaymentmodeMaintenance,PaymentmodeMaintenanceScreen)
 
 class TransactiontypeMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('transaction_type_name','document_type','is_active')
-    list_filter = ('is_active',)
+    list_display = ('transaction_type_name','document_type','is_active','is_utility')
+    list_filter = ('is_active','is_utility')
     search_fields = ('transaction_type_name','document_type__document_type_name')
     fieldsets = [
-        (None, {'fields': ['transaction_type_name','document_type','is_active']}),
+        (None, {'fields': ['transaction_type_name','document_type','is_active','is_utility']}),
     ]
     exclude = ['created_by','modified_by']
 

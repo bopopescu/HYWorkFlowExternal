@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'purchasing.apps.PurchasingConfig',
     'staff_overtime.apps.StaffOvertimeConfig',
     'PDFreport.apps.PdfreportConfig',
+    'drawer_reimbursement.apps.DrawerReimbursementConfig',
     #'sales.apps.SalesConfig',
     #'vendor.apps.VendorConfig',
 
@@ -89,7 +90,8 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates','payment'),
             os.path.join(BASE_DIR, 'templates','purchasing'),  
             os.path.join(BASE_DIR, 'templates','staff_overtime'),     
-            os.path.join(BASE_DIR, 'templates','report')       
+            os.path.join(BASE_DIR, 'templates','report'),
+            os.path.join(BASE_DIR, 'templates','drawer_reimbursement_request'),           
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -106,7 +108,8 @@ TEMPLATES = [
                 'purchasing.context_processors.pcn_trans_type',
                 'purchasing.context_processors.pdn_trans_type',
                 'payment.context_processors.py_trans_type',
-                'staff_overtime.context_processors.staff_ot_trans_type'
+                'staff_overtime.context_processors.staff_ot_trans_type',
+                'drawer_reimbursement.context_processors.reimbursement_trans_type',
             ],
         },
     },
@@ -166,7 +169,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 LOGIN_URL = 'accounts/login'

@@ -12,6 +12,6 @@ urlpatterns = [
     path('api/', include(router.urls)), 
     path('drawerselection/', views.drawer_list, name='drawer_selection'),
     path('disbursement_list/<int:drawerpk>/', views.drawer_disbursement_list, name='disbursement_list'),
-    path('disbursement_disbursed/<int:pk>&<int:drawerpk>/', views.drawer_disbursement_disbursed, name='disbursement_list'),
-    path('disbursement_cancelled/<int:pk>&<int:drawerpk>/', views.drawer_disbursement_cancel, name='disbursement_list'),
+    path('disbursement_disbursed/<int:pk>&<int:drawerpk>&<str:userid>&<str:password>/', views.drawer_disbursement_disbursed, name='disbursement_disburse'),
+    path('disbursement_cancelled/<int:pk>&<int:drawerpk>/', views.drawer_disbursement_cancel, name='disbursement_cancel'),
 ]

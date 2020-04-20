@@ -185,7 +185,29 @@
               </button>
           </div>
           <div class="modal-body">
-              Select "Disburse" below if you are ready to disburse.
+              Please input the user id before disbursed
+              <br>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-3">
+                    User Login ID:
+                  </div>
+                  <div class="col col-md-8">
+                    <input type="input" name="disburseduserid" id="id_disburseduserid" class="col-md-12 form-control form-control-use" value="" /> 
+                  </div>
+                </div>
+              </div>  
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-3">
+                    User Password:
+                  </div>
+                  <div class="col col-md-8">
+                    <input type="input" name="disburseduserpassword" id="id_disburseduserpassword" class="col-md-12 form-control form-control-use" value="" /> 
+                  </div>
+                </div>
+              </div>
+
               <input type="hidden" name="hiddenValueApprove" id="hiddenValueApprove" value="" />
               <input type="hidden" name="hiddenValueApprove2" id="hiddenValueApprove2" value="" />
           </div>
@@ -209,10 +231,16 @@
   $("#approveButton").click(function(e){
       e.preventDefault(); //prevent default action 
       proceed = true;
-      $('#approveModal').modal('hide');
+      
       var payment_id = $(".modal-body #hiddenValueApprove").val();
       var drawer_id = $(".modal-body #hiddenValueApprove2").val();
-      var post_url = "/drawer_disbursement/disbursement_disbursed/" + payment_id + "&"+drawer_id+"/"; //get form action url
+      var user_id = $(".modal-body #id_disburseduserid").val();
+      var password = $(".modal-body #id_disburseduserpassword").val();
+      if(user_id == "" || password == ""){
+        alert("please input the user id and password");
+        proceed == false
+      }
+      var post_url = "/drawer_disbursement/disbursement_disbursed/" + payment_id + "&"+drawer_id+"&"+user_id+"&"+password+"/"; //get form action url
       var request_method = "GET"; //get form GET/POST method
       // var form_data = new FormData(this); //Creates new FormData object
       
@@ -226,12 +254,17 @@
           cache: false,
           processData:false
         }).done(function(res){ 
-            var table = $('#mystaffs').DataTable(); 
-            table.ajax.reload();
-            var table2 = $('#disbursed').DataTable(); 
-            table2.ajax.reload();
-            var table3 = $('#cancelled').DataTable(); 
-            table3.ajax.reload();
+            if(res.valid == false){
+              alert(res.message);
+            }else{
+              $('#approveModal').modal('hide');
+              var table = $('#mystaffs').DataTable(); 
+              table.ajax.reload();
+              var table2 = $('#disbursed').DataTable(); 
+              table2.ajax.reload();
+              var table3 = $('#cancelled').DataTable(); 
+              table3.ajax.reload();
+            }
         });
       }
     });

@@ -25,13 +25,11 @@
                                 <th>No.</th>
                                 <th data-data="id"></th>
                                 <th data-data="revision"></th>
-                                <th data-data="document_number">Doc. No. (Rev.)</th>
+                                <th data-data="document_number">PO. Doc. No. (Rev.)</th>
                                 <th data-data="company">Company</th>
                                 <th data-data="subject">Subject</th>
                                 <th data-data="project">Project</th>
-                                <th data-data="submit_date">Submit Date</th>
-                                <th data-data="approval_code">Approval Code</th>
-                                <th data-data="approval"></th>
+                                <th data-data="submit_date">Approved Date</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -40,7 +38,7 @@
                 <script>
                     $(document).ready(function() {
                         var mytable = $('#awaitgrns').DataTable({
-                            "ajax": "{% url 'awaitgrn-list' %}?format=datatables&trans_type={{trans_type.pk}}",
+                            "ajax": "{% url 'awaitgrn-list' %}?format=datatables",
                             "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                                 "<'row'<'col-sm-12 small'tr>>" +
                                 "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -50,23 +48,15 @@
                                 "targets": 0,
                                 "defaultContent": "<i>Not set</i>"
                             }, {
-                                "targets": 8,
-                                "render": function(data, type, row) {  
-                                    var label = '';   
-                                    var approval_url = "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval);
-                                    label = '<a href="' + approval_url + '">' + row_approval_code + '</a>'
-                                    return label;
-                                }
-                            }, {
                                 "targets": -1,
                                 "data": null,
                                 "render": function(data, type, row) {
                                     var label = '';  
-                                    return '<a href="' + "{% url 'grn_detail' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-dolly"></i> Receive Stock</a>&nbsp;&nbsp;' + label;
+                                    return '<a href="' + "{% url 'grn_init' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-info btn-icon-split"><span class="icon text-white-50"><i class="fas fa-dolly"></i></span><span class="text">Receive Stock</span></a>&nbsp;&nbsp;' + label;
                                 }
                             }, {
                                 "visible": false,
-                                "targets": [1, 2, 9]
+                                "targets": [1, 2]
                             }, {
                                 "render": function(data, type, row) {
                                     return row.document_number + ' (' + row.revision + ')';
@@ -89,28 +79,27 @@
             </div>
             <div class="tab-pane fade show" id="nav-receivedgrn" role="tabpanel" aria-labelledby="nav-receivedgrn-tab">
                 <br/>
-                <div class="table-resgrnnsive">
+                <div class="table-responsive">
                     <table id="receivedgrns" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
                                 <th>No.</th>
                                 <th data-data="id"></th>
-                                <th data-data="revision"></th>
-                                <th data-data="document_number">Doc. No. (Rev.)</th>
+                                <th data-data="grn_doc_no">Doc. No.</th>
                                 <th data-data="company">Company</th>
                                 <th data-data="subject">Subject</th>
-                                <th data-data="project">Project</th>                             
-                                <th data-data="receive_date">Receive Date</th>
-                                <th data-data="approval_code">Approval Code</th>
-                                <th data-data="approval"></th>
+                                <th data-data="project">Project</th>
+                                <th data-data="receive_date">Received Date</th>
+                                <th data-data="grn"></th>
+                                <th></th>
                             </tr>
                         </thead>
                     </table>
                 </div>
                 <script>
                     $(document).ready(function() {
-                        var receivedtable = $('#receivedgrns').DataTable({
-                            "ajax": "{% url 'receivedgrn-list' %}?format=datatables&trans_type={{trans_type.pk}}",
+                        var mytable = $('#receivedgrns').DataTable({
+                            "ajax": "{% url 'receivedgrn-list' %}?format=datatables",
                             "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                                 "<'row'<'col-sm-12 small'tr>>" +
                                 "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -120,34 +109,21 @@
                                 "targets": 0,
                                 "defaultContent": "<i>Not set</i>"
                             }, {
-                                "targets": 8,
-                                "render": function(data, type, row) {  
-                                    var label = '';   
-                                    var approval_url = "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval);
-                                    label = '<a href="' + approval_url + '">' + row_approval_code + '</a>'
-                                    return label;
-                                }
-                            }, {
                                 "targets": -1,
                                 "data": null,
                                 "render": function(data, type, row) {
                                     var label = '';  
-                                    return '<a href="' + "{% url 'grn_detail' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;' + label;
+                                    return '<a href="' + "{% url 'grn_detail' pk=123 %}".replace(/123/, row.grn) + '" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;' + label;
                                 }
                             }, {
                                 "visible": false,
-                                "targets": [1, 2, 9]
-                            }, {
-                                "render": function(data, type, row) {
-                                    return data + ' (' + row.revision + ')';
-                                },
-                                "targets": 3
+                                "targets": [1, 7]
                             }],
                             "lengthMenu": [50, 100, 200, 500],
                         });
 
-                        receivedtable.on('order.dt search.dt', function() {
-                            receivedtable.column(0, {
+                        mytable.on('order.dt search.dt', function() {
+                            mytable.column(0, {
                                 search: 'applied',
                                 order: 'applied'
                             }).nodes().each(function(cell, i) {

@@ -58,7 +58,7 @@ class PurchaseOrderDetail(models.Model):
     additional_description = models.CharField(verbose_name="Additional Description",max_length=250, blank=True, null=True)
     item = models.ForeignKey(Item, verbose_name="Item", on_delete=models.CASCADE, blank=True, null=True)
     po = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, blank=True, null=True)
-    quantity = models.IntegerField(verbose_name="Qty")
+    quantity = models.DecimalField(verbose_name="Qty", default=0.0, decimal_places=3, max_digits=15)
     uom = models.ForeignKey(UOMMaintenance, verbose_name="Item", on_delete=models.CASCADE, blank=True, null=True)
     unit_price = models.DecimalField(default=0.0, decimal_places=2, max_digits=15)
     amount = models.DecimalField(default=0.0, decimal_places=2, max_digits=15)
@@ -92,7 +92,7 @@ class PurchaseOrderComparison2Attachment(models.Model):
         verbose_name = 'Attachment'
 
 class PurchaseOrderComparison3Attachment(models.Model):
-    attachment = models.FileField(upload_to=documenttype_directory_path,verbose_name="File Name", blank=True, null=True)
+    attachment = models.FileField(upload_to=documenttype_directory_path, verbose_name="File Name", blank=True, null=True)
     attachment_date = models.DateField()
     po = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, blank=True, null=True)
 
@@ -101,8 +101,9 @@ class PurchaseOrderComparison3Attachment(models.Model):
 
 class GoodsReceiptNote(models.Model):
     document_number = models.CharField(max_length=100, blank=True, null=True)
-    receive_date = models.DateField(auto_now_add=True, blank=True, null=True)
     po = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, blank=True, null=True)
+    receive_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    receive_date = models.DateField(auto_now=True, blank=True, null=True)
 
     class Meta:
         verbose_name = 'Goods Receipt Note'
@@ -112,7 +113,8 @@ class GoodsReceiptNote(models.Model):
 
 class PurchaseInvoice(models.Model):
     invoice_number = models.CharField(max_length=100, blank=True, null=True)
-    invoice_date = models.DateField(auto_now_add=True, blank=True, null=True)
+    invoice_date = models.DateField(auto_now_add=True, blank=True, null=True)    
+    receive_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     po = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:

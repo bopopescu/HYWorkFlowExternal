@@ -9,10 +9,10 @@ router.register('poattachment', views.POAttachmentViewSet, basename='poattachmen
 router.register('pocomparison2attachment', views.POComparison2AttachmentViewSet, basename='pocv2attachment')
 router.register('pocomparison3attachment', views.POComparison3AttachmentViewSet, basename='pocv3attachment')
 router.register('podetail', views.PODetailViewSet, basename='podetail')
-router.register('awaitgrndata', views.MyPOViewSet, basename='awaitgrn')
-router.register('receivedgrndata', views.MyPOViewSet, basename='receivedgrn')
-router.register('awaitpidata', views.MyPOViewSet, basename='awaitpi')
-router.register('receivedpidata', views.MyPOViewSet, basename='receivedpi')
+router.register('awaitgrndata', views.AwaitGRNViewSet, basename='awaitgrn')
+router.register('receivedgrndata', views.ReceivedGRNViewSet, basename='receivedgrn')
+router.register('awaitpidata', views.AwaitPIViewSet, basename='awaitpi')
+router.register('receivedpidata', views.ReceivedPIViewSet, basename='receivedpi')
 router.register('awaitpcndata', views.MyPOViewSet, basename='awaitpcn')
 router.register('receivedpcndata', views.MyPOViewSet, basename='receivedpcn')
 router.register('awaitpdndata', views.MyPOViewSet, basename='awaitpdn')
@@ -44,15 +44,15 @@ urlpatterns = [
     path('ajax/load-delivery-address/', views.load_delivery_address, name='ajax_load_delivery'),
     path('ajax/load-vendor-address/', views.load_vendor_address, name='ajax_load_vendor'),
 
-    path('grn/list/<int:pk>/', views.grn_list, name='grn_list'),    
+    path('grn/list/<int:pk>/', views.grn_list, name='grn_list'),
     path('grn/init/<int:pk>/', views.grn_init, name='grn_init'),
     path('grn/create/<int:pk>/', views.grn_create, name='grn_create'),
-    path('grn/<int:pk>/', views.grn_detail, name='grn_detail'), 
-    path('grn/delete/', views.grn_delete, name='grn_delete'), 
-    path('grn/update/<int:pk>/', views.grn_update, name='grn_update'),
+    path('grn/<int:pk>/', views.grn_detail, name='grn_detail'),
 
-    path('pi/list/<int:pk>/', views.pi_list, name='pi_list'),    
-    path('pi/<int:pk>/', views.pi_detail, name='pi_detail'), 
+    path('pi/list/<int:pk>/', views.pi_list, name='pi_list'),
+    path('pi/init/<int:pk>/', views.pi_init, name='pi_init'),
+    path('pi/create/<int:pk>/', views.pi_create, name='pi_create'),
+    path('pi/<int:pk>/', views.pi_detail, name='pi_detail'),
 
     path('pcn/list/<int:pk>/', views.pcn_list, name='pcn_list'),    
     path('pcn/<int:pk>/', views.pcn_detail, name='pcn_detail'), 

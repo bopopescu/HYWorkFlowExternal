@@ -59,12 +59,14 @@
                 {% for trans_type in pi_trans_type%}
                   <a class="collapse-item" href="{% url 'pi_list' trans_type.pk %}">{{trans_type.transaction_type_name}}</a>
                 {% endfor %}
+                <!--
                 {% for trans_type in pcn_trans_type%}
                   <a class="collapse-item" href="{% url 'pcn_list' trans_type.pk %}">{{trans_type.transaction_type_name}}</a>
                 {% endfor %}
                 {% for trans_type in pdn_trans_type%}
                   <a class="collapse-item" href="{% url 'pdn_list' trans_type.pk %}">{{trans_type.transaction_type_name}}</a>
                 {% endfor %}
+                -->
               </div>
             </div>
           </li>

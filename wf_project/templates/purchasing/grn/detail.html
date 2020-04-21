@@ -1,0 +1,545 @@
+{% extends 'main_template.html' %} 
+{% block content %} 
+{% load static %} 
+{% load widget_tweaks %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">{{transaction_type.transaction_type_name}}</h1>
+    <div>
+        <a href="{% url 'grn_list' transaction_type.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-acknowledge-tab" data-toggle="tab" href="#nav-acknowledge" role="tab" aria-controls="nav-acknowledge" aria-selected="false">Acknowledgement</a>
+                <a class="nav-item nav-link" id="nav-po-tab" data-toggle="tab" href="#nav-po" role="tab" aria-controls="nav-po" aria-selected="true">Attached PO</a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-acknowledge" role="tabpanel" aria-labelledby="nav-acknowledge-tab">
+                <br/>
+                <div class="row">
+                    <div class="col-xl-6 col-md-6 mb-4">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-1">
+                                    &nbsp;
+                                </div>
+                                <div class="col col-md-3">
+                                    {{formGrn.document_number.label_tag}}
+                                </div>
+                                <div class="col col-md-7">
+                                    {% render_field formGrn.document_number|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                </div>
+                                <div class="col col-md-1">
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-md-6 mb-4">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-1">
+                                    &nbsp;
+                                </div>
+                                <div class="col col-md-3">
+                                    {{formGrn.receive_date.label_tag}}
+                                </div>
+                                <div class="col col-md-7">
+                                    {% render_field formGrn.receive_date|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                </div>
+                                <div class="col col-md-1">
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>   
+                <div class="row">
+                    <div class="col-xl-6 col-md-6 mb-4">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-12">
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-md-6 mb-4">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-1">
+                                    &nbsp;
+                                </div>
+                                <div class="col col-md-3">
+                                    {{formGrn.receive_by.label_tag}}
+                                </div>
+                                <div class="col col-md-7">
+                                    {% render_field formGrn.receive_by|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                </div>
+                                <div class="col col-md-1">
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>   
+                <div class="row">
+                    <div class="col-xl-12 col-md-12 mb-4">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-2">
+                                    &nbsp;
+                                </div>
+                                <div class="col col-md-8" style="text-align: center">
+                                    By submitting this, it is acknowledged that said goods have been inspected and are without defect. Therefore, final acceptance is hereby confirmed as the undersigned accepts to assume any additional cost if the case may be.
+                                </div>
+                                <div class="col col-md-2">
+                                    &nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>              
+            </div>
+            <div class="tab-pane fade" id="nav-po" role="tabpanel" aria-labelledby="nav-po-tab">
+                <div class="row">
+                    <div class="col-xl-6 col-md-6 mb-4">
+                        <div class="card shadow mb-4">
+                            <a href="#GeneralCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="GeneralCard">
+                                <h6 class="m-0 font-weight-bold text-primary">General</h6>
+                            </a>
+                            <div class="collapse show" id="GeneralCard">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <div class="form-row">
+                                            <div class="col col-md-3">
+                                                {{form.vendor.label_tag}}
+                                            </div>
+                                            <div class="col col-md-8">
+                                                {% render_field form.vendor|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-row">
+                                            <div class="col col-md-3">
+                                                {{form.currency.label_tag}}
+                                            </div>
+                                            <div class="col col-md-8">
+                                                {% render_field form.currency|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-row">
+                                            <div class="col col-md-3">
+                                                {{form.company.label_tag}}
+                                            </div>
+                                            <div class="col col-md-8">
+                                                {% render_field form.company|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-row">
+                                            <div class="col col-md-3">
+                                                {{form.project.label_tag}}
+                                            </div>
+                                            <div class="col col-md-8">
+                                                {% render_field form.project|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-md-6 mb-4">
+                        <div class="card shadow mb-4">
+                            <a href="#DocInfoCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="DocInfoCard">
+                                <h6 class="m-0 font-weight-bold text-primary">Document Info</h6>
+                            </a>
+                            <div class="collapse show" id="DocInfoCard">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <div class="form-row">
+                                            <div class="col col-md-3">
+                                                {{form.status.label_tag}}
+                                            </div>
+                                            <div class="col col-md-8">
+                                                {% if po.status.status_code == 100 %}
+                                                <p class="text-info"><strong>{{po.status}}</strong></p>
+                                                {% elif po.status.status_code == 300 %}
+                                                <p class="text-warning"><strong>{{po.status}}</strong></p>
+                                                {% elif po.status.status_code == 400 %}
+                                                <p class="text-success"><strong>{{po.status}}</strong></p>
+                                                {% else %}
+                                                <p class="text-danger"><strong>{{po.status}}</strong></p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-row">
+                                            <div class="col col-md-3">
+                                                {{form.revision.label_tag}}
+                                            </div>
+                                            <div class="col col-md-8">
+                                                {% render_field form.revision|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-row">
+                                            <div class="col col-md-3">
+                                                {{form.document_number.label_tag}}
+                                            </div>
+                                            <div class="col col-md-8">
+                                                {% render_field form.document_number|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-row">
+                                            <div class="col col-md-3">
+                                                {{form.submit_date.label_tag}}
+                                            </div>
+                                            <div class="col col-md-8">
+                                                {% render_field form.submit_date|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12 col-md-12 mb-4">
+                        <div class="card shadow mb-4">
+                            <a href="#AddressCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="AddressCard">
+                                <h6 class="m-0 font-weight-bold text-primary">Address</h6>
+                            </a>
+                            <div class="collapse show" id="AddressCard">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="form-row">
+                                                    <div class="col col-md-3">
+                                                        {{form.vendor_address.label_tag}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="form-row">
+                                                    <div class="col col-md-12">
+                                                        {% render_field form.vendor_address|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="form-row">
+                                                    <div class="col col-md-3">
+                                                        {{form.delivery_receiver.label_tag}}
+                                                    </div>
+                                                    <div class="col col-md-8">
+                                                        {% render_field form.delivery_receiver|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="form-row">
+                                                    <div class="col col-md-12">
+                                                        {% render_field form.delivery_address|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xl-12 col-md-12">
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="col col-md-3">
+                                            {{form.reference.label_tag}}
+                                        </div>
+                                        <div class="col col-md-8">
+                                            {% render_field form.reference|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-12 col-md-12">
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="col col-md-3">
+                                            {{form.subject.label_tag}}
+                                        </div>
+                                        <div class="col col-md-8">
+                                            {% render_field form.subject|append_attr:"readonly" rows="3" class="col-md-12 form-control form-control-use" %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="form-row">
+                            <div class="col col-md-12">
+                                <nav>
+                                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                        <a class="nav-item nav-link active" id="nav-details-tab" data-toggle="tab" href="#nav-details" role="tab" aria-controls="nav-details" aria-selected="true">Details</a>
+                                    </div>
+                                </nav>
+                                <div class="tab-content" id="nav-tabContent">
+                                    <div class="tab-pane fade show active" id="nav-details" role="tabpanel" aria-labelledby="nav-details-tab">
+                                        <br/>
+                                        <div class="form-group">
+                                            <div class="form-row">
+                                                <div class="col col-md-12">
+                                                    <div class="table-responsive">
+                                                        <table id="podetails" class="table table-striped table-bordered" style="width:100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>No.</th>
+                                                                    <th data-data="id"></th>
+                                                                    <th data-data="po"></th>
+                                                                    <th data-data="item_code">Code</th>
+                                                                    <th data-data="item_description">Description</th>
+                                                                    <th data-data="additional_description">Add. Desc.</th>
+                                                                    <th data-data="quantity">Qty</th>
+                                                                    <th data-data="uom">UoM</th>
+                                                                    <th data-data="unit_price">Unit Price</th>
+                                                                    <th data-data="amount">Sub-Total</th>
+                                                                    <th data-data="line_taxamount">Tax</th>
+                                                                    <th data-data="line_total">Total</th>
+                                                                    <th data-data="remarks">Remarks</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                    <script>
+                                                        $(document).ready(function() {
+                                                            var podtable = $('#podetails').DataTable({
+                                                                "ajax": "{% url 'podetail-list' %}?format=datatables&pk={{po.pk}}",
+                                                                "dom": "<'row'<'col-sm-12 small'tr>>" +
+                                                                    "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                                                                "columnDefs": [{
+                                                                    "searchable": false,
+                                                                    "orderable": false,
+                                                                    "targets": 0,
+                                                                    "defaultContent": "<i>Not set</i>"
+                                                                }, {
+                                                                    "visible": false,
+                                                                    "targets": [1, 2]
+                                                                }]
+                                                            });
+
+                                                            podtable.on('order.dt search.dt', function() {
+                                                                podtable.column(0, {
+                                                                    search: 'applied',
+                                                                    order: 'applied'
+                                                                }).nodes().each(function(cell, i) {
+                                                                    cell.innerHTML = i + 1;
+                                                                });
+                                                            }).draw();
+                                                        });
+                                                    </script>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="row">
+                            <div class="col col-md-12">
+                                <div class="row">
+                                    <div class="col-xl-6 col-md-6 mb-4">
+                                        <div class="card shadow mb-4">
+                                            <div class="card-header py-3">
+                                                <h6 class="m-0 font-weight-bold text-primary">Summary</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="form-row">
+                                                        <div class="col col-md-3">
+                                                            {{form.sub_total.label_tag}}
+                                                        </div>
+                                                        <div class="col col-md-8">
+                                                            {% render_field form.sub_total|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="form-row">
+                                                        <div class="col col-md-3">
+                                                            {{form.tax_amount.label_tag}}
+                                                        </div>
+                                                        <div class="col col-md-8">
+                                                            {% render_field form.tax_amount|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" style="visibility:hidden">
+                                                    <div class="form-row">
+                                                        <div class="col col-md-3">
+                                                            {{form.discount.label_tag}}
+                                                        </div>
+                                                        <div class="col col-md-8">
+                                                            <div class="form-row">
+                                                                <div class="col col-md-4">
+                                                                    {% render_field form.discount|append_attr:"readonly" class="col-md-12 form-control form-control-use" onchange="calculateTotal()" %}
+                                                                </div>
+                                                                <div class="col col-md-8">
+                                                                    {% render_field form.discount_amount|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="form-row">
+                                                        <div class="col col-md-3">
+                                                            {{form.total_amount.label_tag}}
+                                                        </div>
+                                                        <div class="col col-md-8">
+                                                            {% render_field form.total_amount|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-md-6 mb-4">
+                                        <div class="card shadow mb-4">
+                                            <div class="card-header py-3">
+                                                <h6 class="m-0 font-weight-bold text-primary">Payment Info</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <div class="form-row">
+                                                        <div class="col col-md-3">
+                                                            {{form.payment_term.label_tag}}
+                                                        </div>
+                                                        <div class="col col-md-8">
+                                                            {% render_field form.payment_term|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="form-row">
+                                                        <div class="col col-md-3">
+                                                            {{form.payment_schedule.label_tag}}
+                                                        </div>
+                                                        <div class="col col-md-8">
+                                                            {% render_field form.payment_schedule|append_attr:"readonly" rows="5" class="col-md-12 form-control form-control-use" %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/> Attachments
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col col-md-12">
+                                    <br/>
+                                    <div class="table-responsive">
+                                        <table id="poattachments" class="table table-striped table-bordered" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th data-data="id"></th>
+                                                    <th data-data="po"></th>
+                                                    <th data-data="attachment">Attachment</th>
+                                                    <th data-data="attachment_date">Date</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <script>
+                                        $(document).ready(function() {
+                                            var poatable = $('#poattachments').DataTable({
+                                                "ajax": "{% url 'poattachment-list' %}?format=datatables&pk={{po.pk}}",
+                                                "dom": "<'row'<'col-sm-12 small'tr>>" +
+                                                    "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                                                "columnDefs": [{
+                                                    "searchable": false,
+                                                    "orderable": false,
+                                                    "targets": 0,
+                                                    "defaultContent": "<i>Not set</i>"
+                                                }, {
+                                                    "targets": -1,
+                                                    "data": null,
+                                                    "render": function(data, type, row) {
+                                                        return '<a href="' + row.attachment + '/" target="_blank" class="btn btn-primary btn-circle btn-sm" target="_blank"><i class="fas fa-file-download"></i></a>';
+                                                    }
+                                                }, {
+                                                    "visible": false,
+                                                    "targets": [1, 2]
+                                                }]
+                                            });
+
+                                            poatable.on('order.dt search.dt', function() {
+                                                poatable.column(0, {
+                                                    search: 'applied',
+                                                    order: 'applied'
+                                                }).nodes().each(function(cell, i) {
+                                                    cell.innerHTML = i + 1;
+                                                });
+                                            }).draw();
+                                        });
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/> {{form.delivery_instruction.label_tag}}
+                        <div class="form-row">
+                            <div class="col col-md-12">
+                                {{form.media}} {% render_field form.delivery_instruction|append_attr:"disabled" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12 col-md-12 mb-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Remarks</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="col col-md-12">
+                                        {{form.media}} {% render_field form.remarks|append_attr:"disabled" %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

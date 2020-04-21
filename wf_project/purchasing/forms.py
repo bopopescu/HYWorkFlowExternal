@@ -1,5 +1,7 @@
 from django import forms
-from .models import PurchaseOrder, PurchaseOrderAttachment, PurchaseOrderComparison2Attachment, PurchaseOrderComparison3Attachment, PurchaseOrderDetail
+from .models import PurchaseOrder, PurchaseOrderAttachment, PurchaseOrderComparison2Attachment
+from .models import PurchaseOrderComparison3Attachment, PurchaseOrderDetail
+from .models import GoodsReceiptNote, PurchaseInvoice, PurchaseCreditNote, PurchaseDebitNote
 from administration.models import CompanyMaintenance, CurrencyMaintenance, DocumentTypeMaintenance, PaymentTermMaintenance
 from administration.models import ProjectMaintenance, VendorMasterData, TransactiontypeMaintenance, UOMMaintenance, TaxMaintenance
 from Inventory.models import Item
@@ -106,3 +108,34 @@ class NewPODetailForm(forms.ModelForm):
         model = PurchaseOrderDetail
         fields = ['po', 'additional_description', 'quantity',
         'unit_price', 'remarks']
+
+class NewGRNForm(forms.ModelForm):    
+    receive_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput, disabled=True)
+
+    class Meta:
+        model = GoodsReceiptNote
+        fields = ['document_number']
+
+class DetailGRNForm(forms.ModelForm):
+    receive_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput, disabled=True)
+    receive_by = forms.CharField()
+
+    class Meta:
+        model = GoodsReceiptNote
+        fields = ['document_number']
+
+class NewINVForm(forms.ModelForm):    
+    invoice_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput, disabled=True)
+    invoice_number = forms.CharField(required=True)
+
+    class Meta:
+        model = PurchaseInvoice
+        fields = []
+
+class DetailINVForm(forms.ModelForm):
+    invoice_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput, disabled=True)
+    receive_by = forms.CharField()
+
+    class Meta:
+        model = PurchaseInvoice
+        fields = ['invoice_number']

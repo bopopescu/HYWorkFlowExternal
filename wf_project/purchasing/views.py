@@ -1,15 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import NewPOForm, DetailPOForm, UpdatePOForm, NewPOAttachmentForm, NewPOComparison2AttachmentForm, NewPOComparison3AttachmentForm, NewPODetailForm
-from .models import PurchaseOrder, PurchaseOrderDetail, PurchaseOrderAttachment, PurchaseOrderComparison2Attachment, PurchaseOrderComparison3Attachment, VendorMasterData, VendorAddressDetail
 from rest_framework import viewsets
-from .serializers import POSerializer, PODetailSerializer, POAttachmentSerializer, POComparison2AttachmentSerializer, POComparison3AttachmentSerializer
 from django.contrib.auth.models import User
 from administration.models import CompanyMaintenance, CompanyAddressDetail, CurrencyMaintenance, DocumentTypeMaintenance
 from administration.models import StatusMaintenance, TransactiontypeMaintenance, WorkflowApprovalRule, ProjectMaintenance
 from administration.models import PaymentTermMaintenance, EmployeeMaintenance, EmployeeDepartmentMaintenance
 from approval.models import ApprovalItem
 from django.http import JsonResponse
+from .forms import NewPOForm, DetailPOForm, UpdatePOForm, NewPOAttachmentForm, NewPOComparison2AttachmentForm
+from .forms import NewPOComparison3AttachmentForm, NewPODetailForm, NewGRNForm, DetailGRNForm
+from .forms import NewINVForm, DetailINVForm
+from .models import PurchaseOrder, PurchaseOrderDetail, PurchaseOrderAttachment, PurchaseOrderComparison2Attachment
+from .models import PurchaseOrderComparison3Attachment, VendorMasterData, VendorAddressDetail
+from .models import GoodsReceiptNote, PurchaseInvoice, PurchaseCreditNote, PurchaseDebitNote
+from .serializers import POSerializer, PODetailSerializer, POAttachmentSerializer, POComparison2AttachmentSerializer, POComparison3AttachmentSerializer
+import datetime
 
 class POAttachmentViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrderAttachment.objects.all()
@@ -20,7 +25,7 @@ class POAttachmentViewSet(viewsets.ModelViewSet):
         This view should return a list of all models by
         the maker passed in the URL
         """
-        po = get_object_or_404(PurchaseOrder,pk=self.request.query_params.get('pk', None))
+        po = get_object_or_404(PurchaseOrder, pk=self.request.query_params.get('pk', None))
         return PurchaseOrderAttachment.objects.filter(po=po)
 
 class POComparison2AttachmentViewSet(viewsets.ModelViewSet):
@@ -32,7 +37,7 @@ class POComparison2AttachmentViewSet(viewsets.ModelViewSet):
         This view should return a list of all models by
         the maker passed in the URL
         """
-        po = get_object_or_404(PurchaseOrder,pk=self.request.query_params.get('pk', None))
+        po = get_object_or_404(PurchaseOrder, pk=self.request.query_params.get('pk', None))
         return PurchaseOrderComparison2Attachment.objects.filter(po=po)
 
 class POComparison3AttachmentViewSet(viewsets.ModelViewSet):
@@ -44,7 +49,7 @@ class POComparison3AttachmentViewSet(viewsets.ModelViewSet):
         This view should return a list of all models by
         the maker passed in the URL
         """
-        po = get_object_or_404(PurchaseOrder,pk=self.request.query_params.get('pk', None))
+        po = get_object_or_404(PurchaseOrder, pk=self.request.query_params.get('pk', None))
         return PurchaseOrderComparison3Attachment.objects.filter(po=po)
 
 class PODetailViewSet(viewsets.ModelViewSet):
@@ -80,6 +85,49 @@ class TeamPOViewSet(viewsets.ModelViewSet):
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)   
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
         return PurchaseOrder.objects.filter(submit_by__in=users, transaction_type=transaction_type)
+
+class AwaitGRNViewSet(viewsets.ModelViewSet):
+    queryset = PurchaseOrder.objects.all().order_by('-id')
+    serializer_class = POSerializer
+
+    def get_queryset(self):
+        po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]
+        transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Purchase Order")[0]
+        po_with_grn = GoodsReceiptNote.objects.filter(receive_by=self.request.user.id).values_list('po_id', flat=True)
+        approved_pos = ApprovalItem.objects.filter(document_type=po_type, status="A").values_list('document_pk', flat=True)
+        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, id__in=approved_pos, transaction_type=transaction_type).exclude(id__in=po_with_grn)
+
+class ReceivedGRNViewSet(viewsets.ModelViewSet):
+    queryset = PurchaseOrder.objects.all().order_by('-id')
+    serializer_class = POSerializer
+
+    def get_queryset(self):
+        po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]
+        transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Purchase Order")[0]
+        po_with_grn = GoodsReceiptNote.objects.filter(receive_by=self.request.user.id).values_list('po_id', flat=True)
+        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, id__in=po_with_grn, transaction_type=transaction_type)
+
+class AwaitPIViewSet(viewsets.ModelViewSet):
+    queryset = PurchaseOrder.objects.all().order_by('-id')
+    serializer_class = POSerializer
+
+    def get_queryset(self):
+        po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]
+        transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Purchase Order")[0]
+        po_with_grn = GoodsReceiptNote.objects.filter(receive_by=self.request.user.id).values_list('po_id', flat=True)
+        po_with_inv = PurchaseInvoice.objects.filter(receive_by=self.request.user.id).values_list('po_id', flat=True)
+        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, id__in=po_with_grn, transaction_type=transaction_type).exclude(id__in=po_with_inv)
+
+class ReceivedPIViewSet(viewsets.ModelViewSet):
+    queryset = PurchaseOrder.objects.all().order_by('-id')
+    serializer_class = POSerializer
+
+    def get_queryset(self):
+        po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]
+        transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Purchase Order")[0]
+        approved_pos = ApprovalItem.objects.filter(document_type=po_type, status="A").values_list('document_pk', flat=True)
+        po_with_inv = PurchaseInvoice.objects.filter(receive_by=self.request.user.id).values_list('po_id', flat=True)
+        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, id__in=po_with_inv, transaction_type=transaction_type)
 
 @login_required
 def po_delete(request):
@@ -123,12 +171,12 @@ def po_create(request, pk):
         form = NewPOForm(request.POST, instance=po)
         po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]
         document_number = po_type.running_number + 1
-        po_type.running_number = document_number 
+        po_type.running_number = document_number
         po_type.save()
 
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=request.POST['transaction_type'])
 
-        po.document_number = '{0}-{1:05d}'.format(po_type.document_type_code,document_number)
+        po.document_number = '{0}-{1:05d}'.format(po_type.document_type_code, document_number)
         po.company = get_object_or_404(CompanyMaintenance, pk=request.POST['company'])
         po.currency = get_object_or_404(CurrencyMaintenance, pk=request.POST['currency'])
         po.vendor = get_object_or_404(VendorMasterData, pk=request.POST['vendor'])
@@ -186,7 +234,7 @@ def po_create(request, pk):
     return render(request, 'po/create.html', {'po': po, 'form': form, 'form_attachment': form_attachment, 'form_cov2_attachment': form_cov2_attachment, 'form_cov3_attachment': form_cov3_attachment, 'form_detail': form_detail})
 
 @login_required
-def po_send_approval(request,pk):
+def po_send_approval(request, pk):
     po = get_object_or_404(PurchaseOrder, pk=pk)
     approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=po.total_amount, document_amount_range__lte= po.total_amount)[0]
     approval_item = get_object_or_404(ApprovalItem, pk=po.approval.pk)       
@@ -411,28 +459,76 @@ def grn_list(request, pk):
 
 @login_required
 def grn_init(request, pk):
-    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
-    return render(request, 'grn/list.html', {'trans_type': transaction_type})
+    po = get_object_or_404(PurchaseOrder, pk=pk)
+    grn = GoodsReceiptNote.objects.create(receive_by=request.user, po=po)
+    return redirect(grn_create, grn.pk)
 
 @login_required
 def grn_create(request, pk):
-    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
-    return render(request, 'grn/list.html', {'trans_type': transaction_type})
+    grn = get_object_or_404(GoodsReceiptNote, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=grn.po.id)    
+    po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Good Receipt Note")[0]
+    transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Good Receipt Note")[0]
+    
+    if request.method == 'POST':
+        form = NewGRNForm(request.POST, instance=grn)
+        grn_type = DocumentTypeMaintenance.objects.filter(document_type_name="Good Receipt Note")[0]
+        document_number = grn_type.running_number + 1
+        grn_type.running_number = document_number
+        grn_type.save()
+
+        grn.document_number = '{0}-{1:05d}'.format(grn_type.document_type_code, document_number)
+        grn.po = po
+        grn.receive_by = request.user
+        grn.save()
+
+        return redirect(grn_detail, grn.pk)
+    else:
+        formGrn = NewGRNForm(instance=grn)
+    
+    form = DetailPOForm(instance=po)
+    form.fields['vendor'].initial = po.vendor
+    form.fields['company'].initial = po.company
+    form.fields['currency'].initial = po.currency
+    form.fields['project'].initial = po.project
+    form.fields['transaction_type'].initial = po.transaction_type
+    form.fields['delivery_receiver'].initial = po.delivery_receiver
+    form.fields['comparison_vendor_2'].initial = po.comparison_vendor_2
+    form.fields['comparison_vendor_3'].initial = po.comparison_vendor_3
+    form.fields['subject'].initial = po.subject
+    form.fields['payment_term'].initial = po.payment_term
+    form.fields['payment_schedule'].initial = po.payment_schedule
+    form.fields['vendor_address'].initial = po.vendor_address
+
+    return render(request, 'grn/create.html', {'grn': grn, 'po': po, 'transaction_type': transaction_type, 'form': form, 'formGrn': formGrn})
 
 @login_required
 def grn_detail(request, pk):
-    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
-    return render(request, 'grn/list.html', {'trans_type': transaction_type})
+    grn = get_object_or_404(GoodsReceiptNote, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=grn.po.id)    
+    po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Good Receipt Note")[0]
+    transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Good Receipt Note")[0]
+    
+    formGrn = DetailGRNForm(instance=grn)
+    formGrn.fields['document_number'].initial = grn.document_number
+    formGrn.fields['receive_by'].initial = grn.receive_by
+    formGrn.fields['receive_date'].initial = grn.receive_date
 
-@login_required
-def grn_delete(request, pk):
-    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
-    return render(request, 'grn/list.html', {'trans_type': transaction_type})
+    form = DetailPOForm(instance=po)
+    form.fields['vendor'].initial = po.vendor
+    form.fields['company'].initial = po.company
+    form.fields['currency'].initial = po.currency
+    form.fields['project'].initial = po.project
+    form.fields['transaction_type'].initial = po.transaction_type
+    form.fields['delivery_receiver'].initial = po.delivery_receiver
+    form.fields['comparison_vendor_2'].initial = po.comparison_vendor_2
+    form.fields['comparison_vendor_3'].initial = po.comparison_vendor_3
+    form.fields['subject'].initial = po.subject
+    form.fields['payment_term'].initial = po.payment_term
+    form.fields['payment_schedule'].initial = po.payment_schedule
+    form.fields['vendor_address'].initial = po.vendor_address
 
-@login_required
-def grn_update(request, pk):
-    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
-    return render(request, 'grn/list.html', {'trans_type': transaction_type})
+    return render(request, 'grn/detail.html', {'grn': grn, 'po': po, 'transaction_type': transaction_type, 'form': form, 'formGrn': formGrn})
 
 @login_required
 def pi_list(request, pk):
@@ -440,9 +536,72 @@ def pi_list(request, pk):
     return render(request, 'pi/list.html', {'trans_type': transaction_type})
 
 @login_required
+def pi_init(request, pk):
+    po = get_object_or_404(PurchaseOrder, pk=pk)
+    pi = PurchaseInvoice.objects.create(receive_by=request.user, po=po)
+    return redirect(pi_create, pi.pk)
+
+@login_required
+def pi_create(request, pk):
+    pi = get_object_or_404(PurchaseInvoice, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=pi.po.id)    
+    po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Invoice")[0]
+    transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Purchase Invoice")[0]
+    
+    if request.method == 'POST':
+        form = NewINVForm(request.POST, instance=pi)
+        pi.po = po
+        pi.receive_by = request.user
+        pi.invoice_number = request.POST['invoice_number']
+        pi.save()
+
+        return redirect(pi_detail, pi.pk)
+    else:
+        formPi = NewINVForm(instance=pi)
+    
+    form = DetailPOForm(instance=po)
+    form.fields['vendor'].initial = po.vendor
+    form.fields['company'].initial = po.company
+    form.fields['currency'].initial = po.currency
+    form.fields['project'].initial = po.project
+    form.fields['transaction_type'].initial = po.transaction_type
+    form.fields['delivery_receiver'].initial = po.delivery_receiver
+    form.fields['comparison_vendor_2'].initial = po.comparison_vendor_2
+    form.fields['comparison_vendor_3'].initial = po.comparison_vendor_3
+    form.fields['subject'].initial = po.subject
+    form.fields['payment_term'].initial = po.payment_term
+    form.fields['payment_schedule'].initial = po.payment_schedule
+    form.fields['vendor_address'].initial = po.vendor_address
+
+    return render(request, 'pi/create.html', {'pi': pi, 'po': po, 'transaction_type': transaction_type, 'form': form, 'formPi': formPi})
+
+@login_required
 def pi_detail(request, pk):
-    transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
-    return render(request, 'pi/list.html', {'trans_type': transaction_type})
+    pi = get_object_or_404(PurchaseInvoice, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=pi.po.id)    
+    pi_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Invoice")[0]
+    transaction_type = TransactiontypeMaintenance.objects.filter(document_type=pi_type, transaction_type_name="Purchase Invoice")[0]
+    
+    formPi = DetailINVForm(instance=pi)
+    formPi.fields['invoice_number'].initial = pi.invoice_number
+    formPi.fields['receive_by'].initial = pi.receive_by
+    formPi.fields['invoice_date'].initial = pi.invoice_date
+
+    form = DetailPOForm(instance=po)
+    form.fields['vendor'].initial = po.vendor
+    form.fields['company'].initial = po.company
+    form.fields['currency'].initial = po.currency
+    form.fields['project'].initial = po.project
+    form.fields['transaction_type'].initial = po.transaction_type
+    form.fields['delivery_receiver'].initial = po.delivery_receiver
+    form.fields['comparison_vendor_2'].initial = po.comparison_vendor_2
+    form.fields['comparison_vendor_3'].initial = po.comparison_vendor_3
+    form.fields['subject'].initial = po.subject
+    form.fields['payment_term'].initial = po.payment_term
+    form.fields['payment_schedule'].initial = po.payment_schedule
+    form.fields['vendor_address'].initial = po.vendor_address
+
+    return render(request, 'pi/detail.html', {'pi': pi, 'po': po, 'transaction_type': transaction_type, 'form': form, 'formPi': formPi})
 
 @login_required
 def pcn_list(request, pk):

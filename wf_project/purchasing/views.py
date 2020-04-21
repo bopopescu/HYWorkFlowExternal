@@ -26,7 +26,7 @@ class POAttachmentViewSet(viewsets.ModelViewSet):
         the maker passed in the URL
         """
         po = get_object_or_404(PurchaseOrder, pk=self.request.query_params.get('pk', None))
-        return PurchaseOrderAttachment.objects.filter(po=po)
+        return PurchaseOrderAttachment.objects.filter(po=po).order_by('-id')
 
 class POComparison2AttachmentViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrderComparison2Attachment.objects.all()
@@ -38,7 +38,7 @@ class POComparison2AttachmentViewSet(viewsets.ModelViewSet):
         the maker passed in the URL
         """
         po = get_object_or_404(PurchaseOrder, pk=self.request.query_params.get('pk', None))
-        return PurchaseOrderComparison2Attachment.objects.filter(po=po)
+        return PurchaseOrderComparison2Attachment.objects.filter(po=po).order_by('-id')
 
 class POComparison3AttachmentViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrderComparison3Attachment.objects.all()
@@ -50,7 +50,7 @@ class POComparison3AttachmentViewSet(viewsets.ModelViewSet):
         the maker passed in the URL
         """
         po = get_object_or_404(PurchaseOrder, pk=self.request.query_params.get('pk', None))
-        return PurchaseOrderComparison3Attachment.objects.filter(po=po)
+        return PurchaseOrderComparison3Attachment.objects.filter(po=po).order_by('-id')
 
 class PODetailViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrderDetail.objects.all()
@@ -62,7 +62,7 @@ class PODetailViewSet(viewsets.ModelViewSet):
         the maker passed in the URL
         """
         po = get_object_or_404(PurchaseOrder, pk=self.request.query_params.get('pk', None))
-        return PurchaseOrderDetail.objects.filter(po=po)
+        return PurchaseOrderDetail.objects.filter(po=po).order_by('-id')
 
 class MyPOViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.all().order_by('-id')
@@ -70,7 +70,7 @@ class MyPOViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
-        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, transaction_type=transaction_type)
+        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, transaction_type=transaction_type).order_by('-id')
 
 class TeamPOViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.all().order_by('-id')    
@@ -84,7 +84,7 @@ class TeamPOViewSet(viewsets.ModelViewSet):
         employees_as_user = EmployeeMaintenance.objects.filter(id__in=employees_indept).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)   
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
-        return PurchaseOrder.objects.filter(submit_by__in=users, transaction_type=transaction_type)
+        return PurchaseOrder.objects.filter(submit_by__in=users, transaction_type=transaction_type).order_by('-id')
 
 class AwaitGRNViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.all().order_by('-id')
@@ -95,7 +95,7 @@ class AwaitGRNViewSet(viewsets.ModelViewSet):
         transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Purchase Order")[0]
         po_with_grn = GoodsReceiptNote.objects.filter(receive_by=self.request.user.id).values_list('po_id', flat=True)
         approved_pos = ApprovalItem.objects.filter(document_type=po_type, status="A").values_list('document_pk', flat=True)
-        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, id__in=approved_pos, transaction_type=transaction_type).exclude(id__in=po_with_grn)
+        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, id__in=approved_pos, transaction_type=transaction_type).exclude(id__in=po_with_grn).order_by('-id')
 
 class ReceivedGRNViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.all().order_by('-id')
@@ -105,7 +105,7 @@ class ReceivedGRNViewSet(viewsets.ModelViewSet):
         po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]
         transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Purchase Order")[0]
         po_with_grn = GoodsReceiptNote.objects.filter(receive_by=self.request.user.id).values_list('po_id', flat=True)
-        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, id__in=po_with_grn, transaction_type=transaction_type)
+        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, id__in=po_with_grn, transaction_type=transaction_type).order_by('-id')
 
 class AwaitPIViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.all().order_by('-id')
@@ -116,7 +116,7 @@ class AwaitPIViewSet(viewsets.ModelViewSet):
         transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Purchase Order")[0]
         po_with_grn = GoodsReceiptNote.objects.filter(receive_by=self.request.user.id).values_list('po_id', flat=True)
         po_with_inv = PurchaseInvoice.objects.filter(receive_by=self.request.user.id).values_list('po_id', flat=True)
-        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, id__in=po_with_grn, transaction_type=transaction_type).exclude(id__in=po_with_inv)
+        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, id__in=po_with_grn, transaction_type=transaction_type).exclude(id__in=po_with_inv).order_by('-id')
 
 class ReceivedPIViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.all().order_by('-id')
@@ -127,7 +127,7 @@ class ReceivedPIViewSet(viewsets.ModelViewSet):
         transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Purchase Order")[0]
         approved_pos = ApprovalItem.objects.filter(document_type=po_type, status="A").values_list('document_pk', flat=True)
         po_with_inv = PurchaseInvoice.objects.filter(receive_by=self.request.user.id).values_list('po_id', flat=True)
-        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, id__in=po_with_inv, transaction_type=transaction_type)
+        return PurchaseOrder.objects.filter(submit_by=self.request.user.id, id__in=po_with_inv, transaction_type=transaction_type).order_by('-id')
 
 @login_required
 def po_delete(request):

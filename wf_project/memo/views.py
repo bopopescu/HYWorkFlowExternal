@@ -26,7 +26,7 @@ class MemoAttachmentViewSet(viewsets.ModelViewSet):
         the maker passed in the URL
         """
         memo = get_object_or_404(Memo, pk=self.request.query_params.get('pk', None))
-        return MemoAttachment.objects.filter(memo=memo)
+        return MemoAttachment.objects.filter(memo=memo).order_by('-id')
 
 class MyMemoViewSet(viewsets.ModelViewSet):
     """Handles My Task datatable"""

@@ -13,6 +13,7 @@ from purchasing.models import PurchaseOrder
 from payment.models import PaymentRequest
 from human_resource.models import StaffRecruitmentRequest
 from staff_overtime.models import StaffOT
+from drawer_reimbursement.models import ReimbursementRequest
 from django.contrib.auth.models import User, Group
 from django.http import JsonResponse
 
@@ -190,6 +191,12 @@ def approval_update(request, pk):
         return redirect('staff_list')
     elif document_type.document_type_code == "504":
         staff_ot = get_object_or_404(StaffOT, pk=approval_item.document_pk)
+        status = StatusMaintenance.objects.filter(document_type=document_type, status_code='300')[0]
+        staff_ot.status = status
+        staff_ot.save()
+        return redirect('staff_ot_list',staff_ot.transaction_type)
+    elif document_type.document_type_code == "403":
+        reimbursement_request = get_object_or_404(StaffOT, pk=approval_item.document_pk)
         status = StatusMaintenance.objects.filter(document_type=document_type, status_code='300')[0]
         staff_ot.status = status
         staff_ot.save()

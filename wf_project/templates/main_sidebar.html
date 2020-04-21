@@ -33,6 +33,12 @@
             <span>Action Workflow</span>
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'account_selection_list' %}">
+            <i class="fas fa-inbox"></i>
+            <span>Utility Dashboard</span>
+          </a>
+        </li>
         
         <!-- Divider -->
         <hr class="sidebar-divider">
@@ -144,7 +150,7 @@
                 <!-- <a class="collapse-item" href="#">Advance Refund</a>-->
                 <a class="collapse-item" href="{% url 'reimbursedrawer_selection' %}">Drawer Reimbursement</a>
                 <a class="collapse-item" href="{% url 'drawer_selection' %}">Drawer Disbursement</a>
-                <!-- <a class="collapse-item" href="#">Reimbursement Request</a>                 -->
+                <a class="collapse-item" href="{% url 'audit_trail_drawer_selection' %}">Audit Trail</a>
               </div>
             </div>
           </li>

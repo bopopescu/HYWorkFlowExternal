@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'staff_overtime.apps.StaffOvertimeConfig',
     'PDFreport.apps.PdfreportConfig',
     'drawer_reimbursement.apps.DrawerReimbursementConfig',
+    'utility_dashboard.apps.UtilityDashboardConfig',
+    'audit_trail.apps.AuditTrailConfig',
     #'sales.apps.SalesConfig',
     #'vendor.apps.VendorConfig',
 
@@ -110,6 +112,7 @@ TEMPLATES = [
                 'payment.context_processors.py_trans_type',
                 'staff_overtime.context_processors.staff_ot_trans_type',
                 'drawer_reimbursement.context_processors.reimbursement_trans_type',
+                'dashboard.context_processors.dashboard_drawer',
             ],
         },
     },

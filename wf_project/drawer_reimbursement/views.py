@@ -25,7 +25,7 @@ class MyReimbursementRequestViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         # transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
-        return ReimbursementRequest.objects.filter(submit_by=self.request.user.id)
+        return ReimbursementRequest.objects.filter(submit_by=self.request.user.id).order_by("-id")
 
 class TeamReimbursementRequestViewSet(viewsets.ModelViewSet):
 

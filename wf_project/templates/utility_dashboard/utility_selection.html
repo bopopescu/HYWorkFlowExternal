@@ -1,0 +1,46 @@
+{% extends 'main_template.html' %}
+
+{% block content %}
+{% load static %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Utilities selection</h1>
+  </div>
+
+  <div class="row">
+
+    <!-- Earnings (Monthly) Card Example -->
+    {%for utility in utility_group%}
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-primary shadow h-100 py-2">
+        <a href="{% url 'utility_approval_list' pk=utility.id %}">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">{{utility.account_group_name}}</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="count{{utility.id}}"></span> Bills</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-layer-group fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+            <script>
+                $(document).ready(function() {
+                  $.ajax({
+                      type: 'GET',
+                      url : '{%url "utility_bill_count" utility.id %}',
+                      dataType: "json",
+
+                      success:function(data){
+                          $('span#count{{utility.id}}').html( data.count );
+                      }
+                });
+                });
+            </script>
+        </a>
+      </div>
+    </div>
+    {%endfor%}
+  </div>   
+{% endblock content %}

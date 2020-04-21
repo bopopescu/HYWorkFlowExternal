@@ -9,4 +9,3 @@ class DetailDisbursementForm(forms.ModelForm):
     class Meta:
         model = DrawerDisbursement
         fields = ['disbursed_by', 'status','total_disbursed','payment','disbursed_date']
-

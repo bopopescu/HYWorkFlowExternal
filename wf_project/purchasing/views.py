@@ -15,6 +15,7 @@ from .models import PurchaseOrderComparison3Attachment, VendorMasterData, Vendor
 from .models import GoodsReceiptNote, PurchaseInvoice, PurchaseCreditNote, PurchaseDebitNote
 from .serializers import POSerializer, PODetailSerializer, POAttachmentSerializer, POComparison2AttachmentSerializer, POComparison3AttachmentSerializer
 import datetime
+from payment.models import PaymentRequest
 
 class POAttachmentViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrderAttachment.objects.all()
@@ -574,6 +575,17 @@ def pi_create(request, pk):
     form.fields['vendor_address'].initial = po.vendor_address
 
     return render(request, 'pi/create.html', {'pi': pi, 'po': po, 'transaction_type': transaction_type, 'form': form, 'formPi': formPi})
+
+@login_required
+def pi_send_to_pr(request, pk):
+    pi = get_object_or_404(PurchaseInvoice, pk=pk)
+    document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code ="301")
+    pi_type = get_object_or_404(DocumentTypeMaintenance,document_type_code ="208")
+    transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name="Payment for Invoice",document_type=document_type)
+    py = PaymentRequest.objects.create(submit_by=request.user,transaction_type=transaction_type,document_pk=pk,document_type=pi_type)
+
+    return redirect('py_create_edit', py.pk)
+    
 
 @login_required
 def pi_detail(request, pk):

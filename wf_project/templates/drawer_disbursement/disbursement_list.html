@@ -176,6 +176,7 @@
   
   <!-- Approve Modal-->
 <div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <form autocomplete="off">
   <div class="modal-dialog" role="document">
       <div class="modal-content">
           <div class="modal-header">
@@ -207,7 +208,7 @@
                   </div>
                 </div>
               </div>
-
+              
               <input type="hidden" name="hiddenValueApprove" id="hiddenValueApprove" value="" />
               <input type="hidden" name="hiddenValueApprove2" id="hiddenValueApprove2" value="" />
           </div>
@@ -217,6 +218,7 @@
           </div>
       </div>
   </div>
+</form>
 </div>
 <script type="text/javascript">
   function sendApprove(param) {
@@ -256,6 +258,9 @@
         }).done(function(res){ 
             if(res.valid == false){
               alert(res.message);
+              if(res.validbalance == false){
+                  window.location.href = "{% url 'reimbursement_request_init' %}";
+              }
             }else{
               $('#approveModal').modal('hide');
               var table = $('#mystaffs').DataTable(); 
@@ -264,8 +269,8 @@
               table2.ajax.reload();
               var table3 = $('#cancelled').DataTable(); 
               table3.ajax.reload();
-              $(".modal-body #id_disburseduserid").val("");
-              $(".modal-body #id_disburseduserpassword").val("");
+              var user_id = $(".modal-body #id_disburseduserid").val("");
+              var password = $(".modal-body #id_disburseduserpassword").val("");
             }
         });
       }

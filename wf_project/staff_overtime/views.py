@@ -24,7 +24,7 @@ class MyStaffOTViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
-        return StaffOT.objects.filter(submit_by=self.request.user.id, transaction_type=transaction_type)
+        return StaffOT.objects.filter(submit_by=self.request.user.id, transaction_type=transaction_type).order_by('-id')
 
 class TeamStaffOTViewSet(viewsets.ModelViewSet):
 
@@ -35,7 +35,7 @@ class TeamStaffOTViewSet(viewsets.ModelViewSet):
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
         groups = self.request.user.groups.values_list('id', flat=True)
         users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
-        return StaffOT.objects.filter(submit_by__in=users,transaction_type=transaction_type)
+        return StaffOT.objects.filter(submit_by__in=users,transaction_type=transaction_type).order_by('-id')
 
 class StaffOTDetailViewSet(viewsets.ModelViewSet):
     serializer_class = StaffOTDetailSerializer

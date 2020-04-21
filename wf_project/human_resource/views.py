@@ -20,7 +20,7 @@ class MyStaffViewSet(viewsets.ModelViewSet):
     serializer_class = StaffRecruitmentSerializer
     
     def get_queryset(self):
-        return StaffRecruitmentRequest.objects.filter(submit_by=self.request.user.id)
+        return StaffRecruitmentRequest.objects.filter(submit_by=self.request.user.id).order_by('-id')
 
 class TeamStaffViewSet(viewsets.ModelViewSet):
     queryset = StaffRecruitmentRequest.objects.all().order_by('-id')    
@@ -29,7 +29,7 @@ class TeamStaffViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         groups = self.request.user.groups.values_list('id', flat=True)
         users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
-        return StaffRecruitmentRequest.objects.filter(submit_by__in=users)
+        return StaffRecruitmentRequest.objects.filter(submit_by__in=users).order_by('-id')
 
 class StaffJobRequirementViewSet(viewsets.ModelViewSet):
     queryset = StaffJobRequirement.objects.all()

@@ -91,7 +91,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates','purchasing'),  
             os.path.join(BASE_DIR, 'templates','staff_overtime'),     
             os.path.join(BASE_DIR, 'templates','report'),
-            os.path.join(BASE_DIR, 'templates','drawer_reimbursement_request'),           
+            os.path.join(BASE_DIR, 'templates','reimbursement_request'),           
         ],
         'APP_DIRS': True,
         'OPTIONS': {

@@ -145,9 +145,7 @@
             <div id="collapseDrawerReimbursed" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
               <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Drawer Reimbursement:</h6>
-                {% for trans_type in reimbursement_trans_type%}
-                  <a class="collapse-item" href="#">{{trans_type.transaction_type_name}}</a>
-                {% endfor %}
+                  <a class="collapse-item" href="{% url 'reimbursement_request_list' %}">Reimbursement Request</a>
               </div>
             </div>
           </li>

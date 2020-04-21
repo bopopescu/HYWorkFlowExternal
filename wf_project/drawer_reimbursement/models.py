@@ -5,7 +5,7 @@ from administration.models import CompanyMaintenance
 from administration.models import DepartmentMaintenance
 from administration.models import ProjectMaintenance
 from administration.models import DrawerMaintenance
-from administration.models import StatusMaintenance 
+from administration.models import StatusMaintenance,TransactiontypeMaintenance 
 from approval.models import ApprovalItem
 import datetime
 
@@ -34,5 +34,6 @@ class ReimbursementRequest(models.Model):
     submit_by = models.ForeignKey(User,blank=True,null=True,on_delete=models.CASCADE)
     approval = models.ForeignKey(ApprovalItem, verbose_name="Approval", on_delete=models.CASCADE, blank=True, null=True)
     description = models.CharField(max_length=300)
+    transaction_type = models.ForeignKey(TransactiontypeMaintenance,blank=True,null=True,on_delete=models.CASCADE)
     document_number = models.CharField(max_length=100,verbose_name="Document No",blank=True, null=True)
     status = models.ForeignKey(StatusMaintenance,verbose_name="Status",blank=True,null=True,on_delete=models.CASCADE)

@@ -28,6 +28,7 @@ urlpatterns = [
     path('memo/', include('memo.urls')),
     path('payment/', include('payment.urls')),
     path('purchasing/', include('purchasing.urls')),
+    path('reimbursementrequest/', include('drawer_reimbursement.urls')),
     path('staffrecruitment/', include('human_resource.urls')),
     path('staffovertime/', include('staff_overtime.urls')),
     path('report_builder/', include('report_builder.urls')),

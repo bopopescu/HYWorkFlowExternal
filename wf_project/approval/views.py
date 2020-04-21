@@ -195,12 +195,13 @@ def approval_update(request, pk):
         staff_ot.status = status
         staff_ot.save()
         return redirect('staff_ot_list',staff_ot.transaction_type)
+
     elif document_type.document_type_code == "403":
-        reimbursement_request = get_object_or_404(StaffOT, pk=approval_item.document_pk)
+        reimbursement_request = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
         status = StatusMaintenance.objects.filter(document_type=document_type, status_code='300')[0]
         reimbursement_request.status = status
         reimbursement_request.save()
-        return redirect('reimbursement_request')
+        return redirect('reimbursement_request_list')
     
     return redirect(approval_list)
 
@@ -246,7 +247,7 @@ def approve(request):
             staff_ot.status = status          
             staff_ot.save()
         elif document_type.document_type_code == "403":
-            reimbursement_request = get_object_or_404(StaffOT, pk=approval_item.document_pk)
+            reimbursement_request = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
             status = StatusMaintenance.objects.filter(document_type=document_type, status_code='400')[0]
             reimbursement_request.status = status
             reimbursement_request.save()
@@ -420,9 +421,9 @@ def reject(request):
         staff_ot.status = status
         staff_ot.save()
     elif document_type.document_type_code == "403":
-            reimbursement_request = get_object_or_404(StaffOT, pk=approval_item.document_pk)
-            status = StatusMaintenance.objects.filter(document_type=document_type, status_code='500')[0]
-            reimbursement_request.status = status
-            reimbursement_request.save()
+        reimbursement_request = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
+        status = StatusMaintenance.objects.filter(document_type=document_type, status_code='500')[0]
+        reimbursement_request.status = status
+        reimbursement_request.save()
 
     return JsonResponse({'message': 'Success'})

@@ -123,6 +123,18 @@
             </div>
           </li>
           <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDrawerReimbursed" aria-expanded="true" aria-controls="collapseDrawer">
+                <i class="fas fa-list-alt"></i>
+              <span>Drawer Reimbursement</span>
+            </a>
+            <div id="collapseDrawerReimbursed" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+              <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Drawer Reimbursement:</h6>
+                  <a class="collapse-item" href="{% url 'reimbursement_request_list' %}">Reimbursement Request</a>
+              </div>
+            </div>
+          </li>
+          <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDrawer" aria-expanded="true" aria-controls="collapseDrawer">
                 <i class="fas fa-list-alt"></i>
               <span>Drawer</span>
@@ -133,19 +145,6 @@
                 <a class="collapse-item" href="#">Drawer Reimbursement</a> -->
                 <a class="collapse-item" href="{% url 'drawer_selection' %}">Drawer Disbursement</a>
                 <!-- <a class="collapse-item" href="#">Reimbursement Request</a>                 -->
-              </div>
-            </div>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDrawerReimbursed" aria-expanded="true" aria-controls="collapseDrawer">
-                <i class="fas fa-list-alt"></i>
-              <span>Drawer Reimbursement</span>
-            </a>
-            <div id="collapseDrawerReimbursed" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-              <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Drawer Reimbursement:</h6>
-                  <a class="collapse-item" href="{% url 'reimbursement_request_list' %}">Reimbursement Request</a>
               </div>
             </div>
           </li>

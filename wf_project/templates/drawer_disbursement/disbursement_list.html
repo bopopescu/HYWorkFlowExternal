@@ -259,7 +259,7 @@
             if(res.valid == false){
               alert(res.message);
               if(res.validbalance == false){
-                  window.location.href = "{% url 'reimbursement_request_init' %}";
+                  window.location.href = "{% url 'reimbursement_request_init_amount' amount=123 %}".replace(/123/,res.amount);
               }
             }else{
               $('#approveModal').modal('hide');

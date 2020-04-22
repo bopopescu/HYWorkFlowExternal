@@ -83,11 +83,12 @@ def drawer_disbursement_disbursed(request,pk,drawerpk,userid,password):
     
     total_drawer_amount = drawer_amount(drawerpk)
     drawer_amount_after = total_drawer_amount - payment.total_amount
+    drawer_amount_lack = payment.total_amount -total_drawer_amount 
     print(total_drawer_amount)
     print(drawer_amount_after)
 
     if drawer_amount_after < 0:
-        return JsonResponse({'message': 'This drawer balance is not enough','valid':False,'validbalance':False})
+        return JsonResponse({'message': 'This drawer balance is not enough','valid':False,'validbalance':False,'amount':drawer_amount_lack})
     
     else:
         if process == True:

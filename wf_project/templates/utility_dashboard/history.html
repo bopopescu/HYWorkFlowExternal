@@ -1,9 +1,13 @@
 {% extends 'main_template.html' %} {% block content %} {% load widget_tweaks %} {% load static %}
-
+<script>
+    function goBack() {
+      window.history.back();
+    }
+    </script>
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Utility Selection</h1>
     <div>
-        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
+        <a href="javascript:javascript:history.go(-1)" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
     </div>
 </div>
 <div class="row">

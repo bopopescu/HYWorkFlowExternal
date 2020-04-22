@@ -15,6 +15,7 @@ urlpatterns = [
     path('list/', views.reimbursement_request_list, name='reimbursement_request_list'),
 
     path('init/', views.reimbursement_request_init, name='reimbursement_request_init'),
+    path('initamount/<str:amount>/', views.reimbursement_request_init_amount, name='reimbursement_request_init_amount'),
     path('create/<int:pk>/', views.reimbursement_request_create, name='reimbursement_request_create'),
 
     path('sendapproval/<int:pk>/', views.reimbursement_request_send_approval, name='reimbursement_request_send_approval'),

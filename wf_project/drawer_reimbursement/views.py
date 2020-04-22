@@ -57,21 +57,33 @@ class ReimbursementListViewSet(viewsets.ModelViewSet):
 
 
 class ReimbursedViewSet(viewsets.ModelViewSet):
-    document_type = DocumentTypeMaintenance.objects.get(document_type_code='401')
-    document_status_reimburse = StatusMaintenance.objects.get(document_type=document_type,status_code='700')
-    queryset = DrawerReimbursement.objects.filter(status=document_status_reimburse)
     serializer_class = DrawerReimbursedSerializer
 
+    def get_queryset(self):
+        drawer = get_object_or_404(DrawerMaintenance, pk=self.request.query_params.get('drawerpk', None))
+        document_type = DocumentTypeMaintenance.objects.get(document_type_code='401')
+        document_status_reimburse = StatusMaintenance.objects.get(document_type=document_type,status_code='700')
+        return DrawerReimbursement.objects.filter(status=document_status_reimburse,drawer=drawer)
+
 class CancelledViewSet(viewsets.ModelViewSet):
-    document_type = DocumentTypeMaintenance.objects.get(document_type_code='401')
-    document_status_cancel = StatusMaintenance.objects.get(document_type=document_type,status_code='999')
-    queryset = DrawerReimbursement.objects.filter(status=document_status_cancel)
     serializer_class = DrawerReimbursedSerializer
+    
+    def get_queryset(self):
+        drawer = get_object_or_404(DrawerMaintenance, pk=self.request.query_params.get('drawerpk', None))
+        document_type = DocumentTypeMaintenance.objects.get(document_type_code='401')
+        document_status_reimburse = StatusMaintenance.objects.get(document_type=document_type,status_code='999')
+        return DrawerReimbursement.objects.filter(status=document_status_reimburse,drawer=drawer)
 
 @login_required
 def reimbursement_request_init(request):    
     # transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
     reimburement_request = ReimbursementRequest.objects.create(submit_by=request.user)
+    return redirect(reimbursement_request_create, reimburement_request.pk)
+
+@login_required
+def reimbursement_request_init_amount(request,amount):    
+    reimburse_request = get_object_or_404(TransactiontypeMaintenance,transaction_type_name="Reimbursement Request")
+    reimburement_request = ReimbursementRequest.objects.create(submit_by=request.user,request_amount=amount,transaction_type=reimburse_request)
     return redirect(reimbursement_request_create, reimburement_request.pk)
 
 @login_required

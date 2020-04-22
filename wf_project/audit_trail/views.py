@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets
 from django.contrib.auth.models import User
-from .serializers import DrawerSelectionSerializer,DrawerDisbursementSerializer
+from .serializers import DrawerSelectionSerializer,DrawerDisbursementSerializer,DrawerReimbursedSerializer
 from administration.models import DrawerMaintenance,TransactiontypeMaintenance
 from administration.models import DrawerUserMaintenance
 from drawer_reimbursement.models import DrawerReimbursement,ReimbursementRequest
@@ -29,6 +29,15 @@ class DisbursedViewSet(viewsets.ModelViewSet):
         document_status_disburse = StatusMaintenance.objects.get(document_type=document_type,status_code='700')
         drawer = get_object_or_404(DrawerMaintenance, pk=self.request.query_params.get('pk', None))
         return DrawerDisbursement.objects.filter(status=document_status_disburse,drawer=drawer).order_by('-id')
+
+class ReimbursedViewSet(viewsets.ModelViewSet):
+    serializer_class = DrawerReimbursedSerializer
+
+    def get_queryset(self):
+        document_type = DocumentTypeMaintenance.objects.get(document_type_code='401')
+        document_status_reimburse = StatusMaintenance.objects.get(document_type=document_type,status_code='700')
+        drawer = get_object_or_404(DrawerMaintenance, pk=self.request.query_params.get('pk', None))
+        return DrawerReimbursement.objects.filter(status=document_status_reimburse,drawer=drawer).order_by('-id')
 
 @login_required
 def drawer_list(request):

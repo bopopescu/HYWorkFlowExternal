@@ -49,10 +49,11 @@ class UtilityApprovalItemSerializer(serializers.ModelSerializer):
     request_by = serializers.SerializerMethodField()
     subject = serializers.SerializerMethodField()
     submit_date = serializers.SerializerMethodField()
+    total_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = UtilityApprovalItem
-        fields = ['id', 'attachment_path', 'document_number', 'document_pk', 'document_type', 'request_by', 'subject', 'submit_date']
+        fields = ['id', 'attachment_path', 'document_number', 'document_pk', 'document_type', 'request_by', 'subject', 'submit_date','total_amount']
 
     def get_request_by(self, obj):
         document_type = get_object_or_404(DocumentTypeMaintenance, pk=obj.document_type.pk)
@@ -76,3 +77,9 @@ class UtilityApprovalItemSerializer(serializers.ModelSerializer):
         if document_type.document_type_code == "301":
             py = get_object_or_404(PaymentRequest, pk=obj.document_pk)
             return py.submit_date
+    
+    def get_total_amount(self, obj):
+        document_type = get_object_or_404(DocumentTypeMaintenance, pk=obj.document_type.pk)
+        if document_type.document_type_code == "301":
+            py = get_object_or_404(PaymentRequest, pk=obj.document_pk)
+            return py.total_amount

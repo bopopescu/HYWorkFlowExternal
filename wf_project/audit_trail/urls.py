@@ -5,6 +5,7 @@ from . import views
 router = routers.DefaultRouter()
 router.register('auditdrawerdata', views.DrawerViewSet,basename="auditdrawerdata")
 router.register('auditdisburseddata', views.DisbursedViewSet,basename="auditdisburseddata")
+router.register('auditreimburseddata', views.ReimbursedViewSet,basename="auditreimburseddata")
 
 urlpatterns = [ 
     path('api/', include(router.urls)), 

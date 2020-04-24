@@ -230,6 +230,17 @@ class EmployeePositionMaintenance(models.Model):
     def __str__(self):
         return self.position_name
 
+class HRPlatformMaintenance(models.Model):
+    platform_name = models.CharField(max_length=255)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='platformcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='platformmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.platform_name
+
 class HolidayEventMaintenance(models.Model):
     event_name = models.CharField(max_length=255)
     event_date = models.DateField()

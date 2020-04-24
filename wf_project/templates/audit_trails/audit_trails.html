@@ -7,8 +7,14 @@
     <h1 class="h3 mb-0 text-gray-800">Audit Trails - {{drawer.drawer_name}} </h1>
   </div>
 
+
 <div class="card shadow mb-4">
     <div class="card-body">
+      <label class="control-label">
+          Select Month 
+      </label>
+      <input type="month" name="filtermonth" class="col-md-5 form-control form-control-user" id="id_filtermonth"><button class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm" onclick="reload()">refresh</button>
+      <br>
       <h1 class="h3 mb-0 text-gray-800"> Disbursement</h1>
       <div class="tab-content" id="nav-tabContent">
           <br/>
@@ -26,9 +32,11 @@
                 </thead>
               </table>  
               <script>
+                var disbursed_url = "{%url 'auditdisburseddata-list'%}?format=datatables&pk={{drawer.pk}}&month="+$("input[name='filtermonth']").val()+"";
+
                   $(document).ready(function() {
                     var mytable = $('#disbursed').DataTable({
-                        "ajax": "{%url 'auditdisburseddata-list'%}?format=datatables&pk={{drawer.pk}}",
+                        "ajax": disbursed_url,
                         "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                             "<'row'<'col-sm-12 small'tr>>" +
                             "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -53,7 +61,19 @@
                         });
                     }).draw();
                 });
+
+                function reload(){
+                    disbursed_url = "{%url 'auditdisburseddata-list'%}?format=datatables&pk={{drawer.pk}}&month="+$("input[name='filtermonth']").val()+"";
+
+                    var table1 = $('#disbursed').DataTable(); 
+                    table1.ajax.reload();
+                    var table2 = $('#reimbursed').DataTable(); 
+                    table2.ajax.reload();
+                    alert(disbursed_url) 
+              }
             </script> 
+              
+              
         </div>
     </div>
     <h1 class="h3 mb-0 text-gray-800"> Reimburse</h1>

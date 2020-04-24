@@ -79,6 +79,8 @@
                                 }else{
                                     label = '<a href="#" data-toggle="modal" data-target="#deleteStaffModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                 }
+                            }else if(row.approval_status == 'Approved'){
+                                label = '<a href="' + "{% url 'staff_after_approve' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-warning btn-icon-split"><span class="icon text-white-50"><i class="fas fa-file-invoice"></i></span><span class="text">Submit Requisition</span></a>&nbsp;&nbsp;';
                             } 
 
                             if(row.approval !== null){      

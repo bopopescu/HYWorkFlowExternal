@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import NewStaffRecruimentForm,UpdateStaffRecruimentForm,DetailStaffRecruimentForm,NewStaffJobRequirementForm,NewStaffJobResponsibleForm
+from .forms import NewStaffRecruimentForm,UpdateStaffRecruimentForm,DetailStaffRecruimentForm,NewStaffJobRequirementForm,NewStaffJobResponsibleForm,NewStaffPlatformForm,NewStaffCandidateForm
 from django.contrib.auth.decorators import login_required
-from .models import StaffRecruitmentRequest,StaffJobRequirement,StaffJobResponsibilities
+from .models import StaffRecruitmentRequest,StaffJobRequirement,StaffJobResponsibilities,StaffPlatform,StaffCandidate
 from rest_framework import viewsets
-from .serializers import StaffRecruitmentSerializer,StaffJobRequirementSerializer,StaffJobResponsibilitiesSerializer
+from .serializers import StaffRecruitmentSerializer,StaffJobRequirementSerializer,StaffJobResponsibilitiesSerializer,StaffPlatformSerializer,StaffCandidateSerializer
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
@@ -54,6 +54,20 @@ class StaffJobResponsibleViewSet(viewsets.ModelViewSet):
         """
         staff = get_object_or_404(StaffRecruitmentRequest,pk=self.request.query_params.get('pk', None))
         return StaffJobResponsibilities.objects.filter(staff_recruitment=staff)
+
+class StaffPlatformViewSet(viewsets.ModelViewSet):
+    serializer_class = StaffPlatformSerializer
+
+    def get_queryset(self):
+        staff = get_object_or_404(StaffRecruitmentRequest,pk=self.request.query_params.get('pk', None))
+        return StaffPlatform.objects.filter(staff_recruitment=staff)
+
+class StaffCandidateViewSet(viewsets.ModelViewSet):
+    serializer_class = StaffCandidateSerializer
+
+    def get_queryset(self):
+        staff = get_object_or_404(StaffRecruitmentRequest,pk=self.request.query_params.get('pk', None))
+        return StaffCandidate.objects.filter(staff_recruitment=staff)
 
 @login_required
 def staff_init(request):    
@@ -185,10 +199,44 @@ def staff_responsible_delete(request, pk):
     staff_responsible.delete()
     return JsonResponse({'message': 'Success'})
 
+def staff_platform_create(request,pk):  
+    form = NewStaffPlatformForm(request.POST)
+    if form.is_valid():
+        staff_platform = form.save(commit=False)
+        staff = get_object_or_404(StaffRecruitmentRequest, pk=pk)
+        staff_platform.staff_recruitment = staff
+        staff_platform.save()
+    else:
+        print(form.errors)
+    
+    return JsonResponse({'message': 'Success'})
+
+def staff_platform_delete(request, pk):
+    staff_platform =  get_object_or_404(StaffPlatform, pk=pk)
+    staff_platform.delete()
+    return JsonResponse({'message': 'Success'})
+
+def staff_candidate_create(request,pk):  
+    form = NewStaffCandidateForm(request.POST)
+    if form.is_valid():
+        staff_candidate = form.save(commit=False)
+        staff = get_object_or_404(StaffRecruitmentRequest, pk=pk)
+        staff_candidate.staff_recruitment = staff
+        staff_candidate.save()
+    else:
+        print(form.errors)
+    
+    return JsonResponse({'message': 'Success'})
+
+def staff_candidate_delete(request, pk):
+    staff_candidate =  get_object_or_404(StaffCandidate, pk=pk)
+    staff_candidate.delete()
+    return JsonResponse({'message': 'Success'})
+
 @login_required
 def staff_send_approval(request,pk):
     staff = get_object_or_404(StaffRecruitmentRequest, pk=pk)
-    approval_level = WorkflowApprovalRule.objects.filter(approval_level=0)[0]
+    approval_level = WorkflowApprovalRule.objects.filter(transaction_type=staff.transaction_type)[0]
     approval_item = get_object_or_404(ApprovalItem, pk=staff.approval.pk)       
     approval_item.approval_level = approval_level
     if approval_level.ceo_approve == True:
@@ -196,3 +244,13 @@ def staff_send_approval(request,pk):
     approval_item.save()
 
     return redirect('approval_detail', pk=approval_item.pk)
+
+
+@login_required
+def staff_after_approve(request, pk):
+    staff =  get_object_or_404(StaffRecruitmentRequest, pk=pk)
+    form = DetailStaffRecruimentForm(instance=staff)
+    form_platform = NewStaffPlatformForm()
+    form_candidate = NewStaffCandidateForm()
+
+    return render(request, 'human_resource/afterapprove.html', {'staff': staff, 'form': form,'form_platform':form_platform,'form_candidate':form_candidate})

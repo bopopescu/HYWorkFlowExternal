@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import StaffRecruitmentRequest,StaffJobRequirement,StaffJobResponsibilities
+from .models import StaffRecruitmentRequest,StaffJobRequirement,StaffJobResponsibilities,StaffPlatform,StaffCandidate
 
 class StaffRecruitmentSerializer(serializers.ModelSerializer):
     request_date = serializers.DateField(format='%d/%m/%Y')
@@ -42,3 +42,16 @@ class StaffJobResponsibilitiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = StaffJobResponsibilities
         fields = ['id','staff_recruitment' ,'responsible_description']
+
+class StaffPlatformSerializer(serializers.ModelSerializer):
+    platform_name = serializers.StringRelatedField(many=False)
+
+    class Meta:
+        model = StaffPlatform
+        fields = ['id','staff_recruitment', 'platform_name','success_platform']
+
+class StaffCandidateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = StaffCandidate
+        fields = ['id','staff_recruitment', 'candidate_name','date_of_join']

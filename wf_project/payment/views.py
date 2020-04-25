@@ -9,6 +9,7 @@ from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
 from administration.models import PaymentmodeMaintenance
 from approval.models import ApprovalItem
+from utility_dashboard.models import UtilityApprovalItem
 from django.contrib.auth.models import User
 import datetime
 from django.http import JsonResponse
@@ -107,18 +108,32 @@ def py_create_edit(request, pk):
             document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
             transaction_type = get_object_or_404(TransactiontypeMaintenance,pk = transaction_type.pk, document_type=document_type)
        
+            if py.transaction_type.is_utility == False:
+                approval_item = ApprovalItem()        
+                approval_item.document_number = py.document_number
+                approval_item.document_pk = py.pk
+                approval_item.document_type = document_type
+                approval_item.transaction_type = transaction_type
+                approval_item.notification = ""
+                approval_item.status = "D"
+                approval_item.save()
 
-            approval_item = ApprovalItem()        
-            approval_item.document_number = py.document_number
-            approval_item.document_pk = py.pk
-            approval_item.document_type = document_type
-            approval_item.transaction_type = transaction_type
-            approval_item.notification = ""
-            approval_item.status = "D"
-            approval_item.save()
+                py.approval = approval_item
+                py.save()
+            else:
+                print("1234")
+                utililty_approval_item = UtilityApprovalItem()        
+                utililty_approval_item.document_number = py.document_number
+                utililty_approval_item.document_pk = py.pk
+                utililty_approval_item.utility_account = py.utility_account
+                utililty_approval_item.document_type = document_type
+                utililty_approval_item.transaction_type = transaction_type
+                utililty_approval_item.notification = ""
+                utililty_approval_item.status = "D"
+                utililty_approval_item.save()
 
-            py.approval = approval_item
-            py.save()
+                py.utility_account_approval = utililty_approval_item
+                py.save()
 
             return redirect(py_update, py.pk)
         else:
@@ -133,21 +148,35 @@ def py_create_edit(request, pk):
 @login_required
 def py_send_approval(request,pk):
     py = get_object_or_404(PaymentRequest, pk=pk)
-    if py.transaction_type.transaction_type_name == "Petty Cash":
-        approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte=py.total_amount,transaction_type=py.transaction_type)[0]
-        approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)       
-        approval_item.approval_level = approval_level
+    if py.transaction_type.is_utility == True:
+        approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte=py.total_amount)[0]
+        utility_approval_item = get_object_or_404(UtilityApprovalItem, pk=py.utility_account_approval.pk)       
+        utility_approval_item.approval_level = approval_level
         if approval_level.ceo_approve == True:
-            approval_item.notification = "CEO will added by default"
+            utility_approval_item.notification = "CEO will added by default"
 
-        approval_item.save()
-    else:
-        approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte= py.total_amount)[0]
-        approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)       
-        approval_item.approval_level = approval_level
-        if approval_level.ceo_approve == True:
-            approval_item.notification = "CEO will added by default"
-        approval_item.save()
+        utility_approval_item.save()
+        print("12345")
+        return redirect('utility_approval_detail', pk=utility_approval_item.pk)
+    else: 
+        if py.transaction_type.transaction_type_name == "Petty Cash":
+            approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte=py.total_amount,transaction_type=py.transaction_type)[0]
+            approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)       
+            approval_item.approval_level = approval_level
+            if approval_level.ceo_approve == True:
+                approval_item.notification = "CEO will added by default"
+
+            approval_item.save()
+            return redirect('approval_detail', pk=approval_item.pk)
+
+        else:
+            approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte= py.total_amount)[0]
+            approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)       
+            approval_item.approval_level = approval_level
+            if approval_level.ceo_approve == True:
+                approval_item.notification = "CEO will added by default"
+            approval_item.save()
+            return redirect('approval_detail', pk=approval_item.pk)
 
     return redirect('approval_detail', pk=approval_item.pk)
 

@@ -1,0 +1,490 @@
+{% extends 'main_template.html' %} 
+{% block content %} 
+{% load widget_tweaks %} 
+{% load static %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Utilities Approval Selection</h1>
+    <div>
+        <a href="{% url 'utility_approval_update' utility_approval_item.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12 col-md-12 mb-4">
+        <div class="card shadow mb-4">
+            <a href="#GeneralCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="GeneralCard">
+                <h6 class="m-0 font-weight-bold text-primary">Approval Information</h6>
+            </a>
+            <div class="collapse show" id="GeneralCard">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-4 col-md-4 mb-4">
+                            <div class="form-group">
+                                <div class="form-row">
+                                    <div class="col col-md-3">
+                                        {{form.document_type.label_tag}}
+                                    </div>
+                                    <div class="col col-md-8">
+                                        {% render_field form.document_type|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-md-4 mb-4">
+                            <div class="form-group">
+                                <div class="form-row">
+                                    <div class="col col-md-3">
+                                        {{form.document_number.label_tag}}
+                                    </div>
+                                    <div class="col col-md-8">
+                                        {% render_field form.document_number|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-md-4 mb-4">
+                            <div class="form-group">
+                                <div class="form-row">
+                                    <div class="col col-md-3">
+                                        {{form.transaction_type.label_tag}}
+                                    </div>
+                                    <div class="col col-md-8">
+                                        {% render_field form.transaction_type|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-2">
+                                {{form.approval_level.label_tag}}
+                            </div>
+                            <div class="col col-md-10">
+                                {% render_field form.approval_level|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col col-md-2">
+                                {{form.notification.label_tag}}
+                            </div>
+                            <div class="col col-md-10">
+                                {% render_field form.notification|append_attr:"disabled" class="col-md-12 form-control form-control-use" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card shadow mb-4">
+    <a href="#ApproverCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="ApproverCard">
+        <h6 class="m-0 font-weight-bold text-primary">Approvers</h6>
+    </a>
+    <div class="collapse show" id="ApproverCard">
+        <div class="card-body">
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    {% for group in approval_rule_group %}
+                        <a class="nav-item nav-link {% if first_tab.approval_group.id == group.approval_group.id %} active {% endif %}" id="nav-group{{group.approval_group.id}}-tab" data-toggle="tab" href="#nav-group{{group.approval_group.id}}" role="tab" aria-controls="nav-group{{group.approval_group.id}}" aria-selected="true">{{group.approval_group.approval_group_name}}</a>
+                    {% endfor %}
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                {% for group in approval_rule_group %}
+                    <div class="tab-pane fade {% if first_tab.approval_group.id == group.approval_group.id %} show active {% endif %}" id="nav-group{{group.approval_group.id}}" role="tabpanel" aria-labelledby="nav-group{{group.approval_group.id}}-tab">
+                        <br/>
+                        <div class="d-sm-flex align-items-right justify-content-between mb-4">
+                            <h1 class="h3 mb-0 text-gray-800"></h1>
+                            <a href="#" data-toggle="modal" data-target="#addApprover{{group.approval_group.id}}Modal" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="approvers{{group.approval_group.id}}" class="table table-striped table-bordered" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th data-data="id"></th>
+                                        <th data-data="stage">Stage</th>
+                                        <th data-data="user">Approver</th>
+                                        <th data-data="user_name">Name</th>
+                                        <th data-data="user_group">Group</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <script>
+                            $(document).ready(function() {
+                                var approver{{group.approval_group.id}}table = $('#approvers{{group.approval_group.id}}').DataTable({
+                                    "ajax": "{% url 'utilityapproverdata-list' %}?format=datatables&pk={{utility_approval_item.pk}}&group={{group.approval_group.user_group.id}}",
+                                    "dom": "<'row'<'col-sm-12 small'tr>>",
+                                    "columnDefs": [{
+                                "searchable": false,
+                                "orderable": false,
+                                "targets": 0,
+                                "defaultContent": "<i>Not set</i>"
+                            }, {
+                                        "targets": -1,
+                                        "data": null,
+                                        "render": function(data, type, row) {
+                                            return '<a href="#" data-toggle="modal" data-target="#deleteApprover{{group.approval_group.id}}Modal" class="btn btn-danger btn-circle btn-sm" onclick="sendDeleteApprover{{group.approval_group.id}}(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                        }
+                                    }, {
+                                        "targets": 4,
+                                        "defaultContent": "<i>Not set</i>"
+                                    }, {
+                                        "visible": false,
+                                        "targets": [1]
+                                    }]
+                                });
+
+                                approver{{group.approval_group.id}}table.on('order.dt search.dt', function() {
+                                    approver{{group.approval_group.id}}table.column(0, {
+                                        search: 'applied',
+                                        order: 'applied'
+                                    }).nodes().each(function(cell, i) {
+                                        cell.innerHTML = i + 1;
+                                    });
+                                }).draw();
+                            });
+                        </script>
+                        <!-- Delete Approver Modal-->
+                        <div class="modal fade" id="deleteApprover{{group.approval_group.id}}Modal" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <form action="{% url 'utility_approver_delete' %}" method="POST" id="deleteApprover{{group.approval_group.id}}">
+                                    <div class="modal-content">
+                                        {% csrf_token %}
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+                                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Select "Delete" below if you are ready to delete.
+                                            <input type="hidden" name="hiddenDeleteGroupId" id="hiddenDeleteGroupId" value="{{group.approval_group.id}}"/>
+                                            <input type="hidden" name="hiddenValueApprover{{group.approval_group.id}}" id="hiddenValueApprover{{group.approval_group.id}}" value="" />
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+                                            <button class="btn btn-danger" id="deleteApprover{{group.approval_group.id}}Button">Delete</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            function sendDeleteApprover{{group.approval_group.id}}(param) {
+                                var deleteInput = document.getElementById("hiddenValueApprover{{group.approval_group.id}}");
+                                deleteInput.value = param;
+                            }
+                        </script>
+                        <script>
+                            $("#deleteApprover{{group.approval_group.id}}").submit(function(e){
+                                e.preventDefault(); //prevent default action 
+                                proceed = true;
+                                $('#deleteApprover{{group.approval_group.id}}Modal').modal('hide');
+                                    
+                                var post_url = $(this).attr("action"); //get form action url
+                                var request_method = $(this).attr("method"); //get form GET/POST method
+                                var form_data = new FormData(this); //Creates new FormData object
+                                
+                                //if everything's ok, continue with Ajax form submit
+                                if(proceed){ 
+                                    $.ajax({ //ajax form submit
+                                        url : post_url,
+                                        type: request_method,
+                                        data : form_data,
+                                        dataType : "json",
+                                        contentType: false,
+                                        cache: false,
+                                        processData:false
+                                    }).done(function(res){ 
+                                        if (res.message == 'Success'){
+                                            var table = $('#approvers{{group.approval_group.id}}').DataTable(); 
+                                            table.ajax.reload();
+                                        }            
+                                    });
+                                }
+                            });
+                        </script>
+                        <!-- Add ApproverModal-->
+                        <div class="modal fade" id="addApprover{{group.approval_group.id}}Modal" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <form action="{% url 'utility_approver_create' utility_approval_item.pk %}" method="POST" id="addApprover{{group.approval_group.id}}">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Add Approver - {{group.approval_group.user_group.group_name}}</h5>
+                                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <div class="form-row">
+                                                    <input type="hidden" name="hiddenGroupId" id="hiddenGroupId" value="{{group.approval_group.id}}"/>
+                                                    <input type="hidden" name="hiddenGroupName" id="hiddenGroupName" value="{{group.approval_group.user_group.group_name}}"/>
+                                                    {% if first_tab.approval_group.user_group.group_name == "Group A"%}
+                                                        <div class="col col-md-3">
+                                                            {{form_approver_a.user.label_tag}}
+                                                        </div>
+                                                        <div class="col col-md-8">
+                                                            {% render_field form_approver_a.user class="form-control form-control-use" %}
+                                                        </div>
+                                                    {% else %}
+                                                        {% if group.approval_group.user_group.group_name == "Group A"%}
+                                                            <div class="col col-md-3">
+                                                                {{form_approver_a.user.label_tag}}
+                                                            </div>
+                                                            <div class="col col-md-8">
+                                                                {% render_field form_approver_a.user class="form-control form-control-use" %}
+                                                            </div>
+                                                        {% else %}
+                                                            <div class="col col-md-3">
+                                                                {{form_approver_b.user.label_tag}}
+                                                            </div>
+                                                            <div class="col col-md-8">
+                                                                {% render_field form_approver_b.user class="form-control form-control-use" %}
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-success" id="addApproverButton">Submit</a>
+                                                <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            $("#addApprover{{group.approval_group.id}}").submit(function(e){
+                                e.preventDefault(); //prevent default action 
+                                proceed = true;
+                                    
+                                var post_url = $(this).attr("action"); //get form action url
+                                var request_method = $(this).attr("method"); //get form GET/POST method
+                                var form_data = new FormData(this); //Creates new FormData object
+                            
+                                $('#addApprover{{group.approval_group.id}}Modal').modal('hide');
+                                $("#addApprover{{group.approval_group.id}} #id_user").prop('selectedIndex',0);
+                                
+                                //if everything's ok, continue with Ajax form submit
+                                if(proceed){ 
+                                    $.ajax({ //ajax form submit
+                                        url : post_url,
+                                        type: request_method,
+                                        data : form_data,
+                                        dataType : "json",
+                                        contentType: false,
+                                        cache: false,
+                                        processData:false
+                                    }).done(function(res){ 
+                                        if (res.message == 'Success'){
+                                            var table = $('#approvers{{group.approval_group.id}}').DataTable(); 
+                                            table.ajax.reload();
+                                        } else {
+                                            alert(res.message);
+                                        }
+                                    });
+                                }
+                            });
+                        </script>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card shadow mb-4">
+    <a href="#CCCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="CCCard">
+        <h6 class="m-0 font-weight-bold text-primary">CC</h6>
+    </a>
+    <div class="collapse show" id="CCCard">
+        <div class="card-body">
+            <div class="d-sm-flex align-items-right justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800"></h1>
+                <a href="#" data-toggle="modal" data-target="#addCCModal" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
+            </div>
+            <div class="table-responsive">
+                <table id="ccs" class="table table-striped table-bordered" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th data-data="id"></th>
+                            <th data-data="user">Name</th>
+                            <th data-data="user_email">E-Mail</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <script>
+                $(document).ready(function() {
+                    var cctable = $('#ccs').DataTable({
+                        "ajax": "{% url 'utilityccdata-list' %}?format=datatables&pk={{utility_approval_item.pk}}",
+                        "dom": "<'row'<'col-sm-12 small'tr>>" +
+                            "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                        "columnDefs": [{
+                                "searchable": false,
+                                "orderable": false,
+                                "targets": 0,
+                                "defaultContent": "<i>Not set</i>"
+                            }, {
+                            "targets": -1,
+                            "data": null,
+                            "render": function(data, type, row) {
+                                return '<a href="#" data-toggle="modal" data-target="#deleteCCModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDeleteCC(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                            }
+                        }, {
+                            "targets": 3,
+                            "defaultContent": "<i>Not set</i>"
+                        }, {
+                            "visible": false,
+                            "targets": [1]
+                        }]
+                    });
+
+                    cctable.on('order.dt search.dt', function() {
+                        cctable.column(0, {
+                                search: 'applied',
+                                order: 'applied'
+                            }).nodes().each(function(cell, i) {
+                                cell.innerHTML = i + 1;
+                            });
+                        }).draw();
+                });
+            </script>
+            <!-- Delete CC Modal-->
+            <div class="modal fade" id="deleteCCModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <form action="{% url 'utility_cc_delete' %}" method="POST" id="deleteCC">
+                    <div class="modal-dialog" role="document">
+                        {% csrf_token %}
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Select "Delete" below if you are ready to delete.
+                                <input type="hidden" name="hiddenValueCC" id="hiddenValueCC" value="" />
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+                                <button class="btn btn-danger" id="deleteCCButton">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <script type="text/javascript">
+                function sendDeleteCC(param) {
+                    var deleteInput = document.getElementById("hiddenValueCC");
+                    deleteInput.value = param;
+                }
+            </script>
+            <script>
+                $("#deleteCC").submit(function(e){
+                    e.preventDefault(); //prevent default action 
+                    proceed = true;
+                    $('#deleteCCModal').modal('hide');
+                        
+                    var post_url = $(this).attr("action"); //get form action url
+                    var request_method = $(this).attr("method"); //get form GET/POST method
+                    var form_data = new FormData(this); //Creates new FormData object
+                    
+                    //if everything's ok, continue with Ajax form submit
+                    if(proceed){ 
+                        $.ajax({ //ajax form submit
+                            url : post_url,
+                            type: request_method,
+                            data : form_data,
+                            dataType : "json",
+                            contentType: false,
+                            cache: false,
+                            processData:false
+                        }).done(function(res){ 
+                            if (res.message == 'Success'){
+                                var table = $('#ccs').DataTable(); 
+                                table.ajax.reload();
+                            }            
+                        });
+                    }
+                });
+            </script>
+            <!-- Add CC Modal-->
+            <div class="modal fade" id="addCCModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form action="{% url 'utility_cc_create' utility_approval_item.pk %}" id="addCC" method="POST">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Add CC</h5>
+                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="col col-md-3">
+                                            {{form_cc.user.label_tag}}
+                                        </div>
+                                        <div class="col col-md-8">
+                                            {% render_field form_cc.user class="form-control form-control-use" %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-success" id="addCCButton">Submit</a>
+                                    <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <script>
+            $("#addCC").submit(function(e){
+                e.preventDefault(); //prevent default action 
+                proceed = true;
+                    
+                var post_url = $(this).attr("action"); //get form action url
+                var request_method = $(this).attr("method"); //get form GET/POST method
+                var form_data = new FormData(this); //Creates new FormData object
+
+                $('#addCCModal').modal('hide');
+                $("#addCC #id_user").prop('selectedIndex',0);
+                
+                //if everything's ok, continue with Ajax form submit
+                if(proceed){ 
+                    $.ajax({ //ajax form submit
+                        url : post_url,
+                        type: request_method,
+                        data : form_data,
+                        dataType : "json",
+                        contentType: false,
+                        cache: false,
+                        processData:false
+                    }).done(function(res){ 
+                        if (res.message == 'Success'){
+                            var table = $('#ccs').DataTable(); 
+                            table.ajax.reload();
+                        }
+                    });
+                }
+            });
+            </script>
+        </div>
+    </div>
+</div>
+{% endblock content %}

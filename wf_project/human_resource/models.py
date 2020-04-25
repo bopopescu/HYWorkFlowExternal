@@ -7,6 +7,7 @@ from administration.models import StaffemploymentTypeMaintenance
 from administration.models import StaffPositionGradeMaintenance
 from administration.models import DocumentTypeMaintenance
 from administration.models import StatusMaintenance
+from administration.models import HRPlatformMaintenance 
 from django.contrib.auth.models import User
 from approval.models import ApprovalItem
 import datetime
@@ -60,4 +61,20 @@ class StaffJobResponsibilities(models.Model):
 
     def __str__(self):
         return self.responsible_description
+
+class StaffPlatform(models.Model):
+    staff_recruitment = models.ForeignKey('StaffRecruitmentRequest',null=True, blank=True, on_delete=models.CASCADE)
+    platform_name = models.ForeignKey(HRPlatformMaintenance,null=True, blank=True, on_delete=models.CASCADE)
+    success_platform = models.BooleanField(max_length=250,verbose_name="Is Success Platform?")
+
+    def __str__(self):
+        return self.platform_name
+
+class StaffCandidate(models.Model):
+    staff_recruitment = models.ForeignKey('StaffRecruitmentRequest',null=True, blank=True, on_delete=models.CASCADE)
+    candidate_name = models.CharField(max_length=250,verbose_name="Candidate Name")
+    date_of_join = models.CharField(max_length=250,verbose_name="Date Of Join")
+
+    def __str__(self):
+        return self.candidate
 

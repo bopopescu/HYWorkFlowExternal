@@ -13,6 +13,7 @@ from purchasing.models import PurchaseOrder
 from payment.models import PaymentRequest
 from human_resource.models import StaffRecruitmentRequest
 from staff_overtime.models import StaffOT
+from drawer_reimbursement.models import ReimbursementRequest
 from django.contrib.auth.models import User, Group
 from django.http import JsonResponse
 
@@ -194,6 +195,13 @@ def approval_update(request, pk):
         staff_ot.status = status
         staff_ot.save()
         return redirect('staff_ot_list',staff_ot.transaction_type)
+
+    elif document_type.document_type_code == "403":
+        reimbursement_request = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
+        status = StatusMaintenance.objects.filter(document_type=document_type, status_code='300')[0]
+        reimbursement_request.status = status
+        reimbursement_request.save()
+        return redirect('reimbursement_request_list')
     
     return redirect(approval_list)
 
@@ -246,6 +254,11 @@ def approve(request):
             status = StatusMaintenance.objects.filter(document_type=document_type, status_code='400')[0]
             staff_ot.status = status          
             staff_ot.save()
+        elif document_type.document_type_code == "403":
+            reimbursement_request = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
+            status = StatusMaintenance.objects.filter(document_type=document_type, status_code='400')[0]
+            reimbursement_request.status = status
+            reimbursement_request.save()
     else:
         next_approver = get_object_or_404(ApprovalItemApprover, stage=approver_item.stage + 1, approval_item=request.POST['hiddenValueApprove'])
         next_approver.status = "P"
@@ -415,5 +428,10 @@ def reject(request):
         status = StatusMaintenance.objects.filter(document_type=document_type, status_code='500')[0]
         staff_ot.status = status
         staff_ot.save()
+    elif document_type.document_type_code == "403":
+        reimbursement_request = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
+        status = StatusMaintenance.objects.filter(document_type=document_type, status_code='500')[0]
+        reimbursement_request.status = status
+        reimbursement_request.save()
 
     return JsonResponse({'message': 'Success'})

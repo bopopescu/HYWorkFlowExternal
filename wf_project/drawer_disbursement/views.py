@@ -9,9 +9,11 @@ from django.contrib.auth.hashers import check_password
 from administration.models import TransactiontypeMaintenance
 from administration.models import DocumentTypeMaintenance
 from administration.models import StatusMaintenance
+from drawer_reimbursement.models import DrawerReimbursement
 from .models import DrawerDisbursement
 from payment.models import PaymentRequest
 from django.http import JsonResponse
+import decimal
 
 # class TeamStaffViewSet(viewsets.ModelViewSet):
 #     queryset = StaffRecruitmentRequest.objects.all().order_by('-id')    
@@ -68,32 +70,42 @@ def drawer_disbursement_disbursed(request,pk,drawerpk,userid,password):
     uservalidation = False
     process = False
     if user.count() == 0:
-        return JsonResponse({'message': 'User Login ID or Password invalid','valid':False})
+        return JsonResponse({'message': 'User Login ID or Password invalid','valid':False,'validbalance':True})
     else:
         user = user.first()
         if payment.submit_by == user:
             if user.check_password(password) == True:
                 process = True
             else:
-                return JsonResponse({'message': 'User Login ID or Password invalid','valid':False})
+                return JsonResponse({'message': 'User Login ID or Password invalid','valid':False,'validbalance':True})
         else:
-            return JsonResponse({'message': 'User ID is not matched the user submit this petty cash','valid':False})
-        
+            return JsonResponse({'message': 'User ID is not matched the user submit this petty cash','valid':False,'validbalance':True})
+    
+    total_drawer_amount = drawer_amount(drawerpk)
+    drawer_amount_after = total_drawer_amount - payment.total_amount
+    drawer_amount_lack = payment.total_amount -total_drawer_amount 
+    print(total_drawer_amount)
+    print(drawer_amount_after)
 
-    if process == True:
-        payment.status = document_status_closed
+    if drawer_amount_after < 0:
+        return JsonResponse({'message': 'This drawer balance is not enough','valid':False,'validbalance':False,'amount':drawer_amount_lack})
+    
+    else:
+        if process == True:
 
-        document_type_disburse = DocumentTypeMaintenance.objects.get(document_type_code='402')
-        document_status_disburse = StatusMaintenance.objects.get(document_type=document_type_disburse,status_code='700')
+            payment.status = document_status_closed
 
-        disbursedrecord = DrawerDisbursement()
-        disbursedrecord.payment = payment
-        disbursedrecord.total_disbursed = payment.total_amount
-        disbursedrecord.status = document_status_disburse
-        disbursedrecord.drawer = drawer
-        disbursedrecord.save()
-        payment.save()
-        return JsonResponse({'message': 'Success','valid' : True})
+            document_type_disburse = DocumentTypeMaintenance.objects.get(document_type_code='402')
+            document_status_disburse = StatusMaintenance.objects.get(document_type=document_type_disburse,status_code='700')
+
+            disbursedrecord = DrawerDisbursement()
+            disbursedrecord.payment = payment
+            disbursedrecord.total_disbursed = payment.total_amount
+            disbursedrecord.status = document_status_disburse
+            disbursedrecord.drawer = drawer
+            disbursedrecord.save()
+            payment.save()
+            return JsonResponse({'message': 'Success','valid' : True,'validbalance':True})
 
 @login_required
 def drawer_disbursement_cancel(request,pk,drawerpk):
@@ -116,3 +128,27 @@ def drawer_disbursement_cancel(request,pk,drawerpk):
     payment.save()
 
     return JsonResponse({'message': 'Success'})
+
+def drawer_amount(drawerpk):
+    drawer = DrawerMaintenance.objects.get(pk=drawerpk)
+    total_disbursed_amount = decimal.Decimal(0.00)
+    total_reimbursed_amount = decimal.Decimal(0.00)
+    total_drawer_amount = decimal.Decimal(0.00)
+
+    #Count for Disbursed
+    drawer_disbursements = DrawerDisbursement.objects.filter(drawer=drawer)
+    for drawer_disbursed in drawer_disbursements:
+        total_disbursed = drawer_disbursed.total_disbursed
+        total_disbursed_amount = total_disbursed_amount + total_disbursed
+
+    drawer_reimbursements = DrawerReimbursement.objects.filter(drawer=drawer)
+    for drawer_reimburse in drawer_reimbursements:
+        total_reimbursed = drawer_reimburse.total_reimburse
+        total_reimbursed_amount = total_reimbursed_amount + total_reimbursed
+
+    total_drawer_amount = total_reimbursed_amount - total_disbursed_amount
+
+    return total_drawer_amount
+
+
+    

@@ -10,6 +10,7 @@ from administration.models import PaymentmodeMaintenance
 from administration.models import DocumentTypeMaintenance
 from administration.models import StatusMaintenance
 from administration.models import UtiliyAccountTypeMaintenance 
+from utility_dashboard.models import UtilityApprovalItem
 from approval.models import ApprovalItem
 from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -34,7 +35,10 @@ class PaymentRequest(models.Model):
     transaction_type = models.ForeignKey(TransactiontypeMaintenance,verbose_name="Trans. Type", on_delete=models.CASCADE,blank=True, null=True)
     utility_account = models.ForeignKey(UtiliyAccountTypeMaintenance,verbose_name="Utility Account", on_delete=models.CASCADE,blank=True, null=True)
     approval = models.ForeignKey(ApprovalItem, verbose_name="Approval", on_delete=models.CASCADE, blank=True, null=True)
+    utility_account_approval = models.ForeignKey(UtilityApprovalItem,verbose_name="Utility Approval", on_delete=models.CASCADE, blank=True, null=True)
     payment_mode = models.ForeignKey(PaymentmodeMaintenance, verbose_name="Payment Mode", on_delete=models.CASCADE,blank=True, null=True)
+    document_pk = models.IntegerField(blank=True,null=True)
+    document_type= models.ForeignKey(DocumentTypeMaintenance,on_delete=models.CASCADE,blank=True, null=True)
     status = models.ForeignKey(StatusMaintenance,default=default_status,verbose_name="Status", on_delete=models.CASCADE,blank=True, null=True)
     submit_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     submit_date = models.DateField(null=True, blank=True,default=datetime.date.today)

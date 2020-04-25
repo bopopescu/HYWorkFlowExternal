@@ -150,7 +150,15 @@
                   {{form.status.label_tag}}
                 </div>
                 <div class="col col-md-8">
-                  {% render_field form.status|append_attr:"readonly" class="col-md-12 form-control form-control-use" %}
+                  {% if staff.status.status_code == 100 %}
+                  <p class="text-info"><strong>{{staff.status}}</strong></p>
+                  {% elif staff.status.status_code == 300  %}
+                  <p class="text-warning"><strong>{{staff.status}}</strong></p>
+                  {% elif staff.status.status_code == 400 %}
+                  <p class="text-success"><strong>{{staff.status}}</strong></p>
+                  {% else %}
+                  <p class="text-danger"><strong>{{staff.status}}</strong></p>
+                  {% endif %}
                 </div>
               </div>
             </div>

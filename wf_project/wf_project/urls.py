@@ -23,7 +23,9 @@ urlpatterns = [
     path('', IndexView.as_view(), name='index'),
     path('accounts/', include('django.contrib.auth.urls')),         
     path('admin/', admin.site.urls, name='admin'), 
-    path('approval/', include('approval.urls')),   
+    path('dashboard/', include('dashboard.urls')),  
+    path('approval/', include('approval.urls')),  
+    path('utilityapproval/', include('utility_dashboard.urls')), 
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('memo/', include('memo.urls')),
     path('payment/', include('payment.urls')),
@@ -34,4 +36,5 @@ urlpatterns = [
     path('report_builder/', include('report_builder.urls')),
     path('drawer_disbursement/', include('drawer_disbursement.urls')),
     path('fixed_asset/', include('fixed_asset.urls')),
+    path('audit_trail/', include('audit_trail.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

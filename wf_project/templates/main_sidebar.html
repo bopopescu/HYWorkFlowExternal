@@ -33,6 +33,12 @@
             <span>Action Workflow</span>
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'account_selection_list' %}">
+            <i class="fas fa-inbox"></i>
+            <span>Utility Dashboard</span>
+          </a>
+        </li>
         
         <!-- Divider -->
         <hr class="sidebar-divider">
@@ -123,21 +129,6 @@
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDrawer" aria-expanded="true" aria-controls="collapseDrawer">
-                <i class="fas fa-list-alt"></i>
-              <span>Drawer</span>
-            </a>
-            <div id="collapseDrawer" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-              <div class="bg-white py-2 collapse-inner rounded">
-                <!-- <a class="collapse-item" href="#">Advance Refund</a>
-                <a class="collapse-item" href="#">Drawer Reimbursement</a> -->
-                <a class="collapse-item" href="{% url 'drawer_selection' %}">Drawer Disbursement</a>
-                <!-- <a class="collapse-item" href="#">Reimbursement Request</a>                 -->
-              </div>
-            </div>
-          </li>
-
-          <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDrawerReimbursed" aria-expanded="true" aria-controls="collapseDrawer">
                 <i class="fas fa-list-alt"></i>
               <span>Drawer Reimbursement</span>
@@ -146,6 +137,20 @@
               <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Drawer Reimbursement:</h6>
                   <a class="collapse-item" href="{% url 'reimbursement_request_list' %}">Reimbursement Request</a>
+              </div>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDrawer" aria-expanded="true" aria-controls="collapseDrawer">
+                <i class="fas fa-list-alt"></i>
+              <span>Drawer</span>
+            </a>
+            <div id="collapseDrawer" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+              <div class="bg-white py-2 collapse-inner rounded">
+                <!-- <a class="collapse-item" href="#">Advance Refund</a>-->
+                <a class="collapse-item" href="{% url 'reimbursedrawer_selection' %}">Drawer Reimbursement</a>
+                <a class="collapse-item" href="{% url 'drawer_selection' %}">Drawer Disbursement</a>
+                <a class="collapse-item" href="{% url 'audit_trail_drawer_selection' %}">Audit Trail</a>
               </div>
             </div>
           </li>

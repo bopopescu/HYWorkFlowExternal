@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import NewReimbursementForm,UpdateReimbursementForm,DetailReimbursementForm
 from django.contrib.auth.decorators import login_required
-from .models import ReimbursementRequest
+from .models import ReimbursementRequest,DrawerReimbursement
 from rest_framework import viewsets
-from .serializers import ReimbursementRequestSerializer
+from .serializers import ReimbursementRequestSerializer,DrawerSelectionSerializer,DrawerReimbursedSerializer,ApprovedReimburserdRequest
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
 from administration.models import StatusMaintenance
 from administration.models import EmployeeMaintenance
 from administration.models import DrawerMaintenance
+from administration.models import DrawerUserMaintenance
 from approval.models import ApprovalItem
 from django.contrib.auth.models import User
 import datetime
@@ -24,7 +25,7 @@ class MyReimbursementRequestViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         # transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
-        return ReimbursementRequest.objects.filter(submit_by=self.request.user.id)
+        return ReimbursementRequest.objects.filter(submit_by=self.request.user.id).order_by("-id")
 
 class TeamReimbursementRequestViewSet(viewsets.ModelViewSet):
 
@@ -37,10 +38,52 @@ class TeamReimbursementRequestViewSet(viewsets.ModelViewSet):
         users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
         return ReimbursementRequest.objects.filter(submit_by__in=users)
 
+class DrawerViewSet(viewsets.ModelViewSet):
+    queryset = DrawerMaintenance.objects.all().order_by('-id')
+    serializer_class = DrawerSelectionSerializer
+
+    def get_queryset(self):
+        drawer_user = DrawerUserMaintenance.objects.filter(user=self.request.user).values_list('drawer', flat=True)
+        return DrawerMaintenance.objects.filter(id__in=drawer_user,drawer_status='O').order_by('-id')
+
+class ReimbursementListViewSet(viewsets.ModelViewSet):
+    serializer_class = ApprovedReimburserdRequest
+    
+    def get_queryset(self):
+        document_type = DocumentTypeMaintenance.objects.get(document_type_code='403')
+        document_status_approve = StatusMaintenance.objects.get(document_type=document_type,status_code='400')
+        drawer = get_object_or_404(DrawerMaintenance, pk=self.request.query_params.get('drawerpk', None))
+        return ReimbursementRequest.objects.filter(status=document_status_approve,drawer=drawer)
+
+
+class ReimbursedViewSet(viewsets.ModelViewSet):
+    serializer_class = DrawerReimbursedSerializer
+
+    def get_queryset(self):
+        drawer = get_object_or_404(DrawerMaintenance, pk=self.request.query_params.get('drawerpk', None))
+        document_type = DocumentTypeMaintenance.objects.get(document_type_code='401')
+        document_status_reimburse = StatusMaintenance.objects.get(document_type=document_type,status_code='700')
+        return DrawerReimbursement.objects.filter(status=document_status_reimburse,drawer=drawer)
+
+class CancelledViewSet(viewsets.ModelViewSet):
+    serializer_class = DrawerReimbursedSerializer
+    
+    def get_queryset(self):
+        drawer = get_object_or_404(DrawerMaintenance, pk=self.request.query_params.get('drawerpk', None))
+        document_type = DocumentTypeMaintenance.objects.get(document_type_code='401')
+        document_status_reimburse = StatusMaintenance.objects.get(document_type=document_type,status_code='999')
+        return DrawerReimbursement.objects.filter(status=document_status_reimburse,drawer=drawer)
+
 @login_required
 def reimbursement_request_init(request):    
     # transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
     reimburement_request = ReimbursementRequest.objects.create(submit_by=request.user)
+    return redirect(reimbursement_request_create, reimburement_request.pk)
+
+@login_required
+def reimbursement_request_init_amount(request,amount):    
+    reimburse_request = get_object_or_404(TransactiontypeMaintenance,transaction_type_name="Reimbursement Request")
+    reimburement_request = ReimbursementRequest.objects.create(submit_by=request.user,request_amount=amount,transaction_type=reimburse_request)
     return redirect(reimbursement_request_create, reimburement_request.pk)
 
 @login_required
@@ -130,4 +173,56 @@ def reimbursement_request_update(request, pk):
 def reimbursement_request_delete(request):
     reimburement_request =  get_object_or_404(ReimbursementRequest, pk=request.POST['hiddenValue'])
     reimburement_request.delete()
+    return JsonResponse({'message': 'Success'})
+
+@login_required
+def drawer_list(request):
+    return render(request, 'drawer_reimbursement/reimbursement_drawer_selection.html')
+
+@login_required
+def drawer_reimbursement_list(request,drawerpk):
+    drawer = DrawerMaintenance.objects.get(pk=drawerpk)
+    return render(request, 'drawer_reimbursement/reimbursement_list.html', {'drawer': drawer})
+
+
+@login_required
+def drawer_reimbursement_reimbursed(request,pk,drawerpk):
+    document_type = DocumentTypeMaintenance.objects.get(document_type_code='403')
+    document_status_closed = StatusMaintenance.objects.get(document_type=document_type,status_code='600')
+    drawer = DrawerMaintenance.objects.get(pk=drawerpk)
+    reimbursed_request = ReimbursementRequest.objects.get(pk=pk)
+
+    reimbursed_request.status = document_status_closed
+
+    document_type_reimbursed = DocumentTypeMaintenance.objects.get(document_type_code='401')
+    document_status_reimbursed = StatusMaintenance.objects.get(document_type=document_type_reimbursed,status_code='700')
+
+    reimbursedrecord = DrawerReimbursement()
+    reimbursedrecord.reimbursement_request = reimbursed_request
+    reimbursedrecord.total_reimburse = reimbursed_request.request_amount
+    reimbursedrecord.status = document_status_reimbursed
+    reimbursedrecord.drawer = drawer
+    reimbursedrecord.save()
+    reimbursed_request.save()
+    return JsonResponse({'message': 'Success'})
+
+@login_required
+def drawer_reimbursement_cancel(request,pk,drawerpk):
+    
+    document_type = DocumentTypeMaintenance.objects.get(document_type_code='403')
+    document_status_closed = StatusMaintenance.objects.get(document_type=document_type,status_code='600')
+    drawer = DrawerMaintenance.objects.get(pk=drawerpk)
+    reimbursed_request = ReimbursementRequest.objects.get(pk=pk)
+
+    reimbursed_request.status = document_status_closed
+
+    document_type_reimbursed = DocumentTypeMaintenance.objects.get(document_type_code='401')
+    document_status_cancel = StatusMaintenance.objects.get(document_type=document_type_reimbursed,status_code='999')
+
+    reimbursedrecord = DrawerReimbursement()
+    reimbursedrecord.reimbursement_request = reimbursed_request
+    reimbursedrecord.total_reimburse = reimbursed_request.request_amount
+    reimbursedrecord.status = document_status_cancel
+    reimbursedrecord.drawer = drawer
+    reimbursedrecord.save()
     return JsonResponse({'message': 'Success'})

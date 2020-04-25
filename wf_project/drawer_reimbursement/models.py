@@ -33,7 +33,18 @@ class ReimbursementRequest(models.Model):
     submit_date = models.DateField(default=datetime.date.today)
     submit_by = models.ForeignKey(User,blank=True,null=True,on_delete=models.CASCADE)
     approval = models.ForeignKey(ApprovalItem, verbose_name="Approval", on_delete=models.CASCADE, blank=True, null=True)
-    description = models.CharField(max_length=300)
+    description = models.CharField(max_length=301)
     transaction_type = models.ForeignKey(TransactiontypeMaintenance,blank=True,null=True,on_delete=models.CASCADE)
     document_number = models.CharField(max_length=100,verbose_name="Document No",blank=True, null=True)
     status = models.ForeignKey(StatusMaintenance,verbose_name="Status",blank=True,null=True,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.description
+
+class DrawerReimbursement(models.Model):
+    reimbursement_request = models.ForeignKey(ReimbursementRequest, verbose_name="Reimbursement Request", on_delete=models.CASCADE,  blank=True, null=True)
+    status = models.ForeignKey(StatusMaintenance,on_delete=models.CASCADE)
+    total_reimburse = models.DecimalField(max_digits=10, decimal_places=2)
+    reimbursed_by = models.ForeignKey(User, on_delete=models.CASCADE,  blank=True, null=True)
+    reimbursed_date = models.DateField(auto_now_add=True)
+    drawer = models.ForeignKey(DrawerMaintenance, verbose_name="Drawer Maintenance", on_delete=models.CASCADE,  blank=True, null=True)

@@ -48,6 +48,9 @@ from .models import StaffPositionGradeMaintenance
 from .models import UtiliyAccountTypeMaintenance
 from .models import OTRateMaintenance
 from .models import HolidayEventMaintenance
+from .models import HRPlatformMaintenance
+from .models import UtiliyGroupMaintenance
+
 
 admin.site.register(WorkflowPattern)
 admin.site.register(WorkflowInstance)
@@ -949,12 +952,49 @@ class UOMMaintenanceScreen(admin.ModelAdmin):
 
 admin.site.register(UOMMaintenance,UOMMaintenanceScreen)
 
-class UtiliyAccountTypeMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('account_short_name','account_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('account_short_name','account_name',)
+class UtilityAccountInline(admin.StackedInline):
+    model = UtiliyAccountTypeMaintenance
     fieldsets = [
-        (None, {'fields': ['account_short_name','account_name','is_active']}),
+        (None, {'fields': ['account_short_name','account_name','account_no','is_active']}),
+    ]
+    exclude = ['created_by','modified_by']
+    extra = 0
+    def save_model(self, request, obj, form, change):
+        self.request = request
+        if not obj.pk:
+            #Only set added_by during the first save.
+            obj.created_by = self.request.user
+        else:
+           obj.modified_by = self.request.user
+        return super().save_model(request, obj, form, change)
+
+class UtilityGroupTypeMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('account_group_name','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('account_group_name',)
+    fieldsets = [
+        (None, {'fields': ['account_group_name','is_active']}),
+    ]
+    exclude = ['created_by','modified_by']
+    inlines = [UtilityAccountInline]
+
+    def save_model(self, request, obj, form, change):
+        self.request = request
+        if not obj.pk:
+            # Only set added_by during the first save.
+            obj.created_by = self.request.user
+        else:
+            obj.modified_by = self.request.user
+        return super().save_model(request, obj, form, change)
+
+admin.site.register(UtiliyGroupMaintenance,UtilityGroupTypeMaintenanceScreen)
+
+class HRPlatformMaintenanceScreen(admin.ModelAdmin):
+    list_display = ('platform_name','is_active')
+    list_filter = ('is_active',)
+    search_fields = ('platform_name',)
+    fieldsets = [
+        (None, {'fields': ['platform_name','is_active']}),
     ]
     exclude = ['created_by','modified_by']
 
@@ -967,4 +1007,24 @@ class UtiliyAccountTypeMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(UtiliyAccountTypeMaintenance,UtiliyAccountTypeMaintenanceScreen)
+admin.site.register(HRPlatformMaintenance,HRPlatformMaintenanceScreen)
+
+# class UtiliyAccountTypeMaintenanceScreen(admin.ModelAdmin):
+#     list_display = ('account_short_name','account_name','is_active')
+#     list_filter = ('is_active',)
+#     search_fields = ('account_short_name','account_name',)
+#     fieldsets = [
+#         (None, {'fields': ['account_short_name','account_name','account_no','is_active']}),
+#     ]
+#     exclude = ['created_by','modified_by']
+
+#     def save_model(self, request, obj, form, change):
+#         self.request = request
+#         if not obj.pk:
+#             # Only set added_by during the first save.
+#             obj.created_by = self.request.user
+#         else:
+#             obj.modified_by = self.request.user
+#         return super().save_model(request, obj, form, change)
+
+# admin.site.register(UtiliyAccountTypeMaintenance,UtiliyAccountTypeMaintenanceScreen)

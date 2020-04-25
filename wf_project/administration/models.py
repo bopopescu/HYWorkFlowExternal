@@ -3,6 +3,8 @@ from django.contrib import admin
 from django.core.validators import MinValueValidator
 from datetime import datetime
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+
 
 class BranchMaintenance(models.Model):
     branch_name = models.CharField(max_length=250)
@@ -31,7 +33,7 @@ class CompanyMaintenance(models.Model):
     modified_timestamp = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.short_name + ' - ' + self.company_name
+        return self.company_name
 
 class CompanyContactDetail(models.Model):
     personal_option = [('Mr.','Mr.'),('Mrs.','Mrs.'),('Ms.','Ms.'),('Miss','Miss')]
@@ -227,6 +229,17 @@ class EmployeePositionMaintenance(models.Model):
 
     def __str__(self):
         return self.position_name
+
+class HRPlatformMaintenance(models.Model):
+    platform_name = models.CharField(max_length=255)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='platformcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='platformmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.platform_name
 
 class HolidayEventMaintenance(models.Model):
     event_name = models.CharField(max_length=255)
@@ -447,8 +460,10 @@ class TransactiontypeMaintenance(models.Model):
         return self.transaction_type_name
 
 class UtiliyAccountTypeMaintenance(models.Model):
+    utility_group = models.ForeignKey('UtiliyGroupMaintenance', default=0, verbose_name="Utility Group",on_delete=models.CASCADE)
     account_short_name = models.CharField(max_length=100)
     account_name = models.CharField(max_length=250)
+    account_no = models.CharField(max_length=100)
     is_active = models.BooleanField()
     created_by = models.ForeignKey(User, related_name='utilityaccountcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)
@@ -456,7 +471,23 @@ class UtiliyAccountTypeMaintenance(models.Model):
     modified_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.account_name
+        return self.account_short_name +'-'+ self.account_no
+
+class UtiliyGroupMaintenance(models.Model):
+    account_group_name = models.CharField(max_length=100)
+    is_active = models.BooleanField()
+    created_by = models.ForeignKey(User, related_name='utilityaccountgroupcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    created_timestamp = models.DateTimeField(auto_now_add=True)
+    modified_by = models.ForeignKey(User, related_name='utilityaccountgroupmodified_by_user', null=True, blank=True, on_delete=models.SET_NULL)
+    modified_timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.account_group_name
+    
+    # def get_bill_count(self):
+    #     utility_account = get_object_or_404(UtiliyAccountTypeMaintenance,utility_group=self).value_list("id",Flat=True)
+    #     payment =  PaymentRequest.objects.filter(utility_account__in = utility_account)
+    #     return payment.count()
 
 class UOMMaintenance(models.Model):
     uom_name = models.CharField(max_length=250)

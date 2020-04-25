@@ -53,6 +53,7 @@ urlpatterns = [
     path('pi/init/<int:pk>/', views.pi_init, name='pi_init'),
     path('pi/create/<int:pk>/', views.pi_create, name='pi_create'),
     path('pi/<int:pk>/', views.pi_detail, name='pi_detail'),
+    path('pi/sendtopr/<int:pk>/', views.pi_send_to_pr, name='pi_send_to_pr'),
 
     path('pcn/list/<int:pk>/', views.pcn_list, name='pcn_list'),    
     path('pcn/<int:pk>/', views.pcn_detail, name='pcn_detail'), 

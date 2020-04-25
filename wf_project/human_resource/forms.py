@@ -1,5 +1,5 @@
 from django import forms
-from .models import StaffRecruitmentRequest,StaffJobRequirement,StaffJobResponsibilities
+from .models import StaffRecruitmentRequest,StaffJobRequirement,StaffJobResponsibilities,StaffPlatform,StaffCandidate
 from django.shortcuts import get_object_or_404
 import datetime
 from administration.models import EmployeeMaintenance
@@ -7,7 +7,7 @@ from administration.models import CompanyMaintenance
 from administration.models import DepartmentMaintenance
 from administration.models import StaffPositionTitleMaintenance
 from administration.models import StaffemploymentTypeMaintenance
-from administration.models import StaffPositionGradeMaintenance
+from administration.models import StaffPositionGradeMaintenance,HRPlatformMaintenance
 
 
 class DetailStaffRecruimentForm(forms.ModelForm):
@@ -64,3 +64,16 @@ class NewStaffJobResponsibleForm(forms.ModelForm):
     class Meta:
         model = StaffJobResponsibilities
         fields = ['staff_recruitment', 'responsible_description']
+
+class NewStaffPlatformForm(forms.ModelForm):
+    platform_name = forms.ModelChoiceField(queryset=HRPlatformMaintenance.objects.filter(is_active=True).order_by('platform_name'), empty_label="Not Assigned")
+
+    class Meta:
+        model = StaffPlatform
+        fields = ['staff_recruitment', 'platform_name','success_platform']
+
+class NewStaffCandidateForm(forms.ModelForm):
+
+    class Meta:
+        model = StaffCandidate
+        fields = ['staff_recruitment', 'candidate_name','date_of_join']

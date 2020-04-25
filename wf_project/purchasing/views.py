@@ -15,6 +15,7 @@ from .models import PurchaseOrderComparison3Attachment, VendorMasterData, Vendor
 from .models import GoodsReceiptNote, PurchaseInvoice, PurchaseCreditNote, PurchaseDebitNote
 from .serializers import POSerializer, PODetailSerializer, POAttachmentSerializer, POComparison2AttachmentSerializer, POComparison3AttachmentSerializer
 import datetime
+from payment.models import PaymentRequest,PaymentRequestDetail
 
 class POAttachmentViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrderAttachment.objects.all()
@@ -576,6 +577,45 @@ def pi_create(request, pk):
     form.fields['vendor_address'].initial = po.vendor_address
 
     return render(request, 'pi/create.html', {'pi': pi, 'po': po, 'transaction_type': transaction_type, 'form': form, 'formPi': formPi})
+
+@login_required
+def pi_send_to_pr(request, pk):
+    pi = get_object_or_404(PurchaseInvoice, pk=pk)
+    document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code ="301")
+    pi_type = get_object_or_404(DocumentTypeMaintenance,document_type_code ="208")
+    transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name="Payment for Invoice",document_type=document_type)
+    
+    pr_vendor = pi.po.vendor
+    pr_currency = pi.po.currency
+    pr_company = pi.po.company
+    pr_project = pi.po.project
+    pr_subject = pi.po.subject
+    pr_reference = pi.po.reference
+    pr_remarks = pi.po.remarks
+    pr_subtotal = pi.po.sub_total
+    pr_discount = pi.po.discount
+    pr_discount_amount = pi.po.discount_amount
+    pr_tax_amount = pi.po.tax_amount
+    pr_total_amount = pi.po.total_amount
+    
+    py = PaymentRequest.objects.create(submit_by=request.user,transaction_type=transaction_type,
+                                        document_pk=pk,document_type=pi_type,vendor=pr_vendor,currency=pr_currency,
+                                        company=pr_company,project=pr_project,subject=pr_subject,reference=pr_reference,
+                                        remarks=pr_remarks,sub_total=pr_subtotal,discount_rate=pr_discount,discount_amount=pr_discount_amount,
+                                        tax_amount=pr_tax_amount,total_amount=pr_total_amount)
+
+    po_items = PurchaseOrderDetail.objects.filter(po=pi.po)
+    i = 0
+    for po_item in po_items:
+        i = i + 1
+        linenum = i
+        pr_item = PaymentRequestDetail.objects.create(linenum=i,item_description=po_item.item.item_description,
+                                                      line_total= po_item.line_total,price = po_item.amount,tax=po_item.tax,
+                                                      line_taxamount= po_item.line_taxamount,py=py)
+
+
+    return redirect('py_create_edit', py.pk)
+    
 
 @login_required
 def pi_detail(request, pk):

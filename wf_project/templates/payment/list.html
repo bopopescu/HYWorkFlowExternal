@@ -52,9 +52,13 @@
                     }, {
                         "targets": 8,
                         "render": function(data, type, row) {  
-                            var label = '';                                  
-                            var approval_url = "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id);
-                                                                
+                            var label = '';
+                            if(row.utility_account_approval == null){
+                                var approval_url = "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id);
+                            }else{
+                                var approval_url = "{% url 'utility_approval_history' pk=123 %}".replace(/123/, row.approval_id);
+                            }                                  
+                                                         
                             if (row.approval_status == 'Draft') {
                                 label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';
                             } else if (row.approval_status == 'Draft(New)') {
@@ -78,14 +82,14 @@
                         "render": function(data, type, row) {
                             var label = '';                      
                             if (row.approval_status == 'Draft' || row.approval_status == 'Rejected' || row.approval_status == 'Draft(New)') {
-                                if(row.approval !== null){    
+                                if(row.approval !== null || row.utility_account_approval !== null){    
                                     label = '<a href="' + "{% url 'py_update' pk=123 %}".replace(/123/, row.id)+ '" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#deletePYModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                 }else{
                                     label = '<a href="#" data-toggle="modal" data-target="#deletePYModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDelete(' + row.id + ')"><i class="fas fa-trash"></i></a>';
                                 }
                             } 
 
-                            if(row.approval !== null){      
+                            if(row.approval !== null || row.utility_account_approval !== null){      
                                 return '<a href="'+ "{% url 'py_detail' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;' + label;
                             }else{
                                 return '<a href="' + "{% url 'py_create_edit' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-info btn-circle btn-sm"><i class="fas fa-pencil-alt"></i></a>&nbsp;&nbsp;' + label;

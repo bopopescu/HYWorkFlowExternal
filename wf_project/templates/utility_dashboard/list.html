@@ -1,0 +1,258 @@
+{% extends 'main_template.html' %} 
+{% block content %} 
+{% load static %}
+{% load widget_tweaks %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Utility Dashboard - {{utility_account.account_group_name}}</h1>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="myapproval" class="table table-striped table-bordered" style="width:100%">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th data-data="id"></th>
+                        <th data-data="attachment_path"></th>
+                        <th data-data="document_pk"></th>
+                        <th data-data="request_by">Requested By</th>
+                        <th data-data="document_type">Doc. Type</th>
+                        <th data-data="document_number">Doc. No.</th>
+                        <th data-data="total_amount">Total Amount</th>
+                        <th data-data="submit_date">Submit Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <script>
+          $(document).ready(function() {
+            var table = $('#myapproval').DataTable( {
+              "ajax": "{% url 'utilityapprovaldata-list' %}?format=datatables&accountpk={{utility_account.pk}}",
+              "dom":  "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-5'B><'col-sm-12 col-md-3'f>>" +
+                      "<'row'<'col-sm-12 small'tr>>" +
+                      "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+              "columnDefs": [{
+                        orderable: false,
+                        className: 'select-checkbox',
+                        targets: 0,
+                        "defaultContent": ""
+                    },{
+                  "targets": -1,
+                  "data": null,
+                  "render": function ( data, type, row ) {
+                        var label = '';
+                        
+                        label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
+                        label = label + '&nbsp;&nbsp;';
+                        label = label + '<a href="' + "{% url 'utility_approval_history' pk=123 %}".replace(/123/, row.id).replace(/456/,"{{utility_account.pk}}") + '" class="btn btn-info btn-circle btn-sm"><i class="fas fa-clipboard-list"></i></a>';
+                        label = label + '&nbsp;&nbsp;';
+                        label = label + '<a href="#" data-toggle="modal" data-target="#approveModal" class="btn btn-success btn-circle btn-sm" onclick="sendApprove(' + row.id + ')"><i class="fas fa-check"></i></a>';
+                        label = label + '&nbsp;&nbsp;';
+                        label = label + '<a href="#" data-toggle="modal" data-target="#rejectModal" class="btn btn-danger btn-circle btn-sm" onclick="sendReject(' + row.id + ')"><i class="fas fa-times"></i></a>';
+                        return label;
+                    }
+              },
+              { "visible": false, 
+              "targets": [ 1, 2, 3] }
+              ],
+              buttons: [
+                    'selectAll',
+                    'selectNone',
+                    {
+                        text: 'Approve',
+                        action: function () {
+                            var count = table.rows( { selected: true } ).count();
+                            var rows = table.rows( { selected: true } ).data();
+                        
+
+                            var i;
+                            for (i = 0; i < rows.length; i++) {
+                                var post_url = "{% url 'utility_approve_all' pk=123 %}".replace(/123/, rows[i].id); //get form action url
+                                var request_method = "GET"; //get form GET/POST method
+                                
+                                //if everything's ok, continue with Ajax form submit
+                                 
+                                    $.ajax({ //ajax form submit
+                                        url : post_url,
+                                        type: request_method,
+                                        contentType: false,
+                                        cache: false,
+                                        processData:false
+                                    }).done(function(res){ 
+
+                                    });
+                            }
+                            var table_reload = $('#myapproval').DataTable(); 
+                            table_reload.ajax.reload();
+                        }
+                    },
+                    {
+                        text: 'Reject',
+                        action: function () {
+                            var count = table.rows( { selected: true } ).count();
+                            var rows = table.rows( { selected: true } ).data();
+
+                            var i;
+                            for (i = 0; i < rows.length; i++) {
+                                var post_url = "{% url 'utility_reject_all' pk=123 %}".replace(/123/, rows[i].id); //get form action url
+                                var request_method = "GET"; //get form GET/POST method
+                                
+                                //if everything's ok, continue with Ajax form submit
+                                 
+                                    $.ajax({ //ajax form submit
+                                        url : post_url,
+                                        type: request_method,
+                                        contentType: false,
+                                        cache: false,
+                                        processData:false
+                                    }).done(function(res){ 
+
+                                    });
+                            }
+                            var table_reload = $('#myapproval').DataTable(); 
+                            table_reload.ajax.reload();
+                        }
+                    }
+                ],
+                select: {
+                    style: 'multi'
+                },
+              "lengthMenu": [50, 100, 200, 500],          
+            });
+          });
+      </script>
+    </div>
+</div>
+<!-- Approve Modal-->
+<div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <form action="{% url 'utility_approve' %}" method="POST" id="approveItem">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Approve Document</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Select "Approve" below if you are ready to approve.
+                    <input type="hidden" name="hiddenValueApprove" id="hiddenValueApprove" value="" />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-success" id="approveButton">Approve</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    function sendApprove(param) {
+        var approveInput = document.getElementById("hiddenValueApprove");
+        approveInput.value = param;
+    }
+</script>
+<script>
+$("#approveItem").submit(function(e){
+    e.preventDefault(); //prevent default action 
+	proceed = true;
+		
+	var post_url = $(this).attr("action"); //get form action url
+	var request_method = $(this).attr("method"); //get form GET/POST method
+    var form_data = new FormData(this); //Creates new FormData object    
+
+    $('#approveModal').modal('hide');
+	
+	//if everything's ok, continue with Ajax form submit
+	if(proceed){ 
+		$.ajax({ //ajax form submit
+			url : post_url,
+			type: request_method,
+			data : form_data,
+			dataType : "json",
+			contentType: false,
+			cache: false,
+			processData:false
+		}).done(function(res){ 
+            if (res.message == 'Success'){
+                var table = $('#myapproval').DataTable(); 
+                table.ajax.reload();
+            }
+		});
+	}
+});
+</script>
+<!-- Reject Modal-->
+<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form action="{% url 'utility_reject' %}" method="POST" id="rejectItem">
+      {% csrf_token %}
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Reject Document</h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+              </button>
+          </div>
+          <div class="modal-body">
+                <div class="form-group">
+                  <div class="form-row">
+                      <div class="col col-md-3">
+                          {{form_reject.reason.label_tag}}
+                      </div>
+                      <div class="col col-md-8">
+                          {% render_field form_reject.reason|attr:"rows:5"|attr:"cols:1" class="col-md-12 form-control form-control-use" %}
+                      </div>
+                  </div>
+              </div>
+              <input type="hidden" name="hiddenValueReject" id="hiddenValueReject" value="" />
+          </div>
+          <div class="modal-footer">
+              <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-danger" id="rejectButton">Reject</a>
+          </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script type="text/javascript">
+  function sendReject(param) {
+      var rejectInput = document.getElementById("hiddenValueReject");
+      rejectInput.value = param;
+  }
+</script>
+<script>
+$("#rejectItem").submit(function(e){
+    e.preventDefault(); //prevent default action 
+	proceed = true;
+		
+	var post_url = $(this).attr("action"); //get form action url
+	var request_method = $(this).attr("method"); //get form GET/POST method
+    var form_data = new FormData(this); //Creates new FormData object    
+
+    $('#rejectModal').modal('hide');
+	
+	//if everything's ok, continue with Ajax form submit
+	if(proceed){ 
+		$.ajax({ //ajax form submit
+			url : post_url,
+			type: request_method,
+			data : form_data,
+			dataType : "json",
+			contentType: false,
+			cache: false,
+			processData:false
+		}).done(function(res){ 
+            if (res.message == 'Success'){
+                var table = $('#myapproval').DataTable(); 
+                table.ajax.reload();
+            }
+		});
+	}
+});
+</script>
+{% endblock content %}

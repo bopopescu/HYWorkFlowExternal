@@ -143,6 +143,8 @@ def po_list(request, pk):
 @login_required
 def po_detail(request, pk):
     po = get_object_or_404(PurchaseOrder, pk=pk)
+    document_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]
+    approval_item = get_object_or_404(ApprovalItem, document_pk=pk, document_type=document_type)
     form = DetailPOForm(instance=po)
     form.fields['vendor'].initial = po.vendor
     form.fields['company'].initial = po.company
@@ -156,7 +158,7 @@ def po_detail(request, pk):
     form.fields['payment_term'].initial = po.payment_term
     form.fields['payment_schedule'].initial = po.payment_schedule
     form.fields['vendor_address'].initial = po.vendor_address
-    return render(request, 'po/detail.html', {'po': po, 'form': form})
+    return render(request, 'po/detail.html', {'po': po, 'form': form, 'approval_item': approval_item})
 
 @login_required
 def po_init(request, pk):

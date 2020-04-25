@@ -206,8 +206,16 @@ def approve(request):
     approvers = ApprovalItemApprover.objects.filter(approval_item=request.POST['hiddenValueApprove']).count()
     approvers_approve = ApprovalItemApprover.objects.filter(approval_item=request.POST['hiddenValueApprove'], status="A").count()
 
-    if approvers == approvers_approve:
-        approval_item =  get_object_or_404(ApprovalItem, pk=request.POST['hiddenValueApprove'])
+    if approvers == approvers_approve:   
+        approval_type = DocumentTypeMaintenance.objects.filter(document_type_code="901")[0]
+        document_number = approval_type.running_number + 1
+        approval_type.running_number = document_number
+        approval_type.save()
+
+        approval_item = get_object_or_404(ApprovalItem, pk=request.POST['hiddenValueApprove'])
+        approval_item.approval_code = '{0}-{1:05d}'.format(
+                approval_type.document_type_code, document_number
+                )
         approval_item.status = "A"
         approval_item.save()
 

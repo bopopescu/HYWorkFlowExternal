@@ -181,7 +181,7 @@ def staff_requirement_delete(request, pk):
     staff_requirement.delete()
     return JsonResponse({'message': 'Success'})
 
-def staff_responsible_create(request,pk):  
+def staff_responsible_create(request, pk):
     form = NewStaffJobResponsibleForm(request.POST)
     if form.is_valid():
         staff_job_responsible = form.save(commit=False)
@@ -194,12 +194,12 @@ def staff_responsible_create(request,pk):
     return JsonResponse({'message': 'Success'})
 
 def staff_responsible_delete(request, pk):
-    staff_responsible =  get_object_or_404(StaffJobResponsibilities, pk=pk)
+    staff_responsible = get_object_or_404(StaffJobResponsibilities, pk=pk)
     staff = get_object_or_404(StaffRecruitmentRequest, pk=staff_responsible.staff_recruitment.pk)
     staff_responsible.delete()
     return JsonResponse({'message': 'Success'})
 
-def staff_platform_create(request,pk):  
+def staff_platform_create(request, pk):
     form = NewStaffPlatformForm(request.POST)
     if form.is_valid():
         staff_platform = form.save(commit=False)
@@ -216,7 +216,7 @@ def staff_platform_delete(request, pk):
     staff_platform.delete()
     return JsonResponse({'message': 'Success'})
 
-def staff_candidate_create(request,pk):  
+def staff_candidate_create(request, pk):
     form = NewStaffCandidateForm(request.POST)
     if form.is_valid():
         staff_candidate = form.save(commit=False)
@@ -229,16 +229,20 @@ def staff_candidate_create(request,pk):
     return JsonResponse({'message': 'Success'})
 
 def staff_candidate_delete(request, pk):
-    staff_candidate =  get_object_or_404(StaffCandidate, pk=pk)
+    staff_candidate = get_object_or_404(StaffCandidate, pk=pk)
     staff_candidate.delete()
     return JsonResponse({'message': 'Success'})
 
 @login_required
-def staff_send_approval(request,pk):
+def staff_send_approval(request, pk):
     staff = get_object_or_404(StaffRecruitmentRequest, pk=pk)
-    approval_level = WorkflowApprovalRule.objects.filter(transaction_type=staff.transaction_type)[0]
-    approval_item = get_object_or_404(ApprovalItem, pk=staff.approval.pk)       
+    document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="501")
+    transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name="Staff Requisition", document_type=document_type)
+           
+    approval_level = WorkflowApprovalRule.objects.filter(transaction_type=transaction_type)[0]
+    approval_item = get_object_or_404(ApprovalItem, pk=staff.approval.pk)
     approval_item.approval_level = approval_level
+    
     if approval_level.ceo_approve == True:
             approval_item.notification = "CEO will added by default"
     approval_item.save()
@@ -248,7 +252,7 @@ def staff_send_approval(request,pk):
 
 @login_required
 def staff_after_approve(request, pk):
-    staff =  get_object_or_404(StaffRecruitmentRequest, pk=pk)
+    staff = get_object_or_404(StaffRecruitmentRequest, pk=pk)
     form = DetailStaffRecruimentForm(instance=staff)
     form_platform = NewStaffPlatformForm()
     form_candidate = NewStaffCandidateForm()

@@ -9,7 +9,8 @@ from administration.models import MemoTemplateMaintenance, WorkflowApprovalRule
 from administration.models import DocumentTypeMaintenance, TransactiontypeMaintenance
 from administration.models import StatusMaintenance, EmployeeMaintenance
 from administration.models import EmployeeDepartmentMaintenance
-from approval.models import ApprovalItem
+from approval.models import ApprovalItem, ApprovalItemApprover
+from PDFreport.render import Render
 from .models import Memo, MemoAttachment
 from .serializers import MemoSerializer, MemoAttachmentSerializer
 from .forms import NewMemoForm, DetailMemoForm, UpdateMemoForm, NewMemoAttachmentForm
@@ -221,3 +222,28 @@ def load_template(request):
 
     template = get_object_or_404(MemoTemplateMaintenance, pk=request.GET.get('template'))
     return HttpResponse(template.template_htmldesign)
+
+@login_required
+def memo_print(request, pk): 
+    memo = get_object_or_404(Memo, pk=pk)
+    approval_item = get_object_or_404(ApprovalItem, pk=memo.approval.pk)
+    requester = get_object_or_404(User, pk=memo.submit_by.pk)
+    approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-id')[0]
+    approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
+    params = {
+        'memo': memo,
+        'approval_item': approval_item,
+        'requester': requester,
+        'approver_employee': approver_employee,
+    }
+    
+    pdf = Render.render('report/Memo/print.html', params)
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = "Memo_%s.pdf" %(memo.document_number)
+        content = "attachment; filename=%s" %(filename)
+        response['Content-Disposition'] = content
+        return response
+    else:
+        return response("errors")
+    #return render(request, 'report/Memo/print.html')

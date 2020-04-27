@@ -9,7 +9,10 @@
         {% if memo.status.status_code == 100 or memo.status.status_code == 500 %}
             <a href="{% url 'approval_detail' memo.approval.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>             
             <a href="{% url 'memo_update' memo.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-pencil-alt"></i> Edit</a>
-        {% endif %}  
+        {% elif memo.status.status_code == 400 %}
+            <a href="{% url 'memo_print' memo.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-print"></i> Print</a>
+        {% endif %}
+        <a href="{% url 'memo_print' memo.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-print"></i> Print</a>
         <a href="{% url 'memo_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
     </div>
 </div>

@@ -5,8 +5,9 @@ from django.contrib.auth.models import User
 from administration.models import CompanyMaintenance, CompanyAddressDetail, CurrencyMaintenance, DocumentTypeMaintenance
 from administration.models import StatusMaintenance, TransactiontypeMaintenance, WorkflowApprovalRule, ProjectMaintenance
 from administration.models import PaymentTermMaintenance, EmployeeMaintenance, EmployeeDepartmentMaintenance
-from approval.models import ApprovalItem
-from django.http import JsonResponse
+from approval.models import ApprovalItem, ApprovalItemApprover
+from PDFreport.render import Render
+from django.http import HttpResponse, JsonResponse
 from .forms import NewPOForm, DetailPOForm, UpdatePOForm, NewPOAttachmentForm, NewPOComparison2AttachmentForm
 from .forms import NewPOComparison3AttachmentForm, NewPODetailForm, NewGRNForm, DetailGRNForm
 from .forms import NewINVForm, DetailINVForm
@@ -664,3 +665,29 @@ def pdn_list(request, pk):
 def pdn_detail(request, pk):
     transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
     return render(request, 'pdn/list.html', {'trans_type': transaction_type})
+
+@login_required
+def po_print(request, pk): 
+    po = get_object_or_404(PurchaseOrder, pk=pk)
+    approval_item = get_object_or_404(ApprovalItem, pk=po.approval.pk)
+    requester = get_object_or_404(User, pk=po.submit_by.pk)
+    approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-stage')[0]
+    approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
+    po_details = PurchaseOrderDetail.objects.filter(po=po)
+    params = {
+        'po': po,
+        'approval_item': approval_item,
+        'requester': requester,
+        'approver_employee': approver_employee,
+        'po_details': po_details
+    }
+    
+    pdf = Render.render('report/PO/print.html', params)
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = "PO_%s.pdf" %(po.document_number)
+        content = "attachment; filename=%s" %(filename)
+        response['Content-Disposition'] = content
+        return response
+    else:
+        return response("errors")

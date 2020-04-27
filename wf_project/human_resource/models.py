@@ -18,20 +18,20 @@ import datetime
 
 def default_status():
     document_type = DocumentTypeMaintenance.objects.filter(document_type_code="501")[0]
-    return StatusMaintenance.objects.filter(document_type=document_type,status_code='100')[0]
+    return StatusMaintenance.objects.filter(document_type=document_type, status_code='100')[0]
 
 class StaffRecruitmentRequest(models.Model):
-    position_title = models.ForeignKey(StaffPositionTitleMaintenance, verbose_name="Position Title", on_delete=models.CASCADE,blank=True, null=True)
+    position_title = models.ForeignKey(StaffPositionTitleMaintenance, verbose_name="Position Title", on_delete=models.CASCADE, blank=True, null=True)
     revision = models.IntegerField(default=1)
-    position_grade = models.ForeignKey(StaffPositionGradeMaintenance, verbose_name="Position Grade", on_delete=models.CASCADE,blank=True, null=True)
+    position_grade = models.ForeignKey(StaffPositionGradeMaintenance, verbose_name="Position Grade", on_delete=models.CASCADE, blank=True, null=True)
     document_number = models.CharField(max_length=100,verbose_name="Document No.", blank=True, null=True)
-    reporting_to = models.ForeignKey(EmployeeMaintenance, verbose_name="Reporting To", on_delete=models.CASCADE,blank=True, null=True)
-    company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE,blank=True, null=True)
-    department = models.ForeignKey(DepartmentMaintenance, verbose_name="Department", on_delete=models.CASCADE,blank=True, null=True)
+    reporting_to = models.ForeignKey(EmployeeMaintenance, verbose_name="Reporting To", on_delete=models.CASCADE, blank=True, null=True)
+    company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE, blank=True, null=True)
+    department = models.ForeignKey(DepartmentMaintenance, verbose_name="Department", on_delete=models.CASCADE, blank=True, null=True)
     budgeted = models.BooleanField(blank=True, null=True)
-    status = models.ForeignKey(StatusMaintenance,default=default_status,verbose_name="Status", on_delete=models.CASCADE,blank=True, null=True)
-    employment_type = models.ForeignKey(StaffemploymentTypeMaintenance, verbose_name="Employment Type", on_delete=models.CASCADE,blank=True, null=True)
-    request_date = models.DateField(null=True, blank=True,default=datetime.date.today)
+    status = models.ForeignKey(StatusMaintenance, default=default_status,verbose_name="Status", on_delete=models.CASCADE, blank=True, null=True)
+    employment_type = models.ForeignKey(StaffemploymentTypeMaintenance, verbose_name="Employment Type", on_delete=models.CASCADE, blank=True, null=True)
+    request_date = models.DateField(null=True, blank=True, default=datetime.date.today)
     submit_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     approval = models.ForeignKey(ApprovalItem, verbose_name="Approval", on_delete=models.CASCADE, blank=True, null=True) 
     no_of_pax = models.IntegerField(null=True, blank=True)

@@ -5,6 +5,7 @@ from administration.models import WorkflowApprovalRule
 from django.contrib.auth.models import User
 
 class ApprovalItem(models.Model):
+    approval_code = models.CharField(max_length=100,verbose_name="Approval Code", blank=True, null=True)
     document_number = models.CharField(max_length=100,verbose_name="Doc. No.")
     document_type = models.ForeignKey(DocumentTypeMaintenance, verbose_name="Doc.Type", on_delete=models.CASCADE,  blank=True, null=True)
     document_pk = models.IntegerField(default=0)
@@ -13,6 +14,7 @@ class ApprovalItem(models.Model):
     notification = models.CharField(max_length=250, blank=True, null=True)
     status = models.CharField(max_length=2, blank=True, null=True)
     submit_by = models.ForeignKey(User, verbose_name="Approver", on_delete=models.CASCADE,  blank=True, null=True)
+    approved_date = models.DateField(blank=True, null=True)
 
     def __str__(self):        
         if self.status == "D":
@@ -30,6 +32,7 @@ class ApprovalItemApprover(models.Model):
     approval_item = models.ForeignKey('ApprovalItem', on_delete=models.CASCADE)
     status = models.CharField(max_length=2, blank=True, null=True)
     reason = models.CharField(max_length=250, blank=True, null=True)
+    approved_date = models.DateField(blank=True, null=True)
 
 class ApprovalItemCC(models.Model):
     user = models.ForeignKey(User, verbose_name="CC", on_delete=models.CASCADE,  blank=True, null=True)

@@ -8,7 +8,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('utility_dashboard', '0001_initial'),
-        ('payment', '0035_paymentrequest_utility_account'),
+        ('payment', '0035_paymentrequest_utility_account'),        
+        ('administration', '0074_merge_20200421_1216'), 
     ]
 
     operations = [

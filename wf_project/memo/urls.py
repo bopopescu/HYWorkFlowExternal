@@ -24,4 +24,5 @@ urlpatterns = [
     path('update/<int:pk_value>/', views.memo_update, name='memo_update'),
 
     path('ajax/load-template/', views.load_template, name='ajax_load_template'),
+    path('print/<int:pk>/', views.memo_print, name='memo_print'),
 ]

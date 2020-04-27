@@ -1,0 +1,345 @@
+{% extends 'main_template.html' %} 
+{% block content %} {% load static %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Send to Accounts</h1>    
+</div>
+
+<div class="row">
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Pending for Process</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{unprocessed}}</div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-inbox fa-2x text-gray-300"></i>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Send for Process</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{processed}}</div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-spinner fa-2x text-gray-300"></i>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Completed</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{completed}}</div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-check fa-2x text-gray-300"></i>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-unprocessedtask-tab" data-toggle="tab" href="#nav-unprocessedtask" role="tab" aria-controls="nav-unprocessedtask" aria-selected="true">Unprocessed Task</a>
+                <a class="nav-item nav-link" id="nav-processedtask-tab" data-toggle="tab" href="#nav-processedtask" role="tab" aria-controls="nav-processedtask" aria-selected="false">Processed Task</a>
+                <a class="nav-item nav-link" id="nav-completedtask-tab" data-toggle="tab" href="#nav-completedtask" role="tab" aria-controls="nav-completedtask" aria-selected="false">Completed Task</a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-unprocessedtask" role="tabpanel" aria-labelledby="nav-unprocessedtask-tab">
+                <br/>
+                <div class="table-responsive">
+                    <table id="unprocessedtasks" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>No.</th>
+                                <th data-data="id"></th>                                
+                                <th data-data="approval_id"></th>
+                                <th data-data="attachment_path"></th>
+                                <th data-data="document_pk"></th>
+                                <th data-data="request_by">Requested By</th>
+                                <th data-data="document_type">Doc. Type</th>
+                                <th data-data="subject">Subject</th>
+                                <th data-data="approval_code">Approval Code</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <script>
+                    $(document).ready(function() {
+                        var mytable = $('#unprocessedtasks').DataTable({
+                            "ajax": "{% url 'unprocessed-list' %}?format=datatables",
+                            "dom":  "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-5'B><'col-sm-12 col-md-3'f>>" +
+                                    "<'row'<'col-sm-12 small'tr>>" +
+                                    "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                            "columnDefs": [{
+                                orderable: false,
+                                className: 'select-checkbox',
+                                targets: 0,
+                                "defaultContent": ""
+                            },{
+                                "searchable": false,
+                                "orderable": false,
+                                "targets": 1,
+                                "defaultContent": "<i>Not set</i>"
+                            }, {
+                                "targets": -1,
+                                "data": null,
+                                "render": function ( data, type, row ) {
+                                        var label = '';
+                                        
+                                        label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
+                                        label = label + '&nbsp;&nbsp;';
+                                        label = label + '<a href="' + "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id) + '" target="_blank" class="btn btn-info btn-circle btn-sm"><i class="fas fa-clipboard-list"></i></a>';
+                                        return label;
+                                    }
+                            },{
+                                "visible": false,
+                                "targets": [2, 3, 4, 5]
+                            }],                                        
+                        buttons: [
+                                'selectAll',
+                                'selectNone',
+                                {
+                                    text: 'Send for Process',
+                                    action: function () {
+                                        var count = mytable.rows( { selected: true } ).count();
+                                        var rows = mytable.rows( { selected: true } ).data();
+
+                                        var i;
+                                        for (i = 0; i < rows.length; i++) {
+                                            var post_url = "{% url 'task_process_all' pk=123 %}".replace(/123/, rows[i].id); //get form action url
+                                            var request_method = "GET"; //get form GET/POST method
+                                            
+                                            //if everything's ok, continue with Ajax form submit
+                                            
+                                                $.ajax({ //ajax form submit
+                                                    url : post_url,
+                                                    type: request_method,
+                                                    contentType: false,
+                                                    cache: false,
+                                                    processData:false
+                                                }).done(function(res){ 
+
+                                                });
+                                        }
+                                        var table_reload = $('#unprocessedtasks').DataTable(); 
+                                        table_reload.ajax.reload();
+
+                                        table_reload = $('#processedtasks').DataTable(); 
+                                        table_reload.ajax.reload();
+
+                                        table_reload = $('#completedtasks').DataTable(); 
+                                        table_reload.ajax.reload();
+                                    }
+                                }
+                            ],
+                            select: {
+                                style: 'multi'
+                            },
+                            "lengthMenu": [50, 100, 200, 500],
+                        });
+
+                        mytable.on('order.dt search.dt', function() {
+                            mytable.column(1, {
+                                search: 'applied',
+                                order: 'applied'
+                            }).nodes().each(function(cell, i) {
+                                cell.innerHTML = i + 1;
+                            });
+                        }).draw();
+                    });
+                </script>
+            </div>
+            <div class="tab-pane fade show" id="nav-processedtask" role="tabpanel" aria-labelledby="nav-processedtask-tab">
+                <br/>
+                <div class="table-responsive">
+                    <table id="processedtasks" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>No.</th>
+                                <th data-data="id"></th>                                
+                                <th data-data="approval_id"></th>
+                                <th data-data="attachment_path"></th>
+                                <th data-data="document_pk"></th>
+                                <th data-data="request_by">Requested By</th>
+                                <th data-data="document_type">Doc. Type</th>
+                                <th data-data="subject">Subject</th>
+                                <th data-data="approval_code">Approval Code</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <script>
+                    $(document).ready(function() {
+                        var teamtable = $('#processedtasks').DataTable({
+                            "ajax": "{% url 'processed-list' %}?format=datatables",
+                            "dom":  "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-5'B><'col-sm-12 col-md-3'f>>" +
+                                    "<'row'<'col-sm-12 small'tr>>" +
+                                    "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                            "columnDefs": [{
+                                orderable: false,
+                                className: 'select-checkbox',
+                                targets: 0,
+                                "defaultContent": ""
+                            },{
+                                "searchable": false,
+                                "orderable": false,
+                                "targets": 1,
+                                "defaultContent": "<i>Not set</i>"
+                            }, {
+                                "targets": -1,
+                                "data": null,
+                                "render": function ( data, type, row ) {
+                                        var label = '';
+                                        
+                                        label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
+                                        label = label + '&nbsp;&nbsp;';
+                                        label = label + '<a href="' + "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id) + '" target="_blank" class="btn btn-info btn-circle btn-sm"><i class="fas fa-clipboard-list"></i></a>';
+                                        return label;
+                                    }
+                            }, {
+                                "visible": false,
+                                "targets": [2, 3, 4, 5]
+                            }],                                        
+                        buttons: [
+                                'selectAll',
+                                'selectNone',
+                                {
+                                    text: 'Mark as Complete',
+                                    action: function () {
+                                        var count = teamtable.rows( { selected: true } ).count();
+                                        var rows = teamtable.rows( { selected: true } ).data();
+                                    
+                                        var i;
+                                        for (i = 0; i < rows.length; i++) {
+                                            var post_url = "{% url 'task_complete_all' pk=123 %}".replace(/123/, rows[i].id); //get form action url
+                                            var request_method = "GET"; //get form GET/POST method
+                                            
+                                            //if everything's ok, continue with Ajax form submit
+                                            
+                                                $.ajax({ //ajax form submit
+                                                    url : post_url,
+                                                    type: request_method,
+                                                    contentType: false,
+                                                    cache: false,
+                                                    processData:false
+                                                }).done(function(res){ 
+
+                                                });
+                                        }
+                                        
+                                        var table_reload = $('#unprocessedtasks').DataTable(); 
+                                        table_reload.ajax.reload();
+
+                                        table_reload = $('#processedtasks').DataTable(); 
+                                        table_reload.ajax.reload();
+
+                                        table_reload = $('#completedtasks').DataTable(); 
+                                        table_reload.ajax.reload();
+                                    }
+                                }
+                            ],
+                            select: {
+                                style: 'multi'
+                            },
+                            "lengthMenu": [50, 100, 200, 500],
+                        });
+
+                        teamtable.on('order.dt search.dt', function() {
+                            teamtable.column(1, {
+                                search: 'applied',
+                                order: 'applied'
+                            }).nodes().each(function(cell, i) {
+                                cell.innerHTML = i + 1;
+                            });
+                        }).draw();
+                    });
+                </script>
+            </div>
+            <div class="tab-pane fade show" id="nav-completedtask" role="tabpanel" aria-labelledby="nav-completedtask-tab">
+                <br/>
+                <div class="table-responsive">
+                    <table id="completedtasks" class="table table-striped table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th data-data="id"></th>                   
+                                <th data-data="approval_id"></th>
+                                <th data-data="attachment_path"></th>
+                                <th data-data="document_pk"></th>
+                                <th data-data="request_by">Requested By</th>
+                                <th data-data="document_type">Doc. Type</th>
+                                <th data-data="subject">Subject</th>
+                                <th data-data="approval_code">Approval Code</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <script>
+                    $(document).ready(function() {
+                        var completetable = $('#completedtasks').DataTable({
+                            "ajax": "{% url 'completed-list' %}?format=datatables",
+                            "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
+                                "<'row'<'col-sm-12 small'tr>>" +
+                                "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                            "columnDefs": [{
+                                "searchable": false,
+                                "orderable": false,
+                                "targets": 0,
+                                "defaultContent": "<i>Not set</i>"
+                                }, {
+                                "targets": -1,
+                                "data": null,
+                                "render": function ( data, type, row ) {
+                                        var label = '';
+                                        
+                                        label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
+                                        label = label + '&nbsp;&nbsp;';
+                                        label = label + '<a href="' + "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id) + '" target="_blank" class="btn btn-info btn-circle btn-sm"><i class="fas fa-clipboard-list"></i></a>';
+                                        return label;
+                                    }
+                            }, {
+                                "visible": false,
+                                "targets": [1, 2, 3, 4]
+                            }],
+                            "lengthMenu": [50, 100, 200, 500],
+                        });
+
+                        completetable.on('order.dt search.dt', function() {
+                            completetable.column(0, {
+                                search: 'applied',
+                                order: 'applied'
+                            }).nodes().each(function(cell, i) {
+                                cell.innerHTML = i + 1;
+                            });
+                        }).draw();
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

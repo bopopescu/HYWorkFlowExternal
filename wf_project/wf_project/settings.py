@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'drawer_reimbursement.apps.DrawerReimbursementConfig',
     'utility_dashboard.apps.UtilityDashboardConfig',
     'audit_trail.apps.AuditTrailConfig',
+    'accounts_task.apps.AccountsTaskConfig',
     #'sales.apps.SalesConfig',
     #'vendor.apps.VendorConfig',
 
@@ -84,6 +85,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'templates','accounts_task'),
             os.path.join(BASE_DIR, 'templates','approval'),
             os.path.join(BASE_DIR, 'templates','drawer_disbursement'),
             os.path.join(BASE_DIR, 'templates','fixed_asset'),

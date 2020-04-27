@@ -7,7 +7,7 @@
 <form method="post">
     {% csrf_token %} 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Staff Recruiment Request</h1>
+    <h1 class="h3 mb-0 text-gray-800">Staff Recruitment Request</h1>
     <div>
         <a href="{% url 'staff_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
     </div>    
@@ -143,7 +143,7 @@
                     {% elif staff.status.status_code == 300  %}
                     <p class="text-warning"><strong>{{staff.status}}</strong></p>
                     {% elif staff.status.status_code == 400 %}
-                    <p class="text-success"><strong>{{staff.status}}</strong></p>
+                    <p class="text-success"><strong>{{staff.status}}</strong> (Approval Code: {{staff.approval.approval_code}})</p>
                     {% else %}
                     <p class="text-danger"><strong>{{staff.status}}</strong></p>
                     {% endif %}

@@ -228,7 +228,7 @@ def memo_print(request, pk):
     memo = get_object_or_404(Memo, pk=pk)
     approval_item = get_object_or_404(ApprovalItem, pk=memo.approval.pk)
     requester = get_object_or_404(User, pk=memo.submit_by.pk)
-    approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-id')[0]
+    approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-stage')[0]
     approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
     params = {
         'memo': memo,

@@ -7,8 +7,8 @@ from .serializers import PYSerializer,PYItemSerializer,PYAttachmentSerializer
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
-from administration.models import PaymentmodeMaintenance
-from approval.models import ApprovalItem
+from administration.models import PaymentmodeMaintenance,EmployeeMaintenance
+from approval.models import ApprovalItem,ApprovalItemApprover
 from utility_dashboard.models import UtilityApprovalItem
 from django.contrib.auth.models import User
 import datetime
@@ -415,14 +415,21 @@ def py_attachment_delete(request, pk):
 def py_print(request, pk): 
     py = get_object_or_404(PaymentRequest, pk=pk)
     py_item = PaymentRequestDetail.objects.filter(py=py).order_by("linenum")
-    # return render(request, 'report/PYReport/PDF_base_site.html', {'py': py,'py_item':py_item})
+    approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)
+    requester = get_object_or_404(User, pk=py.submit_by.pk)
+    approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-stage')[0]
+    approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
+    # return render(request, 'PR/print.html', {'py': py,'py_item':py_item})
     params = {
         'py': py,
         'py_item': py_item,
-        'request': request
+        'request': request,
+        'approval_item': approval_item,
+        'requester': requester,
+        'approver_employee': approver_employee,
     }
     
-    pdf = Render.render('report/PYReport/PaymentReport.html', params)
+    pdf = Render.render('PR/print.html', params)
     if pdf:
         response = HttpResponse(pdf, content_type='application/pdf')
         filename = "PaymentVoucher_%s.pdf" %(py.document_number)

@@ -6,10 +6,14 @@ from payment.models import PaymentRequest
 class DrawerDisbursementSerializer(serializers.ModelSerializer):
     disbursed_date = serializers.DateField(format='%d/%m/%Y')
     payment = serializers.StringRelatedField(many=False)
+    payment_id = serializers.SerializerMethodField()
 
     class Meta:
         model = DrawerDisbursement
-        fields = ['id','disbursed_by', 'status','total_disbursed','payment','disbursed_date']
+        fields = ['id','disbursed_by', 'status','total_disbursed','payment','disbursed_date','payment_id']
+
+    def get_payment_id(self, obj):  
+        return obj.payment.id
 
 class DrawerSelectionSerializer(serializers.ModelSerializer):
     branch = serializers.StringRelatedField(many=False)

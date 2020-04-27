@@ -9,7 +9,7 @@ from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
 from administration.models import PaymentmodeMaintenance,EmployeeMaintenance
 from approval.models import ApprovalItem,ApprovalItemApprover
-from utility_dashboard.models import UtilityApprovalItem
+from utility_dashboard.models import UtilityApprovalItem,UtilityApprovalItemApprover
 from django.contrib.auth.models import User
 import datetime
 from django.http import JsonResponse
@@ -415,9 +415,14 @@ def py_attachment_delete(request, pk):
 def py_print(request, pk): 
     py = get_object_or_404(PaymentRequest, pk=pk)
     py_item = PaymentRequestDetail.objects.filter(py=py).order_by("linenum")
-    approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)
+    if py.transaction_type.is_utility:
+        approval_item = get_object_or_404(UtilityApprovalItem, pk=py.utility_account_approval.pk)
+        approver = UtilityApprovalItemApprover.objects.filter(utility_approval_item=approval_item).order_by('-stage')[0]
+    else:
+        approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)
+        approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-stage')[0]
+
     requester = get_object_or_404(User, pk=py.submit_by.pk)
-    approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-stage')[0]
     approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
     # return render(request, 'PR/print.html', {'py': py,'py_item':py_item})
     params = {

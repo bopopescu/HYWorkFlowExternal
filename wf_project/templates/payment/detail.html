@@ -112,7 +112,9 @@
 
     if (from_value == 'approval'){
       back_button.href = "{% url 'approval_list' %}";
-    } else {
+    } else if (from_value == 'accounts'){
+        back_button.href = "{% url 'task_list' %}";
+      } else {
       back_button.href = "{% url 'pylist' py.transaction_type.pk%}";
     }
 </script>

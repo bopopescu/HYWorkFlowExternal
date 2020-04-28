@@ -27,6 +27,8 @@
       back_button.href = "{% url 'staff_ot_list' pk=123%}".replace(/123/, getUrlParameter('pk'));
     } else if (from_value == 'reimburse'){
         back_button.href = "{% url 'reimbursement_request_list' %}";
+    } else if (from_value == 'accounts'){
+        back_button.href = "{% url 'task_list' %}";
     } else {
       back_button.href = "{% url 'approval_list' %}";
     }

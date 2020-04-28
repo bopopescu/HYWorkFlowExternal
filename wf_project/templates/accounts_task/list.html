@@ -107,9 +107,9 @@
                                 "render": function ( data, type, row ) {
                                         var label = '';
                                         
-                                        label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
+                                        label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/?from=accounts"  class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
                                         label = label + '&nbsp;&nbsp;';
-                                        label = label + '<a href="' + "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id) + '" target="_blank" class="btn btn-info btn-circle btn-sm"><i class="fas fa-clipboard-list"></i></a>';
+                                        label = label + '<a href="' + "{% url 'approval_history' pk=123 %}?from=accounts".replace(/123/, row.approval_id) + '"  class="btn btn-info btn-circle btn-sm"><i class="fas fa-clipboard-list"></i></a>';
                                         return label;
                                     }
                             },{
@@ -214,9 +214,9 @@
                                 "render": function ( data, type, row ) {
                                         var label = '';
                                         
-                                        label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
+                                        label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/?from=accounts" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
                                         label = label + '&nbsp;&nbsp;';
-                                        label = label + '<a href="' + "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id) + '" target="_blank" class="btn btn-info btn-circle btn-sm"><i class="fas fa-clipboard-list"></i></a>';
+                                        label = label + '<a href="' + "{% url 'approval_history' pk=123 %}?from=accounts".replace(/123/, row.approval_id) + '"  class="btn btn-info btn-circle btn-sm"><i class="fas fa-clipboard-list"></i></a>';
                                         return label;
                                     }
                             }, {
@@ -316,9 +316,9 @@
                                 "render": function ( data, type, row ) {
                                         var label = '';
                                         
-                                        label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
+                                        label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/?from=accounts"  class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
                                         label = label + '&nbsp;&nbsp;';
-                                        label = label + '<a href="' + "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id) + '" target="_blank" class="btn btn-info btn-circle btn-sm"><i class="fas fa-clipboard-list"></i></a>';
+                                        label = label + '<a href="' + "{% url 'approval_history' pk=123 %}?from=accounts".replace(/123/, row.approval_id) + '"  class="btn btn-info btn-circle btn-sm"><i class="fas fa-clipboard-list"></i></a>';
                                         return label;
                                     }
                             }, {

@@ -55,7 +55,7 @@
                                 "targets": 8,
                                 "render": function(data, type, row) {  
                                     var label = '';   
-                                    var approval_url = "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval);
+                                    var approval_url = "{% url 'approval_history' pk=123 %}?from=po&pk={{trans_type.pk}}".replace(/123/, row.approval);
                                                                    
                                     if (row.approval_status == 'Draft') {
                                         label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';

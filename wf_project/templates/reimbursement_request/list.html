@@ -50,7 +50,7 @@
                         "targets": 5,
                             "render": function(data, type, row) {  
                                 var label = '';                                  
-                                var approval_url = "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id);
+                                var approval_url = "{% url 'approval_history' pk=123 %}?from=reimburse".replace(/123/, row.approval_id);
                                                                    
                                 if (row.approval_status == 'Draft') {
                                     label = '<p class="text-info"><strong>' + row.approval_status + '</strong></p>';

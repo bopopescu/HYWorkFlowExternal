@@ -113,7 +113,7 @@
                           "data": null,
                           "render": function(data, type, row) {
                             var label = '';
-                            label = '<a href="'+ "{% url 'py_print' pk=123 %}".replace(/123/, row.payment_id) + '" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-print"></i></a>';
+                            label = '<a href="'+ "{% url 'payment_voucher_print' pk=123 %}".replace(/123/, row.payment_id) + '" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-print"></i></a>';
                             return label;
                           }
                       }],

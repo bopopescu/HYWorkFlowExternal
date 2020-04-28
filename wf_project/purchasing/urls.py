@@ -61,5 +61,7 @@ urlpatterns = [
     path('pdn/list/<int:pk>/', views.pdn_list, name='pdn_list'),   
     path('pdn/<int:pk>/', views.pdn_detail, name='pdn_detail'),
 
-    path('print/<int:pk>/', views.po_print, name='po_print'),
+    path('po/print/<int:pk>/', views.po_print, name='po_print'),
+    path('grn/print/<int:pk>/', views.grn_print, name='grn_print'),
+    path('pi/print/<int:pk>/', views.pi_print, name='pi_print'),
 ]

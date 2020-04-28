@@ -691,3 +691,45 @@ def po_print(request, pk):
         return response
     else:
         return response("errors")
+
+@login_required
+def grn_print(request, pk): 
+    grn = get_object_or_404(GoodsReceiptNote, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=grn.po.pk)
+    po_details = PurchaseOrderDetail.objects.filter(po=po)
+    params = {
+        'po': po,
+        'grn': grn,
+        'po_details': po_details
+    }
+    
+    pdf = Render.render('report/GRN/print.html', params)
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = "GRN_%s.pdf" %(grn.document_number)
+        content = "attachment; filename=%s" %(filename)
+        response['Content-Disposition'] = content
+        return response
+    else:
+        return response("errors")
+
+@login_required
+def pi_print(request, pk): 
+    pi = get_object_or_404(PurchaseInvoice, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=pi.po.pk)
+    po_details = PurchaseOrderDetail.objects.filter(po=po)
+    params = {
+        'po': po,
+        'pi': pi,
+        'po_details': po_details
+    }
+    
+    pdf = Render.render('report/PI/print.html', params)
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = "PI_%s.pdf" %(pi.invoice_number)
+        content = "attachment; filename=%s" %(filename)
+        response['Content-Disposition'] = content
+        return response
+    else:
+        return response("errors")

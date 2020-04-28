@@ -12,11 +12,26 @@
         {% elif memo.status.status_code == 400 %}
             <a href="{% url 'memo_print' memo.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-print"></i> Print</a>
         {% endif %}
-        <a href="{% url 'memo_print' memo.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-print"></i> Print</a>
-        <a href="{% url 'memo_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
+        <a href="#" id="back_button" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
     </div>
 </div>
+<script>
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    };
 
+    var from_value = getUrlParameter('from');
+    var back_button = document.getElementById("back_button");
+
+    if (from_value == 'approval'){
+      back_button.href = "{% url 'approval_list' %}";
+    } else {
+      back_button.href = "{% url 'memo_list' %}";
+    }
+</script>
 <div class="row">
     <div class="col-xl-6 col-md-6 mb-4">
         <div class="card shadow mb-4">

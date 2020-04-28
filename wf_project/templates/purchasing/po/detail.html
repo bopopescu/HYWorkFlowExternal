@@ -13,11 +13,26 @@
             {% elif po.status.status_code == 400 %}
             <a href="{% url 'po_print' po.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-print"></i> Print</a>
             {% endif %}
-            <a href="{% url 'po_print' po.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-print"></i> Print</a>
-            <a href="{% url 'po_list' po.transaction_type.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
+            <a href="#" id="back_button" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
         </div>
     </div>
+    <script>
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
 
+        var from_value = getUrlParameter('from');
+        var back_button = document.getElementById("back_button");
+
+        if (from_value == 'approval'){
+        back_button.href = "{% url 'approval_list' %}";
+        } else {
+        back_button.href = "{% url 'po_list' po.transaction_type.pk%}";
+        }
+    </script>
     <div class="row">
         <div class="col-xl-6 col-md-6 mb-4">
             <div class="card shadow mb-4">

@@ -96,10 +96,26 @@
       <a href="{% url 'py_send_approval' py.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
       <a href="{% url 'py_update' py.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-pencil-alt"></i> Edit</a>
       {% endif %}
-      <a href="{% url 'pylist' py.transaction_type.pk%}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
+      <a href="#" id="back_button" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
     </div>    
-  </div>
+  </div>  
+  <script>
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    };
 
+    var from_value = getUrlParameter('from');
+    var back_button = document.getElementById("back_button");
+
+    if (from_value == 'approval'){
+      back_button.href = "{% url 'approval_list' %}";
+    } else {
+      back_button.href = "{% url 'pylist' py.transaction_type.pk%}";
+    }
+</script>
   <div class="row">
     <div class="col-xl-6 col-md-6 mb-4">
       <div class="card shadow mb-4">

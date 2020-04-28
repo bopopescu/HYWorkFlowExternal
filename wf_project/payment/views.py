@@ -1,15 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import NewPaymentForm,UpdatePaymentForm,DetailPaymentForm,NewPYItemForm,NewPYAttachmentForm
+from .forms import NewPaymentForm, UpdatePaymentForm, DetailPaymentForm, NewPYItemForm, NewPYAttachmentForm
 from django.contrib.auth.decorators import login_required
-from .models import PaymentRequest,PaymentRequestDetail,PaymentAttachment
+from .models import PaymentRequest, PaymentRequestDetail, PaymentAttachment
 from rest_framework import viewsets
-from .serializers import PYSerializer,PYItemSerializer,PYAttachmentSerializer
+from .serializers import PYSerializer, PYItemSerializer, PYAttachmentSerializer
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
-from administration.models import PaymentmodeMaintenance,EmployeeMaintenance
-from approval.models import ApprovalItem,ApprovalItemApprover
-from utility_dashboard.models import UtilityApprovalItem,UtilityApprovalItemApprover
+from administration.models import PaymentmodeMaintenance, EmployeeMaintenance
+from approval.models import ApprovalItem, ApprovalItemApprover
+from utility_dashboard.models import UtilityApprovalItem, UtilityApprovalItemApprover
 from django.contrib.auth.models import User
 import datetime
 from django.http import JsonResponse
@@ -34,11 +34,11 @@ class TeamPYViewSet(viewsets.ModelViewSet):
     serializer_class = PYSerializer
 
     def get_queryset(self):
-        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
+        document_type = get_object_or_404(DocumentTypeMaintenance, document_type_code="301")
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
         groups = self.request.user.groups.values_list('id', flat=True)
         users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
-        return PaymentRequest.objects.filter(submit_by__in=users,transaction_type=transaction_type).order_by('-id')  
+        return PaymentRequest.objects.filter(submit_by__in=users, transaction_type=transaction_type).order_by('-id')  
 
 class PYItemViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequestDetail.objects.all()
@@ -49,7 +49,7 @@ class PYItemViewSet(viewsets.ModelViewSet):
         This view should return a list of all models by
         the maker passed in the URL
         """
-        py = get_object_or_404(PaymentRequest,pk=self.request.query_params.get('pk', None))
+        py = get_object_or_404(PaymentRequest, pk=self.request.query_params.get('pk', None))
         return PaymentRequestDetail.objects.filter(py=py)
 
 class PYAttachmentViewSet(viewsets.ModelViewSet):
@@ -61,18 +61,18 @@ class PYAttachmentViewSet(viewsets.ModelViewSet):
         This view should return a list of all models by
         the maker passed in the URL
         """
-        py = get_object_or_404(PaymentRequest,pk=self.request.query_params.get('pk', None))
+        py = get_object_or_404(PaymentRequest, pk=self.request.query_params.get('pk', None))
         return PaymentAttachment.objects.filter(py=py)
 
 @login_required
-def py_create(request,TransType):
+def py_create(request, TransType):
     transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=TransType)
     
     if transaction_type.transaction_type_name == "Petty Cash":
-        payment_mode = get_object_or_404(PaymentmodeMaintenance,payment_mode_name="Petty Cash")
-        py = PaymentRequest.objects.create(submit_by=request.user,transaction_type=transaction_type,payment_mode=payment_mode)
+        payment_mode = get_object_or_404(PaymentmodeMaintenance, payment_mode_name="Petty Cash")
+        py = PaymentRequest.objects.create(submit_by=request.user, transaction_type=transaction_type, payment_mode=payment_mode)
     else:
-        py = PaymentRequest.objects.create(submit_by=request.user,transaction_type=transaction_type)
+        py = PaymentRequest.objects.create(submit_by=request.user, transaction_type=transaction_type)
     return redirect(py_create_edit, py.pk)
 
 @login_required
@@ -94,7 +94,7 @@ def py_create_edit(request, pk):
             employee = form.cleaned_data['employee']
             payment_mode = form.cleaned_data['payment_mode']
             py = form.save(commit=False)
-            py.document_number = '{0}-{1:05d}'.format(payment_type.document_type_code,document_number)
+            py.document_number = '{0}-{1:05d}'.format(payment_type.document_type_code, document_number)
             py.currency = currency
             py.vendor = vendor
             py.employee = employee
@@ -105,8 +105,8 @@ def py_create_edit(request, pk):
             py.submit_by = request.user
             py.save()
 
-            document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="301")
-            transaction_type = get_object_or_404(TransactiontypeMaintenance,pk = transaction_type.pk, document_type=document_type)
+            document_type = get_object_or_404(DocumentTypeMaintenance, document_type_code="301")
+            transaction_type = get_object_or_404(TransactiontypeMaintenance, pk = transaction_type.pk, document_type=document_type)
        
             if py.transaction_type.is_utility == False:
                 approval_item = ApprovalItem()        
@@ -143,10 +143,10 @@ def py_create_edit(request, pk):
         form.fields['currency'].initial = get_object_or_404(CurrencyMaintenance, alphabet="MYR")
         form_attachment = NewPYAttachmentForm()
         form_item = NewPYItemForm()
-    return render(request, 'payment/create.html', {'py': py, 'form': form,'form_item':form_item ,'form_attachment': form_attachment})
+    return render(request, 'payment/create.html', {'py': py, 'form': form, 'form_item':form_item , 'form_attachment': form_attachment})
 
 @login_required
-def py_send_approval(request,pk):
+def py_send_approval(request, pk):
     py = get_object_or_404(PaymentRequest, pk=pk)
     if py.transaction_type.is_utility == True:
         approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte=py.total_amount)[0]
@@ -160,7 +160,7 @@ def py_send_approval(request,pk):
         return redirect('utility_approval_detail', pk=utility_approval_item.pk)
     else: 
         if py.transaction_type.transaction_type_name == "Petty Cash":
-            approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte=py.total_amount,transaction_type=py.transaction_type)[0]
+            approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte=py.total_amount, transaction_type=py.transaction_type)[0]
             approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)       
             approval_item.approval_level = approval_level
             if approval_level.ceo_approve == True:
@@ -214,7 +214,7 @@ def py_item_create_formcreate(request, pk):
 
     else:
         print(form.errors)
-    return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
+    return JsonResponse({'message': 'Success', 'sub_total': sub_total, 'tax_amount':total_tax_amount})
 
 @login_required
 def py_item_delete_formcreate(request, pk):
@@ -249,7 +249,7 @@ def py_item_delete_formcreate(request, pk):
         py.total_amount = price
         py.save()
 
-    return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
+    return JsonResponse({'message': 'Success', 'sub_total': sub_total, 'tax_amount':total_tax_amount})
 
 @login_required
 def py_attachment_create_formcreate(request, pk):    
@@ -283,7 +283,7 @@ def py_detail(request, pk):
     return render(request, 'payment/detail.html', {'py': py, 'form': form})
 
 @login_required
-def pylist(request,pk):
+def pylist(request, pk):
     transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
     return render(request, 'payment/list.html', {'trans_type': transaction_type})
 
@@ -315,7 +315,7 @@ def py_update(request, pk):
         form = UpdatePaymentForm(instance=py)
         form_item = NewPYItemForm()
         form_attachment = NewPYAttachmentForm()
-    return render(request, 'payment/update.html', {'py': py, 'form': form,'form_item':form_item ,'form_attachment':form_attachment})
+    return render(request, 'payment/update.html', {'py': py, 'form': form, 'form_item':form_item , 'form_attachment':form_attachment})
 
 @login_required
 def py_item_create(request, pk):    
@@ -355,7 +355,7 @@ def py_item_create(request, pk):
         py.save()
     else:
         print(form.errors)
-    return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
+    return JsonResponse({'message': 'Success', 'sub_total': sub_total, 'tax_amount':total_tax_amount})
 
 @login_required
 def py_item_delete(request, pk):
@@ -390,7 +390,7 @@ def py_item_delete(request, pk):
         py.total_amount = price
         py.save()
 
-    return JsonResponse({'message': 'Success','sub_total': sub_total,'tax_amount':total_tax_amount})
+    return JsonResponse({'message': 'Success', 'sub_total': sub_total, 'tax_amount':total_tax_amount})
 
 @login_required
 def py_attachment_create(request, pk):    
@@ -424,14 +424,14 @@ def py_print(request, pk):
 
     requester = get_object_or_404(User, pk=py.submit_by.pk)
     approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
-    # return render(request, 'PR/print.html', {'py': py,'py_item':py_item})
+    # return render(request, 'PR/print.html', {'py': py, 'py_item':py_item})
     params = {
-        'py': py,
-        'py_item': py_item,
-        'request': request,
-        'approval_item': approval_item,
-        'requester': requester,
-        'approver_employee': approver_employee,
+        'py': py, 
+        'py_item': py_item, 
+        'request': request, 
+        'approval_item': approval_item, 
+        'requester': requester, 
+        'approver_employee': approver_employee, 
     }
     
     pdf = Render.render('PR/print.html', params)

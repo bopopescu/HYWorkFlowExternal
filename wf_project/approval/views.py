@@ -16,6 +16,7 @@ from staff_overtime.models import StaffOT
 from drawer_reimbursement.models import ReimbursementRequest
 from django.contrib.auth.models import User, Group
 from django.http import JsonResponse
+import datetime
 
 class ApprovalViewSet(viewsets.ModelViewSet):
     queryset = ApprovalItem.objects.all().order_by('-id')
@@ -107,10 +108,10 @@ def approval_detail(request, pk):
             first_tab_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)[0]
 
     if approval_rule_group.count() > 0:
-        return render(request, 'approval/detail.html', {'approval_item': approval_item, 'approval_rule': approval_rule, 'first_tab': first_tab_group,
+        return render(request, 'approval/detail.html', {'approval_item': approval_item, 'approval_rule': approval_rule, 'first_tab': first_tab_group, 
         'approval_rule_group': approval_rule_group, 'form': form, 'form_approver_a': form_approver_a, 'form_approver_b': form_approver_b, 'form_cc': form_cc})
     else:
-        return render(request, 'approval/detail.html', {'approval_item': approval_item, 'approval_rule': approval_rule,
+        return render(request, 'approval/detail.html', {'approval_item': approval_item, 'approval_rule': approval_rule, 
         'approval_rule_group': approval_rule_group, 'form': form, 'form_approver_a': form_approver_a, 'form_approver_b': form_approver_b, 'form_cc': form_cc})
 
 @login_required
@@ -182,7 +183,7 @@ def approval_update(request, pk):
         payment.status = status
         payment.save()
         trans_name = payment.transaction_type.transaction_type_name
-        return redirect('pylist',payment.transaction_type.pk)
+        return redirect('pylist', payment.transaction_type.pk)
     elif document_type.document_type_code == "501":
         staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
         status = StatusMaintenance.objects.filter(document_type=document_type, status_code='300')[0]
@@ -194,7 +195,7 @@ def approval_update(request, pk):
         status = StatusMaintenance.objects.filter(document_type=document_type, status_code='300')[0]
         staff_ot.status = status
         staff_ot.save()
-        return redirect('staff_ot_list',staff_ot.transaction_type)
+        return redirect('staff_ot_list', staff_ot.transaction_type.pk)
 
     elif document_type.document_type_code == "403":
         reimbursement_request = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
@@ -209,6 +210,7 @@ def approval_update(request, pk):
 def approve(request):
     approver_item = get_object_or_404(ApprovalItemApprover, user=request.user.id, approval_item=request.POST['hiddenValueApprove'])
     approver_item.status = "A"
+    approver_item.approved_date = datetime.datetime.now()
     approver_item.save()
 
     approvers = ApprovalItemApprover.objects.filter(approval_item=request.POST['hiddenValueApprove']).count()
@@ -225,6 +227,7 @@ def approve(request):
                 approval_type.document_type_code, document_number
                 )
         approval_item.status = "A"
+        approval_item.approved_date = datetime.datetime.now()
         approval_item.save()
 
         document_type = get_object_or_404(DocumentTypeMaintenance, pk=approval_item.document_type.pk)

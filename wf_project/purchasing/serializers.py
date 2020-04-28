@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from django.shortcuts import get_object_or_404
+from accounts_task.models import AccountTask
 from .models import PurchaseOrder, PurchaseOrderDetail, PurchaseOrderAttachment
 from .models import PurchaseOrderComparison2Attachment, PurchaseOrderComparison3Attachment
 from .models import GoodsReceiptNote, PurchaseInvoice, PurchaseDebitNote, PurchaseCreditNote
@@ -15,13 +17,14 @@ class POSerializer(serializers.ModelSerializer):
     inv = serializers.SerializerMethodField()
     inv_date = serializers.SerializerMethodField()
     inv_doc_no = serializers.SerializerMethodField()
+    accounts_status = serializers.SerializerMethodField()
 
     class Meta:
         model = PurchaseOrder
         fields = ['id', 'revision', 'document_number', 'subject', 
         'submit_date', 'company', 'project', 'submit_by', 
         'approval', 'approval_status', 'grn', 'receive_date', 'grn_doc_no',
-        'inv', 'inv_date', 'inv_doc_no']
+        'inv', 'inv_date', 'inv_doc_no', 'accounts_status']
 
     def get_approval_status(self, obj):    
         if obj.approval != None:  
@@ -89,6 +92,22 @@ class POSerializer(serializers.ModelSerializer):
             return inv.invoice_number
         else:
             return 0
+
+    def get_accounts_status(self, obj):
+        task_exist = AccountTask.objects.filter(approval_item=obj.approval).count()
+
+        if task_exist > 0:
+            account_task = get_object_or_404(AccountTask, approval_item=obj.approval)
+
+            if account_task.process:
+                if account_task.completed:
+                    return "Completed"
+                else:
+                    return "In Process"
+            else:
+                return "Pending Process"
+        else:
+            return "Not Set"
 
 class PODetailSerializer(serializers.ModelSerializer):
     item_code =  serializers.SerializerMethodField()

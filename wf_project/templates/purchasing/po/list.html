@@ -33,6 +33,7 @@
                                 <th data-data="submit_date">Submit Date</th>
                                 <th data-data="approval_status">Status</th>
                                 <th data-data="approval"></th>
+                                <th data-data="accounts_status">Accounts Status</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -70,6 +71,23 @@
                                     } else {
                                         label = '<p class="text-danger"><strong>' + row.approval_status + '</strong></p>';
                                         label = '<a href="' + approval_url + '">' + label + '</a>'
+                                    }
+
+                                    return label;
+                                }
+                            }, {
+                                "targets": 10,
+                                "render": function(data, type, row) {  
+                                    var label = '';   
+                                                                   
+                                    if (row.accounts_status == 'Pending Process') {
+                                        label = '<p class="text-info"><strong>' + row.accounts_status + '</strong></p>';
+                                    } else if (row.accounts_status == 'In Process') {
+                                        label = '<p class="text-warning"><strong>' + row.accounts_status + '</strong></p>';
+                                    } else if (row.accounts_status == 'Completed') {
+                                        label = '<p class="text-success"><strong>' + row.accounts_status + '</strong></p>';
+                                    } else {
+                                        label = '<p class="text-info"><strong>' + row.accounts_status + '</strong></p>';
                                     }
 
                                     return label;

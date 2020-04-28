@@ -1,0 +1,137 @@
+{% load static %}
+<html>
+	<head>
+          <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+  		  <link href="http://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+		  <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+	</head>
+	<body>
+		<table>
+			<tr>
+				<td colspan="4"><img src="{% static 'BigRed.png' %}" style="width:100%"/></td>
+				<td style="text-align:right;">
+					<div style="font-size:18px">Payment Voucher</div>
+					<div>Payment Req. Doc. No.: {{py.document_number}}</div>
+					<div>Date: {{py.submit_date}}</div>
+				</td>
+			</tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr>
+				<td colspan="2" style="vertical-align:top">
+					<img src="{% static 'logo_print.png' %}" style="width:150px"/>
+				</td>
+				<td colspan="2" style="padding-left:20px">
+					<div><span style="color:red">Hua Yang Berhad</span> (44094-M)</div>
+					<div>C-21, Jalan Medan Selayang 1, Medan Selayang,</div>
+					<div>68100 Batu Caves, Selangor Darul Ehsan,</div>
+					<div>Malaysia</div>
+				</td>
+				<td style="border-left: solid red 1px; padding-left:5px; vertical-align:top">
+					<div><span style="color:red">T:</span> +603-6188 4488</div>
+					<div><span style="color:red">F:</span> +603-6188 4487</div>
+					<div><span style="color:red">E:</span> kl@huayang.com.my</div>
+				</td>
+			</tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr>
+				<td colspan="2">
+                    {%if py.transaction_type.is_utility == True%}
+                    <div >Pay To: {{py.utility_account}}</div>
+                    {%else%}
+                    {%if py.vendor == null %}
+                    <div>Pay To: {{py.employee}}</div>
+                    {%else%}
+                    <div>Pay To: {{py.vendor}}</div>
+                    {%endif%}
+                    {%endif%}
+				</td>
+            </tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr>
+				<td>
+					<div>Subject</div>
+					<div>Project</div>
+					<div>Payment Mode</div>
+					<div>Reference</div>
+				</td>
+				<td colspan="4">
+					<div>: {{py.subject}}</div>
+					<div>: {{py.project}}</div>
+					<div>: {{py.payment_mode}}</div>
+					<div>: {{py.reference}}</div>
+				</td>
+			</tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr>
+				<td colspan="5" style="width:100%; padding:2px">
+					<table style="border: solid 1px black">
+						<tr>
+							<th>
+								No.
+							</th>
+							<th colspan="7">
+								Item Description
+							</th>
+							<th>
+								Tax
+							</th>
+							<th colspan="2">
+								Price
+							</th>
+						</tr>
+						{% for detail in py_item%}
+						<tr>
+							<td>{{ forloop.counter }}</td>
+							<td colspan="7">{{detail.item_description}}</td>
+							<td style="text-align:right">{{detail.line_taxamount}}</td>
+							<td colspan="2" style="text-align:right">{{detail.line_total}}</td>
+						</tr>
+						{% endfor %}
+						<tr>
+							<td colspan="8"></td>
+							<td colspan="2">
+								<div>Gross Amount</div>
+								<div>Discount</div>
+								<div>Total Tax</div>
+								<div style="border-top:double 1px black"><strong>Net Amount</strong></div>
+							</td>
+							<td style="text-align:right">
+								<div>{{py.sub_total}}</div>
+								<div>{{py.discount_amount}}</div>
+								<div>{{py.tax_amount}}</div>
+								<div style="border-top:double 1px black"><strong>{{py.total_amount}}</strong></div>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr><td><strong>Remarks:</strong></td></tr>
+			<tr><td colspan="5" style="width:100%">{{py.remarks|safe}}</td></tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr>
+				<td colspan="2" style="vertical-align:top">
+					<span style="text-decoration: underline;"><strong>Terms and Conditions</strong></span>
+					<ol>
+						<li>Any pricing discrepency in PO, supplier should immediately feedback to Hua Yang Berhad for approval.</li>
+						<li>Goods will be rejected if found not in confirmity with the terms of this Purchase Order and Quality Assurance requirements.</li>
+					</ol>
+				</td>
+				<td>&nbsp;</td>
+				<td colspan="2" style="vertical-align:top">
+					<div><strong>Authorised Signatories:</strong></div>
+					<div><img src="{{approver_employee.employee_signature.url}}" /><img src="{% static 'CompanyCop.png' %}" style="width:100px"/></div>
+					<div style="border-bottom:solid black 1px">&nbsp;</div>
+					<div>&nbsp;</div>
+					<div>Date: {{approval_item.approved_date}}</div>
+					<div>Name: {{approver_employee.employee_name}}</div>
+					<div>Designation: {{approver_employee.position_id}}</div>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

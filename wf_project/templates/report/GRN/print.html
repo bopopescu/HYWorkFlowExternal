@@ -1,0 +1,88 @@
+{% load static %}
+<html>
+	<head>
+  		<link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+  		<link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+	</head>
+	<body>
+		<table>
+			<tr>
+				<td colspan="4"><img src="{% static 'BigRed.png' %}" style="width:100%"/></td>
+				<td style="text-align:right;">
+					<div style="font-size:15px">Goods Receipt Note</div>
+					<div>Doc. No.: {{grn.document_number}}</div>
+					<div>Date: {{grn.receive_date}}</div>
+				</td>
+			</tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr>
+				<td colspan="2" style="vertical-align:top">
+					<img src="{% static 'logo_print.png' %}" style="width:150px"/>
+				</td>
+				<td colspan="2" style="padding-left:20px">
+					<div><span style="color:red">Hua Yang Berhad</span> (44094-M)</div>
+					<div>C-21, Jalan Medan Selayang 1, Medan Selayang,</div>
+					<div>68100 Batu Caves, Selangor Darul Ehsan,</div>
+					<div>Malaysia</div>
+				</td>
+				<td style="border-left: solid red 1px; padding-left:5px; vertical-align:top">
+					<div><span style="color:red">T:</span> +603-6188 4488</div>
+					<div><span style="color:red">F:</span> +603-6188 4487</div>
+					<div><span style="color:red">E:</span> kl@huayang.com.my</div>
+				</td>
+			</tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr>
+				<td colspan="2" style="border: 1px solid black; padding:5px">
+					<div>Supplier Address:</div>
+					<div>{{po.vendor_address}}</div>
+				</td>
+				<td>&nbsp;</td>
+				<td colspan="2" style="border: 1px solid black; padding:5px">
+					<div>Delivery Address:</div>
+					<div>{{po.delivery_address}}</div>
+				</td>
+			</tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr>
+				<td colspan="5" style="width:100%; padding:2px">
+					<table style="border: solid 1px black">
+						<tr>
+							<th>
+								No.
+							</th>
+							<th colspan="2">
+								Item Code
+							</th>
+							<th colspan="2">
+								Description
+							</th>
+							<th>
+								UoM
+							</th>
+							<th>
+								Quantity
+							</th>
+						</tr>
+						{% for detail in po_details%}
+						<tr>
+							<td>{{ forloop.counter }}</td>
+							<td colspan="2">{{detail.item.item_code}}</td>
+							<td colspan="2">{{detail.item.item_description}}</td>
+							<td>{{detail.uom}}</td>
+							<td style="text-align:right">{{detail.quantity}}</td>
+						</tr>
+						{% endfor %}
+					</table>
+				</td>
+			</tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr><td><strong>Remarks:</strong></td></tr>
+			<tr><td colspan="5" style="width:100%">{{po.remarks|safe}}</td></tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr><td><strong>Delivery Instruction:</strong></td></tr>
+			<tr><td colspan="5" style="width:100%">{{po.delivery_instruction|safe}}</td></tr>
+		</table>
+	</body>
+</html>

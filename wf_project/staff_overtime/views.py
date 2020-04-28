@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import NewStaffOTForm,NewStaffOTDetailForm,UpdateStaffOTForm,DetailStaffOTForm
+from .forms import NewStaffOTForm, NewStaffOTDetailForm, UpdateStaffOTForm, DetailStaffOTForm
 from django.contrib.auth.decorators import login_required
-from .models import StaffOT,StaffOTDetail
+from .models import StaffOT, StaffOTDetail
 from rest_framework import viewsets
-from .serializers import StaffOTSerializer,StaffOTDetailSerializer
+from .serializers import StaffOTSerializer, StaffOTDetailSerializer
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
@@ -31,11 +31,11 @@ class TeamStaffOTViewSet(viewsets.ModelViewSet):
     serializer_class = StaffOTSerializer
 
     def get_queryset(self):
-        document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code="504")
+        document_type = get_object_or_404(DocumentTypeMaintenance, document_type_code="504")
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
         groups = self.request.user.groups.values_list('id', flat=True)
         users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
-        return StaffOT.objects.filter(submit_by__in=users,transaction_type=transaction_type).order_by('-id')
+        return StaffOT.objects.filter(submit_by__in=users, transaction_type=transaction_type).order_by('-id')
 
 class StaffOTDetailViewSet(viewsets.ModelViewSet):
     serializer_class = StaffOTDetailSerializer
@@ -45,15 +45,15 @@ class StaffOTDetailViewSet(viewsets.ModelViewSet):
         This view should return a list of all models by
         the maker passed in the URL
         """
-        staff_ot = get_object_or_404(StaffOT,pk=self.request.query_params.get('pk', None))
+        staff_ot = get_object_or_404(StaffOT, pk=self.request.query_params.get('pk', None))
         return StaffOTDetail.objects.filter(staff_ot=staff_ot).order_by("ot_date")
 
 @login_required
-def staff_ot_init(request ,pk):    
+def staff_ot_init(request , pk):    
     transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
     employee = get_object_or_404(EmployeeMaintenance, user=request.user)
     employee_position = employee.position_id
-    staff_ot = StaffOT.objects.create(submit_by=request.user, transaction_type=transaction_type,employee=employee,employee_position =employee_position)
+    staff_ot = StaffOT.objects.create(submit_by=request.user, transaction_type=transaction_type, employee=employee, employee_position =employee_position)
     return redirect(staff_ot_create, staff_ot.pk)
 
 @login_required
@@ -76,7 +76,7 @@ def staff_ot_create(request, pk):
 
             status = get_object_or_404(StatusMaintenance, document_type=staff_ot_type, status_code="100")
 
-            staff_ot.document_number = '{0}-{1:05d}'.format(staff_ot_type.document_type_code,document_number)
+            staff_ot.document_number = '{0}-{1:05d}'.format(staff_ot_type.document_type_code, document_number)
             staff_ot.company = company
             staff_ot.department = department
             staff_ot.project = project
@@ -86,7 +86,7 @@ def staff_ot_create(request, pk):
             staff_ot.transaction_type = transaction_type
             staff_ot.save()
 
-            # transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=transaction_type.pk ,document_type=staff_ot_type)
+            # transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=transaction_type.pk , document_type=staff_ot_type)
 
             approval_item = ApprovalItem()        
             approval_item.document_number = staff_ot.document_number
@@ -110,15 +110,15 @@ def staff_ot_create(request, pk):
     return render(request, 'staff_overtime/create.html', {'staff_ot': staff_ot, 'form': form, 'form_detail': form_detail})
 
 @login_required
-def staff_ot_send_approval(request,pk):
+def staff_ot_send_approval(request, pk):
     staff_ot = get_object_or_404(StaffOT, pk=pk)
+    staff_employee = get_object_or_404(EmployeeMaintenance, user=request.user)
+    reporting_officer = get_object_or_404(EmployeeMaintenance, pk=staff_employee.reporting_officer_id.pk)
     print(staff_ot.transaction_type)
     approval_level = WorkflowApprovalRule.objects.filter(transaction_type=staff_ot.transaction_type)[0]
-    approval_item = get_object_or_404(ApprovalItem, pk=staff_ot.approval.pk)       
+    approval_item = get_object_or_404(ApprovalItem, pk=staff_ot.approval.pk)
     approval_item.approval_level = approval_level
-    if approval_level.ceo_approve == True:
-        approval_item.notification = "CEO will added by default"
-
+    approval_item.notification = reporting_officer.employee_name + " will be added by default"
     approval_item.save()
 
     return redirect('approval_detail', pk=approval_item.pk)
@@ -130,7 +130,7 @@ def staff_ot_detail(request, pk):
     return render(request, 'staff_overtime/detail.html', {'staff_ot': staff_ot, 'form': form})
 
 @login_required
-def staff_ot_list(request,pk):
+def staff_ot_list(request, pk):
     transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=pk)
     return render(request, 'staff_overtime/list.html', {'trans_type': transaction_type})
 
@@ -148,7 +148,7 @@ def staff_ot_update(request, pk):
     else:
         form = UpdateStaffOTForm(instance=staff_ot)
         form_detail = NewStaffOTDetailForm()
-    return render(request, 'staff_overtime/update.html', {'staff_ot': staff_ot, 'form': form,'form_detail':form_detail})
+    return render(request, 'staff_overtime/update.html', {'staff_ot': staff_ot, 'form': form, 'form_detail':form_detail})
 
 @login_required
 def staff_ot_delete(request):
@@ -163,9 +163,8 @@ def staff_ot_detail_create(request, pk):
         staff_ot_detail = form.save(commit=False)
         staff_ot = get_object_or_404(StaffOT, pk=pk)
 
-        
-        time_out = datetime.datetime.combine(date.today(),staff_ot_detail.ot_time_out)
-        time_in = datetime.datetime.combine(date.today(),staff_ot_detail.ot_time_in)
+        time_out = datetime.datetime.combine(date.today(), staff_ot_detail.ot_time_out)
+        time_in = datetime.datetime.combine(date.today(), staff_ot_detail.ot_time_in)
         total_ot_time = time_out - time_in
         total_ot_hours = 0
         ot_rate = 0.0
@@ -204,7 +203,7 @@ def staff_ot_detail_create(request, pk):
         
     else:
         print(form.errors)
-    return JsonResponse({'message': 'Success','total_ot_hours': staff_ot_hours,'total_ot_rate':staff_ot_rate}) 
+    return JsonResponse({'message': 'Success', 'total_ot_hours': staff_ot_hours, 'total_ot_rate':staff_ot_rate}) 
 
 @login_required
 def staff_ot_detail_delete(request):
@@ -229,4 +228,4 @@ def staff_ot_detail_delete(request):
         staff_ot.total_ot_hours = staff_ot_hours
         staff_ot.total_ot_rate = staff_ot_rate
         staff_ot.save()
-    return JsonResponse({'message': 'Success','total_ot_hours': staff_ot_hours,'total_ot_rate':staff_ot_rate})
+    return JsonResponse({'message': 'Success', 'total_ot_hours': staff_ot_hours, 'total_ot_rate':staff_ot_rate})

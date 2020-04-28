@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from rest_framework import viewsets
+from administration.models import TransactiontypeMaintenance
 from approval.models import ApprovalItem
 from .models import AccountTask
 from .serializers import TaskSerializer
@@ -12,7 +13,6 @@ class UnprocessedViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
 
     def get_queryset(self):
-        task_init(self.request)
         return AccountTask.objects.filter(process=False, completed=False).order_by('-id')
 
 class ProcessedViewSet(viewsets.ModelViewSet):
@@ -33,15 +33,19 @@ class CompletedViewSet(viewsets.ModelViewSet):
 def task_init(request):
     """Initializa task"""
 
-    po_exist = AccountTask.objects.all().values_list('approval_item_id', flat=True)
-    approval_list = ApprovalItem.objects.filter(status="A").exclude(pk__in=po_exist)
+    transaction_types = TransactiontypeMaintenance.objects.filter(send_to_account=True).values_list('id', flat=True)
+    workflow_exist = AccountTask.objects.all().values_list('approval_item_id', flat=True)
+    approval_list = ApprovalItem.objects.filter(status="A", transaction_type__in=transaction_types).exclude(pk__in=workflow_exist)
 
     for approval_item in approval_list:
         AccountTask.objects.create(approval_item=approval_item)
 
 @login_required
 def task_list(request):
-    """Handles a list of Memo"""
+    """Handles a list of task"""
+    
+    task_init(request)
+
     unprocessed = AccountTask.objects.filter(process=False, completed=False).count()
     processed = AccountTask.objects.filter(process=True, completed=False).count()
     completed = AccountTask.objects.filter(process=True, completed=True).count()

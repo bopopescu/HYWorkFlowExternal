@@ -56,12 +56,12 @@ admin.site.register(WorkflowPattern)
 admin.site.register(WorkflowInstance)
 
 class ProjectMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('project_code','company','project_name','phase_name','sub_phase_name')
-    search_fields = ('company__company_name', 'company__short_name','project_code','project_name','phase_name','sub_phase_name',)
+    list_display = ('project_code', 'company', 'project_name', 'phase_name', 'sub_phase_name')
+    search_fields = ('company__company_name', 'company__short_name', 'project_code', 'project_name', 'phase_name', 'sub_phase_name', )
     fieldsets = [
-        (None, {'fields': ['company','project_code','project_name','phase_name','sub_phase_name','effect_start_date','effect_end_date']}),
+        (None, {'fields': ['company', 'project_code', 'project_name', 'phase_name', 'sub_phase_name', 'effect_start_date', 'effect_end_date']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -72,16 +72,16 @@ class ProjectMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(ProjectMaintenance,ProjectMaintenanceScreen)
+admin.site.register(ProjectMaintenance, ProjectMaintenanceScreen)
 
 class StatusMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('status_code','status_name','document_type','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('status_code', 'status_name','document_type__document_type_name')
+    list_display = ('status_code', 'status_name', 'document_type', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('status_code', 'status_name', 'document_type__document_type_name')
     fieldsets = [
-        (None, {'fields': ['document_type','status_code','status_name','is_active']}),
+        (None, {'fields': ['document_type', 'status_code', 'status_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -92,16 +92,16 @@ class StatusMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(StatusMaintenance,StatusMaintenanceScreen)
+admin.site.register(StatusMaintenance, StatusMaintenanceScreen)
 
 class StaffemploymentTypeMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('employment_type_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('employment_type_name',)
+    list_display = ('employment_type_name', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('employment_type_name', )
     fieldsets = [
-        (None, {'fields': ['employment_type_name','is_active']}),
+        (None, {'fields': ['employment_type_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -112,16 +112,16 @@ class StaffemploymentTypeMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(StaffemploymentTypeMaintenance,StaffemploymentTypeMaintenanceScreen)
+admin.site.register(StaffemploymentTypeMaintenance, StaffemploymentTypeMaintenanceScreen)
 
 class StaffPositionTitleMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('position_title_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('position_title_name',)
+    list_display = ('position_title_name', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('position_title_name', )
     fieldsets = [
-        (None, {'fields': ['position_title_name','is_active']}),
+        (None, {'fields': ['position_title_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -132,16 +132,16 @@ class StaffPositionTitleMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(StaffPositionTitleMaintenance,StaffPositionTitleMaintenanceScreen)
+admin.site.register(StaffPositionTitleMaintenance, StaffPositionTitleMaintenanceScreen)
 
 class StaffPositionGradeMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('position_grade_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('position_grade_name',)
+    list_display = ('position_grade_name', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('position_grade_name', )
     fieldsets = [
-        (None, {'fields': ['position_grade_name','is_active']}),
+        (None, {'fields': ['position_grade_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -152,16 +152,16 @@ class StaffPositionGradeMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(StaffPositionGradeMaintenance,StaffPositionGradeMaintenanceScreen) 
+admin.site.register(StaffPositionGradeMaintenance, StaffPositionGradeMaintenanceScreen) 
 
 class DepartmentMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('department_name', 'is_active',)
+    list_display = ('department_name', 'is_active', )
     list_filter = ('is_active',)
-    search_fields = ('department_name',)
+    search_fields = ('department_name', )
     fieldsets = [
-        (None, {'fields': ['department_name','is_active']}),
+        (None, {'fields': ['department_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -172,16 +172,16 @@ class DepartmentMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(DepartmentMaintenance,DepartmentMaintenanceScreen)
+admin.site.register(DepartmentMaintenance, DepartmentMaintenanceScreen)
 
 class DocumentTypeMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('document_type_name', 'is_active',)
+    list_display = ('document_type_name', 'is_active')
     list_filter = ('is_active',)
-    search_fields = ('document_type_name',)
+    search_fields = ('document_type_name', )
     fieldsets = [
-        (None, {'fields': ['document_type_name','document_type_code','running_number','attachment_path','is_active']}),
+        (None, {'fields': ['document_type_name', 'document_type_code', 'running_number', 'attachment_path', 'is_active']}),
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -192,14 +192,14 @@ class DocumentTypeMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(DocumentTypeMaintenance,DocumentTypeMaintenanceScreen)
+admin.site.register(DocumentTypeMaintenance, DocumentTypeMaintenanceScreen)
 
 class CompanyContactInline(admin.StackedInline):
     model = CompanyContactDetail
     fieldsets = [
-        (None, {'fields': [('personal_title', 'contact_person'),('tel_no1','tel_no2'),('mobile','email'),('fax','ic_or_passport_no'),('position','dob')]}),
+        (None, {'fields': [('personal_title', 'contact_person'), ('tel_no1', 'tel_no2'), ('mobile', 'email'), ('fax', 'ic_or_passport_no'), ('position', 'dob')]}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
     extra = 0
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -213,9 +213,9 @@ class CompanyContactInline(admin.StackedInline):
 class CompanyAddressInline(admin.StackedInline):
     model = CompanyAddressDetail
     fieldsets = [
-        (None, {'fields': ['address_name', 'address1','address2','address3','address4',('address_zip','state','country')]}),
+        (None, {'fields': ['address_name', 'address1', 'address2', 'address3', 'address4', ('address_zip', 'state', 'country')]}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
     extra = 0
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -227,14 +227,14 @@ class CompanyAddressInline(admin.StackedInline):
         return super().save_model(request, obj, form, change)
 
 class CompanyMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('short_name', 'company_name', 'currency','region','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('short_name', 'company_name','currency__currency_name','currency__currency_code',)
+    list_display = ('short_name', 'company_name', 'currency', 'region', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('short_name', 'company_name', 'currency__currency_name', 'currency__currency_code', )
     fieldsets = [
-        (None, {'fields': ['branch','short_name','company_name','business_registration_no','tax_id_1','tax_id_2','is_active','currency','region']}),
+        (None, {'fields': ['branch', 'short_name', 'company_name', 'business_registration_no', 'tax_id_1', 'tax_id_2', 'is_active', 'currency', 'region']}), 
     ]
-    exclude = ['created_by','modified_by']
-    inlines = [CompanyContactInline,CompanyAddressInline]
+    exclude = ['created_by', 'modified_by']
+    inlines = [CompanyContactInline, CompanyAddressInline]
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -245,16 +245,16 @@ class CompanyMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(CompanyMaintenance,CompanyMaintenanceScreen)
+admin.site.register(CompanyMaintenance, CompanyMaintenanceScreen)
 
 class CurrencyMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('currency_name', 'is_active',)
-    list_filter = ('is_active',)
-    search_fields = ('currency_name',)
+    list_display = ('currency_name', 'is_active', )
+    list_filter = ('is_active', )
+    search_fields = ('currency_name', )
     fieldsets = [
-        (None, {'fields': ['currency_name','alphabet','rate','is_active']}),
+        (None, {'fields': ['currency_name', 'alphabet', 'rate', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -265,11 +265,11 @@ class CurrencyMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(CurrencyMaintenance,CurrencyMaintenanceScreen)
+admin.site.register(CurrencyMaintenance, CurrencyMaintenanceScreen)
 
 class EmployeeDepartmentInline(admin.StackedInline):
     model = EmployeeDepartmentMaintenance
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
     extra = 0
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -283,7 +283,7 @@ class EmployeeDepartmentInline(admin.StackedInline):
 
 class EmployeeBranchInline(admin.StackedInline):
     model = EmployeeBranchMaintenance
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
     extra = 0
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -297,13 +297,13 @@ class EmployeeBranchInline(admin.StackedInline):
 class EmployeeCompanyInline(admin.StackedInline):
     model = EmployeeCompanyMaintenance
     fieldsets = [
-        (None, {'fields': ['company']}),
+        (None, {'fields': ['company']}), 
     ]
     extra = 0
 
 class EmployeeProjectInline(admin.StackedInline):
     model = EmployeeProjectMaintenance
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
     extra = 0
 
     def save_model(self, request, obj, form, change):
@@ -316,14 +316,14 @@ class EmployeeProjectInline(admin.StackedInline):
         return super().save_model(request, obj, form, change)
 
 class EmployeeMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('employee_name','nick_name','position_id')
-    list_filter = ('is_active',)
-    search_fields = ('nick_name', 'employee_name','position_id__position_name')
+    list_display = ('employee_name', 'nick_name', 'position_id')
+    list_filter = ('is_active', )
+    search_fields = ('nick_name', 'employee_name', 'position_id__position_name')
     fieldsets = [
-        (None, {'fields': ['employee_name','nick_name','gender','email','user','dob','position_id','employee_group','reporting_officer_id','employee_signature','is_active']}),
+        (None, {'fields': ['employee_name', 'nick_name', 'gender', 'email', 'user', 'dob', 'position_id', 'employee_group', 'reporting_officer_id', 'employee_signature', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
-    inlines = [EmployeeDepartmentInline,EmployeeBranchInline,EmployeeProjectInline,EmployeeCompanyInline]
+    exclude = ['created_by', 'modified_by']
+    inlines = [EmployeeDepartmentInline, EmployeeBranchInline, EmployeeProjectInline, EmployeeCompanyInline]
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -334,16 +334,16 @@ class EmployeeMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(EmployeeMaintenance,EmployeeMaintenanceScreen)
+admin.site.register(EmployeeMaintenance, EmployeeMaintenanceScreen)
 #admin.site.register(UserMaintenance)
 class HolidayEventMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('event_name','event_date','ot_rate','is_public_holiday','is_active')
-    list_filter = ('is_active','is_public_holiday',)
-    search_fields = ('event_name','event_date')
+    list_display = ('event_name', 'event_date', 'ot_rate', 'is_public_holiday', 'is_active')
+    list_filter = ('is_active', 'is_public_holiday', )
+    search_fields = ('event_name', 'event_date')
     fieldsets = [
-        (None, {'fields': ['event_name','event_date','is_public_holiday','ot_rate','is_active']}),
+        (None, {'fields': ['event_name', 'event_date', 'is_public_holiday', 'ot_rate', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -354,16 +354,16 @@ class HolidayEventMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(HolidayEventMaintenance,HolidayEventMaintenanceScreen)
+admin.site.register(HolidayEventMaintenance, HolidayEventMaintenanceScreen)
 
 class OTRateMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('ot_rate_name','ot_rate','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('ot_rate_name','ot_rate')
+    list_display = ('ot_rate_name', 'ot_rate', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('ot_rate_name', 'ot_rate')
     fieldsets = [
-        (None, {'fields': ['ot_rate_name','ot_rate','is_active']}),
+        (None, {'fields': ['ot_rate_name', 'ot_rate', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -374,16 +374,16 @@ class OTRateMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(OTRateMaintenance,OTRateMaintenanceScreen)
+admin.site.register(OTRateMaintenance, OTRateMaintenanceScreen)
 
 class PaymentTermMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('description','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('description',)
+    list_display = ('description', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('description', )
     fieldsets = [
-        (None, {'fields': ['description','days','is_active']}),
+        (None, {'fields': ['description', 'days', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -394,16 +394,16 @@ class PaymentTermMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(PaymentTermMaintenance,PaymentTermMaintenanceScreen)
+admin.site.register(PaymentTermMaintenance, PaymentTermMaintenanceScreen)
 
 class LocationMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('loc_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('loc_name',)
+    list_display = ('loc_name', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('loc_name', )
     fieldsets = [
-        (None, {'fields': ['loc_name','is_active']}),
+        (None, {'fields': ['loc_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -414,14 +414,14 @@ class LocationMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(LocationMaintenance,LocationMaintenanceScreen)
+admin.site.register(LocationMaintenance, LocationMaintenanceScreen)
 
 class ItemClassesMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('item_class_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('item_class_name',)
+    list_display = ('item_class_name', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('item_class_name', )
     fieldsets = [
-        (None, {'fields': ['item_class_name','is_active']}),
+        (None, {'fields': ['item_class_name', 'is_active']}), 
     ]
 
     def save_model(self, request, obj, form, change):
@@ -433,16 +433,16 @@ class ItemClassesMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(ItemClassesMaintenance,ItemClassesMaintenanceScreen)
+admin.site.register(ItemClassesMaintenance, ItemClassesMaintenanceScreen)
    
 class ItemGroupsMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('item_group_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('item_group_name',)
+    list_display = ('item_group_name', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('item_group_name', )
     fieldsets = [
-        (None, {'fields': ['parent_id', 'item_group_name','is_active']}),
+        (None, {'fields': ['parent_id', 'item_group_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -454,11 +454,11 @@ class ItemGroupsMaintenanceScreen(admin.ModelAdmin):
         return super().save_model(request, obj, form, change)
 
 
-admin.site.register(ItemGroupsMaintenance,ItemGroupsMaintenanceScreen)
+admin.site.register(ItemGroupsMaintenance, ItemGroupsMaintenanceScreen)
 
 class WorkflowApprovalRuleGroupMaintenanceInline(admin.StackedInline):
     model = WorkflowApprovalRuleGroupMaintenance
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
     extra = 0
 
     def save_model(self, request, obj, form, change):
@@ -471,13 +471,13 @@ class WorkflowApprovalRuleGroupMaintenanceInline(admin.StackedInline):
         return super().save_model(request, obj, form, change)
 
 class WorkflowApprovalRuleScreen(admin.ModelAdmin):
-    list_display = ('approval_level', 'approval_rule_name','ceo_approve','ceo_approve_overwrite','supervisor_approve','is_active')
-    list_filter = ('is_active',)
+    list_display = ('approval_level', 'approval_rule_name', 'ceo_approve', 'ceo_approve_overwrite', 'supervisor_approve', 'is_active')
+    list_filter = ('is_active', )
     search_fields = ('approval_level', 'approval_rule_name')
     fieldsets = [
-        (None, {'fields': ['approval_level', 'approval_rule_name', ('document_amount_range', 'document_amount_range2'),'ceo_approve', 'ceo_approve_overwrite', 'supervisor_approve','transaction_type','is_active']}),
+        (None, {'fields': ['approval_level', 'approval_rule_name', ('document_amount_range', 'document_amount_range2'), 'ceo_approve', 'ceo_approve_overwrite', 'supervisor_approve', 'transaction_type', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
     inlines = [WorkflowApprovalRuleGroupMaintenanceInline]
 
     def save_model(self, request, obj, form, change):
@@ -489,16 +489,16 @@ class WorkflowApprovalRuleScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
     
-admin.site.register(WorkflowApprovalRule,WorkflowApprovalRuleScreen)
+admin.site.register(WorkflowApprovalRule, WorkflowApprovalRuleScreen)
 
 class WorkflowApprovalGroupScreen(admin.ModelAdmin):
-    list_display = ('approval_group_name', 'no_of_person','user_group','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('approval_group_name',)
+    list_display = ('approval_group_name', 'no_of_person', 'user_group', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('approval_group_name', )
     fieldsets = [
-        (None, {'fields': ['approval_group_name', 'no_of_person','user_group','is_active']}),
+        (None, {'fields': ['approval_group_name', 'no_of_person', 'user_group', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -509,16 +509,16 @@ class WorkflowApprovalGroupScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(WorkflowApprovalGroup,WorkflowApprovalGroupScreen)
+admin.site.register(WorkflowApprovalGroup, WorkflowApprovalGroupScreen)
 
 # class WorkflowApprovalRuleGroupMaintenanceScreen(admin.ModelAdmin):
-#     list_display = ('approval_rule', 'approval_group',)
-#     list_filter = ('approval_rule',)
-#     search_fields = ('approval_rule__approval_rule_name','approval_rule__approval_approval_level','approval_group__approval_group_name')
+#     list_display = ('approval_rule', 'approval_group', )
+#     list_filter = ('approval_rule', )
+#     search_fields = ('approval_rule__approval_rule_name', 'approval_rule__approval_approval_level', 'approval_group__approval_group_name')
 #     fieldsets = [
-#         (None, {'fields': ['approval_rule', 'approval_group','next_condition']}),
+#         (None, {'fields': ['approval_rule', 'approval_group', 'next_condition']}), 
 #     ]
-#     exclude = ['created_by','modified_by']
+#     exclude = ['created_by', 'modified_by']
 
 #     def save_model(self, request, obj, form, change):
 #         self.request = request
@@ -529,16 +529,16 @@ admin.site.register(WorkflowApprovalGroup,WorkflowApprovalGroupScreen)
 #             obj.modified_by = self.request.user
 #         return super().save_model(request, obj, form, change)
 
-# admin.site.register(WorkflowApprovalRuleGroupMaintenance,WorkflowApprovalRuleGroupMaintenanceScreen)
+# admin.site.register(WorkflowApprovalRuleGroupMaintenance, WorkflowApprovalRuleGroupMaintenanceScreen)
 
 class VendorGroupMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('group_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('group_name',)
+    list_display = ('group_name', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('group_name', )
     fieldsets = [
-        (None, {'fields': ['group_name', 'is_active']}),
+        (None, {'fields': ['group_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -549,14 +549,14 @@ class VendorGroupMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(VendorGroupMaintenance,VendorGroupMaintenanceScreen)
+admin.site.register(VendorGroupMaintenance, VendorGroupMaintenanceScreen)
 
 class VendorContactInline(admin.StackedInline):
     model = VendorContactDetail
     fieldsets = [
-        (None, {'fields': [('personal_title', 'contact_person'),('tel_no1','tel_no2'),('mobile','email'),('fax','ic_or_passport_no'),('position','dob')]}),
+        (None, {'fields': [('personal_title', 'contact_person'), ('tel_no1', 'tel_no2'), ('mobile', 'email'), ('fax', 'ic_or_passport_no'), ('position', 'dob')]}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
     extra = 0
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -570,9 +570,9 @@ class VendorContactInline(admin.StackedInline):
 class VendorAddressInline(admin.StackedInline):
     model = VendorAddressDetail
     fieldsets = [
-        (None, {'fields': ['address_name', 'address1','address2','address3','address4',('address_zip','state','country')]}),
+        (None, {'fields': ['address_name', 'address1', 'address2', 'address3', 'address4', ('address_zip', 'state', 'country')]}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
     extra = 0
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -584,15 +584,15 @@ class VendorAddressInline(admin.StackedInline):
         return super().save_model(request, obj, form, change)
 
 class VendorMasterDataScreen(admin.ModelAdmin):
-    list_display = ('vendor_name','currency','vendor_group','is_company','is_active')
-    list_filter = ('is_active','is_company')
-    search_fields = ('vendor_name','vendor_group')
+    list_display = ('vendor_name', 'currency', 'vendor_group', 'is_company', 'is_active')
+    list_filter = ('is_active', 'is_company')
+    search_fields = ('vendor_name', 'vendor_group')
     fieldsets = [
-        (None, {'fields': ['vendor_name', 'currency','business_registration_no','tax_id_1','tax_id_2','vendor_group','vendor_category','is_company','is_active','is_qualified']}),
+        (None, {'fields': ['vendor_name', 'currency', 'business_registration_no', 'tax_id_1', 'tax_id_2', 'vendor_group', 'vendor_category', 'is_company', 'is_active', 'is_qualified']}), 
     ]
     readonly_fields = ['is_qualified']
-    exclude = ['created_by','modified_by']
-    inlines = [VendorContactInline,VendorAddressInline]
+    exclude = ['created_by', 'modified_by']
+    inlines = [VendorContactInline, VendorAddressInline]
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -603,16 +603,16 @@ class VendorMasterDataScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(VendorMasterData,VendorMasterDataScreen)
+admin.site.register(VendorMasterData, VendorMasterDataScreen)
 
 class VendorCategoryMaintenceScreen(admin.ModelAdmin):
-    list_display = ('vendor_category_name', 'is_active',)
-    list_filter = ('is_active',)
-    search_fields = ('vendor_category_name',)
+    list_display = ('vendor_category_name', 'is_active', )
+    list_filter = ('is_active', )
+    search_fields = ('vendor_category_name', )
     fieldsets = [
-        (None, {'fields': ['vendor_category_name','is_active']}),
+        (None, {'fields': ['vendor_category_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -623,15 +623,15 @@ class VendorCategoryMaintenceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(VendorCategoryMaintenance,VendorCategoryMaintenceScreen)
+admin.site.register(VendorCategoryMaintenance, VendorCategoryMaintenceScreen)
 
 class SystemFlagMaintenanceScreen(admin.ModelAdmin):
     list_display = ('flag_name', 'table_id')
     search_fields = ('flag_name', 'table_id')
     fieldsets = [
-        (None, {'fields': ['flag_name', 'table_id']}),
+        (None, {'fields': ['flag_name', 'table_id']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -642,17 +642,17 @@ class SystemFlagMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(SystemFlagMaintenance,SystemFlagMaintenanceScreen)
+admin.site.register(SystemFlagMaintenance, SystemFlagMaintenanceScreen)
 
 
 class EmployeePositionMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('position_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('position_name',)
+    list_display = ('position_name', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('position_name', )
     fieldsets = [
-        (None, {'fields': ['position_name','is_active']}),
+        (None, {'fields': ['position_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -665,16 +665,16 @@ class EmployeePositionMaintenanceScreen(admin.ModelAdmin):
 
     
 
-admin.site.register(EmployeePositionMaintenance,EmployeePositionMaintenanceScreen)
+admin.site.register(EmployeePositionMaintenance, EmployeePositionMaintenanceScreen)
 
 class BranchMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('branch_name','is_active' )
-    list_filter = ('is_active',)
-    search_fields = ('branch_name',)
+    list_display = ('branch_name', 'is_active' )
+    list_filter = ('is_active', )
+    search_fields = ('branch_name', )
     fieldsets = [
-        (None, {'fields': ['branch_name','is_active']}),
+        (None, {'fields': ['branch_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -685,16 +685,16 @@ class BranchMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(BranchMaintenance,BranchMaintenanceScreen)
+admin.site.register(BranchMaintenance, BranchMaintenanceScreen)
 
 class CountryMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('country_name', 'is_active',)
-    list_filter = ('is_active',)
-    search_fields = ('country_name',)
+    list_display = ('country_name', 'is_active', )
+    list_filter = ('is_active', )
+    search_fields = ('country_name', )
     fieldsets = [
-        (None, {'fields': ['country_name','currency','alpha_2','alpha_3','iso3166_2','is_active']}),
+        (None, {'fields': ['country_name', 'currency', 'alpha_2', 'alpha_3', 'iso3166_2', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -705,16 +705,16 @@ class CountryMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(CountryMaintenance,CountryMaintenanceScreen)
+admin.site.register(CountryMaintenance, CountryMaintenanceScreen)
 
 class StateMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('state_name', 'capital','country','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('country__country_name','state_name','capital',)
+    list_display = ('state_name', 'capital', 'country', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('country__country_name', 'state_name', 'capital', )
     fieldsets = [
-        (None, {'fields': ['state_name','capital','country','is_active']}),
+        (None, {'fields': ['state_name', 'capital', 'country', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -725,15 +725,15 @@ class StateMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(StateMaintenance,StateMaintenanceScreen)
+admin.site.register(StateMaintenance, StateMaintenanceScreen)
 
 # class EmployeeBranchMaintenanceScreen(admin.ModelAdmin):
 #     list_display = ('employee', 'branch')
-#     search_fields = ('employee__employee_name','employee__nick_name' ,'branch__branch_name','branch__branch_code')
+#     search_fields = ('employee__employee_name', 'employee__nick_name' , 'branch__branch_name', 'branch__branch_code')
 #     fieldsets = [
-#         (None, {'fields': ['employee','branch']}),
+#         (None, {'fields': ['employee', 'branch']}), 
 #     ]
-#     exclude = ['created_by','modified_by']
+#     exclude = ['created_by', 'modified_by']
 
 #     def save_model(self, request, obj, form, change):
 #         self.request = request
@@ -744,15 +744,15 @@ admin.site.register(StateMaintenance,StateMaintenanceScreen)
 #             obj.modified_by = self.request.user
 #         return super().save_model(request, obj, form, change)
 
-# admin.site.register(EmployeeBranchMaintenance,EmployeeBranchMaintenanceScreen)
+# admin.site.register(EmployeeBranchMaintenance, EmployeeBranchMaintenanceScreen)
 
 # class EmployeeDepartmentMaintenanceScreen(admin.ModelAdmin):
 #     list_display = ('employee', 'department')
-#     search_fields = ('employee__employee_name','employee__nick_name' ,'department__department_name')
+#     search_fields = ('employee__employee_name', 'employee__nick_name' , 'department__department_name')
 #     fieldsets = [
-#         (None, {'fields': ['employee','department']}),
+#         (None, {'fields': ['employee', 'department']}), 
 #     ]
-#     exclude = ['created_by','modified_by']
+#     exclude = ['created_by', 'modified_by']
 
 #     def save_model(self, request, obj, form, change):
 #         self.request = request
@@ -763,16 +763,16 @@ admin.site.register(StateMaintenance,StateMaintenanceScreen)
 #             obj.modified_by = self.request.user
 #         return super().save_model(request, obj, form, change)
 
-# admin.site.register(EmployeeDepartmentMaintenance,EmployeeDepartmentMaintenanceScreen)
+# admin.site.register(EmployeeDepartmentMaintenance, EmployeeDepartmentMaintenanceScreen)
 
 class EmployeeGroupMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('group_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('group_name',)
+    list_display = ('group_name', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('group_name', )
     fieldsets = [
-        (None, {'fields': ['group_name','is_active']}),
+        (None, {'fields': ['group_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -783,15 +783,15 @@ class EmployeeGroupMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(EmployeeGroupMaintenance,EmployeeGroupMaintenanceScreen)
+admin.site.register(EmployeeGroupMaintenance, EmployeeGroupMaintenanceScreen)
 
 # class EmployeeProjectMaintenanceScreen(admin.ModelAdmin):
 #     list_display = ('employee', 'project')
-#     search_fields = ('employee__employee_name','employee__nick_name' ,'project__project_code','project__project_name','project__phase_name','project__sub_phase_name')
+#     search_fields = ('employee__employee_name', 'employee__nick_name' , 'project__project_code', 'project__project_name', 'project__phase_name', 'project__sub_phase_name')
 #     fieldsets = [
-#         (None, {'fields': ['employee','project']}),
+#         (None, {'fields': ['employee', 'project']}), 
 #     ]
-#     exclude = ['created_by','modified_by']
+#     exclude = ['created_by', 'modified_by']
 
 #     def save_model(self, request, obj, form, change):
 #         self.request = request
@@ -802,16 +802,16 @@ admin.site.register(EmployeeGroupMaintenance,EmployeeGroupMaintenanceScreen)
 #             obj.modified_by = self.request.user
 #         return super().save_model(request, obj, form, change)
 
-# admin.site.register(EmployeeProjectMaintenance,EmployeeProjectMaintenanceScreen)
+# admin.site.register(EmployeeProjectMaintenance, EmployeeProjectMaintenanceScreen)
 
 class RegionMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('region_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('region_name',)
+    list_display = ('region_name', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('region_name', )
     fieldsets = [
-        (None, {'fields': ['region_name','is_active']}),
+        (None, {'fields': ['region_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -822,16 +822,16 @@ class RegionMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(RegionMaintenance,RegionMaintenanceScreen)
+admin.site.register(RegionMaintenance, RegionMaintenanceScreen)
 
 class TaxMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('tax_code', 'tax_name', 'rate','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('tax_code', 'tax_name','rate',)
+    list_display = ('tax_code', 'tax_name', 'rate', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('tax_code', 'tax_name', 'rate', )
     fieldsets = [
-        (None, {'fields': ['tax_code','tax_name','rate','is_active']}),
+        (None, {'fields': ['tax_code', 'tax_name', 'rate', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -842,23 +842,23 @@ class TaxMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(TaxMaintenance,TaxMaintenanceScreen)
+admin.site.register(TaxMaintenance, TaxMaintenanceScreen)
 
 class DrawerUserInline(admin.StackedInline):
     model = DrawerUserMaintenance
     fieldsets = [
-        (None, {'fields': ['user']}),
+        (None, {'fields': ['user']}), 
     ]
     extra = 0
 
 class DrawerMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('drawer_name', 'open_year', 'open_month','drawer_status')
-    list_filter = ('drawer_status',)
-    search_fields = ('drawer_name',)
+    list_display = ('drawer_name', 'open_year', 'open_month', 'drawer_status')
+    list_filter = ('drawer_status', )
+    search_fields = ('drawer_name', )
     fieldsets = [
-        (None, {'fields': ['drawer_name','branch','open_year','open_month','limit','drawer_status']}),
+        (None, {'fields': ['drawer_name', 'branch', 'open_year', 'open_month', 'limit', 'drawer_status']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
     inlines = [DrawerUserInline]
 
     def save_model(self, request, obj, form, change):
@@ -870,16 +870,16 @@ class DrawerMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(DrawerMaintenance,DrawerMaintenanceScreen)
+admin.site.register(DrawerMaintenance, DrawerMaintenanceScreen)
 
 class PaymentmodeMaintenanceScreen(admin.ModelAdmin):
     list_display = ('payment_mode_name', 'is_active')
-    list_filter = ('is_active',)
-    search_fields = ('payment_mode_name',)
+    list_filter = ('is_active', )
+    search_fields = ('payment_mode_name', )
     fieldsets = [
-        (None, {'fields': ['payment_mode_name','is_active']}),
+        (None, {'fields': ['payment_mode_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -890,16 +890,16 @@ class PaymentmodeMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(PaymentmodeMaintenance,PaymentmodeMaintenanceScreen)
+admin.site.register(PaymentmodeMaintenance, PaymentmodeMaintenanceScreen)
 
 class TransactiontypeMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('transaction_type_name','document_type','is_active','is_utility')
-    list_filter = ('is_active','is_utility')
-    search_fields = ('transaction_type_name','document_type__document_type_name')
+    list_display = ('transaction_type_name', 'document_type', 'is_active', 'is_utility', 'send_to_account')
+    list_filter = ('is_active', 'is_utility', 'send_to_account')
+    search_fields = ('transaction_type_name', 'document_type__document_type_name')
     fieldsets = [
-        (None, {'fields': ['transaction_type_name','document_type','is_active','is_utility']}),
+        (None, {'fields': ['transaction_type_name', 'document_type', 'is_active', 'is_utility', 'send_to_account']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -910,16 +910,16 @@ class TransactiontypeMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(TransactiontypeMaintenance,TransactiontypeMaintenanceScreen)
+admin.site.register(TransactiontypeMaintenance, TransactiontypeMaintenanceScreen)
 
 class MemoTemplateMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('memo_template_name','template_htmldesign','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('memo_template_name','template_htmldesign')
+    list_display = ('memo_template_name', 'template_htmldesign', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('memo_template_name', 'template_htmldesign')
     fieldsets = [
-        (None, {'fields': ['memo_template_name','template_htmldesign','is_active']}),
+        (None, {'fields': ['memo_template_name', 'template_htmldesign', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -930,16 +930,16 @@ class MemoTemplateMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(MemoTemplateMaintenance,MemoTemplateMaintenanceScreen)
+admin.site.register(MemoTemplateMaintenance, MemoTemplateMaintenanceScreen)
 
 class UOMMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('uom_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('uom_name',)
+    list_display = ('uom_name', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('uom_name', )
     fieldsets = [
-        (None, {'fields': ['uom_name','is_active']}),
+        (None, {'fields': ['uom_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -950,14 +950,14 @@ class UOMMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(UOMMaintenance,UOMMaintenanceScreen)
+admin.site.register(UOMMaintenance, UOMMaintenanceScreen)
 
 class UtilityAccountInline(admin.StackedInline):
     model = UtiliyAccountTypeMaintenance
     fieldsets = [
-        (None, {'fields': ['account_short_name','account_name','account_no','is_active']}),
+        (None, {'fields': ['account_short_name', 'account_name', 'account_no', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
     extra = 0
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -969,13 +969,13 @@ class UtilityAccountInline(admin.StackedInline):
         return super().save_model(request, obj, form, change)
 
 class UtilityGroupTypeMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('account_group_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('account_group_name',)
+    list_display = ('account_group_name', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('account_group_name', )
     fieldsets = [
-        (None, {'fields': ['account_group_name','is_active']}),
+        (None, {'fields': ['account_group_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
     inlines = [UtilityAccountInline]
 
     def save_model(self, request, obj, form, change):
@@ -987,16 +987,16 @@ class UtilityGroupTypeMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(UtiliyGroupMaintenance,UtilityGroupTypeMaintenanceScreen)
+admin.site.register(UtiliyGroupMaintenance, UtilityGroupTypeMaintenanceScreen)
 
 class HRPlatformMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('platform_name','is_active')
-    list_filter = ('is_active',)
-    search_fields = ('platform_name',)
+    list_display = ('platform_name', 'is_active')
+    list_filter = ('is_active', )
+    search_fields = ('platform_name', )
     fieldsets = [
-        (None, {'fields': ['platform_name','is_active']}),
+        (None, {'fields': ['platform_name', 'is_active']}), 
     ]
-    exclude = ['created_by','modified_by']
+    exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
         self.request = request
@@ -1007,16 +1007,16 @@ class HRPlatformMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(HRPlatformMaintenance,HRPlatformMaintenanceScreen)
+admin.site.register(HRPlatformMaintenance, HRPlatformMaintenanceScreen)
 
 # class UtiliyAccountTypeMaintenanceScreen(admin.ModelAdmin):
-#     list_display = ('account_short_name','account_name','is_active')
-#     list_filter = ('is_active',)
-#     search_fields = ('account_short_name','account_name',)
+#     list_display = ('account_short_name', 'account_name', 'is_active')
+#     list_filter = ('is_active', )
+#     search_fields = ('account_short_name', 'account_name', )
 #     fieldsets = [
-#         (None, {'fields': ['account_short_name','account_name','account_no','is_active']}),
+#         (None, {'fields': ['account_short_name', 'account_name', 'account_no', 'is_active']}), 
 #     ]
-#     exclude = ['created_by','modified_by']
+#     exclude = ['created_by', 'modified_by']
 
 #     def save_model(self, request, obj, form, change):
 #         self.request = request
@@ -1027,4 +1027,4 @@ admin.site.register(HRPlatformMaintenance,HRPlatformMaintenanceScreen)
 #             obj.modified_by = self.request.user
 #         return super().save_model(request, obj, form, change)
 
-# admin.site.register(UtiliyAccountTypeMaintenance,UtiliyAccountTypeMaintenanceScreen)
+# admin.site.register(UtiliyAccountTypeMaintenance, UtiliyAccountTypeMaintenanceScreen)

@@ -15,14 +15,13 @@ class POSerializer(serializers.ModelSerializer):
     inv = serializers.SerializerMethodField()
     inv_date = serializers.SerializerMethodField()
     inv_doc_no = serializers.SerializerMethodField()
-    accounts_status = serializers.SerializerMethodField()
 
     class Meta:
         model = PurchaseOrder
         fields = ['id', 'revision', 'document_number', 'subject', 
         'submit_date', 'company', 'project', 'submit_by', 
         'approval', 'approval_status', 'grn', 'receive_date', 'grn_doc_no',
-        'inv', 'inv_date', 'inv_doc_no', 'accounts_status']
+        'inv', 'inv_date', 'inv_doc_no']
 
     def get_approval_status(self, obj):    
         if obj.approval != None:  

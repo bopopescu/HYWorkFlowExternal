@@ -64,7 +64,7 @@ class PYSerializer(serializers.ModelSerializer):
             else:
                 return "Pending Process"
         else:
-            return "Not Applicables"
+            return "Not Applicable"
 
 class PYItemSerializer(serializers.ModelSerializer):
     tax = serializers.StringRelatedField(many=False)

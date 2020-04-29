@@ -437,7 +437,7 @@ def py_print(request, pk):
     pdf = Render.render('PR/print.html', params)
     if pdf:
         response = HttpResponse(pdf, content_type='application/pdf')
-        filename = "PaymentVoucher_%s.pdf" %(py.document_number)
+        filename = "PaymentRequest_%s.pdf" %(py.document_number)
         content = "attachment; filename=%s" %(filename)
         response['Content-Disposition'] = content
         return response

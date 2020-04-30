@@ -459,6 +459,26 @@ $("#deletestaffotdetail").submit(function(e){
 
 
 <script>
+
+$(document).ready(function(){
+     $("input[name='ot_time_out']").change(function(){
+           var timeout = $("input[name='ot_time_out']").val();
+           if(timeout > "00:00" && timeout < "07:00" ){
+             alert("cannot be select midnight.");
+             $("input[name='ot_time_out']").val("");
+           }
+         });
+});
+$(document).ready(function(){
+  $("input[name='ot_time_in']").change(function(){
+        var timein = $("input[name='ot_time_in']").val();
+        if(timein > "00:00" && timein < "07:00" ){
+          alert("cannot be select midnight.");
+          $("input[name='ot_time_in']").val("");
+        }
+      });
+});
+
   $("#addPYItem").submit(function(e){
       e.preventDefault(); //prevent default action 
       var timein = document.getElementById("id_ot_time_in").value;

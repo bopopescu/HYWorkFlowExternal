@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'utility_dashboard.apps.UtilityDashboardConfig',
     'audit_trail.apps.AuditTrailConfig',
     'accounts_task.apps.AccountsTaskConfig',
+    'stock.apps.StockConfig',
     #'sales.apps.SalesConfig',
     #'vendor.apps.VendorConfig',
 
@@ -95,7 +96,8 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates','purchasing'),  
             os.path.join(BASE_DIR, 'templates','staff_overtime'),     
             os.path.join(BASE_DIR, 'templates','report'),
-            os.path.join(BASE_DIR, 'templates','reimbursement_request'),           
+            os.path.join(BASE_DIR, 'templates','reimbursement_request'), 
+            os.path.join(BASE_DIR, 'templates','stock'),            
         ],
         'APP_DIRS': True,
         'OPTIONS': {

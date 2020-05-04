@@ -1,0 +1,305 @@
+{% extends 'main_template.html' %}
+
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+<form method="post">
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Stock Adjustment</h1>
+  <style>
+    table#dataTable tbody tr td a#additem {
+       display:none;
+   }
+
+  table#dataTable .form-control.error2 {
+		border-color: #f50000;
+	}
+   
+   i.fas.fa-plus{
+      color:white;
+      margin-right: 1px;
+      position: relative;
+      top: 2px;
+   }
+   i.fas.fa-pencil-alt{
+      color:white;
+   }
+   i.fas.fa-trash{
+      color:white;
+   }
+   select[readonly]
+    {
+        pointer-events: none;
+    }
+ </style>
+  {% csrf_token %} 
+    <div>
+        {% if stock_adjustment.status.status_code == 100 %}
+        <a href="{% url 'stock_adjustment_submit' stock_adjustment.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit</a>
+        <a href="{% url 'stock_adjustment_update' stock_adjustment.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-pencil-alt"></i> Edit</a>
+        {% endif %}
+        <a href="{% url 'stock_adjustment_list' %}" id="back_button" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
+    </div>    
+  </div>
+
+  <div class="row">
+    <div class="col-xl-6 col-md-6 mb-4">
+      <div class="card shadow mb-4">
+        <a href="#GeneralCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="GeneralCard">
+          <h6 class="m-0 font-weight-bold text-primary">General</h6>
+        </a>
+        <div class="collapse show" id="GeneralCard">
+          <div class="card-body">
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.department.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.department class="col-md-12 form-control form-control-user" placeholder=form.department.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.company.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.company class="col-md-12 form-control form-control-user" placeholder=form.company.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.project.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.project class="col-md-12 form-control form-control-user" placeholder=form.project.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.attention.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.attention|append_attr:"readonly" class="col-md-12 form-control form-control-user" placeholder=form.attention.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.reference.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                    {% render_field form.reference|append_attr:"readonly" class="col-md-12 form-control form-control-user" placeholder=form.reference.label %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-3">
+                    <label class="control-label">
+                      {{form.location.label_tag}}
+                    </label>
+                  </div>
+                  <div class="col col-md-8">
+                    {% render_field form.location class="col-md-12 form-control form-control-user" placeholder=form.location.label %}
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>        
+      </div>
+    </div> 
+    <div class="col-xl-6 col-md-6 mb-4">      
+      <div class="card shadow mb-4">
+        <a href="#DocInfoCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="DocInfoCard">
+          <h6 class="m-0 font-weight-bold text-primary">Document Info</h6>
+        </a>
+        <div class="collapse show" id="DocInfoCard">
+          <div class="card-body">
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.revision.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.revision class="col-md-12 form-control form-control-user" placeholder=form.revision.label readonly=true %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.document_number.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.document_number|attr:"readonly" class="col-md-12 form-control form-control-user" %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.status.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                    {% if stock_adjustment.status.status_code == 100 %}
+                    <p class="text-info"><strong>{{stock_adjustment.status}}</strong></p>
+                    {% elif stock_adjustment.status.status_code == 300  %}
+                    <p class="text-warning"><strong>{{stock_adjustment.status}}</strong></p>
+                    {% elif stock_adjustment.status.status_code == 400 %}
+                    <p class="text-success"><strong>{{stock_adjustment.status}}</strong></p>
+                    {% else %}
+                    <p class="text-danger"><strong>{{stock_adjustment.status}}</strong></p>
+                    {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.submit_date.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.submit_date type="date" class="col-md-12 form-control form-control-user" placeholder=form.submit_date.label readonly=true %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>        
+      </div>
+    </div>
+  </div>  
+  <div class="card shadow mb-4">    
+    <div class="card-body">
+      <div class="form-row">
+        <div class="col col-md-12">
+          <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+              <a class="nav-item nav-link active" id="nav-detail-tab" data-toggle="tab" href="#nav-detail" role="tab" aria-controls="nav-detail" aria-selected="true">Detail</a>
+              <a class="nav-item nav-link" id="nav-attachments-tab" data-toggle="tab" href="#nav-attachments" role="tab" aria-controls="nav-attachments" aria-selected="false">Attachments</a>
+            </div>
+          </nav>
+          <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-detail" role="tabpanel" aria-labelledby="nav-detail-tab">
+              <br/>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-12">
+                    <div class="col col-md-12">
+                      <div class="table-responsive">
+                        <table id="mydetails" class="table table-striped table-bordered" style="width:100%" >
+                          <thead>
+                            <tr>
+                              <th>No.</th>  
+                              <th data-data="id"></th>
+                              <th data-data="stock_adjustment"></th>
+                              <th data-data="item">Item</th> 
+                              <th data-data="quantity">Quantity</th>
+                              <th data-data="uom">UOM</th> 
+                              <th data-data="additional_description">Additional Description</th>
+                              <th data-data="reason">Reason</th>
+                              <th data-data="remarks">Remarks</th>
+                            </tr>
+                          </thead>
+                        </table>       
+                        </div>
+                        <script>
+                          $(document).ready(function() {
+                            var table = $('#mydetails').DataTable( {
+                              "ajax": "{% url 'stockadjustmentdetail-list'%}?format=datatables&pk={{stock_adjustment.pk}}",
+                              "dom":  "<'row'<'col-sm-12 small'tr>>" +
+                                      "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                              "columnDefs": [{
+                              "searchable": false,
+                              "orderable": false,
+                              "targets": 0,
+                              "defaultContent": "<i>Not set</i>"
+                              },               
+                              { "visible": false, 
+                              "targets": [ 1,2 ] }
+                              ]        
+                            });
+                            table.on('order.dt search.dt', function() {
+                              table.column(0, {
+                                  search: 'applied',
+                                  order: 'applied'
+                              }).nodes().each(function(cell, i) {
+                                  cell.innerHTML = i + 1;
+                              });
+                            }).draw();
+                          });
+                      </script> 
+                    </div>
+                  </div>
+                </div>
+              </div>  
+            </div>
+            <div class="tab-pane fade" id="nav-attachments" role="tabpanel" aria-labelledby="nav-attachments-tab">
+                <br/>
+                <div class="form-group">
+                  <div class="form-row">
+                    <div class="col col-md-12">
+                      <div class="table-responsive">
+                        <table id="myattachments" class="table table-striped table-bordered" style="width:100%">
+                          <thead>
+                            <tr>
+                              <th data-data="id"></th>
+                              <th data-data="stock_adjustment"></th>
+                              <th data-data="attachment">Attachment</th> 
+                              <th data-data="attachment_date">Date</th>
+                            </tr>
+                          </thead>
+                        </table>       
+                        </div>
+                        <script>
+                          $(document).ready(function() {
+                            var table = $('#myattachments').DataTable( {
+                              "ajax": "{% url 'stockadjustmentattachment-list'%}?format=datatables&pk={{stock_adjustment.pk}}",
+                              "dom":  "<'row'<'col-sm-12 small'tr>>" +
+                                      "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
+                              "columnDefs": [               
+                              { "visible": false, 
+                              "targets": [ 0, 1 ] }
+                              ]        
+                            });
+                          });
+                      </script> 
+                    </div>
+                  </div>
+                </div>  
+              </div>
+          </div>            
+        </div>
+      </div>  
+    </div>
+  </div>
+  {% render_field form.transaction_type|append_attr:"readonly" class="col-md-12 form-control form-control-use" style="visibility:hidden"%} 
+</form>
+
+{% endblock content %}

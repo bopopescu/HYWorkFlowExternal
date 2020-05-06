@@ -112,7 +112,7 @@
                                 "targets": -1,
                                 "data": null,
                                 "render": function(data, type, row) {
-                                    var label = '';  
+                                    var label = '<a href="' + "{% url 'grn_send_to_stockadjustment' pk=123 %}".replace(/123/, row.grn) + '" class="btn btn-warning btn-icon-split"><span class="icon text-white-50"><i class="fas fa-file-invoice"></i></span><span class="text">Submit Stock Adjustment</span></a>&nbsp;&nbsp;';  
                                     return '<a href="' + "{% url 'grn_detail' pk=123 %}".replace(/123/, row.grn) + '" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;' + label;
                                 }
                             }, {

@@ -630,13 +630,12 @@ def stock_balance(request):
             location = form.cleaned_data['location']
             if item != None:
                 item_select = Item.objects.filter(pk=item.pk)
-            else:
-                item_select = Item.objects.filter(is_active=True).order_by("item_code")
                 
             if location != None:
                 location_select = LocationMaintenance.objects.filter(pk=location.pk)
             else:
                 location_select = LocationMaintenance.objects.filter(is_active=True)
+                
             location_current_balance_list = []
             for itm in item_select:
                 for loc in location_select:

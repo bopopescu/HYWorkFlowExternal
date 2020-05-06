@@ -80,6 +80,8 @@ class StockAdjustment(models.Model):
     company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE,blank=True, null=True)
     department = models.ForeignKey(DepartmentMaintenance, verbose_name="Department", on_delete=models.CASCADE,blank=True, null=True)
     project = models.ForeignKey(ProjectMaintenance, verbose_name="Project", on_delete=models.CASCADE,blank=True, null=True)
+    document_type = models.ForeignKey(DocumentTypeMaintenance, verbose_name="Document Type", on_delete=models.CASCADE,blank=True, null=True)
+    document_pk = models.IntegerField(blank=True, null=True)
     transaction_type = models.ForeignKey(TransactiontypeMaintenance,verbose_name="Trans. Type", on_delete=models.CASCADE,blank=True, null=True)
     status = models.ForeignKey(StatusMaintenance,default=stock_adjustment_default_status,verbose_name="Status", on_delete=models.CASCADE,blank=True, null=True)
     submit_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)

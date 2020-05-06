@@ -64,7 +64,7 @@ class PODetailViewSet(viewsets.ModelViewSet):
         the maker passed in the URL
         """
         po = get_object_or_404(PurchaseOrder, pk=self.request.query_params.get('pk', None))
-        return PurchaseOrderDetail.objects.filter(po=po).order_by('-id')
+        return PurchaseOrderDetail.objects.filter(po=po)
 
 class MyPOViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.all().order_by('-id')
@@ -673,7 +673,7 @@ def po_print(request, pk):
     requester = get_object_or_404(User, pk=po.submit_by.pk)
     approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-stage')[0]
     approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
-    po_details = PurchaseOrderDetail.objects.filter(po=po)
+    po_details = PurchaseOrderDetail.objects.filter(po=po).order_by("id")
     params = {
         'po': po,
         'approval_item': approval_item,

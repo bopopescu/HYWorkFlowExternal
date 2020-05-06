@@ -67,4 +67,7 @@ urlpatterns = [
     path('deletestockissuingitem/', views.stock_issuing_detail_delete, name='stock_issuing_detail_delete'),
     path('createstockissuingattachment/<int:pk>/', views.stock_issuing_attachment_create, name='stock_issuing_attachment_create'),
     path('deletestockissuingattachment/<int:pk>/', views.stock_issuing_attachment_delete, name='stock_issuing_attachment_delete'),
+
+    path('stockbalanceinquiry/', views.stock_balance, name='stock_balance_inquiry'),
+
 ]

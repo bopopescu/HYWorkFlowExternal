@@ -2,18 +2,20 @@ from django.shortcuts import render,redirect, get_object_or_404
 from .forms import NewStockTransferForm, UpdateStockTransferForm, DetailStockTransferForm, NewStockTransferDetailForm, NewStockTransferAttachmentForm
 from .forms import NewStockAdjustmentForm, UpdateStockAdjustmentForm, DetailStockAdjustmentForm, NewStockAdjustmentDetailForm, NewStockAdjustmentAttachmentForm
 from .forms import NewStockIssuingForm, UpdateStockIssuingForm, DetailStockIssuingForm, NewStockIssuingDetailForm, NewStockIssuingAttachmentForm
+from .forms import StockBalanceReport
 from django.contrib.auth.decorators import login_required
 from .models import StockTransfer,StockTransferDetail,StockTransferAttachment
 from .models import StockAdjustment,StockAdjustmentDetail,StockAdjustmentAttachment
 from .models import StockIssuing,StockIssuingDetail,StockIssuingAttachment
 from .models import ItemMovement
+from Inventory.models import Item
 from rest_framework import viewsets
 from .serializers import StockTransferSerializer, StockTransferDetailSerializer, StockTransferAttachmentSerializer
 from .serializers import StockAdjustmentSerializer, StockAdjustmentDetailSerializer, StockAdjustmentAttachmentSerializer
 from .serializers import StockIssuingSerializer, StockIssuingDetailSerializer, StockIssuingAttachmentSerializer
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance,CompanyMaintenance,CompanyAddressDetail
-from administration.models import WorkflowApprovalRule,StatusMaintenance
+from administration.models import WorkflowApprovalRule,StatusMaintenance,LocationMaintenance
 from django.contrib.auth.models import User
 import datetime
 from django.http import JsonResponse
@@ -618,4 +620,67 @@ def load_delivery_address(request):
     delivery = get_object_or_404(CompanyMaintenance, pk=request.GET.get('delivery_receiver'))
     address = CompanyAddressDetail.objects.filter(company=delivery)[0]
     return render(request, 'stock/stock_issuing/delivery_address_field.html', {'address': address})
+
+@login_required
+def stock_balance(request):
+    if request.method == 'POST':
+        form = StockBalanceReport(request.POST)
+        if form.is_valid():
+            item = form.cleaned_data['item']
+            location = form.cleaned_data['location']
+            if item != None:
+                item_select = Item.objects.filter(pk=item.pk)
+            else:
+                item_select = Item.objects.filter(is_active=True).order_by("item_code")
+                
+            if location != None:
+                location_select = LocationMaintenance.objects.filter(pk=location.pk)
+            else:
+                location_select = LocationMaintenance.objects.filter(is_active=True)
+            location_current_balance_list = []
+            for itm in item_select:
+                for loc in location_select:
+                    location_current_balance_list.append(count_stock_balance(itm.id,loc.id))
+
+
+            params = {
+                'items': item_select,
+                'locations': location_select,
+                'location_current_balance':location_current_balance_list,
+            }
+
+            pdf = Render.render('stock/print.html',params)
+            if pdf:
+                response = HttpResponse(pdf, content_type='application/pdf')
+                filename = "StockBalanceReport.pdf" 
+                content = "attachment; filename=%s" %(filename)
+                response['Content-Disposition'] = content
+                return response
+            else:
+                return response("errors")
+
+            # return render(request, 'stock/print.html', {'items': item_select,'locations': location_select})
+    else:
+        form = StockBalanceReport()
+    return render(request, 'stock/stock_balance_inquiry/selection.html', {'form': form})
+
+
+def count_stock_balance(itempk,locationpk):
+    item = Item.objects.get(pk=itempk)
+    location = LocationMaintenance.objects.get(pk=locationpk)
+    item_movements = ItemMovement.objects.filter(item=item,location=location)
+
+    if item_movements.count == 0:
+        return 0
+    else:
+        total_balance = 0
+        total_stock_out = 0
+        total_stock_in = 0
+        for item_movement in item_movements:
+            total_stock_in = total_stock_in + item_movement.stock_in
+            total_stock_out = total_stock_out + item_movement.stock_out
+        
+        total_balance = total_stock_in - total_stock_out
+        return total_balance
+
 

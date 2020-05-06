@@ -3,6 +3,7 @@ from django.forms import ModelChoiceField
 from .models import StockTransfer,StockTransferDetail,StockTransferAttachment
 from .models import StockAdjustment,StockAdjustmentDetail,StockAdjustmentAttachment
 from .models import StockIssuing,StockIssuingDetail,StockIssuingAttachment
+from .models import ItemMovement
 from django.shortcuts import get_object_or_404
 import datetime
 from Inventory.models import Item
@@ -57,7 +58,7 @@ class UpdateStockTransferForm(forms.ModelForm):
         'document_number','status','submit_date','attention','reference','remarks']
 
 class NewStockTransferDetailForm(forms.ModelForm):
-    item = ItemNewChoiceField(queryset=Item.objects.all(), empty_label="Not Assigned")
+    item = ItemNewChoiceField(queryset=Item.objects.filter(is_active=True).order_by('item_code'), empty_label="Not Assigned")
 
     class Meta:
         model = StockTransferDetail
@@ -110,7 +111,7 @@ class UpdateStockAdjustmentForm(forms.ModelForm):
         'document_number','status','submit_date','attention','reference','remarks']
 
 class NewStockAdjustmentDetailForm(forms.ModelForm):
-    item = ItemNewChoiceField(queryset=Item.objects.all(), empty_label="Not Assigned")
+    item = ItemNewChoiceField(queryset=Item.objects.filter(is_active=True).order_by('item_code'), empty_label="Not Assigned")
 
     class Meta:
         model = StockAdjustmentDetail
@@ -169,7 +170,7 @@ class UpdateStockIssuingForm(forms.ModelForm):
         'document_number','status','submit_date','attention','reference','remarks']
 
 class NewStockIssuingDetailForm(forms.ModelForm):
-    item = ItemNewChoiceField(queryset=Item.objects.all(), empty_label="Not Assigned")
+    item = ItemNewChoiceField(queryset=Item.objects.filter(is_active=True).order_by('item_code'), empty_label="Not Assigned")
 
     class Meta:
         model = StockIssuingDetail
@@ -181,3 +182,9 @@ class NewStockIssuingAttachmentForm(forms.ModelForm):
     class Meta:
         model = StockIssuingAttachment
         fields = ['stock_issuing', 'attachment']
+
+class StockBalanceReport(forms.Form):
+    item = ItemNewChoiceField(queryset=Item.objects.filter(is_active=True).order_by('item_code'), empty_label="Not Assigned",required=True)
+    location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="All",required=False)
+    
+

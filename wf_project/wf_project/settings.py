@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',  
     'django_extensions',
     'ckeditor',
+    'django_select2',
     'ckeditor_uploader',
     'rest_framework_datatables',
     'widget_tweaks',

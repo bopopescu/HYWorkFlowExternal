@@ -6,6 +6,7 @@ from .models import StockIssuing,StockIssuingDetail,StockIssuingAttachment
 from .models import StockReturn,StockReturnDetail,StockReturnAttachment
 from .models import ItemMovement
 from django.shortcuts import get_object_or_404
+from django_select2.forms import Select2Widget
 import datetime
 from Inventory.models import Item
 from administration.models import CompanyMaintenance
@@ -241,7 +242,7 @@ class NewStockReturnAttachmentForm(forms.ModelForm):
         fields = ['stock_return', 'attachment']
 
 class StockBalanceReport(forms.Form):
-    item = ItemNewChoiceField(queryset=Item.objects.filter(is_active=True).order_by('item_code'), empty_label="Not Assigned",required=True)
+    item = ItemNewChoiceField(queryset=Item.objects.filter(is_active=True).order_by('item_code'), empty_label="Not Assigned",required=True,widget=Select2Widget)
     location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="All",required=False)
     date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput)
 

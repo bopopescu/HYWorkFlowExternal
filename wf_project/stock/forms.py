@@ -3,6 +3,7 @@ from django.forms import ModelChoiceField
 from .models import StockTransfer,StockTransferDetail,StockTransferAttachment
 from .models import StockAdjustment,StockAdjustmentDetail,StockAdjustmentAttachment
 from .models import StockIssuing,StockIssuingDetail,StockIssuingAttachment
+from .models import StockReturn,StockReturnDetail,StockReturnAttachment
 from .models import ItemMovement
 from django.shortcuts import get_object_or_404
 import datetime
@@ -183,8 +184,69 @@ class NewStockIssuingAttachmentForm(forms.ModelForm):
         model = StockIssuingAttachment
         fields = ['stock_issuing', 'attachment']
 
+# Stock Return
+class DetailStockReturnForm(forms.ModelForm):
+    company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned",initial=StockReturn.company, disabled=True)
+    location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="Not Assigned",initial=StockReturn.location, disabled=True)
+    vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.filter(is_active=True).order_by('vendor_name'), empty_label="Not Assigned",initial=StockReturn.vendor, disabled=True)
+    department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned", initial=StockReturn.department, disabled=True)
+    project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=StockReturn.project, disabled=True)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]), empty_label="Not Assigned",initial=StockReturn.transaction_type, disabled=True)
+
+    class Meta:
+        model = StockReturn
+        fields = ['company','location','department','vendor','project','transaction_type','revision',
+        'document_number','status','submit_date','attention','reference','remarks']
+
+
+class NewStockReturnForm(forms.ModelForm):
+    company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned")
+    location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="Not Assigned")
+    department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned")
+    vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.filter(is_active=True).order_by('vendor_name'), empty_label="Not Assigned")
+    project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned")
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]), empty_label="Not Assigned")
+    revision = forms.IntegerField(initial=0)
+
+    class Meta:
+        model = StockReturn
+        fields = ['company','location','department','project','vendor','transaction_type','revision',
+        'document_number','status','submit_date','attention','reference','remarks']
+
+class UpdateStockReturnForm(forms.ModelForm):
+    company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned",initial=StockReturn.company)
+    location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="Not Assigned",initial=StockReturn.location)
+    vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.filter(is_active=True).order_by('vendor_name'), empty_label="Not Assigned",initial=StockReturn.vendor)
+    department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned", initial=StockReturn.department)
+    project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=StockReturn.project)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]), empty_label="Not Assigned",initial=StockReturn.transaction_type)
+
+    class Meta:
+        model = StockReturn
+        fields = ['company','location','department','project','vendor','transaction_type','revision',
+        'document_number','status','submit_date','attention','reference','remarks']
+
+class NewStockReturnDetailForm(forms.ModelForm):
+    item = ItemNewChoiceField(queryset=Item.objects.filter(is_active=True).order_by('item_code'), empty_label="Not Assigned")
+
+    class Meta:
+        model = StockReturnDetail
+        fields = ['stock_return','quantity','uom','additional_description','reason','remarks']
+
+class NewStockReturnAttachmentForm(forms.ModelForm):
+    attachment_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput)
+    
+    class Meta:
+        model = StockReturnAttachment
+        fields = ['stock_return', 'attachment']
+
 class StockBalanceReport(forms.Form):
     item = ItemNewChoiceField(queryset=Item.objects.filter(is_active=True).order_by('item_code'), empty_label="Not Assigned",required=True)
     location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="All",required=False)
+    date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput)
+
+class StockBalanceReportLocation(forms.Form):
+    location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="All",required=False)
     
+
 

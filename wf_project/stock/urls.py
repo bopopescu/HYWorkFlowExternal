@@ -10,6 +10,8 @@ router.register('mystockadjustment', views.MyStockAdjustmentViewSet,basename="my
 router.register('teamstockadjustment', views.TeamStockAdjustmentViewSet,basename="teamstockadjustment")
 router.register('mystockissuing', views.MyStockIssuingViewSet,basename="mystockissuing")
 router.register('teamstockissuing', views.TeamStockIssuingViewSet,basename="teamstockissuing")
+router.register('mystockreturn', views.MyStockReturnViewSet,basename="mystockreturn")
+router.register('teamstockreturn', views.TeamStockReturnViewSet,basename="teamstockreturn")
 
 #item & attachment
 router.register('stocktransferdetail', views.StockTransferDetailViewSet,basename="stocktransferdetail")
@@ -18,6 +20,8 @@ router.register('stockadjustmentdetail', views.StockAdjustmentDetailViewSet,base
 router.register('stockadjustmentattachment',views.StockAdjustmentAttachmentViewSet,basename="stockadjustmentattachment")
 router.register('stockissuingdetail', views.StockIssuingDetailViewSet,basename="stockissuingdetail")
 router.register('stockissuingattachment',views.StockIssuingAttachmentViewSet,basename="stockissuingattachment")
+router.register('stockreturndetail', views.StockReturnDetailViewSet,basename="stockreturndetail")
+router.register('stockreturnattachment',views.StockReturnAttachmentViewSet,basename="stockreturnattachment")
 
 urlpatterns = [ 
     path('api/', include(router.urls)), 
@@ -68,6 +72,22 @@ urlpatterns = [
     path('createstockissuingattachment/<int:pk>/', views.stock_issuing_attachment_create, name='stock_issuing_attachment_create'),
     path('deletestockissuingattachment/<int:pk>/', views.stock_issuing_attachment_delete, name='stock_issuing_attachment_delete'),
 
+    #stock return
+    path('stock_return_list/', views.stock_return_list, name='stock_return_list'),
+
+    path('stock_return_create/init/', views.stock_return_init, name='stock_return_init'),
+    path('stock_return_create/<int:pk>/', views.stock_return_create, name='stock_return_create'),
+
+    path('stock_return_submit/<int:pk>/', views.stock_return_submit, name='stock_return_submit'),
+    path('stock_return/<int:pk>/', views.stock_return_detail, name='stock_return_detail'),    
+    path('stock_return_delete/', views.stock_return_delete, name='stock_return_delete'),
+    path('stock_return_update/<int:pk>/', views.stock_return_update, name='stock_return_update'),
+    path('createstockreturnitem/<int:pk>/', views.stock_return_detail_create, name='stock_return_detail_create'),
+    path('deletestockreturnitem/', views.stock_return_detail_delete, name='stock_return_detail_delete'),
+    path('createstockreturnattachment/<int:pk>/', views.stock_return_attachment_create, name='stock_return_attachment_create'),
+    path('deletestockreturnattachment/<int:pk>/', views.stock_return_attachment_delete, name='stock_return_attachment_delete'),
+    
+    path('stockbalanceinquirylocation/', views.stock_balance_location, name='stock_balance_location'),
     path('stockbalanceinquiry/', views.stock_balance, name='stock_balance_inquiry'),
 
 ]

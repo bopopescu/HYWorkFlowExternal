@@ -5,7 +5,7 @@
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">{{transaction_type.transaction_type_name}}</h1>
     <div>
-        <a href="{% url 'grn_send_to_stockadjustment' grn.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-file-invoice"></i> Send To Stock Adjustment</a>
+        <a href="{% url 'grn_send_to_stock' grn.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-file-invoice"></i> Send To Stock Return</a>
         <a href="{% url 'grn_print' grn.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-print"></i> Print</a>
         <a href="{% url 'grn_list' transaction_type.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>
     </div>

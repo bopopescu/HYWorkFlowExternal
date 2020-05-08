@@ -48,7 +48,7 @@ urlpatterns = [
     path('grn/init/<int:pk>/', views.grn_init, name='grn_init'),
     path('grn/create/<int:pk>/', views.grn_create, name='grn_create'),
     path('grn/<int:pk>/', views.grn_detail, name='grn_detail'),
-    path('pi/sendtostock/<int:pk>/', views.grn_send_to_stockadjustment, name='grn_send_to_stockadjustment'),
+    path('grn/sendtostock/<int:pk>/', views.grn_send_to_stock, name='grn_send_to_stock'),
 
     path('pi/list/<int:pk>/', views.pi_list, name='pi_list'),
     path('pi/init/<int:pk>/', views.pi_init, name='pi_init'),

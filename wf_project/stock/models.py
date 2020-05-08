@@ -182,6 +182,64 @@ class StockIssuingAttachment(models.Model):
     class Meta:
         verbose_name = 'Stock Issuing Attachment'
 
+
+def stock_return_default_status():
+    document_type = DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]
+    return StatusMaintenance.objects.filter(document_type=document_type,status_code='100')[0]
+
+class StockReturn(models.Model):
+    revision = models.IntegerField(default=1)
+    document_number = models.CharField(max_length=100,verbose_name="Document No",blank=True, null=True)
+    location = models.ForeignKey(LocationMaintenance, verbose_name="Location", on_delete=models.CASCADE,blank=True, null=True)
+    vendor = models.ForeignKey(VendorMasterData, verbose_name="Vendor", on_delete=models.CASCADE,blank=True, null=True)
+    company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE,blank=True, null=True)
+    department = models.ForeignKey(DepartmentMaintenance, verbose_name="Department", on_delete=models.CASCADE,blank=True, null=True)
+    project = models.ForeignKey(ProjectMaintenance, verbose_name="Project", on_delete=models.CASCADE,blank=True, null=True)
+    document_type = models.ForeignKey(DocumentTypeMaintenance, verbose_name="Document Type", on_delete=models.CASCADE,blank=True, null=True)
+    document_pk = models.IntegerField(blank=True, null=True)
+    transaction_type = models.ForeignKey(TransactiontypeMaintenance,verbose_name="Trans. Type", on_delete=models.CASCADE,blank=True, null=True)
+    status = models.ForeignKey(StatusMaintenance,default=stock_adjustment_default_status,verbose_name="Status", on_delete=models.CASCADE,blank=True, null=True)
+    submit_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    submit_date = models.DateField(null=True, blank=True,default=datetime.date.today)
+    attention = models.CharField(max_length=250)
+    reference = models.CharField(max_length=100,null=True, blank=True)
+    remarks = RichTextUploadingField(config_name='remarks_py',null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Stock Return'
+        verbose_name_plural = 'Stock Return'
+
+    def __str__(self):
+        return self.attention
+
+class StockReturnDetail(models.Model):
+    item = models.ForeignKey(Item, verbose_name="Item", on_delete=models.CASCADE, blank=True, null=True)
+    stock_return = models.ForeignKey('StockReturn', on_delete=models.CASCADE,blank=True, null=True)
+    additional_description = models.CharField(verbose_name="Additional Description",max_length=250, blank=True, null=True)
+    quantity = models.DecimalField(verbose_name="Qty", default=0.0, decimal_places=3, max_digits=15)
+    uom = models.ForeignKey(UOMMaintenance, verbose_name="UOM", on_delete=models.CASCADE, blank=True, null=True)
+    reason = models.CharField(max_length=250, blank=True, null=True)
+    remarks = models.CharField(max_length=250, blank=True, null=True)
+    
+    class Meta:
+        verbose_name = 'Stock Return Detail'
+        verbose_name_plural = 'Stock Return Detail'
+
+    def __str__(self):
+        return self.additional_description
+
+def stock_return_directory_path(instance, filename):
+    document_type = DocumentTypeMaintenance.objects.filter(document_type_code="210")[0]
+    return '{0}/{1}'.format(document_type.attachment_path,filename)
+
+class StockReturnAttachment(models.Model):
+    attachment = models.FileField(upload_to=stock_return_directory_path,verbose_name="File Name", blank=True, null=True)
+    attachment_date = models.DateField()
+    stock_return = models.ForeignKey('StockReturn', on_delete=models.CASCADE,blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Stock Return Attachment'
+
 class ItemMovement(models.Model):
     location = models.ForeignKey(LocationMaintenance, verbose_name="Location", on_delete=models.CASCADE,blank=True, null=True)
     document_type = models.ForeignKey(DocumentTypeMaintenance, verbose_name="Document Type", on_delete=models.CASCADE,blank=True, null=True)
@@ -189,3 +247,4 @@ class ItemMovement(models.Model):
     item = models.ForeignKey(Item, verbose_name="Item", on_delete=models.CASCADE, blank=True, null=True)
     stock_in = models.DecimalField(default=0.0, decimal_places=3, max_digits=15)
     stock_out = models.DecimalField(default=0.0, decimal_places=3, max_digits=15)
+    submit_date = models.DateField(null=True, blank=True,default=datetime.date.today)

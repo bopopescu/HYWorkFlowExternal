@@ -11,7 +11,7 @@
 			<tr>
 				<td colspan="4"><img src="{% static 'BigRed.png' %}" style="width:100%"/></td>
 				<td style="text-align:right;">
-					<div style="font-size:14px">Stock Balance Inquiry At {{date}}</div>
+					<div style="font-size:14px">Stock Balance Inquiry</div>
 				</td>
 			</tr>
 			<tr><td>&nbsp;</td></tr>
@@ -33,33 +33,33 @@
 			</tr>
             <tr><td>&nbsp;</td></tr>
             <tr><td>&nbsp;</td></tr>
-            {%for item in items%}
+            {%for location in locations%}
 			<tr>
-				<td colspan="5" style="width:100%; padding:2px">
+				<td colspan="3" style="width:100%; padding:2px">
 					<table style="border: solid 1px black">
 						<tr>
-							<th colspan="5">
-								{{item.item_code}}-{{item.item_description}}
+							<th colspan="3">
+								{{location.loc_name}}
 							</th>
                         </tr>
                         <tr>
-                            <td colspan="3" style="text-align:center">
-								<div>Location Name</div>
-							</td>
                             <td colspan="2" style="text-align:center">
+								<div>Item </div>
+							</td>
+                            <td style="text-align:center">
 								<div>Current Balance</div>
 							</td>
                         </tr>
                         
 						<tr>
-                            <td colspan="3" style="text-align:center">
-                                {%for location in locations%}
-                                <div>{{location.loc_name}}</div>
+                            <td colspan="2" style="text-align:center">
+                                {%for item_movement in item_movements%}
+                                <div>{{item_movement.item.item_code}}-{{item_movement.item.item_description}} ({{item_movement.item.item_uom}})</div>
                                 {%endfor%}
 							</td>
-                            <td colspan="2" style="text-align:center">
+                            <td style="text-align:center">
                                 {%for current_balance in location_current_balance%}
-                                <div>{{current_balance}} <strong>{{item.item_uom}}</strong></div>
+                                <div>{{current_balance}}</div>
                                 {%endfor%}
                             </td>
                         </tr>

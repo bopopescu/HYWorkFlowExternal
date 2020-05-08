@@ -2,17 +2,20 @@ from django.shortcuts import render,redirect, get_object_or_404
 from .forms import NewStockTransferForm, UpdateStockTransferForm, DetailStockTransferForm, NewStockTransferDetailForm, NewStockTransferAttachmentForm
 from .forms import NewStockAdjustmentForm, UpdateStockAdjustmentForm, DetailStockAdjustmentForm, NewStockAdjustmentDetailForm, NewStockAdjustmentAttachmentForm
 from .forms import NewStockIssuingForm, UpdateStockIssuingForm, DetailStockIssuingForm, NewStockIssuingDetailForm, NewStockIssuingAttachmentForm
-from .forms import StockBalanceReport
+from .forms import NewStockReturnForm, UpdateStockReturnForm, DetailStockReturnForm, NewStockReturnDetailForm, NewStockReturnAttachmentForm
+from .forms import StockBalanceReport,StockBalanceReportLocation
 from django.contrib.auth.decorators import login_required
 from .models import StockTransfer,StockTransferDetail,StockTransferAttachment
 from .models import StockAdjustment,StockAdjustmentDetail,StockAdjustmentAttachment
 from .models import StockIssuing,StockIssuingDetail,StockIssuingAttachment
+from .models import StockReturn,StockReturnDetail,StockReturnAttachment
 from .models import ItemMovement
 from Inventory.models import Item
 from rest_framework import viewsets
 from .serializers import StockTransferSerializer, StockTransferDetailSerializer, StockTransferAttachmentSerializer
 from .serializers import StockAdjustmentSerializer, StockAdjustmentDetailSerializer, StockAdjustmentAttachmentSerializer
 from .serializers import StockIssuingSerializer, StockIssuingDetailSerializer, StockIssuingAttachmentSerializer
+from .serializers import StockReturnSerializer, StockReturnDetailSerializer, StockReturnAttachmentSerializer
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance,CompanyMaintenance,CompanyAddressDetail
 from administration.models import WorkflowApprovalRule,StatusMaintenance,LocationMaintenance
@@ -21,6 +24,7 @@ import datetime
 from django.http import JsonResponse
 from PDFreport.render import Render
 from django.http import HttpResponse
+from django.db.models.aggregates import Sum
 
 # Stock Transfer ViewSet
 class MyStockTransferViewSet(viewsets.ModelViewSet):
@@ -141,6 +145,46 @@ class StockIssuingAttachmentViewSet(viewsets.ModelViewSet):
         """
         stock_issuing = get_object_or_404(StockIssuing, pk=self.request.query_params.get('pk', None))
         return StockIssuingAttachment.objects.filter(stock_issuing=stock_issuing)
+
+# Stock Return ViewSet
+class MyStockReturnViewSet(viewsets.ModelViewSet):
+    serializer_class = StockReturnSerializer
+    
+    def get_queryset(self):
+        # transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
+        return StockReturn.objects.filter(submit_by=self.request.user.id).order_by('-id')  
+
+class TeamStockReturnViewSet(viewsets.ModelViewSet):   
+    serializer_class = StockReturnSerializer
+
+    def get_queryset(self):
+        # document_type = get_object_or_404(DocumentTypeMaintenance, document_type_code="301")
+        # transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
+        groups = self.request.user.groups.values_list('id', flat=True)
+        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        return StockReturn.objects.filter(submit_by__in=users).order_by('-id')  
+
+class StockReturnDetailViewSet(viewsets.ModelViewSet):
+    serializer_class = StockReturnDetailSerializer
+
+    def get_queryset(self):
+        """
+        This view should return a list of all models by
+        the maker passed in the URL
+        """
+        stock_return = get_object_or_404(StockReturn, pk=self.request.query_params.get('pk', None))
+        return StockReturnDetail.objects.filter(stock_return=stock_return)
+
+class StockReturnAttachmentViewSet(viewsets.ModelViewSet):
+    serializer_class = StockReturnAttachmentSerializer
+
+    def get_queryset(self):
+        """
+        This view should return a list of all models by
+        the maker passed in the URL
+        """
+        stock_return = get_object_or_404(StockReturn, pk=self.request.query_params.get('pk', None))
+        return StockReturnAttachment.objects.filter(stock_return=stock_return)
 
 #Stock Transfer
 @login_required
@@ -621,6 +665,158 @@ def load_delivery_address(request):
     address = CompanyAddressDetail.objects.filter(company=delivery)[0]
     return render(request, 'stock/stock_issuing/delivery_address_field.html', {'address': address})
 
+#Stock Return
+@login_required
+def stock_return_init(request):    
+    document_type = DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]
+    transaction_type = TransactiontypeMaintenance.objects.filter(document_type=document_type)[0]
+
+    stock_return = StockReturn.objects.create(submit_by=request.user, transaction_type=transaction_type)
+    return redirect(stock_return_create, stock_return.pk)
+
+@login_required
+def stock_return_create(request, pk):    
+    stock_return = get_object_or_404(StockReturn, pk=pk)
+    if request.method == 'POST':
+        form = NewStockReturnForm(request.POST, instance=stock_return)
+        if form.is_valid():
+
+            document_type = DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]
+            document_number = document_type.running_number + 1
+            document_type.running_number = document_number 
+            document_type.save()
+
+            company = form.cleaned_data['company']
+            transaction_type = form.cleaned_data['transaction_type']
+            vendor = form.cleaned_data['vendor']
+            project = form.cleaned_data['project']
+            location = form.cleaned_data['location']
+            department = form.cleaned_data['department']
+
+            status = get_object_or_404(StatusMaintenance, document_type=document_type, status_code="100")
+
+            stock_return.document_number = '{0}-{1:05d}'.format(document_type.document_type_code, document_number)
+            stock_return.company = company
+            stock_return.project = project
+            stock_return.location = location
+            stock_return.department = department
+            stock_return.status = status
+            stock_return.submit_by = request.user
+            stock_return.transaction_type = transaction_type
+            stock_return.save()
+
+            # transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=transaction_type.pk , document_type=staff_ot_type)
+
+            return redirect(stock_return_update, pk=stock_return.pk)
+        else:
+            print(form.errors)
+            form = NewStockReturnForm(instance=stock_return)
+            form_detail = NewStockReturnDetailForm()
+            form_attachment = NewStockAdjustmentAttachmentForm()
+    else:
+        form = NewStockReturnForm(instance=stock_return)
+        form_detail = NewStockReturnDetailForm()
+        form_attachment = NewStockReturnAttachmentForm()
+    return render(request, 'stock/stock_return/create.html', {'stock_return': stock_return, 'form': form, 'form_detail': form_detail,'form_attachment':form_attachment})
+
+@login_required
+def stock_return_submit(request, pk):
+    stock_return = get_object_or_404(StockReturn, pk=pk)
+    stock_return_details = StockReturnDetail.objects.filter(stock_return=stock_return)
+    document_type = DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]
+    status = StatusMaintenance.objects.filter(document_type=document_type,status_code='400')[0]
+
+    for stock_return_detail in stock_return_details:
+        item_movement= ItemMovement()     
+        item_movement.location = stock_return.location
+        item_movement.document_type = document_type
+        item_movement.document_pk = stock_return.id
+        item_movement.item = stock_return_detail.item
+        item_movement.stock_out = stock_return_detail.quantity
+        item_movement.stock_in = 0.0
+        item_movement.save()
+
+    stock_return.status = status
+    stock_return.save()
+    return redirect(stock_return_list)
+
+@login_required
+def stock_return_detail(request, pk):
+    stock_return = get_object_or_404(StockReturn, pk=pk)
+    form = DetailStockReturnForm(instance=stock_return)
+    return render(request, 'stock/stock_return/detail.html', {'stock_return': stock_return, 'form': form})
+
+@login_required
+def stock_return_list(request):
+    return render(request, 'stock/stock_return/list.html')
+
+@login_required
+def stock_return_update(request, pk):
+    stock_return = get_object_or_404(StockReturn, pk=pk)
+    if request.method == 'POST':
+        form = UpdateStockReturnForm(request.POST, instance=stock_return)
+        status = stock_return.status
+        stock_return = form.save()
+        stock_return.revision = stock_return.revision + 1
+        stock_return.status = status
+        stock_return.save()
+        return redirect('stock_return_detail', pk=stock_return.pk)
+    else:
+        form = UpdateStockReturnForm(instance=stock_return)
+        form_attachment = NewStockReturnAttachmentForm()
+        form_detail = NewStockReturnDetailForm()
+    return render(request, 'stock/stock_return/update.html', {'stock_return': stock_return, 'form': form, 'form_detail':form_detail,'form_attachment':form_attachment})
+
+@login_required
+def stock_return_delete(request):
+    stock_return =  get_object_or_404(StockReturn, pk=request.POST['hiddenValue'])
+    stock_return.delete()
+    return JsonResponse({'message': 'Success'})
+
+@login_required
+def stock_return_detail_create(request, pk):    
+    form = NewStockReturnDetailForm(request.POST)
+    if form.is_valid():
+        stock_return_detail = form.save(commit=False)
+        stock_return = get_object_or_404(StockReturn, pk=pk)
+
+        item = form.cleaned_data['item']
+        item_uom = item.item_uom
+
+        stock_return_detail.stock_return = stock_return
+        stock_return_detail.uom = item_uom
+        stock_return_detail.item = item
+        stock_return_detail.save()
+        
+    else:
+        print(form.errors)
+    return JsonResponse({'message': 'Success'}) 
+
+@login_required
+def stock_return_detail_delete(request):
+    stock_return_detail =  get_object_or_404(StockReturnDetail, pk=request.POST['hiddenValue'])
+    stock_return_detail.delete()
+    return JsonResponse({'message': 'Success'})
+
+@login_required
+def stock_return_attachment_create(request, pk):    
+    form = NewStockReturnAttachmentForm(request.POST, request.FILES)
+    if form.is_valid():
+        stock_return_attachment = form.save(commit=False)
+        stock_return = get_object_or_404(StockReturn, pk=pk)
+        stock_return_attachment.stock_return = stock_return
+        stock_return_attachment.attachment_date = request.POST['attachment_date']
+        stock_return_attachment.save()
+        
+    return JsonResponse({'message': 'Success'})
+
+@login_required
+def stock_return_attachment_delete(request, pk):
+    stock_return_attachment = get_object_or_404(StockReturnAttachment, pk=request.POST['hiddenValue2'])
+    stock_return_attachment.delete()
+    return JsonResponse({'message': 'Success'})
+
+
 @login_required
 def stock_balance(request):
     if request.method == 'POST':
@@ -635,23 +831,24 @@ def stock_balance(request):
                 location_select = LocationMaintenance.objects.filter(pk=location.pk)
             else:
                 location_select = LocationMaintenance.objects.filter(is_active=True)
-                
+            date = request.POST['date']
             location_current_balance_list = []
             for itm in item_select:
                 for loc in location_select:
-                    location_current_balance_list.append(count_stock_balance(itm.id,loc.id))
+                    location_current_balance_list.append(count_stock_balance(itm.id,loc.id,date))
 
 
             params = {
                 'items': item_select,
                 'locations': location_select,
                 'location_current_balance':location_current_balance_list,
+                'date':date,
             }
 
             pdf = Render.render('stock/print.html',params)
             if pdf:
                 response = HttpResponse(pdf, content_type='application/pdf')
-                filename = "StockBalanceReport.pdf" 
+                filename = "StockBalanceReportAt%s.pdf" % (date) 
                 content = "attachment; filename=%s" %(filename)
                 response['Content-Disposition'] = content
                 return response
@@ -664,10 +861,10 @@ def stock_balance(request):
     return render(request, 'stock/stock_balance_inquiry/selection.html', {'form': form})
 
 
-def count_stock_balance(itempk,locationpk):
+def count_stock_balance(itempk,locationpk,date):
     item = Item.objects.get(pk=itempk)
     location = LocationMaintenance.objects.get(pk=locationpk)
-    item_movements = ItemMovement.objects.filter(item=item,location=location)
+    item_movements = ItemMovement.objects.filter(item=item,location=location,submit_date__lte=date)
 
     if item_movements.count == 0:
         return 0
@@ -682,4 +879,46 @@ def count_stock_balance(itempk,locationpk):
         total_balance = total_stock_in - total_stock_out
         return total_balance
 
+@login_required
+def stock_balance_location(request):
+    if request.method == 'POST':
+        form = StockBalanceReportLocation(request.POST)
+        if form.is_valid():
+            location = form.cleaned_data['location']
+
+            if location != None:
+                location_select = LocationMaintenance.objects.filter(pk=location.pk)
+            else:
+                location_select = LocationMaintenance.objects.filter(is_active=True)
+                
+            location_current_balance_list = []
+            location_item = []
+            for loc in location_select:
+                item_movements = ItemMovement.objects.filter(location=loc).values("item_id","location_id").annotate(total_stock_out=Sum("stock_out"),total_stock_in=Sum("stock_in"))
+                print(item_movements)
+                for item_movement in item_movements:
+                    location_current_balance = item_movement.total_stock_in - item_movement.total_stock_out
+                    location_current_balance_list.append(location_current_balance)
+
+
+            params = {
+                'locations': location_select,
+                'item_movements': item_movement,
+                'location_current_balance':location_current_balance_list,
+            }
+
+            pdf = Render.render('LocationStock/print.html',params)
+            if pdf:
+                response = HttpResponse(pdf, content_type='application/pdf')
+                filename = "StockBalanceReportByLocation.pdf" 
+                content = "attachment; filename=%s" %(filename)
+                response['Content-Disposition'] = content
+                return response
+            else:
+                return response("errors")
+
+            # return render(request, 'stock/print.html', {'items': item_select,'locations': location_select})
+    else:
+        form = StockBalanceReportLocation()
+    return render(request, 'stock/stock_balance_inquiry/locationselection.html', {'form': form})
 

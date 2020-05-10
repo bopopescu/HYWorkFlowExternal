@@ -7,6 +7,7 @@ from administration.models import StatusMaintenance, TransactiontypeMaintenance,
 from administration.models import PaymentTermMaintenance, EmployeeMaintenance, EmployeeDepartmentMaintenance
 from approval.models import ApprovalItem, ApprovalItemApprover
 from PDFreport.render import Render
+from stock.models import StockReturn,StockReturnDetail
 from django.http import HttpResponse, JsonResponse
 from .forms import NewPOForm, DetailPOForm, UpdatePOForm, NewPOAttachmentForm, NewPOComparison2AttachmentForm
 from .forms import NewPOComparison3AttachmentForm, NewPODetailForm, NewGRNForm, DetailGRNForm
@@ -64,7 +65,7 @@ class PODetailViewSet(viewsets.ModelViewSet):
         the maker passed in the URL
         """
         po = get_object_or_404(PurchaseOrder, pk=self.request.query_params.get('pk', None))
-        return PurchaseOrderDetail.objects.filter(po=po).order_by('-id')
+        return PurchaseOrderDetail.objects.filter(po=po)
 
 class MyPOViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrder.objects.all().order_by('-id')
@@ -673,7 +674,7 @@ def po_print(request, pk):
     requester = get_object_or_404(User, pk=po.submit_by.pk)
     approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-stage')[0]
     approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
-    po_details = PurchaseOrderDetail.objects.filter(po=po)
+    po_details = PurchaseOrderDetail.objects.filter(po=po).order_by("id")
     params = {
         'po': po,
         'approval_item': approval_item,
@@ -733,3 +734,32 @@ def pi_print(request, pk):
         return response
     else:
         return response("errors")
+
+@login_required
+def grn_send_to_stock(request, pk):
+    grn = get_object_or_404(GoodsReceiptNote, pk=pk)
+    document_type = DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]
+    transaction_type = TransactiontypeMaintenance.objects.filter(document_type=document_type)[0]
+    grn_type = get_object_or_404(DocumentTypeMaintenance,document_type_code ="206")
+    
+    
+    stock_company = grn.po.company
+    stock_project = grn.po.project
+    stock_reference = grn.document_number
+    stock_vendor = grn.po.vendor
+    
+    stock_return = StockReturn.objects.create(submit_by=request.user,transaction_type=transaction_type,company=stock_company,
+                                        document_pk=pk,document_type=grn_type,vendor=stock_vendor,project=stock_project,reference=stock_reference)
+
+    po_items = PurchaseOrderDetail.objects.filter(po=grn.po)
+    i = 0
+    for po_item in po_items:
+        i = i + 1
+        linenum = i
+        stock_item = StockReturnDetail.objects.create(item=po_item.item,stock_return=stock_return,
+                                                        additional_description=po_item.additional_description,
+                                                        quantity=po_item.quantity,uom=po_item.uom,
+                                                        remarks=po_item.remarks)
+
+    return redirect('stock_return_create', stock_return.pk)
+    

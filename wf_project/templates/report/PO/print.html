@@ -2,6 +2,7 @@
 <html>
 	<head>
   		<link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+  		<link href="http://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
   		<link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
 	</head>
 	<body>
@@ -46,15 +47,19 @@
 			<tr><td>&nbsp;</td></tr>
 			<tr>
 				<td>
+					<div>Vendor Name</div>
 					<div>Subject</div>
 					<div>Project</div>
 					<div>Terms of Payment</div>
+					<div>Payment Schedule</div>
 					<div>Reference</div>
 				</td>
 				<td colspan="4">
+					<div>: {{po.vendor}}</div>
 					<div>: {{po.subject}}</div>
 					<div>: {{po.project}}</div>
 					<div>: {{po.payment_term}}</div>
+					<div>: {{po.payment_schedule}}</div>
 					<div>: {{po.reference}}</div>
 				</td>
 			</tr>
@@ -72,6 +77,9 @@
 							<th colspan="2">
 								Description
 							</th>
+							<th colspan="2">
+								Remarks
+							</th>
 							<th>
 								UoM
 							</th>
@@ -80,9 +88,6 @@
 							</th>
 							<th>
 								Price
-							</th>
-							<th>
-								Discount
 							</th>
 							<th>
 								Tax
@@ -96,25 +101,27 @@
 							<td>{{ forloop.counter }}</td>
 							<td colspan="2">{{detail.item.item_code}}</td>
 							<td colspan="2">{{detail.item.item_description}}</td>
+							<td colspan="2">{{detail.remarks}}</td>
 							<td>{{detail.uom}}</td>
 							<td style="text-align:right">{{detail.quantity}}</td>
 							<td style="text-align:right">{{detail.unit_price}}</td>
-							<td style="text-align:right">0.00</td>
 							<td style="text-align:right">{{detail.line_taxamount}}</td>
 							<td style="text-align:right">{{detail.amount}}</td>
 						</tr>
 						{% endfor %}
 						<tr>
-							<td colspan="8"></td>
+							<td colspan="9"></td>
 							<td colspan="2">
 								<div>Gross Amount</div>
-								<div>Discount</div>
+								<div>Discount(%)</div>
+								<div>Discount Amount</div>
 								<div>Total Tax</div>
 								<div style="border-top:double 1px black"><strong>Net Amount</strong></div>
 							</td>
 							<td style="text-align:right">
 								<div>{{po.sub_total}}</div>
 								<div>{{po.discount}}</div>
+								<div>{{po.discount_amount}}</div>
 								<div>{{po.tax_amount}}</div>
 								<div style="border-top:double 1px black"><strong>{{po.total_amount}}</strong></div>
 							</td>

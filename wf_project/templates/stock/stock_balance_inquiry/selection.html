@@ -1,0 +1,145 @@
+{% extends 'main_template.html' %}
+
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Stock Balance Inquiry Report</h1>
+  <style>
+    table#dataTable tbody tr td a#additem {
+       display:none;
+   }
+
+  table#dataTable .form-control.error2 {
+		border-color: #f50000;
+	}
+   
+   i.fas.fa-plus{
+      color:white;
+      margin-right: 1px;
+      position: relative;
+      top: 2px;
+   }
+   i.fas.fa-pencil-alt{
+      color:white;
+   }
+   i.fas.fa-trash{
+      color:white;
+   }
+   select[readonly]
+    {
+        pointer-events: none;
+    }
+ </style>  
+</div>
+
+<div class="row">
+  <div class="col-xl-6 col-md-6 mb-4">
+    <div class="card shadow mb-4">
+      <a href="#GeneralCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="GeneralCard">
+        <h6 class="m-0 font-weight-bold text-primary">Item Filtertion</h6>
+      </a>
+      <div class="collapse show" id="GeneralCard">
+        <form method="post">
+          <div style="float: right;margin-top: 12px;margin-right: 12px;position:relative;">
+            <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Print</button>
+          </div> 
+          {% csrf_token %}  
+          <br>
+          <br>
+          <input type="hidden" value="item" name="hiddenValue"/>
+          <div class="card-body">
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.item.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.item class="col-md-12 form-control form-control-user"%}
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-3">
+                    <label class="control-label">
+                      {{form.location.label_tag}}
+                    </label>
+                  </div>
+                  <div class="col col-md-8">
+                    {% render_field form.location class="col-md-12 form-control form-control-user"%}
+                  </div>
+                </div>
+            </div>    
+            <div class="form-group">
+              <div class="form-row">
+                <div class="col col-md-3">
+                  <label class="control-label">
+                    {{form.date.label_tag}}
+                  </label>
+                </div>
+                <div class="col col-md-8">
+                  {% render_field form.date type="date" class="col-md-12 form-control form-control-user"%}
+                </div>
+              </div>
+          </div>   
+        </div>
+      </form>
+      </div>        
+    </div>
+  </div>  
+  <div class="col-xl-6 col-md-6 mb-4">      
+    <div class="card shadow mb-4">
+      <a href="#DocInfoCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="DocInfoCard">
+        <h6 class="m-0 font-weight-bold text-primary">Location Filteration</h6>
+      </a>
+      <div class="collapse show" id="DocInfoCard">
+        <form method="post">
+          <div style="float: right;margin-top: 12px;margin-right: 12px;position:relative;">
+            <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Print</button>
+          </div> 
+          {% csrf_token %}  
+          <br>
+          <br>
+          <input type="hidden" value="location" name="hiddenValue"/>
+          <div class="card-body">
+            <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-3">
+                    <label class="control-label">
+                      {{form2.location.label_tag}}
+                    </label>
+                  </div>
+                  <div class="col col-md-8">
+                    {% render_field form2.location class="col-md-12 form-control form-control-user"%}
+                  </div>
+                </div>
+              </div> 
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col col-md-3">
+                    <label class="control-label">
+                      {{form2.date.label_tag}}
+                    </label>
+                  </div>
+                  <div class="col col-md-8">
+                    {% render_field form2.date type="date" class="col-md-12 form-control form-control-user"%}
+                  </div>
+                </div>
+              </div>     
+        </div>
+      </form>
+      </div>        
+    </div>
+  </div>
+</div>  
+
+
+
+  
+
+{% endblock content %}

@@ -1,0 +1,84 @@
+
+{% load static %}
+<html>
+	<head>
+          <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+  		  <link href="http://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+		  <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+	</head>
+	<body>
+		<table>
+			<tr>
+				<td colspan="4"><img src="{% static 'BigRed.png' %}" style="width:100%"/></td>
+				<td style="text-align:right;">
+					<div style="font-size:14px">Stock Balance Inquiry By Location at {{date}}</div>
+				</td>
+			</tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr>
+				<td colspan="2" style="vertical-align:top">
+					<img src="{% static 'logo_print.png' %}" style="width:150px"/>
+				</td>
+				<td colspan="2" style="padding-left:20px">
+					<div><span style="color:red">Hua Yang Berhad</span> (44094-M)</div>
+					<div>C-21, Jalan Medan Selayang 1, Medan Selayang,</div>
+					<div>68100 Batu Caves, Selangor Darul Ehsan,</div>
+					<div>Malaysia</div>
+				</td>
+				<td style="border-left: solid red 1px; padding-left:5px; vertical-align:top">
+					<div><span style="color:red">T:</span> +603-6188 4488</div>
+					<div><span style="color:red">F:</span> +603-6188 4487</div>
+					<div><span style="color:red">E:</span> kl@huayang.com.my</div>
+				</td>
+			</tr>
+            <tr><td>&nbsp;</td></tr>
+            <tr><td>&nbsp;</td></tr>
+            {%for location in locations%}
+			<tr>
+				<td colspan="5" style="width:100%; padding:2px">
+					<table style="border: solid 1px black">
+						<tr>
+							<th colspan="5">
+								{{location.loc_name}}
+							</th>
+                        </tr>
+                        <tr>
+							<td style="text-align:center">
+                                <div>No.</div>
+							</td>
+                            <td colspan="3" style="text-align:center">
+								<div>Item </div>
+							</td>
+                            <td colspan="1" style="text-align:center">
+								<div>Current Balance</div>
+							</td>
+                        </tr>
+                        
+						<tr>
+							<td style="text-align:center">
+                                {%for item in items%}
+                                <div>{{forloop.counter}}</div>
+                                {%endfor%}
+							</td>
+                            <td colspan="3" style="text-align:center">
+                                {%for item in items%}
+                                <div>{{item.item_code}}-{{item.item_description}} ({{item.item_uom}})</div>
+                                {%endfor%}
+							</td>
+                            <td colspan="1" style="text-align:center">
+                                {%for current_balance in location_current_balance%}
+                                <div>{{current_balance}}</div>
+                                {%endfor%}
+                            </td>
+                        </tr>
+                        
+                        
+					</table>
+				</td>
+            </tr>
+			<tr><td>&nbsp;</td></tr>
+			<tr><td>&nbsp;</td></tr>
+            {%endfor%}
+		</table>
+	</body>
+</html>

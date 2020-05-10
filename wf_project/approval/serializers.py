@@ -7,6 +7,7 @@ from memo.models import Memo
 from django.contrib.auth.models import User
 from payment.models import PaymentRequest
 from human_resource.models import StaffRecruitmentRequest
+from payment.models import PaymentRequest
 from purchasing.models import PurchaseOrder
 from staff_overtime.models import StaffOT
 from drawer_reimbursement.models import ReimbursementRequest
@@ -42,7 +43,7 @@ class ApprovalCCSerializer(serializers.ModelSerializer):
 
 class ApprovalItemSerializer(serializers.ModelSerializer):
     #document_amount =  serializers.SerializerMethodField()
-    document_type = serializers.StringRelatedField(many=False)
+    document_type = serializers.SerializerMethodField()
     attachment_path = serializers.SerializerMethodField()
     request_by = serializers.SerializerMethodField()
     subject = serializers.SerializerMethodField()
@@ -51,6 +52,14 @@ class ApprovalItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApprovalItem
         fields = ['id', 'attachment_path', 'document_number', 'document_pk', 'document_type', 'request_by', 'subject', 'submit_date']
+
+    def get_document_type(self, obj):
+        document_type = get_object_or_404(DocumentTypeMaintenance, pk=obj.document_type.pk)
+        if document_type.document_type_code == "301":
+            py = PaymentRequest.objects.filter(pk=obj.document_pk)[0]
+            return obj.document_type.document_type_name +"-"+ py.transaction_type.transaction_type_name
+        else:
+            return obj.document_type.document_type_name
 
     def get_request_by(self, obj):
         document_type = get_object_or_404(DocumentTypeMaintenance, pk=obj.document_type.pk)

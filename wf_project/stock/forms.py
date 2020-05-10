@@ -247,7 +247,7 @@ class StockBalanceReport(forms.Form):
     date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput)
 
 class StockBalanceReportLocation(forms.Form):
-    location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="All",required=False)
-    
+    location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="Not Assigned",required=True)
+    date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput)
 
 

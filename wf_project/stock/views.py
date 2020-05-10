@@ -820,45 +820,93 @@ def stock_return_attachment_delete(request, pk):
 @login_required
 def stock_balance(request):
     if request.method == 'POST':
-        form = StockBalanceReport(request.POST)
-        if form.is_valid():
-            item = form.cleaned_data['item']
-            location = form.cleaned_data['location']
-            if item != None:
-                item_select = Item.objects.filter(pk=item.pk)
-                
-            if location != None:
-                location_select = LocationMaintenance.objects.filter(pk=location.pk)
-            else:
-                location_select = LocationMaintenance.objects.filter(is_active=True)
-            date = request.POST['date']
-            location_current_balance_list = []
-            for itm in item_select:
+        hiddenvalue = request.POST['hiddenValue']
+        print(hiddenvalue)
+        if hiddenvalue == "item":
+            form = StockBalanceReport(request.POST)
+        else:
+            form = StockBalanceReportLocation(request.POST)
+        if hiddenvalue == "item":
+            if form.is_valid():
+                item = form.cleaned_data['item']
+                location = form.cleaned_data['location']
+                if item != None:
+                    item_select = Item.objects.filter(pk=item.pk)
+                    
+                if location != None:
+                    location_select = LocationMaintenance.objects.filter(pk=location.pk)
+                else:
+                    location_select = LocationMaintenance.objects.filter(is_active=True)
+                date = request.POST['date']
+                location_current_balance_list = []
+                for itm in item_select:
+                    for loc in location_select:
+                        location_current_balance_list.append(count_stock_balance(itm.id,loc.id,date))
+
+
+                params = {
+                    'items': item_select,
+                    'locations': location_select,
+                    'location_current_balance':location_current_balance_list,
+                    'date':date,
+                }
+
+                pdf = Render.render('stock/print.html',params)
+                if pdf:
+                    response = HttpResponse(pdf, content_type='application/pdf')
+                    filename = "StockBalanceReportAt%s.pdf" % (date) 
+                    content = "attachment; filename=%s" %(filename)
+                    response['Content-Disposition'] = content
+                    return response
+                else:
+                    return response("errors")
+        else:
+            if form.is_valid():
+                location = form.cleaned_data['location']
+                date = request.POST['date']
+                if location != None:
+                    location_select = LocationMaintenance.objects.filter(pk=location.pk)
+                else:
+                    location_select = LocationMaintenance.objects.filter(is_active=True)
+                    
+                location_current_balance_list = []
+                location_item = []
                 for loc in location_select:
-                    location_current_balance_list.append(count_stock_balance(itm.id,loc.id,date))
+                    item_movements = ItemMovement.objects.filter(location=loc,submit_date__lte=date).values("item_id","location_id").annotate(total_stock_out=Sum("stock_out"),total_stock_in=Sum("stock_in"))
+                    # print(item_movements.count())
+                    for item_movement in item_movements:
+                        total_stock_in = item_movement['total_stock_in']
+                        total_stock_out = item_movement['total_stock_out']
+                        item = Item.objects.get(pk=item_movement['item_id'])
+                        location_current_balance = total_stock_in - total_stock_out
+                        # print(item)
+                        # print(location_current_balance)
+                        location_current_balance_list.append(location_current_balance)
+                        location_item.append(item)
 
 
-            params = {
-                'items': item_select,
-                'locations': location_select,
-                'location_current_balance':location_current_balance_list,
-                'date':date,
-            }
+                params = {
+                    'locations': location_select,
+                    'items':location_item,
+                    'location_current_balance':location_current_balance_list,
+                    'date':date,
+                }
 
-            pdf = Render.render('stock/print.html',params)
-            if pdf:
-                response = HttpResponse(pdf, content_type='application/pdf')
-                filename = "StockBalanceReportAt%s.pdf" % (date) 
-                content = "attachment; filename=%s" %(filename)
-                response['Content-Disposition'] = content
-                return response
-            else:
-                return response("errors")
+                pdf = Render.render('LocationStock/print.html',params)
+                if pdf:
+                    response = HttpResponse(pdf, content_type='application/pdf')
+                    filename = "StockBalanceReportByLocationAt%s.pdf" % (date) 
+                    content = "attachment; filename=%s" %(filename)
+                    response['Content-Disposition'] = content
+                    return response
+                else:
+                    return response("errors")
 
             # return render(request, 'stock/print.html', {'items': item_select,'locations': location_select})
     else:
         form = StockBalanceReport()
-    return render(request, 'stock/stock_balance_inquiry/selection.html', {'form': form})
+        form2 = StockBalanceReportLocation()
+    return render(request, 'stock/stock_balance_inquiry/selection.html', {'form': form,'form2':form2})
 
 
 def count_stock_balance(itempk,locationpk,date):
@@ -885,7 +933,7 @@ def stock_balance_location(request):
         form = StockBalanceReportLocation(request.POST)
         if form.is_valid():
             location = form.cleaned_data['location']
-
+            date = request.POST['date']
             if location != None:
                 location_select = LocationMaintenance.objects.filter(pk=location.pk)
             else:
@@ -894,16 +942,22 @@ def stock_balance_location(request):
             location_current_balance_list = []
             location_item = []
             for loc in location_select:
-                item_movements = ItemMovement.objects.filter(location=loc).values("item_id","location_id").annotate(total_stock_out=Sum("stock_out"),total_stock_in=Sum("stock_in"))
-                print(item_movements)
+                item_movements = ItemMovement.objects.filter(location=loc,submit_date__lte=date).values("item_id","location_id").annotate(total_stock_out=Sum("stock_out"),total_stock_in=Sum("stock_in"))
+                # print(item_movements.count())
                 for item_movement in item_movements:
-                    location_current_balance = item_movement.total_stock_in - item_movement.total_stock_out
+                    total_stock_in = item_movement['total_stock_in']
+                    total_stock_out = item_movement['total_stock_out']
+                    item = Item.objects.get(pk=item_movement['item_id'])
+                    location_current_balance = total_stock_in - total_stock_out
+                    # print(item)
+                    # print(location_current_balance)
                     location_current_balance_list.append(location_current_balance)
+                    location_item.append(item)
 
 
             params = {
                 'locations': location_select,
-                'item_movements': item_movement,
+                'items':location_item,
                 'location_current_balance':location_current_balance_list,
             }
 

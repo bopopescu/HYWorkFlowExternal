@@ -11,7 +11,7 @@
 			<tr>
 				<td colspan="4"><img src="{% static 'BigRed.png' %}" style="width:100%"/></td>
 				<td style="text-align:right;">
-					<div style="font-size:14px">Stock Balance Inquiry At {{date}}</div>
+					<div style="font-size:14px">Stock Balance Inquiry at {{date}}</div>
 				</td>
 			</tr>
 			<tr><td>&nbsp;</td></tr>
@@ -43,7 +43,10 @@
 							</th>
                         </tr>
                         <tr>
-                            <td colspan="3" style="text-align:center">
+							<td style="text-align:center">
+								<div>No.</div>
+							</td>
+                            <td colspan="2" style="text-align:center">
 								<div>Location Name</div>
 							</td>
                             <td colspan="2" style="text-align:center">
@@ -52,7 +55,12 @@
                         </tr>
                         
 						<tr>
-                            <td colspan="3" style="text-align:center">
+							<td style="text-align:center">
+                                {%for location in locations%}
+                                <div>{{forloop.counter}}</div>
+                                {%endfor%}
+							</td>
+                            <td colspan="2" style="text-align:center">
                                 {%for location in locations%}
                                 <div>{{location.loc_name}}</div>
                                 {%endfor%}

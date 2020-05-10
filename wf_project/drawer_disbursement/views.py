@@ -34,24 +34,24 @@ class DrawerViewSet(viewsets.ModelViewSet):
         drawer_user = DrawerUserMaintenance.objects.filter(user=self.request.user).values_list('drawer', flat=True)
         return DrawerMaintenance.objects.filter(id__in=drawer_user, drawer_status='O').order_by('-id')
 
-class DisbursementListViewSet(viewsets.ModelViewSet):
-    document_type = DocumentTypeMaintenance.objects.get(document_type_code='301')
-    document_status_approve = StatusMaintenance.objects.get(document_type=document_type, status_code='400')
-    transaction = TransactiontypeMaintenance.objects.get(transaction_type_name="Petty Cash")
-    queryset = PaymentRequest.objects.filter(status=document_status_approve, transaction_type=transaction)
-    serializer_class = ApprovedPaymentRequest
+# class DisbursementListViewSet(viewsets.ModelViewSet):
+#     document_type = DocumentTypeMaintenance.objects.get(document_type_code='301')
+#     document_status_approve = StatusMaintenance.objects.get(document_type=document_type, status_code='400')
+#     transaction = TransactiontypeMaintenance.objects.get(transaction_type_name="Petty Cash")
+#     queryset = PaymentRequest.objects.filter(status=document_status_approve, transaction_type=transaction)
+#     serializer_class = ApprovedPaymentRequest
 
-class DisbursedViewSet(viewsets.ModelViewSet):
-    document_type = DocumentTypeMaintenance.objects.get(document_type_code='402')
-    document_status_disburse = StatusMaintenance.objects.get(document_type=document_type, status_code='700')
-    queryset = DrawerDisbursement.objects.filter(status=document_status_disburse)
-    serializer_class = DrawerDisbursementSerializer
+# class DisbursedViewSet(viewsets.ModelViewSet):
+#     document_type = DocumentTypeMaintenance.objects.get(document_type_code='402')
+#     document_status_disburse = StatusMaintenance.objects.get(document_type=document_type, status_code='700')
+#     queryset = DrawerDisbursement.objects.filter(status=document_status_disburse)
+#     serializer_class = DrawerDisbursementSerializer
 
-class CancelledViewSet(viewsets.ModelViewSet):
-    document_type = DocumentTypeMaintenance.objects.get(document_type_code='402')
-    document_status_cancel = StatusMaintenance.objects.get(document_type=document_type, status_code='999')
-    queryset = DrawerDisbursement.objects.filter(status=document_status_cancel)
-    serializer_class = DrawerDisbursementSerializer
+# class CancelledViewSet(viewsets.ModelViewSet):
+#     document_type = DocumentTypeMaintenance.objects.get(document_type_code='402')
+#     document_status_cancel = StatusMaintenance.objects.get(document_type=document_type, status_code='999')
+#     queryset = DrawerDisbursement.objects.filter(status=document_status_cancel)
+#     serializer_class = DrawerDisbursementSerializer
 
 @login_required
 def drawer_list(request):

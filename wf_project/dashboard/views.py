@@ -5,14 +5,10 @@ from drawer_reimbursement.models import DrawerReimbursement
 from drawer_disbursement.models import DrawerDisbursement
 from administration.models import DrawerMaintenance
 from administration.models import DrawerUserMaintenance,DocumentTypeMaintenance,StatusMaintenance
+from approval.models import ApprovalItem
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import decimal
-
-class IndexView(LoginRequiredMixin, TemplateView):
-    login_url = 'accounts/login/'
-    redirect_field_name = '/'
-    template_name="home.html"
 
 @login_required
 def count_drawer_amount(request,pk):
@@ -38,3 +34,16 @@ def count_drawer_amount(request,pk):
     total_drawer_amount = total_reimbursed_amount - total_disbursed_amount
 
     return JsonResponse({'total_drawer_amount': total_drawer_amount})
+
+@login_required
+def home_index(request):
+    in_progress = ApprovalItem.objects.filter(status='IP').count()
+    approved = ApprovalItem.objects.filter(status='A').count()
+    rejected = ApprovalItem.objects.filter(status='R').count()
+    all_approval = ApprovalItem.objects.count()
+
+    in_progress = (in_progress/all_approval) * 100
+    approved = (approved/all_approval) * 100
+    rejected = (rejected/all_approval) * 100
+
+    return render(request, 'home.html', {'in_progress': in_progress, 'approved': approved, 'rejected': rejected})

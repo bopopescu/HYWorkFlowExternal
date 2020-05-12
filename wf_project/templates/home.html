@@ -135,17 +135,17 @@
         <h6 class="m-0 font-weight-bold text-primary">Submitted Workflow</h6>
       </div>
       <div class="card-body">
-        <h4 class="small font-weight-bold">Not yet Started <span class="float-right">20%</span></h4>
+        <h4 class="small font-weight-bold">In Progress <span class="float-right">{{in_progress|floatformat:"0"}}%</span></h4>
         <div class="progress mb-4">
-          <div class="progress-bar bg-danger" role="progressbar" style="width: 30%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+          <div class="progress-bar bg-warning" role="progressbar" style="width: {{in_progress|floatformat:"0"}}%" aria-valuenow="{{in_progress|floatformat:"0"}}" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
-        <h4 class="small font-weight-bold">In Progress <span class="float-right">40%</span></h4>
+        <h4 class="small font-weight-bold">Approval Rate <span class="float-right">{{approved|floatformat:"0"}}%</span></h4>
         <div class="progress mb-4">
-          <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+          <div class="progress-bar bg-success" role="progressbar" style="width: {{approved|floatformat:"0"}}%" aria-valuenow="{{approved|floatformat:"0"}}" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
-        <h4 class="small font-weight-bold">Completed <span class="float-right">Complete!</span></h4>
+        <h4 class="small font-weight-bold">Rejected Rate <span class="float-right">{{rejected|floatformat:"0"}}%</span></h4>
         <div class="progress">
-          <div class="progress-bar bg-success" role="progressbar" style="width: 30%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+          <div class="progress-bar bg-danger" role="progressbar" style="width: {{rejected|floatformat:"0"}}%" aria-valuenow="{{rejected|floatformat:"0"}}" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
       </div>
     </div>
@@ -154,12 +154,9 @@
 
 <!-- Content Row -->
 
-<div class="row">
-
-  <!-- Area Chart -->
+<!-- <div class="row">
   <div class="col-xl-8 col-lg-7">
     <div class="card shadow mb-4">
-      <!-- Card Header - Dropdown -->
       <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
         <div class="dropdown no-arrow">
@@ -175,7 +172,6 @@
           </div>
         </div>
       </div>
-      <!-- Card Body -->
       <div class="card-body">
         <div class="chart-area">
           <canvas id="myAreaChart"></canvas>
@@ -184,10 +180,8 @@
     </div>
   </div>
 
-  <!-- Pie Chart -->
   <div class="col-xl-4 col-lg-5">
     <div class="card shadow mb-4">
-      <!-- Card Header - Dropdown -->
       <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
         <div class="dropdown no-arrow">
@@ -203,7 +197,6 @@
           </div>
         </div>
       </div>
-      <!-- Card Body -->
       <div class="card-body">
         <div class="chart-pie pt-4 pb-2">
           <canvas id="myPieChart"></canvas>
@@ -222,7 +215,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 <!-- Page level custom scripts -->
 <script src="{% static 'js/demo/chart-area-demo.js' %}"></script>

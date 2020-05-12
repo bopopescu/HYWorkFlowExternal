@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import PurchaseOrder, PurchaseOrderDetail, PurchaseOrderAttachment
+from django.utils.formats import number_format
+from django.shortcuts import get_object_or_404
 from .models import PurchaseOrderComparison2Attachment, PurchaseOrderComparison3Attachment
 from .models import GoodsReceiptNote, PurchaseInvoice, PurchaseDebitNote, PurchaseCreditNote
 
@@ -94,6 +96,10 @@ class PODetailSerializer(serializers.ModelSerializer):
     item_code =  serializers.SerializerMethodField()
     item_description = serializers.SerializerMethodField()
     uom = serializers.StringRelatedField(many=False)
+    unit_price = serializers.SerializerMethodField()
+    amount = serializers.SerializerMethodField()
+    line_taxamount = serializers.SerializerMethodField()
+    line_total = serializers.SerializerMethodField()
 
     class Meta:
         model = PurchaseOrderDetail
@@ -106,6 +112,19 @@ class PODetailSerializer(serializers.ModelSerializer):
 
     def get_item_description(self, obj):    
         return obj.item.item_description
+
+    def get_unit_price(self, obj):    
+        return number_format(obj.unit_price)
+
+    def get_line_taxamount(self, obj):    
+        return number_format(obj.line_taxamount)
+    
+    def get_line_total(self, obj):    
+        return number_format(obj.line_total)
+
+    def get_amount(self, obj):    
+        return number_format(obj.amount)
+
 
 class POAttachmentSerializer(serializers.ModelSerializer):
     attachment_date = serializers.DateField(format='%d/%m/%Y')
@@ -127,3 +146,4 @@ class POComparison3AttachmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseOrderComparison2Attachment
         fields = ['id', 'po', 'attachment', 'attachment_date']
+        

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 from accounts_task.models import AccountTask
+from django.utils.formats import number_format
 from .models import PaymentRequest
 from .models import PaymentRequestDetail
 from .models import PaymentAttachment
@@ -68,9 +69,19 @@ class PYSerializer(serializers.ModelSerializer):
 
 class PYItemSerializer(serializers.ModelSerializer):
     tax = serializers.StringRelatedField(many=False)
+    line_total = serializers.SerializerMethodField()
+    price = serializers.SerializerMethodField()
+
     class Meta:
         model = PaymentRequestDetail
         fields = ['id', 'py', 'item_description', 'price', 'tax', 'line_total', 'linenum']
+
+    def get_line_total(self, obj):
+        return number_format(obj.line_total)
+
+    def get_price(self, obj):
+        return number_format(obj.price)
+
 
 class PYAttachmentSerializer(serializers.ModelSerializer):
     attachment_date = serializers.DateField(format='%d/%m/%Y')

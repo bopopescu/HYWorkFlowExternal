@@ -12,7 +12,7 @@ class NewPOForm(forms.ModelForm):
     currency = forms.ModelChoiceField(queryset=CurrencyMaintenance.objects.filter(is_active=True).order_by('currency_name'), empty_label="Not Assigned")
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned")
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned")
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]).order_by('transaction_type_name'), empty_label="Not Assigned")
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]).order_by('transaction_type_name'), empty_label="Not Assigned")
     submit_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput, disabled=True)
     revision = forms.IntegerField(initial=1)
     delivery_receiver = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), label="Delivery Address", empty_label="Not Assigned")
@@ -24,6 +24,11 @@ class NewPOForm(forms.ModelForm):
     subject = forms.CharField(widget=forms.Textarea)
     payment_schedule = forms.CharField(required=False, widget=forms.Textarea)
     payment_term = forms.ModelChoiceField(queryset=PaymentTermMaintenance.objects.filter(is_active=True).order_by('days'), empty_label="Not Assigned")
+    sub_total = forms.DecimalField(initial=0.00,localize=True)
+    discount_amount = forms.DecimalField(initial=0.00,localize=True)
+    discount = forms.DecimalField(initial=0.00,localize=True)
+    tax_amount = forms.DecimalField(initial=0.00,localize=True)
+    total_amount = forms.DecimalField(initial=0.00,localize=True)
 
     class Meta:
         model = PurchaseOrder
@@ -36,7 +41,7 @@ class DetailPOForm(forms.ModelForm):
     currency = forms.ModelChoiceField(queryset=CurrencyMaintenance.objects.filter(is_active=True).order_by('currency_name'), empty_label="Not Assigned", initial=PurchaseOrder.currency, disabled=True)
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned", initial=PurchaseOrder.company, disabled=True)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned", initial=PurchaseOrder.project, disabled=True)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]).order_by('transaction_type_name'), empty_label="Not Assigned", initial=PurchaseOrder.transaction_type, disabled=True)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]).order_by('transaction_type_name'), empty_label="Not Assigned", initial=PurchaseOrder.transaction_type, disabled=True)
     submit_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput, disabled=True)
     delivery_receiver = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), label="Delivery Address", empty_label="Not Assigned", initial=PurchaseOrder.delivery_receiver, disabled=True)
     billing_receiver = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), label="Billing Address", empty_label="Not Assigned", initial=PurchaseOrder.billing_receiver, disabled=True)
@@ -47,7 +52,12 @@ class DetailPOForm(forms.ModelForm):
     subject = forms.CharField(widget=forms.Textarea)
     payment_schedule = forms.CharField(required=False, widget=forms.Textarea)
     payment_term = forms.ModelChoiceField(queryset=PaymentTermMaintenance.objects.filter(is_active=True).order_by('days'), empty_label="Not Assigned", initial=PurchaseOrder.payment_term)
-    
+    sub_total = forms.DecimalField(initial=PurchaseOrder.sub_total,localize=True)
+    discount_amount = forms.DecimalField(initial=PurchaseOrder.discount_amount,localize=True)
+    discount = forms.DecimalField(initial=PurchaseOrder.discount,localize=True)
+    tax_amount = forms.DecimalField(initial=PurchaseOrder.tax_amount,localize=True)
+    total_amount = forms.DecimalField(initial=PurchaseOrder.total_amount,localize=True)
+
     class Meta:
         model = PurchaseOrder
         fields = ['document_number', 'status', 'remarks', 'reference', 'revision', 
@@ -59,7 +69,7 @@ class UpdatePOForm(forms.ModelForm):
     currency = forms.ModelChoiceField(queryset=CurrencyMaintenance.objects.filter(is_active=True).order_by('currency_name'), empty_label="Not Assigned", initial=PurchaseOrder.currency)
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned", initial=PurchaseOrder.company)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned", initial=PurchaseOrder.project)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]).order_by('transaction_type_name'), empty_label="Not Assigned", initial=PurchaseOrder.transaction_type)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]).order_by('transaction_type_name'), empty_label="Not Assigned", initial=PurchaseOrder.transaction_type)
     submit_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput, disabled=True)
     delivery_receiver = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), label="Delivery Address", empty_label="Not Assigned", initial=PurchaseOrder.delivery_receiver)
     billing_receiver = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), label="Billing Address", empty_label="Not Assigned", initial=PurchaseOrder.billing_receiver)
@@ -70,7 +80,12 @@ class UpdatePOForm(forms.ModelForm):
     subject = forms.CharField(widget=forms.Textarea)
     payment_schedule = forms.CharField(required=False, widget=forms.Textarea)
     payment_term = forms.ModelChoiceField(queryset=PaymentTermMaintenance.objects.filter(is_active=True).order_by('days'), empty_label="Not Assigned", initial=PurchaseOrder.payment_term)
-
+    sub_total = forms.DecimalField(initial=PurchaseOrder.sub_total,localize=True)
+    discount_amount = forms.DecimalField(initial=PurchaseOrder.discount_amount,localize=True)
+    discount = forms.DecimalField(initial=PurchaseOrder.discount,localize=True)
+    tax_amount = forms.DecimalField(initial=PurchaseOrder.tax_amount,localize=True)
+    total_amount = forms.DecimalField(initial=PurchaseOrder.total_amount,localize=True)
+    
     class Meta:
         model = PurchaseOrder
         fields = ['document_number', 'status', 'remarks', 'reference', 'revision',

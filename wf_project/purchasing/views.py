@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from administration.models import CompanyMaintenance, CompanyAddressDetail, CurrencyMaintenance, DocumentTypeMaintenance
 from administration.models import StatusMaintenance, TransactiontypeMaintenance, WorkflowApprovalRule, ProjectMaintenance
 from administration.models import PaymentTermMaintenance, EmployeeMaintenance, EmployeeDepartmentMaintenance
+from administration.models import CompanyAddressDetail,CompanyContactDetail
 from approval.models import ApprovalItem, ApprovalItemApprover
 from PDFreport.render import Render
 from stock.models import StockReturn,StockReturnDetail
@@ -675,12 +676,21 @@ def po_print(request, pk):
     approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-stage')[0]
     approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
     po_details = PurchaseOrderDetail.objects.filter(po=po).order_by("id")
+
+    company_address = CompanyAddressDetail.objects.filter(company=po.company)
+    if company_address.count() > 0:
+        company_address = CompanyAddressDetail.objects.filter(company=po.company)[0]
+    company_contact = CompanyContactDetail.objects.filter(company=po.company)
+    if company_contact.count() > 0:
+        company_contact = CompanyContactDetail.objects.filter(company=po.company)[0]
     params = {
         'po': po,
         'approval_item': approval_item,
         'requester': requester,
         'approver_employee': approver_employee,
-        'po_details': po_details
+        'po_details': po_details,
+        'company_address': company_address,
+        'company_contact': company_contact,
     }
     
     pdf = Render.render('report/PO/print.html', params)
@@ -698,10 +708,19 @@ def grn_print(request, pk):
     grn = get_object_or_404(GoodsReceiptNote, pk=pk)
     po = get_object_or_404(PurchaseOrder, pk=grn.po.pk)
     po_details = PurchaseOrderDetail.objects.filter(po=po)
+    company_address = CompanyAddressDetail.objects.filter(company=po.company)
+    if company_address.count() > 0:
+        company_address = CompanyAddressDetail.objects.filter(company=po.company)[0]
+    company_contact = CompanyContactDetail.objects.filter(company=po.company)
+    if company_contact.count() > 0:
+        company_contact = CompanyContactDetail.objects.filter(company=po.company)[0]
+
     params = {
         'po': po,
         'grn': grn,
-        'po_details': po_details
+        'po_details': po_details,
+        'company_address': company_address,
+        'company_contact': company_contact,
     }
     
     pdf = Render.render('report/GRN/print.html', params)
@@ -719,10 +738,19 @@ def pi_print(request, pk):
     pi = get_object_or_404(PurchaseInvoice, pk=pk)
     po = get_object_or_404(PurchaseOrder, pk=pi.po.pk)
     po_details = PurchaseOrderDetail.objects.filter(po=po)
+    company_address = CompanyAddressDetail.objects.filter(company=po.company)
+    if company_address.count() > 0:
+        company_address = CompanyAddressDetail.objects.filter(company=po.company)[0]
+    company_contact = CompanyContactDetail.objects.filter(company=po.company)
+    if company_contact.count() > 0:
+        company_contact = CompanyContactDetail.objects.filter(company=po.company)[0]
+        
     params = {
         'po': po,
         'pi': pi,
-        'po_details': po_details
+        'po_details': po_details,
+        'company_address': company_address,
+        'company_contact': company_contact,
     }
     
     pdf = Render.render('report/PI/print.html', params)

@@ -48,6 +48,18 @@
 <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
 <script src="{% static 'js/django_select2.js' %}"></script>
 <script src="{% static 'js/select2.min.js' %}"></script>
+<script>
+function parsenumbertocomma(number) {
+    var parts = number.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+}
+
+function parsecommatonumber(number) {
+	  return number.replace(/,/g, '');
+}
+
+</script>
 </body>
 
 </html>

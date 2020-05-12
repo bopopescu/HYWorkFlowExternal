@@ -1,6 +1,7 @@
 {% extends 'main_template.html' %}
 
 {% block content %}
+{% load l10n %}
 {% load static %}
 {% load widget_tweaks %}
 
@@ -58,16 +59,16 @@
    <script type="text/javascript">
     $(document).ready(function(){
      $("input[name='discount_amount']").change(function(){
-           var discount_amount = $("input[name='discount_amount']").val();
-           var sub_total =  $("input[name='sub_total']").val();
-           var tax_amount = $("input[name='tax_amount']").val();
+           var discount_amount = parsecommatonumber($("input[name='discount_amount']").val());
+           var sub_total =  parsecommatonumber($("input[name='sub_total']").val());
+           var tax_amount = parsecommatonumber($("input[name='tax_amount']").val());
            if(sub_total > 0){
               var total_amount_afterdiscount = (sub_total - discount_amount);
               var after_add_taxamount = parseFloat(total_amount_afterdiscount) + parseFloat(tax_amount)
               var discount_rate = (discount_amount/sub_total) * 100 ;
     
-              $("input[name='total_amount']").val(parseFloat(after_add_taxamount).toFixed(2));
-              $("input[name='discount_rate']").val(parseFloat(discount_rate).toFixed(2));
+              $("input[name='total_amount']").val(parsenumbertocomma(parseFloat(after_add_taxamount).toFixed(2)));
+              $("input[name='discount_rate']").val(parsenumbertocomma(parseFloat(discount_rate).toFixed(2)));
            }else{
               alert("discount cannot be calculate because subtotal is 0");
               $("input[name='discount_amount']").val(0.00);
@@ -77,16 +78,16 @@
          });
     });
     function recalculate(){
-      var discount_amount = $("input[name='discount_amount']").val();
-           var sub_total =  $("input[name='sub_total']").val();
-           var tax_amount = $("input[name='tax_amount']").val();
+           var discount_amount = parsecommatonumber($("input[name='discount_amount']").val());
+           var sub_total =  parsecommatonumber($("input[name='sub_total']").val());
+           var tax_amount = parsecommatonumber($("input[name='tax_amount']").val());
            if(sub_total > 0){
               var total_amount_afterdiscount = (sub_total - discount_amount);
               var after_add_taxamount = parseFloat(total_amount_afterdiscount) + parseFloat(tax_amount)
               var discount_rate = (discount_amount/sub_total) * 100 ;
     
-              $("input[name='total_amount']").val(parseFloat(after_add_taxamount).toFixed(2));
-              $("input[name='discount_rate']").val(parseFloat(discount_rate).toFixed(2));
+              $("input[name='total_amount']").val(parsenumbertocomma(parseFloat(after_add_taxamount).toFixed(2)));
+              $("input[name='discount_rate']").val(parsenumbertocomma(parseFloat(discount_rate).toFixed(2)));
            }else{
               $("input[name='discount_amount']").val(0.00);
               $("input[name='total_amount']").val(0.00);
@@ -364,7 +365,7 @@
                         <script>
                           $(document).ready(function() {
                             var table = $('#myitems').DataTable( {
-                              "ajax": "{% url 'pyitem-list'%}?format=datatables&pk={{py.pk}}",
+                              "ajax": "{% url 'pyitem-list'%}?format=datatables&pk={{py.pk|unlocalize}}",
                               "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                       "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                               "columnDefs": [ {
@@ -421,7 +422,7 @@
                       <script>
                         $(document).ready(function() {
                           var table = $('#myattachments').DataTable( {
-                            "ajax": "{% url 'pyattachment-list'%}?format=datatables&pk={{py.pk}}",
+                            "ajax": "{% url 'pyattachment-list'%}?format=datatables&pk={{py.pk|unlocalize}}",
                             "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                     "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                             "columnDefs": [ {
@@ -563,8 +564,8 @@
                 var sub_total = res.sub_total;
                 var tax_amount = res.tax_amount;
 
-              $("input[name='sub_total']").val(parseFloat(sub_total).toFixed(2));
-              $("input[name='tax_amount']").val(parseFloat(tax_amount).toFixed(2));
+                $("input[name='sub_total']").val(parsenumbertocomma(parseFloat(sub_total).toFixed(2)));
+                $("input[name='tax_amount']").val(parsenumbertocomma(parseFloat(tax_amount).toFixed(2)));
               recalculate();
         });
       }
@@ -651,8 +652,8 @@
               var sub_total = res.sub_total;
               var tax_amount = res.tax_amount;
 
-              $("input[name='sub_total']").val(parseFloat(sub_total).toFixed(2));
-              $("input[name='tax_amount']").val(parseFloat(tax_amount).toFixed(2));
+              $("input[name='sub_total']").val(parsenumbertocomma(parseFloat(sub_total).toFixed(2)));
+              $("input[name='tax_amount']").val(parsenumbertocomma(parseFloat(tax_amount).toFixed(2)));
               recalculate();
       });
     }

@@ -109,15 +109,15 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.static',
                 'django.template.context_processors.media',
-                # 'purchasing.context_processors.po_trans_type',
-                # 'purchasing.context_processors.grn_trans_type',
-                # 'purchasing.context_processors.pi_trans_type',
-                # 'purchasing.context_processors.pcn_trans_type',
-                # 'purchasing.context_processors.pdn_trans_type',
-                # 'payment.context_processors.py_trans_type',
-                # 'staff_overtime.context_processors.staff_ot_trans_type',
-                # 'drawer_reimbursement.context_processors.reimbursement_trans_type',
-                # 'dashboard.context_processors.dashboard_drawer',
+                'purchasing.context_processors.po_trans_type',
+                'purchasing.context_processors.grn_trans_type',
+                'purchasing.context_processors.pi_trans_type',
+                'purchasing.context_processors.pcn_trans_type',
+                'purchasing.context_processors.pdn_trans_type',
+                'payment.context_processors.py_trans_type',
+                'staff_overtime.context_processors.staff_ot_trans_type',
+                'drawer_reimbursement.context_processors.reimbursement_trans_type',
+                'dashboard.context_processors.dashboard_drawer',
             ],
         },
     },
@@ -168,6 +168,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+USE_THOUSAND_SEPARATOR = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

@@ -1,5 +1,5 @@
 {% extends 'main_template.html' %}
-
+{% load l10n %}
 {% block content %}
 {% load static %}
 {% load widget_tweaks %}
@@ -364,7 +364,7 @@
                         <script>
                           $(document).ready(function() {
                             var table = $('#myitems').DataTable( {
-                              "ajax": "{% url 'pyitem-list'%}?format=datatables&pk={{py.pk}}",
+                              "ajax": "{% url 'pyitem-list'%}?format=datatables&pk={{py.pk|unlocalize}}",
                               "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                       "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                               "columnDefs": [ {
@@ -421,7 +421,7 @@
                       <script>
                         $(document).ready(function() {
                           var table = $('#myattachments').DataTable( {
-                            "ajax": "{% url 'pyattachment-list'%}?format=datatables&pk={{py.pk}}",
+                            "ajax": "{% url 'pyattachment-list'%}?format=datatables&pk={{py.pk|unlocalize}}",
                             "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                     "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                             "columnDefs": [ {

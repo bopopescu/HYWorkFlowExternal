@@ -18,7 +18,7 @@ class DetailPaymentForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned",initial=PaymentRequest.company, disabled=True)
     vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.filter(is_active=True).order_by('vendor_name'), empty_label="Not Assigned",initial=PaymentRequest.vendor, disabled=True)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=PaymentRequest.project, disabled=True)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]), empty_label="Not Assigned",initial=PaymentRequest.transaction_type, disabled=True)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]), empty_label="Not Assigned",initial=PaymentRequest.transaction_type, disabled=True)
     currency = forms.ModelChoiceField(queryset=CurrencyMaintenance.objects.filter(is_active=True), empty_label="Not Assigned",initial=PaymentRequest.currency, disabled=True)
     payment_mode = forms.ModelChoiceField(queryset=PaymentmodeMaintenance.objects.filter(is_active=True), empty_label="Not Assigned",initial=PaymentRequest.payment_mode, disabled=True)
     employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.filter(is_active=True), empty_label="Not Assigned",initial=PaymentRequest.employee, disabled=True)
@@ -37,7 +37,7 @@ class NewPaymentForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned")
     vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.filter(is_active=True).order_by('vendor_name'), empty_label="Not Assigned",required=False)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned")
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]), empty_label="Not Assigned")
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]), empty_label="Not Assigned")
     currency = forms.ModelChoiceField(queryset=CurrencyMaintenance.objects.filter(is_active=True).order_by('currency_name'), empty_label="Not Assigned")
     payment_mode = forms.ModelChoiceField(queryset=PaymentmodeMaintenance.objects.filter(is_active=True).order_by('payment_mode_name'), empty_label="Not Assigned")
     employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.filter(is_active=True).order_by('employee_name'), empty_label="Not Assigned",required=False)
@@ -47,7 +47,7 @@ class NewPaymentForm(forms.ModelForm):
     discount_amount = forms.DecimalField(initial=0.00)
     discount_rate = forms.DecimalField(initial=0.00)
     tax_amount = forms.DecimalField(initial=0.00)
-    total_amount = forms.DecimalField(initial=0.00)
+    total_amount = forms.DecimalField(localize=True, initial=0.00)
     subject = forms.CharField(widget=forms.Textarea)
 
     class Meta:
@@ -61,7 +61,7 @@ class UpdatePaymentForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned",initial=PaymentRequest.company)
     vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.filter(is_active=True).order_by('vendor_name'), empty_label="Not Assigned",initial=PaymentRequest.vendor,required=False)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=PaymentRequest.project)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]), empty_label="Not Assigned",initial=PaymentRequest.transaction_type)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]), empty_label="Not Assigned",initial=PaymentRequest.transaction_type)
     currency = forms.ModelChoiceField(queryset=CurrencyMaintenance.objects.filter(is_active=True).order_by('currency_name'), empty_label="Not Assigned",initial=PaymentRequest.currency)
     payment_mode = forms.ModelChoiceField(queryset=PaymentmodeMaintenance.objects.filter(is_active=True).order_by('payment_mode_name'), empty_label="Not Assigned",initial=PaymentRequest.payment_mode)
     employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.filter(is_active=True).order_by('employee_name'), empty_label="Not Assigned",initial=PaymentRequest.employee,required=False)
@@ -70,7 +70,7 @@ class UpdatePaymentForm(forms.ModelForm):
     discount_amount = forms.DecimalField(initial=PaymentRequest.discount_amount)
     discount_rate = forms.DecimalField(initial=PaymentRequest.discount_rate)
     tax_amount = forms.DecimalField(initial=PaymentRequest.tax_amount)
-    total_amount = forms.DecimalField(initial=PaymentRequest.total_amount)
+    total_amount = forms.DecimalField(localize=True, initial=PaymentRequest.total_amount)
     subject = forms.CharField(widget=forms.Textarea)
     
     class Meta:

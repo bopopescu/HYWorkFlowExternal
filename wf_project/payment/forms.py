@@ -23,6 +23,11 @@ class DetailPaymentForm(forms.ModelForm):
     payment_mode = forms.ModelChoiceField(queryset=PaymentmodeMaintenance.objects.filter(is_active=True), empty_label="Not Assigned",initial=PaymentRequest.payment_mode, disabled=True)
     employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.filter(is_active=True), empty_label="Not Assigned",initial=PaymentRequest.employee, disabled=True)
     utility_account = forms.ModelChoiceField(queryset=UtiliyAccountTypeMaintenance.objects.filter(is_active=True), empty_label="Not Assigned",initial=PaymentRequest.utility_account, disabled=True)
+    sub_total = forms.DecimalField(initial=PaymentRequest.sub_total,localize=True)
+    discount_amount = forms.DecimalField(initial=PaymentRequest.discount_amount,localize=True)
+    discount_rate = forms.DecimalField(initial=PaymentRequest.discount_rate,localize=True)
+    tax_amount = forms.DecimalField(initial=PaymentRequest.tax_amount,localize=True)
+    total_amount = forms.DecimalField(initial=PaymentRequest.total_amount,localize=True)
     subject = forms.CharField(widget=forms.Textarea)
 
     class Meta:
@@ -43,11 +48,11 @@ class NewPaymentForm(forms.ModelForm):
     employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.filter(is_active=True).order_by('employee_name'), empty_label="Not Assigned",required=False)
     utility_account = forms.ModelChoiceField(queryset=UtiliyAccountTypeMaintenance.objects.filter(is_active=True).order_by('account_name'), empty_label="Not Assigned",required=False)
     revision = forms.IntegerField(initial=0)
-    sub_total = forms.DecimalField(initial=0.00)
-    discount_amount = forms.DecimalField(initial=0.00)
-    discount_rate = forms.DecimalField(initial=0.00)
-    tax_amount = forms.DecimalField(initial=0.00)
-    total_amount = forms.DecimalField(localize=True, initial=0.00)
+    sub_total = forms.DecimalField(initial=0.0,localize=True)
+    discount_amount = forms.DecimalField(initial=0.0,localize=True)
+    discount_rate = forms.DecimalField(initial=0.0,localize=True)
+    tax_amount = forms.DecimalField(initial=0.0,localize=True)
+    total_amount = forms.DecimalField(initial=0.0,localize=True)
     subject = forms.CharField(widget=forms.Textarea)
 
     class Meta:
@@ -66,11 +71,11 @@ class UpdatePaymentForm(forms.ModelForm):
     payment_mode = forms.ModelChoiceField(queryset=PaymentmodeMaintenance.objects.filter(is_active=True).order_by('payment_mode_name'), empty_label="Not Assigned",initial=PaymentRequest.payment_mode)
     employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.filter(is_active=True).order_by('employee_name'), empty_label="Not Assigned",initial=PaymentRequest.employee,required=False)
     utility_account = forms.ModelChoiceField(queryset=UtiliyAccountTypeMaintenance.objects.filter(is_active=True).order_by('account_name'), empty_label="Not Assigned",initial=PaymentRequest.utility_account,required=False)
-    sub_total = forms.DecimalField(initial=PaymentRequest.sub_total)
-    discount_amount = forms.DecimalField(initial=PaymentRequest.discount_amount)
-    discount_rate = forms.DecimalField(initial=PaymentRequest.discount_rate)
-    tax_amount = forms.DecimalField(initial=PaymentRequest.tax_amount)
-    total_amount = forms.DecimalField(localize=True, initial=PaymentRequest.total_amount)
+    sub_total = forms.DecimalField(initial=PaymentRequest.sub_total,localize=True)
+    discount_amount = forms.DecimalField(initial=PaymentRequest.discount_amount,localize=True)
+    discount_rate = forms.DecimalField(initial=PaymentRequest.discount_rate,localize=True)
+    tax_amount = forms.DecimalField(initial=PaymentRequest.tax_amount,localize=True)
+    total_amount = forms.DecimalField(initial=PaymentRequest.total_amount,localize=True)
     subject = forms.CharField(widget=forms.Textarea)
     
     class Meta:

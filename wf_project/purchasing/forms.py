@@ -24,6 +24,11 @@ class NewPOForm(forms.ModelForm):
     subject = forms.CharField(widget=forms.Textarea)
     payment_schedule = forms.CharField(required=False, widget=forms.Textarea)
     payment_term = forms.ModelChoiceField(queryset=PaymentTermMaintenance.objects.filter(is_active=True).order_by('days'), empty_label="Not Assigned")
+    sub_total = forms.DecimalField(initial=0.00,localize=True)
+    discount_amount = forms.DecimalField(initial=0.00,localize=True)
+    discount = forms.DecimalField(initial=0.00,localize=True)
+    tax_amount = forms.DecimalField(initial=0.00,localize=True)
+    total_amount = forms.DecimalField(initial=0.00,localize=True)
 
     class Meta:
         model = PurchaseOrder
@@ -47,7 +52,12 @@ class DetailPOForm(forms.ModelForm):
     subject = forms.CharField(widget=forms.Textarea)
     payment_schedule = forms.CharField(required=False, widget=forms.Textarea)
     payment_term = forms.ModelChoiceField(queryset=PaymentTermMaintenance.objects.filter(is_active=True).order_by('days'), empty_label="Not Assigned", initial=PurchaseOrder.payment_term)
-    
+    sub_total = forms.DecimalField(initial=PurchaseOrder.sub_total,localize=True)
+    discount_amount = forms.DecimalField(initial=PurchaseOrder.discount_amount,localize=True)
+    discount = forms.DecimalField(initial=PurchaseOrder.discount,localize=True)
+    tax_amount = forms.DecimalField(initial=PurchaseOrder.tax_amount,localize=True)
+    total_amount = forms.DecimalField(initial=PurchaseOrder.total_amount,localize=True)
+
     class Meta:
         model = PurchaseOrder
         fields = ['document_number', 'status', 'remarks', 'reference', 'revision', 
@@ -70,7 +80,12 @@ class UpdatePOForm(forms.ModelForm):
     subject = forms.CharField(widget=forms.Textarea)
     payment_schedule = forms.CharField(required=False, widget=forms.Textarea)
     payment_term = forms.ModelChoiceField(queryset=PaymentTermMaintenance.objects.filter(is_active=True).order_by('days'), empty_label="Not Assigned", initial=PurchaseOrder.payment_term)
-
+    sub_total = forms.DecimalField(initial=PurchaseOrder.sub_total,localize=True)
+    discount_amount = forms.DecimalField(initial=PurchaseOrder.discount_amount,localize=True)
+    discount = forms.DecimalField(initial=PurchaseOrder.discount,localize=True)
+    tax_amount = forms.DecimalField(initial=PurchaseOrder.tax_amount,localize=True)
+    total_amount = forms.DecimalField(initial=PurchaseOrder.total_amount,localize=True)
+    
     class Meta:
         model = PurchaseOrder
         fields = ['document_number', 'status', 'remarks', 'reference', 'revision',

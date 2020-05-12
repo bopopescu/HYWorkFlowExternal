@@ -8,6 +8,7 @@ from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
 from administration.models import PaymentmodeMaintenance, EmployeeMaintenance
+from administration.models import CompanyAddressDetail,CompanyContactDetail
 from approval.models import ApprovalItem, ApprovalItemApprover
 from utility_dashboard.models import UtilityApprovalItem, UtilityApprovalItemApprover
 from django.contrib.auth.models import User
@@ -424,6 +425,12 @@ def py_print(request, pk):
 
     requester = get_object_or_404(User, pk=py.submit_by.pk)
     approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
+    company_address = CompanyAddressDetail.objects.filter(company=py.company)
+    if company_address.count() > 0:
+        company_address = CompanyAddressDetail.objects.filter(company=py.company)[0]
+    company_contact = CompanyContactDetail.objects.filter(company=py.company)
+    if company_contact.count() > 0:
+        company_contact = CompanyContactDetail.objects.filter(company=py.company)[0]
     # return render(request, 'PR/print.html', {'py': py, 'py_item':py_item})
     params = {
         'py': py, 
@@ -432,6 +439,8 @@ def py_print(request, pk):
         'approval_item': approval_item, 
         'requester': requester, 
         'approver_employee': approver_employee, 
+        'company_address': company_address,
+        'company_contact': company_contact,
     }
     
     pdf = Render.render('PR/print.html', params)

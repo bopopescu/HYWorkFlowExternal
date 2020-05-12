@@ -16,7 +16,7 @@ from administration.models import DocumentTypeMaintenance
 class DetailStaffOTForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned",initial=StaffOT.company,disabled=True)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=StaffOT.project,disabled=True)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="504")[0]), empty_label="Not Assigned",initial=StaffOT.transaction_type,disabled=True)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="504")[0]), empty_label="Not Assigned",initial=StaffOT.transaction_type,disabled=True)
     employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.filter(is_active=True).order_by('employee_name'), empty_label="Not Assigned",required=False,initial=StaffOT.employee,disabled=True)
     department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned",required=False,initial=StaffOT.department,disabled=True)
     # employee_position = forms.ModelChoiceField(queryset=EmployeePositionMaintenance.objects.filter(is_active=True).order_by('position_name'), empty_label="Not Assigned",required=False)
@@ -28,7 +28,7 @@ class DetailStaffOTForm(forms.ModelForm):
 class NewStaffOTForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned")
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned")
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="504")[0]), empty_label="Not Assigned",required=False)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="504")[0]), empty_label="Not Assigned",required=False)
     employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.filter(is_active=True).order_by('employee_name'), empty_label="Not Assigned",required=False)
     department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned",required=False)
     revision = forms.IntegerField(initial=0)
@@ -42,7 +42,7 @@ class NewStaffOTForm(forms.ModelForm):
 class UpdateStaffOTForm(forms.ModelForm):
     company = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), empty_label="Not Assigned",initial=StaffOT.company)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=StaffOT.project)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="504")[0]), empty_label="Not Assigned",initial=StaffOT.transaction_type,required=False)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="504")[0]), empty_label="Not Assigned",initial=StaffOT.transaction_type,required=False)
     employee = forms.ModelChoiceField(queryset=EmployeeMaintenance.objects.filter(is_active=True).order_by('employee_name'), empty_label="Not Assigned",required=False,initial=StaffOT.employee)
     department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned",required=False,initial=StaffOT.department)
 

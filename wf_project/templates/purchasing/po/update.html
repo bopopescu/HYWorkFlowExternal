@@ -1205,9 +1205,9 @@ $("#deletePODetail").submit(function(e){
 			processData:false
 		}).done(function(res){ 
 			if (res.message == 'Success'){
-                $("#id_sub_total").val(res.sub_total);
-                $("#id_total_amount").val(res.total_amount);                
-                $("#id_tax_amount").val(res.tax_amount);
+                $("#id_sub_total").val(parsenumbertocomma(res.sub_total));
+                $("#id_total_amount").val(parsenumbertocomma(res.total_amount));                
+                $("#id_tax_amount").val(parsenumbertocomma(res.tax_amount));
             }            
 
             var table = $('#podetails').DataTable(); 
@@ -1352,9 +1352,9 @@ $("#deletePODetail").submit(function(e){
                 processData:false
             }).done(function(res){ 
                 if (res.message == 'Success'){
-                $("#id_sub_total").val(res.sub_total);
-                $("#id_total_amount").val(res.total_amount);                
-                $("#id_tax_amount").val(res.tax_amount);
+                    $("#id_sub_total").val(parsenumbertocomma(res.sub_total));
+                    $("#id_total_amount").val(parsenumbertocomma(res.total_amount));                
+                    $("#id_tax_amount").val(parsenumbertocomma(res.tax_amount));
                 } 
 
                 var table = $('#podetails').DataTable(); 
@@ -1364,9 +1364,9 @@ $("#deletePODetail").submit(function(e){
     });
 </script>
 <script>
-    function calculateTotal() {  
-	var subtotal=document.getElementById("id_sub_total").value;
-	var docDiscPerc = document.getElementById("id_discount").value;
+ function calculateTotal() {  
+	var subtotal= parsecommatonumber(document.getElementById("id_sub_total").value);
+	var docDiscPerc = parsecommatonumber(document.getElementById("id_discount").value);
 	if(docDiscPerc > 100 || docDiscPerc <= 0 || docDiscPerc == ""){
 		if(docDiscPerc >100){
 			alert("Discount Percentage should not be more than 100 percent");
@@ -1379,7 +1379,7 @@ $("#deletePODetail").submit(function(e){
 		document.getElementById("id_discount").value=0;
 	}
 
-	var taxamount = document.getElementById("id_tax_amount").value; 
+	var taxamount = parsecommatonumber(document.getElementById("id_tax_amount").value); 
 	var txtDocDiscAmt="0.00", txttaxamount="0.00";
 	var docDiscAmt = 0.00;	
 
@@ -1393,12 +1393,12 @@ $("#deletePODetail").submit(function(e){
 		txttaxamount = taxamount;
 	}
 	
-	document.getElementById("id_discount").value= parseFloat(docDiscPerc).toFixed(2);
-	document.getElementById("id_discount_amount").value = txtDocDiscAmt;
-	document.getElementById("id_tax_amount").value = taxamount;
+	 document.getElementById("id_discount").value= parsenumbertocomma(parseFloat(docDiscPerc).toFixed(2));
+	document.getElementById("id_discount_amount").value = parsenumbertocomma(txtDocDiscAmt);
+	document.getElementById("id_tax_amount").value = parsenumbertocomma(taxamount);
 	var totamt = parseFloat((subtotal - docDiscAmt + parseFloat(taxamount))).toFixed(2);
 	totamt=totamt;
-	document.getElementById("id_total_amount").value = totamt; 
+	document.getElementById("id_total_amount").value = parsenumbertocomma(totamt); 
 }
 </script>
 {% endblock content %}

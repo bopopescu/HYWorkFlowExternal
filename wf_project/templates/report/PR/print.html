@@ -21,15 +21,15 @@
 					<img src="{% static 'logo_print.png' %}" style="width:150px"/>
 				</td>
 				<td colspan="2" style="padding-left:20px">
-					<div><span style="color:red">Hua Yang Berhad</span> (44094-M)</div>
-					<div>C-21, Jalan Medan Selayang 1, Medan Selayang,</div>
-					<div>68100 Batu Caves, Selangor Darul Ehsan,</div>
-					<div>Malaysia</div>
+					<div><span style="color:red">{{py.company}}</span> ({{py.company.business_registration_no}})</div>
+					<div>{{company_address.address1}} {{company_address.address2}}</div>
+					<div>{{company_address.address3}} {{company_address.address4}}</div>
+					<div>{{company_address.country}}</div>
 				</td>
 				<td style="border-left: solid red 1px; padding-left:5px; vertical-align:top">
-					<div><span style="color:red">T:</span> +603-6188 4488</div>
-					<div><span style="color:red">F:</span> +603-6188 4487</div>
-					<div><span style="color:red">E:</span> kl@huayang.com.my</div>
+					<div><span style="color:red">T:</span> {{company_contact.tel_no1}}</div>
+					<div><span style="color:red">F:</span> {{company_contact.fax}}</div>
+					<div><span style="color:red">E:</span> {{company_contact.email}}</div>
 				</td>
 			</tr>
 			<tr><td>&nbsp;</td></tr>

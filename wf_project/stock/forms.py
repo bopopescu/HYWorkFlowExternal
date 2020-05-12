@@ -26,7 +26,7 @@ class DetailStockTransferForm(forms.ModelForm):
     from_location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="Not Assigned",initial=StockTransfer.from_location, disabled=True)
     to_location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="Not Assigned",initial=StockTransfer.to_location, disabled=True)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=StockTransfer.project, disabled=True)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="211")[0]), empty_label="Not Assigned",initial=StockTransfer.transaction_type, disabled=True)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="211")[0]), empty_label="Not Assigned",initial=StockTransfer.transaction_type, disabled=True)
 
     class Meta:
         model = StockTransfer
@@ -39,7 +39,7 @@ class NewStockTransferForm(forms.ModelForm):
     from_location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="Not Assigned")
     to_location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="Not Assigned")
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned")
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="211")[0]), empty_label="Not Assigned")
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="211")[0]), empty_label="Not Assigned")
     revision = forms.IntegerField(initial=0)
 
     class Meta:
@@ -52,7 +52,7 @@ class UpdateStockTransferForm(forms.ModelForm):
     from_location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="Not Assigned",initial=StockTransfer.from_location)
     to_location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="Not Assigned",initial=StockTransfer.to_location)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=StockTransfer.project)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="211")[0]), empty_label="Not Assigned",initial=StockTransfer.transaction_type)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="211")[0]), empty_label="Not Assigned",initial=StockTransfer.transaction_type)
 
     class Meta:
         model = StockTransfer
@@ -79,7 +79,7 @@ class DetailStockAdjustmentForm(forms.ModelForm):
     location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="Not Assigned",initial=StockAdjustment.location, disabled=True)
     department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned", initial=StockAdjustment.department, disabled=True)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=StockAdjustment.project, disabled=True)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="210")[0]), empty_label="Not Assigned",initial=StockAdjustment.transaction_type, disabled=True)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="210")[0]), empty_label="Not Assigned",initial=StockAdjustment.transaction_type, disabled=True)
 
     class Meta:
         model = StockAdjustment
@@ -92,7 +92,7 @@ class NewStockAdjustmentForm(forms.ModelForm):
     location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="Not Assigned")
     department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned")
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned")
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="210")[0]), empty_label="Not Assigned")
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="210")[0]), empty_label="Not Assigned")
     revision = forms.IntegerField(initial=0)
 
     class Meta:
@@ -105,7 +105,7 @@ class UpdateStockAdjustmentForm(forms.ModelForm):
     location = forms.ModelChoiceField(queryset=LocationMaintenance.objects.filter(is_active=True).order_by('loc_name'), empty_label="Not Assigned",initial=StockAdjustment.location)
     department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned", initial=StockAdjustment.department)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=StockAdjustment.project)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="210")[0]), empty_label="Not Assigned",initial=StockAdjustment.transaction_type)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="210")[0]), empty_label="Not Assigned",initial=StockAdjustment.transaction_type)
 
     class Meta:
         model = StockAdjustment
@@ -133,7 +133,7 @@ class DetailStockIssuingForm(forms.ModelForm):
     delivery_to = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), label="Delivery Address", empty_label="Not Assigned", initial=StockIssuing.delivery_to, disabled=True)
     department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned", initial=StockIssuing.department, disabled=True)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=StockIssuing.project, disabled=True)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="212")[0]), empty_label="Not Assigned",initial=StockIssuing.transaction_type, disabled=True)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="212")[0]), empty_label="Not Assigned",initial=StockIssuing.transaction_type, disabled=True)
     delivery_address = forms.CharField(widget=forms.Textarea)
 
     class Meta:
@@ -148,7 +148,7 @@ class NewStockIssuingForm(forms.ModelForm):
     delivery_to = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), label="Delivery Address", empty_label="Not Assigned")
     department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned")
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned")
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="212")[0]), empty_label="Not Assigned")
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="212")[0]), empty_label="Not Assigned")
     revision = forms.IntegerField(initial=0)
     delivery_address = forms.CharField(widget=forms.Textarea)
 
@@ -163,7 +163,7 @@ class UpdateStockIssuingForm(forms.ModelForm):
     delivery_to = forms.ModelChoiceField(queryset=CompanyMaintenance.objects.filter(is_active=True).order_by('company_name'), label="Delivery Address", empty_label="Not Assigned", initial=StockIssuing.delivery_to)
     department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned", initial=StockIssuing.department)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=StockIssuing.project)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="212")[0]), empty_label="Not Assigned",initial=StockIssuing.transaction_type)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="212")[0]), empty_label="Not Assigned",initial=StockIssuing.transaction_type)
     delivery_address = forms.CharField(widget=forms.Textarea)
     
     class Meta:
@@ -192,7 +192,7 @@ class DetailStockReturnForm(forms.ModelForm):
     vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.filter(is_active=True).order_by('vendor_name'), empty_label="Not Assigned",initial=StockReturn.vendor, disabled=True)
     department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned", initial=StockReturn.department, disabled=True)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=StockReturn.project, disabled=True)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]), empty_label="Not Assigned",initial=StockReturn.transaction_type, disabled=True)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]), empty_label="Not Assigned",initial=StockReturn.transaction_type, disabled=True)
 
     class Meta:
         model = StockReturn
@@ -206,7 +206,7 @@ class NewStockReturnForm(forms.ModelForm):
     department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned")
     vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.filter(is_active=True).order_by('vendor_name'), empty_label="Not Assigned")
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned")
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]), empty_label="Not Assigned")
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]), empty_label="Not Assigned")
     revision = forms.IntegerField(initial=0)
 
     class Meta:
@@ -220,7 +220,7 @@ class UpdateStockReturnForm(forms.ModelForm):
     vendor = forms.ModelChoiceField(queryset=VendorMasterData.objects.filter(is_active=True).order_by('vendor_name'), empty_label="Not Assigned",initial=StockReturn.vendor)
     department = forms.ModelChoiceField(queryset=DepartmentMaintenance.objects.filter(is_active=True).order_by('department_name'), empty_label="Not Assigned", initial=StockReturn.department)
     project = forms.ModelChoiceField(queryset=ProjectMaintenance.objects.all().order_by('project_name'), empty_label="Not Assigned",initial=StockReturn.project)
-    #transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]), empty_label="Not Assigned",initial=StockReturn.transaction_type)
+    transaction_type = forms.ModelChoiceField(queryset=TransactiontypeMaintenance.objects.filter(document_type=DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]), empty_label="Not Assigned",initial=StockReturn.transaction_type)
 
     class Meta:
         model = StockReturn

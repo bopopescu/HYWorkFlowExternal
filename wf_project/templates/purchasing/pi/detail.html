@@ -1,6 +1,7 @@
 {% extends 'main_template.html' %} 
 {% block content %} 
 {% load static %} 
+{% load l10n %}
 {% load widget_tweaks %}
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">{{transaction_type.transaction_type_name}}</h1>
@@ -354,7 +355,7 @@
                                                     <script>
                                                         $(document).ready(function() {
                                                             var podtable = $('#podetails').DataTable({
-                                                                "ajax": "{% url 'podetail-list' %}?format=datatables&pk={{po.pk}}",
+                                                                "ajax": "{% url 'podetail-list' %}?format=datatables&pk={{po.pk|unlocalize}}",
                                                                 "dom": "<'row'<'col-sm-12 small'tr>>" +
                                                                     "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                                                 "columnDefs": [{
@@ -499,7 +500,7 @@
                                     <script>
                                         $(document).ready(function() {
                                             var poatable = $('#poattachments').DataTable({
-                                                "ajax": "{% url 'poattachment-list' %}?format=datatables&pk={{po.pk}}",
+                                                "ajax": "{% url 'poattachment-list' %}?format=datatables&pk={{po.pk|unlocalize}}",
                                                 "dom": "<'row'<'col-sm-12 small'tr>>" +
                                                     "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                                 "columnDefs": [{

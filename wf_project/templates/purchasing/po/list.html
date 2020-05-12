@@ -2,6 +2,7 @@
 
 {% block content %}
 {% load static %}
+{% load l10n %}
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">{{trans_type.transaction_type_name}}</h1>
@@ -41,7 +42,7 @@
                 <script>
                     $(document).ready(function() {
                         var mytable = $('#mypos').DataTable({
-                            "ajax": "{% url 'mypo-list' %}?format=datatables&trans_type={{trans_type.pk}}",
+                            "ajax": "{% url 'mypo-list' %}?format=datatables&trans_type={{trans_type.pk|unlocalize}}",
                             "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                                 "<'row'<'col-sm-12 small'tr>>" +
                                 "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -142,7 +143,7 @@
                 <script>
                     $(document).ready(function() {
                         var teamtable = $('#teampos').DataTable({
-                            "ajax": "{% url 'teampo-list' %}?format=datatables&trans_type={{trans_type.pk}}",
+                            "ajax": "{% url 'teampo-list' %}?format=datatables&trans_type={{trans_type.pk|unlocalize}}",
                             "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                                 "<'row'<'col-sm-12 small'tr>>" +
                                 "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",

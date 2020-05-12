@@ -12,6 +12,7 @@ from administration.models import EmployeeMaintenance
 from administration.models import DrawerMaintenance
 from administration.models import DrawerUserMaintenance
 from approval.models import ApprovalItem
+from approval.forms import RejectForm
 from django.contrib.auth.models import User
 import datetime
 from django.http import JsonResponse
@@ -148,7 +149,8 @@ def reimbursement_request_send_approval(request,pk):
 def reimbursement_request_detail(request, pk):
     reimbursement_request =  get_object_or_404(ReimbursementRequest, pk=pk)
     form = DetailReimbursementForm(instance=reimbursement_request)
-    return render(request, 'reimbursement_request/detail.html', {'reimburse': reimbursement_request, 'form': form})
+    form_reject = RejectForm()
+    return render(request, 'reimbursement_request/detail.html', {'reimburse': reimbursement_request, 'form': form, 'form_reject': form_reject})
 
 @login_required
 def reimbursement_request_list(request):

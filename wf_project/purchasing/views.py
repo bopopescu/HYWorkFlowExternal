@@ -7,6 +7,7 @@ from administration.models import StatusMaintenance, TransactiontypeMaintenance,
 from administration.models import PaymentTermMaintenance, EmployeeMaintenance, EmployeeDepartmentMaintenance
 from administration.models import CompanyAddressDetail,CompanyContactDetail
 from approval.models import ApprovalItem, ApprovalItemApprover
+from approval.forms import RejectForm
 from PDFreport.render import Render
 from stock.models import StockReturn,StockReturnDetail
 from django.http import HttpResponse, JsonResponse
@@ -162,7 +163,8 @@ def po_detail(request, pk):
     form.fields['payment_term'].initial = po.payment_term
     form.fields['payment_schedule'].initial = po.payment_schedule
     form.fields['vendor_address'].initial = po.vendor_address
-    return render(request, 'po/detail.html', {'po': po, 'form': form, 'approval_item': approval_item})
+    form_reject = RejectForm()
+    return render(request, 'po/detail.html', {'po': po, 'form': form, 'approval_item': approval_item, 'form_reject': form_reject})
 
 @login_required
 def po_init(request, pk):

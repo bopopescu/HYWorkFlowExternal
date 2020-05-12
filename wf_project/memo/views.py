@@ -9,6 +9,7 @@ from administration.models import MemoTemplateMaintenance, WorkflowApprovalRule
 from administration.models import DocumentTypeMaintenance, TransactiontypeMaintenance
 from administration.models import StatusMaintenance, EmployeeMaintenance
 from administration.models import EmployeeDepartmentMaintenance
+from approval.forms import RejectForm
 from approval.models import ApprovalItem, ApprovalItemApprover
 from PDFreport.render import Render
 from .models import Memo, MemoAttachment
@@ -177,7 +178,8 @@ def memo_detail(request, pk_value):
     form.fields['project'].initial = memo.project
     form.fields['template'].initial = memo.template
     form.fields['subject'].initial = memo.subject
-    return render(request, 'memo/detail.html', {'memo': memo, 'form': form})
+    form_reject = RejectForm()
+    return render(request, 'memo/detail.html', {'memo': memo, 'form': form, 'form_reject': form_reject})
 
 @login_required
 def memo_index(request):

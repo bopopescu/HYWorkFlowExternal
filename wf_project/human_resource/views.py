@@ -9,6 +9,7 @@ from administration.models import DocumentTypeMaintenance, StatusMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
 from approval.models import ApprovalItem
+from approval.forms import RejectForm
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 
@@ -148,7 +149,8 @@ def staff_delete(request, pk):
 def staff_detail(request, pk):
     staff = get_object_or_404(StaffRecruitmentRequest, pk=pk)
     form = DetailStaffRecruimentForm(instance=staff)
-    return render(request, 'human_resource/detail.html', {'staff': staff, 'form': form})
+    form_reject = RejectForm()
+    return render(request, 'human_resource/detail.html', {'staff': staff, 'form': form, 'form_reject': form_reject})
 
 @login_required
 def staff_list(request):

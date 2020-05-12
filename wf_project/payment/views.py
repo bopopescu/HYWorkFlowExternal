@@ -9,6 +9,7 @@ from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
 from administration.models import PaymentmodeMaintenance, EmployeeMaintenance
 from administration.models import CompanyAddressDetail,CompanyContactDetail
+from approval.forms import RejectForm
 from approval.models import ApprovalItem, ApprovalItemApprover
 from utility_dashboard.models import UtilityApprovalItem, UtilityApprovalItemApprover
 from django.contrib.auth.models import User
@@ -281,7 +282,8 @@ def py_delete(request, pk):
 def py_detail(request, pk):
     py =  get_object_or_404(PaymentRequest, pk=pk)
     form = DetailPaymentForm(instance=py)
-    return render(request, 'payment/detail.html', {'py': py, 'form': form})
+    form_reject = RejectForm()
+    return render(request, 'payment/detail.html', {'py': py, 'form': form,'form_reject': form_reject})
 
 @login_required
 def pylist(request, pk):

@@ -12,6 +12,7 @@ from administration.models import EmployeeMaintenance
 from administration.models import HolidayEventMaintenance
 from administration.models import OTRateMaintenance
 from approval.models import ApprovalItem
+from approval.forms import RejectForm
 from django.contrib.auth.models import User
 import datetime
 from django.http import JsonResponse
@@ -127,7 +128,8 @@ def staff_ot_send_approval(request, pk):
 def staff_ot_detail(request, pk):
     staff_ot =  get_object_or_404(StaffOT, pk=pk)
     form = DetailStaffOTForm(instance=staff_ot)
-    return render(request, 'staff_overtime/detail.html', {'staff_ot': staff_ot, 'form': form})
+    form_reject = RejectForm()
+    return render(request, 'staff_overtime/detail.html', {'staff_ot': staff_ot, 'form': form, 'form_reject': form_reject})
 
 @login_required
 def staff_ot_list(request, pk):

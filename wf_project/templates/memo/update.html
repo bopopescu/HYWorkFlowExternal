@@ -1,5 +1,6 @@
 {% extends 'main_template.html' %} 
-{% block content %} 
+{% block content %}
+{% load l10n %}
 {% load widget_tweaks %} 
 {% load static %}
 
@@ -7,7 +8,7 @@
     {% csrf_token %}
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Memo (Update)</h1>
-        <div>
+        <div id="navbar">
             <a href="{% url 'approval_detail' memo.approval.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
             <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
             <a href="{% url 'memo_list' %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
@@ -187,7 +188,7 @@
                             <script>
                                 $(document).ready(function() {
                                     var mytable = $('#myattachments').DataTable({
-                                        "ajax": "{% url 'memoattachment-list' %}?format=datatables&pk={{memo.pk}}",
+                                        "ajax": "{% url 'memoattachment-list' %}?format=datatables&pk={{memo.pk|unlocalize}}",
                                         "dom": "<'row'<'col-sm-12 small'tr>>" +
                                             "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                         "columnDefs": [{

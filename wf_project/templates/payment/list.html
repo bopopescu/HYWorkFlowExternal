@@ -2,6 +2,7 @@
 
 {% block content %}
 {% load static %}
+{% load l10n %}
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Payment Request - {{trans_type.transaction_type_name}}</h1>
@@ -41,7 +42,7 @@
         <script>
             $(document).ready(function() {
                 var mytable = $('#mypys').DataTable({
-                    "ajax": "{%url 'mypy-list' %}?format=datatables&trans_type={{trans_type.pk}}",
+                    "ajax": "{%url 'mypy-list' %}?format=datatables&trans_type={{trans_type.pk|unlocalize}}",
                     "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                         "<'row'<'col-sm-12 small'tr>>" +
                         "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -169,7 +170,7 @@
             <script>
                 $(document).ready(function() {
                     var teamtable = $('#teampys').DataTable({
-                        "ajax": "{%url 'teampy-list' %}?format=datatables&trans_type={{trans_type.pk}}",
+                        "ajax": "{%url 'teampy-list' %}?format=datatables&trans_type={{trans_type.pk|unlocalize}}",
                         "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                             "<'row'<'col-sm-12 small'tr>>" +
                             "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",

@@ -136,6 +136,7 @@
                                 <th data-data="submit_by">Submitted By</th>                                
                                 <th data-data="submit_date">Submit Date</th>
                                 <th data-data="approval">Status</th>
+                                <th></th>
                             </tr>
                         </thead>
                     </table>
@@ -172,6 +173,13 @@
                             }, {
                                 "visible": false,
                                 "targets": [1, 2]
+                            },{
+                            "targets": -1,
+                            "data": null,
+                            "render": function(data, type, row) {
+                                var label = '';                      
+                                return '<a href="'  + "{% url 'po_detail' pk=123 %}".replace(/123/, row.id) +  '"  class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>&nbsp;&nbsp;' + label;
+                            }
                             }, {
                                 "render": function(data, type, row) {
                                     label = '';

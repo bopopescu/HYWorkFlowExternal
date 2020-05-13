@@ -276,14 +276,26 @@
                   </label>
                 </div>
                 <div class="col col-md-8">
-                  {% if py.status.status_code == 100 %}
-                  <p class="text-info"><strong>{{py.status}}</strong></p>
-                  {% elif py.status.status_code == 300  %}
-                  <p class="text-warning"><strong>{{py.status}}</strong></p>
-                  {% elif py.status.status_code == 400 or py.status.status_code == 600%}
-                  <p class="text-success"><strong>{{py.status}}</strong></p>
-                  {% else %}
-                  <p class="text-danger"><strong>{{py.status}}</strong></p>
+                  {%if py.transaction_type.is_utility == True%}
+                    {% if py.status.status_code == 100 %}
+                    <p class="text-info"><strong>{{py.status}}</strong></p>
+                    {% elif py.status.status_code == 300  %}
+                    <p class="text-warning"><strong>{{py.status}}</strong></p>
+                    {% elif py.status.status_code == 400 or py.status.status_code == 600%}
+                    <p class="text-success"><strong>{{py.status}}</strong></p>
+                    {% else %}
+                    <p class="text-danger"><strong>{{py.status}}</strong></p>
+                    {% endif %}
+                  {%else%}
+                    {% if py.status.status_code == 100 %}
+                    <p class="text-info"><strong>{{py.status}}</strong></p>
+                    {% elif py.status.status_code == 300  %}
+                    <p class="text-warning"><strong>{{py.status}}</strong></p>
+                    {% elif py.status.status_code == 400 or py.status.status_code == 600%}
+                    <p class="text-success"><strong>{{py.status}} - Approval Code: {{py.approval.approval_code}} </strong></p>
+                    {% else %}
+                    <p class="text-danger"><strong>{{py.status}}</strong></p>
+                    {% endif %}
                   {% endif %}
                 </div>
               </div>

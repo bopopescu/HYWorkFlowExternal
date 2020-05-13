@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Memo, MemoAttachment
+from .models import StatusMaintenance
 
 class MemoSerializer(serializers.ModelSerializer):
     submit_by = serializers.StringRelatedField(many=False)
@@ -25,7 +26,17 @@ class MemoSerializer(serializers.ModelSerializer):
             else:
                 return "Rejected"
         else:
-            return "Draft (New)"
+            if obj.status != None:
+                status = StatusMaintenance.objects.filter(pk=obj.status.pk)
+                if status.count() > 0:
+                    if status[0].status_code == 999:
+                        return "Cancel"
+                    else:
+                        return "Draft (New)"
+                else:
+                    return "Draft (New)"
+            else:
+                return "Draft (New)"
 
 class MemoAttachmentSerializer(serializers.ModelSerializer):
     attachment_date = serializers.DateField(format='%d/%m/%Y')

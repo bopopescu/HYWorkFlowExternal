@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 from accounts_task.models import AccountTask
 from django.utils.formats import number_format
+from administration.models import StatusMaintenance
 from .models import PaymentRequest
 from .models import PaymentRequestDetail
 from .models import PaymentAttachment
@@ -41,7 +42,17 @@ class PYSerializer(serializers.ModelSerializer):
             else:
                 return "Rejected"
         else:
-            return "Draft(New)"
+            if obj.status != None:
+                status = StatusMaintenance.objects.filter(pk=obj.status.pk)
+                if status.count() > 0:
+                    if status[0].status_code == 999:
+                        return "Cancel"
+                    else:
+                        return "Draft(New)"
+                else:
+                    return "Draft(New)"
+            else:
+                return "Draft(New)"
 
     def get_approval_id(self, obj):  
         if obj.approval != None:

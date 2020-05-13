@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import PurchaseOrder, PurchaseOrderDetail, PurchaseOrderAttachment
+from administration.models import StatusMaintenance
 from django.utils.formats import number_format
 from django.shortcuts import get_object_or_404
 from .models import PurchaseOrderComparison2Attachment, PurchaseOrderComparison3Attachment
@@ -36,7 +37,17 @@ class POSerializer(serializers.ModelSerializer):
             else:
                 return "Rejected"
         else:
-            return "Draft (New)"
+            if obj.status != None:
+                status = StatusMaintenance.objects.filter(pk=obj.status.pk)
+                if status.count() > 0:
+                    if status[0].status_code == 999:
+                        return "Cancel"
+                    else:
+                        return "Draft (New)"
+                else:
+                    return "Draft (New)"
+            else:
+                return "Draft (New)"
 
     def get_grn(self, obj):
         grn_exist = GoodsReceiptNote.objects.filter(po=obj).count()

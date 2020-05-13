@@ -109,7 +109,7 @@
                                 {% elif memo.status.status_code == 300  %}
                                 <p class="text-warning"><strong>{{memo.status}}</strong></p>
                                 {% elif memo.status.status_code == 400 %}
-                                <p class="text-success"><strong>{{memo.status}}</strong></p>
+                                <p class="text-success"><strong>{{memo.status}} - Approval Code: {{memo.approval.approval_code}} </strong></p>
                                 {% else %}
                                 <p class="text-danger"><strong>{{memo.status}}</strong></p>
                                 {% endif %}

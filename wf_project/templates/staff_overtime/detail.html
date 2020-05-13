@@ -182,7 +182,7 @@
                     {% elif staff_ot.status.status_code == 300  %}
                     <p class="text-warning"><strong>{{staff_ot.status}}</strong></p>
                     {% elif staff_ot.status.status_code == 400 %}
-                    <p class="text-success"><strong>{{staff_ot.status}}</strong></p>
+                    <p class="text-success"><strong>{{staff_ot.status}} - Approval Code: {{staff_ot.approval.approval_code}}</strong></p>
                     {% else %}
                     <p class="text-danger"><strong>{{staff_ot.status}}</strong></p>
                     {% endif %}

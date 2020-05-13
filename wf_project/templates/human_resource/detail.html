@@ -170,7 +170,7 @@
                   {% elif staff.status.status_code == 300  %}
                   <p class="text-warning"><strong>{{staff.status}}</strong></p>
                   {% elif staff.status.status_code == 400 %}
-                  <p class="text-success"><strong>{{staff.status}}</strong> (Approval Code: {{staff.approval.approval_code}})</p>
+                  <p class="text-success"><strong>{{staff.status}} - Approval Code: {{staff.approval.approval_code}} </strong></p>
                   {% else %}
                   <p class="text-danger"><strong>{{staff.status}}</strong></p>
                   {% endif %}

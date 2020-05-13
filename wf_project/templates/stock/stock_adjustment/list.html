@@ -39,7 +39,7 @@
             <script>
               $(document).ready(function() {
                   var mytable = $('#mystockadjustment').DataTable({
-                      "ajax": "{%url 'mystockadjustment-list' %}?format=datatables&trans_type={{trans_type.pk}}",
+                      "ajax": "{%url 'mystockadjustment-list' %}?format=datatables",
                       "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                           "<'row'<'col-sm-12 small'tr>>" +
                           "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -135,7 +135,7 @@
             <script>
               $(document).ready(function() {
                   var mytable = $('#teamstockadjustment').DataTable({
-                      "ajax": "{%url 'teamstockadjustment-list' %}?format=datatables&trans_type={{trans_type.pk}}",
+                      "ajax": "{%url 'teamstockadjustment-list' %}?format=datatables",
                       "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                           "<'row'<'col-sm-12 small'tr>>" +
                           "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",

@@ -2,6 +2,7 @@
 
 {% block content %}
 {% load static %}
+{% load l10n %}
 {% load widget_tweaks %}
 
 <form method="post">
@@ -244,7 +245,7 @@
                         <script>
                           $(document).ready(function() {
                             var table = $('#mydetails').DataTable( {
-                              "ajax": "{% url 'stockreturndetail-list'%}?format=datatables&pk={{stock_return.pk}}",
+                              "ajax": "{% url 'stockreturndetail-list'%}?format=datatables&pk={{stock_return.pk|unlocalize}}",
                               "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                       "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                               "columnDefs": [{
@@ -292,7 +293,7 @@
                         <script>
                           $(document).ready(function() {
                             var table = $('#myattachments').DataTable( {
-                              "ajax": "{% url 'stockreturnattachment-list'%}?format=datatables&pk={{stock_return.pk}}",
+                              "ajax": "{% url 'stockreturnattachment-list'%}?format=datatables&pk={{stock_return.pk|unlocalize}}",
                               "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                       "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                               "columnDefs": [               

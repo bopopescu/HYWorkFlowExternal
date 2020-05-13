@@ -2,6 +2,7 @@
 
 {% block content %}
 {% load static %}
+{% load l10n %}
 {% load widget_tweaks %}
 
 <form method="post">
@@ -270,7 +271,7 @@
                         <script>
                           $(document).ready(function() {
                             var table = $('#mydetails').DataTable( {
-                              "ajax": "{% url 'stockissuingdetail-list'%}?format=datatables&pk={{stock_issuing.pk}}",
+                              "ajax": "{% url 'stockissuingdetail-list'%}?format=datatables&pk={{stock_issuing.pk|unlocalize}}",
                               "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                       "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                               "columnDefs": [{
@@ -318,7 +319,7 @@
                         <script>
                           $(document).ready(function() {
                             var table = $('#myattachments').DataTable( {
-                              "ajax": "{% url 'stockissuingattachment-list'%}?format=datatables&pk={{stock_issuing.pk}}",
+                              "ajax": "{% url 'stockissuingattachment-list'%}?format=datatables&pk={{stock_issuing.pk|unlocalize}}",
                               "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                       "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                               "columnDefs": [               

@@ -2,6 +2,7 @@
 
 {% block content %}
 {% load static %}
+{% load l10n %}
 {% load widget_tweaks %}
 
 <form method="post">
@@ -216,7 +217,7 @@
                         <script>
                           $(document).ready(function() {
                             var table = $('#mydetails').DataTable( {
-                              "ajax": "{% url 'staffotdetail-list'%}?format=datatables&pk={{staff_ot.pk}}",
+                              "ajax": "{% url 'staffotdetail-list'%}?format=datatables&pk={{staff_ot.pk|unlocalize}}",
                               "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                       "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                               "columnDefs": [{

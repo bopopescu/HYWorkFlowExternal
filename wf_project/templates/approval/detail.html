@@ -1,6 +1,7 @@
 {% extends 'main_template.html' %} 
 {% block content %} 
 {% load widget_tweaks %} 
+{% load l10n %}
 {% load static %}
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -120,7 +121,7 @@
                         <script>
                             $(document).ready(function() {
                                 var approver{{group.approval_group.id}}table = $('#approvers{{group.approval_group.id}}').DataTable({
-                                    "ajax": "{% url 'approverdata-list' %}?format=datatables&pk={{approval_item.pk}}&group={{group.approval_group.user_group.id}}",
+                                    "ajax": "{% url 'approverdata-list' %}?format=datatables&pk={{approval_item.pk|unlocalize}}&group={{group.approval_group.user_group.id|unlocalize}}",
                                     "dom": "<'row'<'col-sm-12 small'tr>>",
                                     "columnDefs": [{
                                 "searchable": false,
@@ -329,7 +330,7 @@
             <script>
                 $(document).ready(function() {
                     var cctable = $('#ccs').DataTable({
-                        "ajax": "{% url 'ccdata-list' %}?format=datatables&pk={{approval_item.pk}}",
+                        "ajax": "{% url 'ccdata-list' %}?format=datatables&pk={{approval_item.pk|unlocalize}}",
                         "dom": "<'row'<'col-sm-12 small'tr>>" +
                             "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                         "columnDefs": [{

@@ -1,6 +1,7 @@
 {% extends 'main_template.html' %}
 
 {% block content %}
+{% load l10n %}
 {% load static %}
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -39,7 +40,7 @@
             <script>
               $(document).ready(function() {
                   var mytable = $('#mystaffot').DataTable({
-                      "ajax": "{%url 'mystaffot-list' %}?format=datatables&trans_type={{trans_type.pk}}",
+                      "ajax": "{%url 'mystaffot-list' %}?format=datatables&trans_type={{trans_type.pk|unlocalize}}",
                       "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                           "<'row'<'col-sm-12 small'tr>>" +
                           "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -145,7 +146,7 @@
             <script>
               $(document).ready(function() {
                   var mytable = $('#teamstaffsot').DataTable({
-                      "ajax": "{%url 'teamstaffot-list' %}?format=datatables&trans_type={{trans_type.pk}}",
+                      "ajax": "{%url 'teamstaffot-list' %}?format=datatables&trans_type={{trans_type.pk|unlocalize}}",
                       "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                           "<'row'<'col-sm-12 small'tr>>" +
                           "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",

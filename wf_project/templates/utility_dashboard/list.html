@@ -1,6 +1,7 @@
 {% extends 'main_template.html' %} 
 {% block content %} 
 {% load static %}
+{% load l10n %}
 {% load widget_tweaks %}
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -30,7 +31,7 @@
         <script>
           $(document).ready(function() {
             var table = $('#myapproval').DataTable( {
-              "ajax": "{% url 'utilityapprovaldata-list' %}?format=datatables&accountpk={{utility_account.pk}}",
+              "ajax": "{% url 'utilityapprovaldata-list' %}?format=datatables&accountpk={{utility_account.pk|unlocalize}}",
               "dom":  "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-5'B><'col-sm-12 col-md-3'f>>" +
                       "<'row'<'col-sm-12 small'tr>>" +
                       "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",

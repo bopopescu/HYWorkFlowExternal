@@ -2,6 +2,7 @@
 
 {% block content %}
 {% load widget_tweaks %}
+{% load l10n %}
 {% load static %}
 
 <style>
@@ -225,7 +226,7 @@
                         <script>
                           $(document).ready(function() {
                             var table = $('#myrequirements').DataTable( {
-                              "ajax": "../../api/staffjobrequirement/?format=datatables&pk={{staff.pk}}",
+                              "ajax": "../../api/staffjobrequirement/?format=datatables&pk={{staff.pk|unlocalize}}",
                               "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                       "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                   "columnDefs": [ {
@@ -285,7 +286,7 @@
                         <script>
                           $(document).ready(function() {
                             var table = $('#myresponsibles').DataTable( {
-                              "ajax": "../../api/staffjobresponsible/?format=datatables&pk={{staff.pk}}",
+                              "ajax": "../../api/staffjobresponsible/?format=datatables&pk={{staff.pk|unlocalize}}",
                               "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                       "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                               "columnDefs": [{

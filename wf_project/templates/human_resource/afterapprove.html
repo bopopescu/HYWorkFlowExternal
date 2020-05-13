@@ -1,6 +1,7 @@
 {% extends 'main_template.html' %}
 
 {% block content %}
+{% load l10n %}
 {% load widget_tweaks %}
 {% load static %}
 
@@ -210,7 +211,7 @@
                         <script>
                           $(document).ready(function() {
                             var table = $('#myrequirements').DataTable( {
-                              "ajax": "{% url 'staffjobrequirement-list' %}?format=datatables&pk={{staff.pk}}",
+                              "ajax": "{% url 'staffjobrequirement-list' %}?format=datatables&pk={{staff.pk|unlocalize}}",
                               "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                       "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                               "columnDefs": [  {
@@ -258,7 +259,7 @@
                       <script>
                         $(document).ready(function() {
                           var table = $('#myresponsibles').DataTable( {
-                            "ajax": "{%url 'staffjobresponsible-list'%}?format=datatables&pk={{staff.pk}}",
+                            "ajax": "{%url 'staffjobresponsible-list'%}?format=datatables&pk={{staff.pk|unlocalize}}",
                             "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                     "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                             "columnDefs": [ {
@@ -312,7 +313,7 @@
                           <script>
                             $(document).ready(function() {
                               var table = $('#myplatforms').DataTable( {
-                                "ajax": "{%url 'staffplatform-list'%}?format=datatables&pk={{staff.pk}}",
+                                "ajax": "{%url 'staffplatform-list'%}?format=datatables&pk={{staff.pk|unlocalize}}",
                                 "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                         "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                 "columnDefs": [{
@@ -382,7 +383,7 @@
                           <script>
                             $(document).ready(function() {
                               var table = $('#mycandidates').DataTable( {
-                                "ajax": "{%url 'staffcandidate-list'%}?format=datatables&pk={{staff.pk}}",
+                                "ajax": "{%url 'staffcandidate-list'%}?format=datatables&pk={{staff.pk|unlocalize}}",
                                 "dom":  "<'row'<'col-sm-12 small'tr>>" +
                                         "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
                                 "columnDefs": [{

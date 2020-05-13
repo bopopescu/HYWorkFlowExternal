@@ -2,6 +2,7 @@
 
 {% block content %}
 {% load static %}
+{% load l10n %}
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Stock Return</h1>
@@ -39,7 +40,7 @@
             <script>
               $(document).ready(function() {
                   var mytable = $('#mystockreturn').DataTable({
-                      "ajax": "{%url 'mystockreturn-list' %}?format=datatables&trans_type={{trans_type.pk}}",
+                      "ajax": "{%url 'mystockreturn-list' %}?format=datatables",
                       "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                           "<'row'<'col-sm-12 small'tr>>" +
                           "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -135,7 +136,7 @@
             <script>
               $(document).ready(function() {
                   var mytable = $('#teamstockreturn').DataTable({
-                      "ajax": "{%url 'teamstockreturn-list' %}?format=datatables&trans_type={{trans_type.pk}}",
+                      "ajax": "{%url 'teamstockreturn-list' %}?format=datatables",
                       "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                           "<'row'<'col-sm-12 small'tr>>" +
                           "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",

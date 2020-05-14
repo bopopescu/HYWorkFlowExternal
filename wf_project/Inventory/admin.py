@@ -7,7 +7,7 @@ from .models import ItemCategoryMaintenance
 #    extra = 1
 
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('item_type', 'item_class','item_description','is_active')
+    list_display = ('item_description','item_type', 'item_class','is_active')
     list_filter = ('is_active',)
     search_fields = ('item_type', 'item_class','item_description')
     fieldsets = [
@@ -15,6 +15,7 @@ class ItemAdmin(admin.ModelAdmin):
         ('Quantity', {'fields': ['minimum_quantity','minimum_order_quantity','standard_packing_quantity','leadtime']}),
         ('Other Information', {'fields': ['origin','specification','hs_code','remarks']}),
     ]
+    ordering = ('item_description', )
     exclude = ['created_by','modified_by']
     #inlines = [PODetailInline, POAddressInline, POCCInline]
     def save_model(self, request, obj, form, change):
@@ -35,6 +36,7 @@ class ItemCategoryAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['category_name', 'is_active']}),
     ]
+    ordering = ('category_name', )
     exclude = ['created_by','modified_by']
     #inlines = [PODetailInline, POAddressInline, POCCInline]
     def save_model(self, request, obj, form, change):

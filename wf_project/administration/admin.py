@@ -61,6 +61,7 @@ class ProjectMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['company', 'project_code', 'project_name', 'phase_name', 'sub_phase_name', 'effect_start_date', 'effect_end_date']}), 
     ]
+    ordering = ('project_code', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -81,6 +82,7 @@ class StatusMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['document_type', 'status_code', 'status_name', 'is_active']}), 
     ]
+    ordering = ('status_code', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -101,6 +103,7 @@ class StaffemploymentTypeMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['employment_type_name', 'is_active']}), 
     ]
+    ordering = ('employment_type_name', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -121,6 +124,7 @@ class StaffPositionTitleMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['position_title_name', 'is_active']}), 
     ]
+    ordering = ('position_title_name', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -141,6 +145,7 @@ class StaffPositionGradeMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['position_grade_name', 'is_active']}), 
     ]
+    ordering = ('position_grade_name', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -161,6 +166,7 @@ class DepartmentMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['department_name', 'is_active', 'access_accounts_dashboard']}),
     ]
+    ordering = ('department_name', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -181,6 +187,7 @@ class DocumentTypeMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['document_type_name', 'document_type_code', 'running_number', 'attachment_path', 'is_active']}),
     ]
+    ordering = ('document_type_name', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -233,6 +240,7 @@ class CompanyMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['branch', 'short_name', 'company_name', 'business_registration_no', 'tax_id_1', 'tax_id_2', 'is_active', 'currency', 'region']}), 
     ]
+    ordering = ('short_name', )
     exclude = ['created_by', 'modified_by']
     inlines = [CompanyContactInline, CompanyAddressInline]
 
@@ -254,6 +262,7 @@ class CurrencyMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['currency_name', 'alphabet', 'rate', 'is_active']}), 
     ]
+    ordering = ('currency_name', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -322,6 +331,7 @@ class EmployeeMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['employee_name', 'nick_name', 'gender', 'email', 'user', 'dob', 'position_id', 'employee_group', 'reporting_officer_id', 'employee_signature', 'is_active']}), 
     ]
+    ordering = ('employee_name', )
     exclude = ['created_by', 'modified_by']
     inlines = [EmployeeDepartmentInline, EmployeeBranchInline, EmployeeProjectInline, EmployeeCompanyInline]
 
@@ -343,6 +353,7 @@ class HolidayEventMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['event_name', 'event_date', 'is_public_holiday', 'ot_rate', 'is_active']}), 
     ]
+    ordering = ('event_name', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -363,6 +374,7 @@ class OTRateMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['ot_rate_name', 'ot_rate', 'is_active']}), 
     ]
+    ordering = ('ot_rate_name', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -383,6 +395,7 @@ class PaymentTermMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['description', 'days', 'is_active']}), 
     ]
+    ordering = ('description', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -403,6 +416,7 @@ class LocationMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['loc_name', 'is_active']}), 
     ]
+    ordering = ('loc_name', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -420,6 +434,7 @@ class ItemClassesMaintenanceScreen(admin.ModelAdmin):
     list_display = ('item_class_name', 'is_active')
     list_filter = ('is_active', )
     search_fields = ('item_class_name', )
+    ordering = ('item_class_name', )
     fieldsets = [
         (None, {'fields': ['item_class_name', 'is_active']}), 
     ]
@@ -439,6 +454,7 @@ class ItemGroupsMaintenanceScreen(admin.ModelAdmin):
     list_display = ('item_group_name', 'is_active')
     list_filter = ('is_active', )
     search_fields = ('item_group_name', )
+    ordering = ('item_group_name', )
     fieldsets = [
         (None, {'fields': ['parent_id', 'item_group_name', 'is_active']}), 
     ]
@@ -477,6 +493,7 @@ class WorkflowApprovalRuleScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['approval_level', 'approval_rule_name', ('document_amount_range', 'document_amount_range2'), 'ceo_approve', 'ceo_approve_overwrite', 'supervisor_approve', 'transaction_type', 'is_active']}), 
     ]
+    ordering = ('approval_level', )
     exclude = ['created_by', 'modified_by']
     inlines = [WorkflowApprovalRuleGroupMaintenanceInline]
 
@@ -498,6 +515,7 @@ class WorkflowApprovalGroupScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['approval_group_name', 'no_of_person', 'user_group', 'is_active']}), 
     ]
+    ordering = ('approval_group_name', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -538,6 +556,7 @@ class VendorGroupMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['group_name', 'is_active']}), 
     ]
+    ordering = ('group_name', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -587,6 +606,7 @@ class VendorMasterDataScreen(admin.ModelAdmin):
     list_display = ('vendor_name', 'currency', 'vendor_group', 'is_company', 'is_active')
     list_filter = ('is_active', 'is_company')
     search_fields = ('vendor_name', )
+    ordering = ('vendor_name', )
     fieldsets = [
         (None, {'fields': ['vendor_name', 'currency', 'business_registration_no', 'tax_id_1', 'tax_id_2', 'vendor_group', 'vendor_category', 'is_company', 'is_active', 'is_qualified']}), 
     ]
@@ -612,6 +632,7 @@ class VendorCategoryMaintenceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['vendor_category_name', 'is_active']}), 
     ]
+    ordering = ('vendor_category_name', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -628,6 +649,7 @@ admin.site.register(VendorCategoryMaintenance, VendorCategoryMaintenceScreen)
 class SystemFlagMaintenanceScreen(admin.ModelAdmin):
     list_display = ('flag_name', 'table_id')
     search_fields = ('flag_name', 'table_id')
+    ordering = ('flag_name', )
     fieldsets = [
         (None, {'fields': ['flag_name', 'table_id']}), 
     ]
@@ -649,6 +671,7 @@ class EmployeePositionMaintenanceScreen(admin.ModelAdmin):
     list_display = ('position_name', 'is_active')
     list_filter = ('is_active', )
     search_fields = ('position_name', )
+    ordering = ('position_name', )
     fieldsets = [
         (None, {'fields': ['position_name', 'is_active']}), 
     ]
@@ -671,6 +694,7 @@ class BranchMaintenanceScreen(admin.ModelAdmin):
     list_display = ('branch_name', 'is_active' )
     list_filter = ('is_active', )
     search_fields = ('branch_name', )
+    ordering = ('branch_name', )
     fieldsets = [
         (None, {'fields': ['branch_name', 'is_active']}), 
     ]
@@ -691,6 +715,7 @@ class CountryMaintenanceScreen(admin.ModelAdmin):
     list_display = ('country_name', 'is_active', )
     list_filter = ('is_active', )
     search_fields = ('country_name', )
+    ordering = ('country_name', )
     fieldsets = [
         (None, {'fields': ['country_name', 'currency', 'alpha_2', 'alpha_3', 'iso3166_2', 'is_active']}), 
     ]
@@ -711,6 +736,7 @@ class StateMaintenanceScreen(admin.ModelAdmin):
     list_display = ('state_name', 'capital', 'country', 'is_active')
     list_filter = ('is_active', )
     search_fields = ('country__country_name', 'state_name', 'capital', )
+    ordering = ('state_name', )
     fieldsets = [
         (None, {'fields': ['state_name', 'capital', 'country', 'is_active']}), 
     ]
@@ -769,6 +795,7 @@ class EmployeeGroupMaintenanceScreen(admin.ModelAdmin):
     list_display = ('group_name', 'is_active')
     list_filter = ('is_active', )
     search_fields = ('group_name', )
+    ordering = ('group_name', )
     fieldsets = [
         (None, {'fields': ['group_name', 'is_active']}), 
     ]
@@ -811,6 +838,7 @@ class RegionMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['region_name', 'is_active']}), 
     ]
+    ordering = ('region_name', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -831,6 +859,7 @@ class TaxMaintenanceScreen(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['tax_code', 'tax_name', 'rate', 'is_active']}), 
     ]
+    ordering = ('tax_code', )
     exclude = ['created_by', 'modified_by']
 
     def save_model(self, request, obj, form, change):
@@ -855,6 +884,7 @@ class DrawerMaintenanceScreen(admin.ModelAdmin):
     list_display = ('drawer_name', 'open_year', 'open_month', 'drawer_status')
     list_filter = ('drawer_status', )
     search_fields = ('drawer_name', )
+    ordering = ('drawer_name', )
     fieldsets = [
         (None, {'fields': ['drawer_name', 'branch', 'open_year', 'open_month', 'limit', 'drawer_status']}), 
     ]
@@ -876,6 +906,7 @@ class PaymentmodeMaintenanceScreen(admin.ModelAdmin):
     list_display = ('payment_mode_name', 'is_active')
     list_filter = ('is_active', )
     search_fields = ('payment_mode_name', )
+    ordering = ('payment_mode_name', )
     fieldsets = [
         (None, {'fields': ['payment_mode_name', 'is_active']}), 
     ]
@@ -896,6 +927,7 @@ class TransactiontypeMaintenanceScreen(admin.ModelAdmin):
     list_display = ('transaction_type_name', 'document_type', 'is_active', 'is_utility', 'send_to_account')
     list_filter = ('is_active', 'is_utility', 'send_to_account')
     search_fields = ('transaction_type_name', 'document_type__document_type_name')
+    ordering = ('transaction_type_name', )
     fieldsets = [
         (None, {'fields': ['transaction_type_name', 'document_type', 'is_active', 'is_utility', 'send_to_account']}), 
     ]
@@ -916,6 +948,7 @@ class MemoTemplateMaintenanceScreen(admin.ModelAdmin):
     list_display = ('memo_template_name', 'template_htmldesign', 'is_active')
     list_filter = ('is_active', )
     search_fields = ('memo_template_name', 'template_htmldesign')
+    ordering = ('memo_template_name', )
     fieldsets = [
         (None, {'fields': ['memo_template_name', 'template_htmldesign', 'is_active']}), 
     ]
@@ -936,6 +969,7 @@ class UOMMaintenanceScreen(admin.ModelAdmin):
     list_display = ('uom_name', 'is_active')
     list_filter = ('is_active', )
     search_fields = ('uom_name', )
+    ordering = ('uom_name', )
     fieldsets = [
         (None, {'fields': ['uom_name', 'is_active']}), 
     ]
@@ -972,6 +1006,7 @@ class UtilityGroupTypeMaintenanceScreen(admin.ModelAdmin):
     list_display = ('account_group_name', 'is_active')
     list_filter = ('is_active', )
     search_fields = ('account_group_name', )
+    ordering = ('account_group_name', )
     fieldsets = [
         (None, {'fields': ['account_group_name', 'is_active']}), 
     ]
@@ -993,6 +1028,7 @@ class HRPlatformMaintenanceScreen(admin.ModelAdmin):
     list_display = ('platform_name', 'is_active')
     list_filter = ('is_active', )
     search_fields = ('platform_name', )
+    ordering = ('platform_name', )
     fieldsets = [
         (None, {'fields': ['platform_name', 'is_active']}), 
     ]

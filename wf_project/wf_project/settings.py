@@ -87,18 +87,18 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'templates'),
-            os.path.join(BASE_DIR, 'templates','accounts_task'),
-            os.path.join(BASE_DIR, 'templates','approval'),
-            os.path.join(BASE_DIR, 'templates','drawer_disbursement'),
-            os.path.join(BASE_DIR, 'templates','fixed_asset'),
-            os.path.join(BASE_DIR, 'templates','human_resource'),
-            os.path.join(BASE_DIR, 'templates','memo'),
-            os.path.join(BASE_DIR, 'templates','payment'),
-            os.path.join(BASE_DIR, 'templates','purchasing'),  
-            os.path.join(BASE_DIR, 'templates','staff_overtime'),     
-            os.path.join(BASE_DIR, 'templates','report'),
-            os.path.join(BASE_DIR, 'templates','reimbursement_request'), 
-            os.path.join(BASE_DIR, 'templates','stock'),            
+            os.path.join(BASE_DIR, 'templates', 'accounts_task'),
+            os.path.join(BASE_DIR, 'templates', 'approval'),
+            os.path.join(BASE_DIR, 'templates', 'drawer_disbursement'),
+            os.path.join(BASE_DIR, 'templates', 'fixed_asset'),
+            os.path.join(BASE_DIR, 'templates', 'human_resource'),
+            os.path.join(BASE_DIR, 'templates', 'memo'),
+            os.path.join(BASE_DIR, 'templates', 'payment'),
+            os.path.join(BASE_DIR, 'templates', 'purchasing'),
+            os.path.join(BASE_DIR, 'templates', 'staff_overtime'),
+            os.path.join(BASE_DIR, 'templates', 'report'),
+            os.path.join(BASE_DIR, 'templates', 'reimbursement_request'),
+            os.path.join(BASE_DIR, 'templates', 'stock'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -118,6 +118,7 @@ TEMPLATES = [
                 'staff_overtime.context_processors.staff_ot_trans_type',
                 'drawer_reimbursement.context_processors.reimbursement_trans_type',
                 'dashboard.context_processors.dashboard_drawer',
+                'administration.context_processors.access_accounts_dashboard',
             ],
         },
     },
@@ -179,7 +180,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
-MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = 'E:/media'
 MEDIA_URL = '/media/'
 
 LOGIN_URL = 'accounts/login'

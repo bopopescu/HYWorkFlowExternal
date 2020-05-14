@@ -97,6 +97,7 @@ class CurrencyMaintenance(models.Model):
 
 class DepartmentMaintenance(models.Model):
     department_name = models.CharField(max_length=250)
+    access_accounts_dashboard = models.BooleanField()
     is_active = models.BooleanField()
     created_by = models.ForeignKey(User, related_name='departmentcreated_by_user', null=True, blank=True, on_delete=models.SET_NULL)
     created_timestamp = models.DateTimeField(auto_now_add=True)

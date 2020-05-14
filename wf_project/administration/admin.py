@@ -152,14 +152,14 @@ class StaffPositionGradeMaintenanceScreen(admin.ModelAdmin):
             obj.modified_by = self.request.user
         return super().save_model(request, obj, form, change)
 
-admin.site.register(StaffPositionGradeMaintenance, StaffPositionGradeMaintenanceScreen) 
+admin.site.register(StaffPositionGradeMaintenance, StaffPositionGradeMaintenanceScreen)
 
 class DepartmentMaintenanceScreen(admin.ModelAdmin):
-    list_display = ('department_name', 'is_active', )
-    list_filter = ('is_active',)
+    list_display = ('department_name', 'is_active', 'access_accounts_dashboard',)
+    list_filter = ('is_active', 'access_accounts_dashboard',)
     search_fields = ('department_name', )
     fieldsets = [
-        (None, {'fields': ['department_name', 'is_active']}), 
+        (None, {'fields': ['department_name', 'is_active', 'access_accounts_dashboard']}),
     ]
     exclude = ['created_by', 'modified_by']
 

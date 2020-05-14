@@ -203,6 +203,7 @@ def memo_update(request, pk_value):
         memo.revision = memo.revision + 1
         memo.submit_by = request.user
         memo.subject = request.POST['subject']
+        memo.details = request.POST['details']
         memo.save()
         return redirect(memo_detail, pk_value=memo.pk)
 

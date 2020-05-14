@@ -8,7 +8,7 @@ from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
 from administration.models import StatusMaintenance
-from administration.models import EmployeeMaintenance
+from administration.models import EmployeeMaintenance, EmployeeDepartmentMaintenance
 from administration.models import HolidayEventMaintenance
 from administration.models import OTRateMaintenance
 from approval.models import ApprovalItem
@@ -32,10 +32,13 @@ class TeamStaffOTViewSet(viewsets.ModelViewSet):
     serializer_class = StaffOTSerializer
 
     def get_queryset(self):
-        document_type = get_object_or_404(DocumentTypeMaintenance, document_type_code="504")
+        employee = get_object_or_404(EmployeeMaintenance, user=self.request.user)
+        depts = EmployeeDepartmentMaintenance.objects.filter(employee=employee).values_list('department_id', flat=True)
+        employees_indept = EmployeeDepartmentMaintenance.objects.filter(department_id__in=depts).values_list('employee_id', flat=True)
+
+        employees_as_user = EmployeeMaintenance.objects.filter(id__in=employees_indept).values_list('user_id', flat=True)
+        users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)   
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
-        groups = self.request.user.groups.values_list('id', flat=True)
-        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
         return StaffOT.objects.filter(submit_by__in=users, transaction_type=transaction_type).order_by('-id')
 
 class StaffOTDetailViewSet(viewsets.ModelViewSet):

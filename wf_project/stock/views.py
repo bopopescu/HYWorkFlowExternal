@@ -19,6 +19,7 @@ from .serializers import StockReturnSerializer, StockReturnDetailSerializer, Sto
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance,CompanyMaintenance,CompanyAddressDetail
 from administration.models import WorkflowApprovalRule,StatusMaintenance,LocationMaintenance
+from administration.models import EmployeeMaintenance, EmployeeDepartmentMaintenance
 from django.contrib.auth.models import User
 import datetime
 from django.http import JsonResponse
@@ -38,10 +39,12 @@ class TeamStockTransferViewSet(viewsets.ModelViewSet):
     serializer_class = StockTransferSerializer
 
     def get_queryset(self):
-        # document_type = get_object_or_404(DocumentTypeMaintenance, document_type_code="301")
-        # transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
-        groups = self.request.user.groups.values_list('id', flat=True)
-        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        employee = get_object_or_404(EmployeeMaintenance, user=self.request.user)
+        depts = EmployeeDepartmentMaintenance.objects.filter(employee=employee).values_list('department_id', flat=True)
+        employees_indept = EmployeeDepartmentMaintenance.objects.filter(department_id__in=depts).values_list('employee_id', flat=True)
+        
+        employees_as_user = EmployeeMaintenance.objects.filter(id__in=employees_indept).values_list('user_id', flat=True)
+        users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
         return StockTransfer.objects.filter(submit_by__in=users).order_by('-id')  
 
 class StockTransferDetailViewSet(viewsets.ModelViewSet):
@@ -78,10 +81,12 @@ class TeamStockAdjustmentViewSet(viewsets.ModelViewSet):
     serializer_class = StockAdjustmentSerializer
 
     def get_queryset(self):
-        # document_type = get_object_or_404(DocumentTypeMaintenance, document_type_code="301")
-        # transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
-        groups = self.request.user.groups.values_list('id', flat=True)
-        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        employee = get_object_or_404(EmployeeMaintenance, user=self.request.user)
+        depts = EmployeeDepartmentMaintenance.objects.filter(employee=employee).values_list('department_id', flat=True)
+        employees_indept = EmployeeDepartmentMaintenance.objects.filter(department_id__in=depts).values_list('employee_id', flat=True)
+        
+        employees_as_user = EmployeeMaintenance.objects.filter(id__in=employees_indept).values_list('user_id', flat=True)
+        users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
         return StockAdjustment.objects.filter(submit_by__in=users).order_by('-id')  
 
 class StockAdjustmentDetailViewSet(viewsets.ModelViewSet):
@@ -118,10 +123,12 @@ class TeamStockIssuingViewSet(viewsets.ModelViewSet):
     serializer_class = StockIssuingSerializer
 
     def get_queryset(self):
-        # document_type = get_object_or_404(DocumentTypeMaintenance, document_type_code="301")
-        # transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
-        groups = self.request.user.groups.values_list('id', flat=True)
-        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        employee = get_object_or_404(EmployeeMaintenance, user=self.request.user)
+        depts = EmployeeDepartmentMaintenance.objects.filter(employee=employee).values_list('department_id', flat=True)
+        employees_indept = EmployeeDepartmentMaintenance.objects.filter(department_id__in=depts).values_list('employee_id', flat=True)
+        
+        employees_as_user = EmployeeMaintenance.objects.filter(id__in=employees_indept).values_list('user_id', flat=True)
+        users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
         return StockIssuing.objects.filter(submit_by__in=users).order_by('-id')  
 
 class StockIssuingDetailViewSet(viewsets.ModelViewSet):
@@ -158,10 +165,12 @@ class TeamStockReturnViewSet(viewsets.ModelViewSet):
     serializer_class = StockReturnSerializer
 
     def get_queryset(self):
-        # document_type = get_object_or_404(DocumentTypeMaintenance, document_type_code="301")
-        # transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
-        groups = self.request.user.groups.values_list('id', flat=True)
-        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
+        employee = get_object_or_404(EmployeeMaintenance, user=self.request.user)
+        depts = EmployeeDepartmentMaintenance.objects.filter(employee=employee).values_list('department_id', flat=True)
+        employees_indept = EmployeeDepartmentMaintenance.objects.filter(department_id__in=depts).values_list('employee_id', flat=True)
+        
+        employees_as_user = EmployeeMaintenance.objects.filter(id__in=employees_indept).values_list('user_id', flat=True)
+        users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
         return StockReturn.objects.filter(submit_by__in=users).order_by('-id')  
 
 class StockReturnDetailViewSet(viewsets.ModelViewSet):

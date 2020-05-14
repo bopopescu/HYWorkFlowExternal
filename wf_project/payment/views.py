@@ -7,7 +7,7 @@ from .serializers import PYSerializer, PYItemSerializer, PYAttachmentSerializer
 from administration.models import DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
-from administration.models import PaymentmodeMaintenance, EmployeeMaintenance
+from administration.models import PaymentmodeMaintenance, EmployeeMaintenance, EmployeeDepartmentMaintenance
 from administration.models import CompanyAddressDetail,CompanyContactDetail
 from approval.forms import RejectForm
 from approval.models import ApprovalItem, ApprovalItemApprover
@@ -36,10 +36,13 @@ class TeamPYViewSet(viewsets.ModelViewSet):
     serializer_class = PYSerializer
 
     def get_queryset(self):
-        document_type = get_object_or_404(DocumentTypeMaintenance, document_type_code="301")
+        employee = get_object_or_404(EmployeeMaintenance, user=self.request.user)
+        depts = EmployeeDepartmentMaintenance.objects.filter(employee=employee).values_list('department_id', flat=True)
+        employees_indept = EmployeeDepartmentMaintenance.objects.filter(department_id__in=depts).values_list('employee_id', flat=True)
+        
+        employees_as_user = EmployeeMaintenance.objects.filter(id__in=employees_indept).values_list('user_id', flat=True)
+        users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)   
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
-        groups = self.request.user.groups.values_list('id', flat=True)
-        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
         return PaymentRequest.objects.filter(submit_by__in=users, transaction_type=transaction_type).order_by('-id')  
 
 class PYItemViewSet(viewsets.ModelViewSet):

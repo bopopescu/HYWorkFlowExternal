@@ -7,7 +7,8 @@ from .serializers import StaffRecruitmentSerializer, StaffJobRequirementSerializ
 from .serializers import StaffPlatformSerializer, StaffCandidateSerializer
 from administration.models import DocumentTypeMaintenance, StatusMaintenance
 from administration.models import TransactiontypeMaintenance
-from administration.models import WorkflowApprovalRule
+from administration.models import WorkflowApprovalRule 
+from administration.models import EmployeeMaintenance, EmployeeDepartmentMaintenance
 from approval.models import ApprovalItem
 from approval.forms import RejectForm
 from django.contrib.auth.models import User
@@ -29,9 +30,13 @@ class TeamStaffViewSet(viewsets.ModelViewSet):
     serializer_class = StaffRecruitmentSerializer
 
     def get_queryset(self):
-        groups = self.request.user.groups.values_list('id', flat=True)
-        users = User.objects.filter(groups__in = groups).exclude(id=self.request.user.id).values_list('id', flat=True)
-        return StaffRecruitmentRequest.objects.filter(submit_by__in=users).order_by('-id')
+        employee = get_object_or_404(EmployeeMaintenance, user=self.request.user)
+        depts = EmployeeDepartmentMaintenance.objects.filter(employee=employee).values_list('department_id', flat=True)
+        employees_indept = EmployeeDepartmentMaintenance.objects.filter(department_id__in=depts).values_list('employee_id', flat=True)
+        
+        employees_as_user = EmployeeMaintenance.objects.filter(id__in=employees_indept).values_list('user_id', flat=True)
+        users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
+        return StaffRecruitmentRequest.objects.filter(submit_by__in=users).order_by('-id')        
 
 class ManageStaffViewSet(viewsets.ModelViewSet):
     queryset = StaffRecruitmentRequest.objects.all().order_by('-id')

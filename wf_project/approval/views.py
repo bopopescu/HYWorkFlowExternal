@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ApprovalForm, ApproverGroupAForm, ApproverGroupBForm, CCForm, RejectForm
 from .models import ApprovalItem, ApprovalItemApprover, ApprovalItemCC
 from django.contrib.auth.decorators import login_required
+from django.db.models.expressions import Window
+from django.db.models.functions import RowNumber
+from django.db.models import F
 from administration.models import DocumentTypeMaintenance, EmployeeMaintenance, EmployeePositionMaintenance
 from administration.models import TransactiontypeMaintenance, EmployeeGroupMaintenance
 from administration.models import WorkflowApprovalRule, WorkflowApprovalGroup, WorkflowApprovalRuleGroupMaintenance
@@ -24,7 +27,7 @@ class ApprovalViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         approvers = ApprovalItemApprover.objects.filter(user=self.request.user, status='P').values_list('approval_item', flat=True)
-        return ApprovalItem.objects.filter(id__in=approvers)
+        return ApprovalItem.objects.filter(id__in=approvers).annotate(row_number=Window(expression=RowNumber(), order_by=F('id').desc())).order_by('-id')
 
 class ApproverViewSet(viewsets.ModelViewSet):
     queryset = ApprovalItemApprover.objects.all().order_by('stage')

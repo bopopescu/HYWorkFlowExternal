@@ -48,10 +48,11 @@ class ApprovalItemSerializer(serializers.ModelSerializer):
     request_by = serializers.SerializerMethodField()
     subject = serializers.SerializerMethodField()
     submit_date = serializers.SerializerMethodField()
+    row_number = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = ApprovalItem
-        fields = ['id', 'attachment_path', 'document_number', 'document_pk', 'document_type', 'request_by', 'subject', 'submit_date']
+        fields = ['row_number', 'id', 'attachment_path', 'document_number', 'document_pk', 'document_type', 'request_by', 'subject', 'submit_date']
 
     def get_document_type(self, obj):
         document_type = get_object_or_404(DocumentTypeMaintenance, pk=obj.document_type.pk)
@@ -87,8 +88,7 @@ class ApprovalItemSerializer(serializers.ModelSerializer):
             reimbursed_request = get_object_or_404(ReimbursementRequest, pk=obj.document_pk)
             user = get_object_or_404(User, pk=reimbursed_request.submit_by.id)
             return user.username
-        
-    
+
     def get_attachment_path(self, obj):
         document_type = get_object_or_404(DocumentTypeMaintenance, pk=obj.document_type.pk)
         return document_type.attachment_path

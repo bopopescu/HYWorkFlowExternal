@@ -21,10 +21,11 @@ class TaskSerializer(serializers.ModelSerializer):
     document_type = serializers.SerializerMethodField()
     approval_code = serializers.SerializerMethodField()
     approval_id = serializers.SerializerMethodField()
+    row_number = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = AccountTask
-        fields = ['id',
+        fields = ['row_number', 'id',
             'approval_item',
             'approval_id',
             'process',

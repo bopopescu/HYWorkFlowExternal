@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.db.models.expressions import Window
+from django.db.models.functions import RowNumber
+from django.db.models import F
 from rest_framework import viewsets
 from administration.models import TransactiontypeMaintenance
 from approval.models import ApprovalItem
@@ -13,21 +16,21 @@ class UnprocessedViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
 
     def get_queryset(self):
-        return AccountTask.objects.filter(process=False, completed=False).order_by('-id')
+        return AccountTask.objects.filter(process=False, completed=False).annotate(row_number=Window(expression=RowNumber(), order_by=F('id').desc())).order_by('-id')
 
 class ProcessedViewSet(viewsets.ModelViewSet):
     queryset = AccountTask.objects.all().order_by('-id')
     serializer_class = TaskSerializer
 
     def get_queryset(self):
-        return AccountTask.objects.filter(process=True, completed=False).order_by('-id')
+        return AccountTask.objects.filter(process=True, completed=False).annotate(row_number=Window(expression=RowNumber(), order_by=F('id').desc())).order_by('-id')
 
 class CompletedViewSet(viewsets.ModelViewSet):
     queryset = AccountTask.objects.all().order_by('-id')
     serializer_class = TaskSerializer
 
     def get_queryset(self):
-        return AccountTask.objects.filter(process=True, completed=True).order_by('-id')
+        return AccountTask.objects.filter(process=True, completed=True).annotate(row_number=Window(expression=RowNumber(), order_by=F('id').desc())).order_by('-id')
 
 @login_required
 def task_init(request):

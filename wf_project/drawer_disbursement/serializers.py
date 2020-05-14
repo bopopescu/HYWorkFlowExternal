@@ -8,6 +8,7 @@ class DrawerDisbursementSerializer(serializers.ModelSerializer):
     disbursed_date = serializers.DateField(format='%d/%m/%Y')
     payment = serializers.StringRelatedField(many=False)
     payment_id = serializers.SerializerMethodField()
+    total_disbursed = serializers.SerializerMethodField()
 
     class Meta:
         model = DrawerDisbursement
@@ -15,6 +16,9 @@ class DrawerDisbursementSerializer(serializers.ModelSerializer):
 
     def get_payment_id(self, obj):  
         return obj.payment.id
+
+    def get_total_disbursed(self,obj):
+        return number_format(obj.total_disbursed)
 
 class DrawerSelectionSerializer(serializers.ModelSerializer):
     branch = serializers.StringRelatedField(many=False)
@@ -29,7 +33,11 @@ class ApprovedPaymentRequest(serializers.ModelSerializer):
     project = serializers.StringRelatedField(many=False)
     approval = serializers.StringRelatedField(many=False)
     submit_by = serializers.StringRelatedField(many=False)
+    total_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = PaymentRequest
         fields = ['id', 'revision', 'document_number', 'subject', 'submit_date', 'company', 'project','submit_by', 'approval','total_amount']
+
+    def get_total_amount(self,obj):
+        return number_format(obj.total_amount)

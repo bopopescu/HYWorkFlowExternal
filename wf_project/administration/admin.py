@@ -586,7 +586,7 @@ class VendorAddressInline(admin.StackedInline):
 class VendorMasterDataScreen(admin.ModelAdmin):
     list_display = ('vendor_name', 'currency', 'vendor_group', 'is_company', 'is_active')
     list_filter = ('is_active', 'is_company')
-    search_fields = ('vendor_name', 'vendor_group')
+    search_fields = ('vendor_name', )
     fieldsets = [
         (None, {'fields': ['vendor_name', 'currency', 'business_registration_no', 'tax_id_1', 'tax_id_2', 'vendor_group', 'vendor_category', 'is_company', 'is_active', 'is_qualified']}), 
     ]

@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import NewStaffOTForm, NewStaffOTDetailForm, UpdateStaffOTForm, DetailStaffOTForm
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from django.contrib.auth.models import User
 from .models import StaffOT, StaffOTDetail
 from rest_framework import viewsets
 from .serializers import StaffOTSerializer, StaffOTDetailSerializer
@@ -11,9 +13,13 @@ from administration.models import StatusMaintenance
 from administration.models import EmployeeMaintenance, EmployeeDepartmentMaintenance
 from administration.models import HolidayEventMaintenance
 from administration.models import OTRateMaintenance
-from approval.models import ApprovalItem
+from approval.models import ApprovalItem, ApprovalItemApprover
 from approval.forms import RejectForm
-from django.contrib.auth.models import User
+from memo.models import Memo
+from purchasing.models import PurchaseOrder
+from payment.models import PaymentRequest
+from human_resource.models import StaffRecruitmentRequest
+from drawer_reimbursement.models import ReimbursementRequest
 import datetime
 from django.http import JsonResponse
 from django.utils.datetime_safe import date
@@ -129,10 +135,45 @@ def staff_ot_send_approval(request, pk):
 
 @login_required
 def staff_ot_detail(request, pk):
-    staff_ot =  get_object_or_404(StaffOT, pk=pk)
+    if request.GET.get('from', None) == 'approval':
+        approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
+        approval_items = ApprovalItem.objects.filter(id__in=approvers).order_by('-id')
+        found = False
+
+        for approval_item in approval_items:
+            if approval_item.document_pk == pk:
+                found = True
+            elif found:
+                found = False
+                document_type = get_object_or_404(DocumentTypeMaintenance, pk=approval_item.document_type.pk)
+
+                if document_type.document_type_code == "601":
+                    document = get_object_or_404(Memo, pk=approval_item.document_pk)
+                    next_link = reverse('memo_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "205":
+                    document = get_object_or_404(PurchaseOrder, pk=approval_item.document_pk)
+                    next_link = reverse('po_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "301":
+                    document = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
+                    next_link = reverse('py_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "501":
+                    document = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
+                    next_link = reverse('staff_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "504":
+                    document = get_object_or_404(StaffOT, pk=approval_item.document_pk)
+                    next_link = reverse('staff_ot_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "403":
+                    document = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
+                    next_link = reverse('reimbursement_request_detail', args=(approval_item.document_pk, ))
+
+        next_link = next_link + '?from=approval'
+    else:
+        next_link = reverse('approval_list')
+
+    staff_ot = get_object_or_404(StaffOT, pk=pk)
     form = DetailStaffOTForm(instance=staff_ot)
     form_reject = RejectForm()
-    return render(request, 'staff_overtime/detail.html', {'staff_ot': staff_ot, 'form': form, 'form_reject': form_reject})
+    return render(request, 'staff_overtime/detail.html', {'staff_ot': staff_ot, 'form': form, 'form_reject': form_reject, 'next_link': next_link})
 
 @login_required
 def staff_ot_list(request, pk):

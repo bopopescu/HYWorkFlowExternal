@@ -1,23 +1,27 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .forms import NewPaymentForm, UpdatePaymentForm, DetailPaymentForm, NewPYItemForm, NewPYAttachmentForm
 from django.contrib.auth.decorators import login_required
-from .models import PaymentRequest, PaymentRequestDetail, PaymentAttachment
+from django.contrib.auth.models import User
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+import datetime
 from rest_framework import viewsets
-from .serializers import PYSerializer, PYItemSerializer, PYAttachmentSerializer
-from administration.models import DocumentTypeMaintenance
+from administration.models import CurrencyMaintenance, DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
 from administration.models import PaymentmodeMaintenance, EmployeeMaintenance, EmployeeDepartmentMaintenance
 from administration.models import CompanyAddressDetail,CompanyContactDetail
 from approval.forms import RejectForm
 from approval.models import ApprovalItem, ApprovalItemApprover
+from memo.models import Memo
+from purchasing.models import PurchaseOrder
+from human_resource.models import StaffRecruitmentRequest
+from staff_overtime.models import StaffOT
+from drawer_reimbursement.models import ReimbursementRequest
 from utility_dashboard.models import UtilityApprovalItem, UtilityApprovalItemApprover
-from django.contrib.auth.models import User
-import datetime
-from django.http import JsonResponse
-from administration.models import CurrencyMaintenance
 from PDFreport.render import Render
-from django.http import HttpResponse
+from .forms import NewPaymentForm, UpdatePaymentForm, DetailPaymentForm, NewPYItemForm, NewPYAttachmentForm
+from .models import PaymentRequest, PaymentRequestDetail, PaymentAttachment
+from .serializers import PYSerializer, PYItemSerializer, PYAttachmentSerializer
 
 class PYViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequest.objects.all() #.order_by('rank')
@@ -223,7 +227,7 @@ def py_item_create_formcreate(request, pk):
 
 @login_required
 def py_item_delete_formcreate(request, pk):
-    py_item =  get_object_or_404(PaymentRequestDetail, pk=pk)
+    py_item = get_object_or_404(PaymentRequestDetail, pk=pk)
     py = get_object_or_404(PaymentRequest, pk=py_item.py.pk)
     py_item.delete()
 
@@ -270,23 +274,58 @@ def py_attachment_create_formcreate(request, pk):
 
 @login_required
 def py_attachment_delete_formcreate(request, pk):
-    py_attachment =  get_object_or_404(PaymentAttachment, pk=pk)
+    py_attachment = get_object_or_404(PaymentAttachment, pk=pk)
     py = get_object_or_404(PaymentRequest, pk=py_attachment.py.pk)
     py_attachment.delete()
     return JsonResponse({'message': 'Success'})
 
 @login_required
 def py_delete(request, pk):
-    py =  get_object_or_404(PaymentRequest, pk=pk)
+    py = get_object_or_404(PaymentRequest, pk=pk)
     py.delete()
     return JsonResponse({'message': 'Success'})
 
 @login_required
 def py_detail(request, pk):
-    py =  get_object_or_404(PaymentRequest, pk=pk)
+    if request.GET.get('from', None) == 'approval':
+        approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
+        approval_items = ApprovalItem.objects.filter(id__in=approvers).order_by('-id')
+        found = False
+
+        for approval_item in approval_items:
+            if approval_item.document_pk == pk:
+                found = True
+            elif found:
+                found = False
+                document_type = get_object_or_404(DocumentTypeMaintenance, pk=approval_item.document_type.pk)
+
+                if document_type.document_type_code == "601":
+                    document = get_object_or_404(Memo, pk=approval_item.document_pk)
+                    next_link = reverse('memo_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "205":
+                    document = get_object_or_404(PurchaseOrder, pk=approval_item.document_pk)
+                    next_link = reverse('po_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "301":
+                    document = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
+                    next_link = reverse('py_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "501":
+                    document = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
+                    next_link = reverse('staff_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "504":
+                    document = get_object_or_404(StaffOT, pk=approval_item.document_pk)
+                    next_link = reverse('staff_ot_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "403":
+                    document = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
+                    next_link = reverse('reimbursement_request_detail', args=(approval_item.document_pk, ))
+
+        next_link = next_link + '?from=approval'
+    else:
+        next_link = reverse('approval_list')
+
+    py = get_object_or_404(PaymentRequest, pk=pk)
     form = DetailPaymentForm(instance=py)
     form_reject = RejectForm()
-    return render(request, 'payment/detail.html', {'py': py, 'form': form,'form_reject': form_reject})
+    return render(request, 'payment/detail.html', {'py': py, 'form': form, 'form_reject': form_reject, 'next_link': next_link})
 
 @login_required
 def pylist(request, pk):
@@ -365,7 +404,7 @@ def py_item_create(request, pk):
 
 @login_required
 def py_item_delete(request, pk):
-    py_item =  get_object_or_404(PaymentRequestDetail, pk=pk)
+    py_item = get_object_or_404(PaymentRequestDetail, pk=pk)
     py = get_object_or_404(PaymentRequest, pk=py_item.py.pk)
     py_item.delete()
 
@@ -412,7 +451,7 @@ def py_attachment_create(request, pk):
 
 @login_required
 def py_attachment_delete(request, pk):
-    py_attachment =  get_object_or_404(PaymentAttachment, pk=pk)
+    py_attachment = get_object_or_404(PaymentAttachment, pk=pk)
     py = get_object_or_404(PaymentRequest, pk=py_attachment.py.pk)
     py_attachment.delete()
     return JsonResponse({'message': 'Success'})

@@ -36,6 +36,7 @@
  </style>
   {% csrf_token %} 
     <div id="navbar">
+      <a href="{{next_link}}" id="skip_button" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm" style="visibility: hidden"><i class="fas fa-forward"></i> Skip</a>  
       <a href="#" id="approve_button" data-toggle="modal" data-target="#approveModal" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm" onclick="sendApprove({{staff_ot.approval.id|unlocalize}})" style="visibility: hidden"><i class="fas fa-check"></i> Approve</a>  
       <a href="#" id="reject_button" data-toggle="modal" data-target="#rejectModal" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm" onclick="sendReject({{staff_ot.approval.id|unlocalize}})" style="visibility: hidden"><i class="fas fa-times"></i> Reject</a>    
       {% if staff_ot.status.status_code == 100 or staff_ot.status.status_code == 500 %}
@@ -58,6 +59,7 @@
   
       if (from_value == 'approval'){
         back_button.href = "{% url 'approval_list' %}";
+        skip_button.style.visibility = "visible";
         approve_button.style.visibility = "visible";
         reject_button.style.visibility = "visible";
       } else if (from_value == 'accounts'){
@@ -386,7 +388,7 @@ if(proceed){
     processData:false
   }).done(function(res){ 
           if (res.message == 'Success'){
-            window.location.href = "{% url 'approval_list' %}";
+            window.location.href = "{{next_link}}";
           }
   });
 }
@@ -454,7 +456,7 @@ $("#rejectItem").submit(function(e){
       processData:false
     }).done(function(res){ 
             if (res.message == 'Success'){                  
-              window.location.href = "{% url 'approval_list' %}";
+              window.location.href = "{{next_link}}";
             }
     });
   }

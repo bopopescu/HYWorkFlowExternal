@@ -11,8 +11,12 @@ from administration.models import StatusMaintenance
 from administration.models import EmployeeMaintenance, EmployeeDepartmentMaintenance
 from administration.models import DrawerMaintenance
 from administration.models import DrawerUserMaintenance
-from approval.models import ApprovalItem
+from approval.models import ApprovalItem, ApprovalItemApprover
 from approval.forms import RejectForm
+from memo.models import Memo
+from purchasing.models import PurchaseOrder
+from payment.models import PaymentRequest
+from human_resource.models import StaffRecruitmentRequest
 from django.contrib.auth.models import User
 import datetime
 from django.http import JsonResponse
@@ -149,10 +153,45 @@ def reimbursement_request_send_approval(request,pk):
 
 @login_required
 def reimbursement_request_detail(request, pk):
-    reimbursement_request =  get_object_or_404(ReimbursementRequest, pk=pk)
+    if request.GET.get('from', None) == 'approval':
+        approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
+        approval_items = ApprovalItem.objects.filter(id__in=approvers).order_by('-id')
+        found = False
+
+        for approval_item in approval_items:
+            if approval_item.document_pk == pk:
+                found = True
+            elif found:
+                found = False
+                document_type = get_object_or_404(DocumentTypeMaintenance, pk=approval_item.document_type.pk)
+
+                if document_type.document_type_code == "601":
+                    document = get_object_or_404(Memo, pk=approval_item.document_pk)
+                    next_link = reverse('memo_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "205":
+                    document = get_object_or_404(PurchaseOrder, pk=approval_item.document_pk)
+                    next_link = reverse('po_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "301":
+                    document = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
+                    next_link = reverse('py_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "501":
+                    document = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
+                    next_link = reverse('staff_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "504":
+                    document = get_object_or_404(StaffOT, pk=approval_item.document_pk)
+                    next_link = reverse('staff_ot_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "403":
+                    document = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
+                    next_link = reverse('reimbursement_request_detail', args=(approval_item.document_pk, ))
+
+        next_link = next_link + '?from=approval'
+    else:
+        next_link = reverse('approval_list')
+        
+    reimbursement_request = get_object_or_404(ReimbursementRequest, pk=pk)
     form = DetailReimbursementForm(instance=reimbursement_request)
     form_reject = RejectForm()
-    return render(request, 'reimbursement_request/detail.html', {'reimburse': reimbursement_request, 'form': form, 'form_reject': form_reject})
+    return render(request, 'reimbursement_request/detail.html', {'reimburse': reimbursement_request, 'form': form, 'form_reject': form_reject, 'next_link': next_link})
 
 @login_required
 def reimbursement_request_list(request):

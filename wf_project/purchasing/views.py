@@ -1,16 +1,23 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from rest_framework import viewsets
 from django.contrib.auth.models import User
+from django.http import HttpResponse, JsonResponse
+from django.urls import reverse
+import datetime
+from rest_framework import viewsets
 from administration.models import CompanyMaintenance, CompanyAddressDetail, CurrencyMaintenance, DocumentTypeMaintenance
 from administration.models import StatusMaintenance, TransactiontypeMaintenance, WorkflowApprovalRule, ProjectMaintenance
 from administration.models import PaymentTermMaintenance, EmployeeMaintenance, EmployeeDepartmentMaintenance
-from administration.models import CompanyAddressDetail,CompanyContactDetail
+from administration.models import CompanyAddressDetail, CompanyContactDetail
 from approval.models import ApprovalItem, ApprovalItemApprover
 from approval.forms import RejectForm
+from memo.models import Memo
+from payment.models import PaymentRequest
+from human_resource.models import StaffRecruitmentRequest
+from staff_overtime.models import StaffOT
+from drawer_reimbursement.models import ReimbursementRequest
 from PDFreport.render import Render
-from stock.models import StockReturn,StockReturnDetail
-from django.http import HttpResponse, JsonResponse
+from stock.models import StockReturn, StockReturnDetail
 from .forms import NewPOForm, DetailPOForm, UpdatePOForm, NewPOAttachmentForm, NewPOComparison2AttachmentForm
 from .forms import NewPOComparison3AttachmentForm, NewPODetailForm, NewGRNForm, DetailGRNForm
 from .forms import NewINVForm, DetailINVForm
@@ -18,8 +25,8 @@ from .models import PurchaseOrder, PurchaseOrderDetail, PurchaseOrderAttachment,
 from .models import PurchaseOrderComparison3Attachment, VendorMasterData, VendorAddressDetail
 from .models import GoodsReceiptNote, PurchaseInvoice, PurchaseCreditNote, PurchaseDebitNote
 from .serializers import POSerializer, PODetailSerializer, POAttachmentSerializer, POComparison2AttachmentSerializer, POComparison3AttachmentSerializer
-import datetime
-from payment.models import PaymentRequest,PaymentRequestDetail
+
+from payment.models import PaymentRequest, PaymentRequestDetail
 
 class POAttachmentViewSet(viewsets.ModelViewSet):
     queryset = PurchaseOrderAttachment.objects.all()
@@ -147,6 +154,41 @@ def po_list(request, pk):
 
 @login_required
 def po_detail(request, pk):
+    if request.GET.get('from', None) == 'approval':
+        approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
+        approval_items = ApprovalItem.objects.filter(id__in=approvers).order_by('-id')
+        found = False
+
+        for approval_item in approval_items:
+            if approval_item.document_pk == pk:
+                found = True
+            elif found:
+                found = False
+                document_type = get_object_or_404(DocumentTypeMaintenance, pk=approval_item.document_type.pk)
+
+                if document_type.document_type_code == "601":
+                    document = get_object_or_404(Memo, pk=approval_item.document_pk)
+                    next_link = reverse('memo_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "205":
+                    document = get_object_or_404(PurchaseOrder, pk=approval_item.document_pk)
+                    next_link = reverse('po_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "301":
+                    document = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
+                    next_link = reverse('py_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "501":
+                    document = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
+                    next_link = reverse('staff_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "504":
+                    document = get_object_or_404(StaffOT, pk=approval_item.document_pk)
+                    next_link = reverse('staff_ot_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "403":
+                    document = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
+                    next_link = reverse('reimbursement_request_detail', args=(approval_item.document_pk, ))
+
+        next_link = next_link + '?from=approval'
+    else:
+        next_link = reverse('approval_list')
+
     po = get_object_or_404(PurchaseOrder, pk=pk)
     document_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]
     approval_item = get_object_or_404(ApprovalItem, document_pk=pk, document_type=document_type)
@@ -164,7 +206,7 @@ def po_detail(request, pk):
     form.fields['payment_schedule'].initial = po.payment_schedule
     form.fields['vendor_address'].initial = po.vendor_address
     form_reject = RejectForm()
-    return render(request, 'po/detail.html', {'po': po, 'form': form, 'approval_item': approval_item, 'form_reject': form_reject})
+    return render(request, 'po/detail.html', {'po': po, 'form': form, 'approval_item': approval_item, 'form_reject': form_reject, 'next_link': next_link})
 
 @login_required
 def po_init(request, pk):
@@ -245,7 +287,7 @@ def po_create(request, pk):
 def po_send_approval(request, pk):
     po = get_object_or_404(PurchaseOrder, pk=pk)
     approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=po.total_amount, document_amount_range__lte= po.total_amount)[0]
-    approval_item = get_object_or_404(ApprovalItem, pk=po.approval.pk)       
+    approval_item = get_object_or_404(ApprovalItem, pk=po.approval.pk)
     approval_item.approval_level = approval_level
 
     if approval_level.ceo_approve == True:
@@ -327,7 +369,7 @@ def load_vendor_address(request):
     return render(request, 'po/vendor_address_field.html', {'address': address})
 
 @login_required
-def po_attachment_create(request, pk):    
+def po_attachment_create(request, pk):
     form = NewPOAttachmentForm(request.POST, request.FILES)
     if form.is_valid():
         po_attachment = form.save(commit=False)
@@ -346,7 +388,7 @@ def po_attachment_delete(request, pk):
     return JsonResponse({'message': 'Success'})
 
 @login_required
-def po_cov2_attachment_create(request, pk):    
+def po_cov2_attachment_create(request, pk):
     form = NewPOComparison2AttachmentForm(request.POST, request.FILES)
     if form.is_valid():
         po_cov2_attachment = form.save(commit=False)
@@ -474,7 +516,7 @@ def grn_init(request, pk):
 @login_required
 def grn_create(request, pk):
     grn = get_object_or_404(GoodsReceiptNote, pk=pk)
-    po = get_object_or_404(PurchaseOrder, pk=grn.po.id)    
+    po = get_object_or_404(PurchaseOrder, pk=grn.po.id)
     po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Good Receipt Note")[0]
     transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Good Receipt Note")[0]
     
@@ -513,7 +555,7 @@ def grn_create(request, pk):
 @login_required
 def grn_detail(request, pk):
     grn = get_object_or_404(GoodsReceiptNote, pk=pk)
-    po = get_object_or_404(PurchaseOrder, pk=grn.po.id)    
+    po = get_object_or_404(PurchaseOrder, pk=grn.po.id)
     po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Good Receipt Note")[0]
     transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Good Receipt Note")[0]
     
@@ -552,7 +594,7 @@ def pi_init(request, pk):
 @login_required
 def pi_create(request, pk):
     pi = get_object_or_404(PurchaseInvoice, pk=pk)
-    po = get_object_or_404(PurchaseOrder, pk=pi.po.id)    
+    po = get_object_or_404(PurchaseOrder, pk=pi.po.id)
     po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Invoice")[0]
     transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Purchase Invoice")[0]
     
@@ -586,9 +628,9 @@ def pi_create(request, pk):
 @login_required
 def pi_send_to_pr(request, pk):
     pi = get_object_or_404(PurchaseInvoice, pk=pk)
-    document_type = get_object_or_404(DocumentTypeMaintenance,document_type_code ="301")
-    pi_type = get_object_or_404(DocumentTypeMaintenance,document_type_code ="208")
-    transaction_type = get_object_or_404(TransactiontypeMaintenance,transaction_type_name="Payment for Invoice",document_type=document_type)
+    document_type = get_object_or_404(DocumentTypeMaintenance, document_type_code ="301")
+    pi_type = get_object_or_404(DocumentTypeMaintenance, document_type_code ="208")
+    transaction_type = get_object_or_404(TransactiontypeMaintenance, transaction_type_name="Payment for Invoice",document_type=document_type)
     
     pr_vendor = pi.po.vendor
     pr_currency = pi.po.currency
@@ -603,20 +645,20 @@ def pi_send_to_pr(request, pk):
     pr_tax_amount = pi.po.tax_amount
     pr_total_amount = pi.po.total_amount
     
-    py = PaymentRequest.objects.create(submit_by=request.user,transaction_type=transaction_type,
-                                        document_pk=pk,document_type=pi_type,vendor=pr_vendor,currency=pr_currency,
-                                        company=pr_company,project=pr_project,subject=pr_subject,reference=pr_reference,
-                                        remarks=pr_remarks,sub_total=pr_subtotal,discount_rate=pr_discount,discount_amount=pr_discount_amount,
-                                        tax_amount=pr_tax_amount,total_amount=pr_total_amount)
+    py = PaymentRequest.objects.create(submit_by=request.user, transaction_type=transaction_type,
+                                        document_pk=pk, document_type=pi_type, vendor=pr_vendor, currency=pr_currency,
+                                        company=pr_company, project=pr_project, subject=pr_subject, reference=pr_reference,
+                                        remarks=pr_remarks, sub_total=pr_subtotal, discount_rate=pr_discount, discount_amount=pr_discount_amount,
+                                        tax_amount=pr_tax_amount, total_amount=pr_total_amount)
 
     po_items = PurchaseOrderDetail.objects.filter(po=pi.po)
     i = 0
     for po_item in po_items:
         i = i + 1
         linenum = i
-        pr_item = PaymentRequestDetail.objects.create(linenum=i,item_description=po_item.item.item_description,
-                                                      line_total= po_item.line_total,price = po_item.amount,tax=po_item.tax,
-                                                      line_taxamount= po_item.line_taxamount,py=py)
+        pr_item = PaymentRequestDetail.objects.create(linenum=i, item_description=po_item.item.item_description,
+                                                      line_total= po_item.line_total, price = po_item.amount, tax=po_item.tax,
+                                                      line_taxamount= po_item.line_taxamount, py=py)
 
 
     return redirect('py_create_edit', py.pk)

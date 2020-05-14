@@ -1,9 +1,10 @@
 """View logic to control Memo module"""
 
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from rest_framework import viewsets
 from administration.models import MemoTemplateMaintenance, WorkflowApprovalRule
 from administration.models import DocumentTypeMaintenance, TransactiontypeMaintenance
@@ -11,6 +12,11 @@ from administration.models import StatusMaintenance, EmployeeMaintenance
 from administration.models import EmployeeDepartmentMaintenance
 from approval.forms import RejectForm
 from approval.models import ApprovalItem, ApprovalItemApprover
+from purchasing.models import PurchaseOrder
+from payment.models import PaymentRequest
+from human_resource.models import StaffRecruitmentRequest
+from staff_overtime.models import StaffOT
+from drawer_reimbursement.models import ReimbursementRequest
 from PDFreport.render import Render
 from .models import Memo, MemoAttachment
 from .serializers import MemoSerializer, MemoAttachmentSerializer
@@ -171,6 +177,41 @@ def memo_delete(request):
 def memo_detail(request, pk_value):
     """Handles to view a Memo"""
 
+    if request.GET.get('from', None) == 'approval':
+        approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
+        approval_items = ApprovalItem.objects.filter(id__in=approvers).order_by('-id')
+        found = False
+
+        for approval_item in approval_items:
+            if approval_item.document_pk == pk_value:
+                found = True
+            elif found:
+                found = False
+                document_type = get_object_or_404(DocumentTypeMaintenance, pk=approval_item.document_type.pk)
+
+                if document_type.document_type_code == "601":
+                    document = get_object_or_404(Memo, pk=approval_item.document_pk)
+                    next_link = reverse('memo_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "205":
+                    document = get_object_or_404(PurchaseOrder, pk=approval_item.document_pk)
+                    next_link = reverse('po_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "301":
+                    document = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
+                    next_link = reverse('py_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "501":
+                    document = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
+                    next_link = reverse('staff_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "504":
+                    document = get_object_or_404(StaffOT, pk=approval_item.document_pk)
+                    next_link = reverse('staff_ot_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "403":
+                    document = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
+                    next_link = reverse('reimbursement_request_detail', args=(approval_item.document_pk, ))
+
+        next_link = next_link + '?from=approval'
+    else:
+        next_link = reverse('approval_list')
+
     memo = get_object_or_404(Memo, pk=pk_value)
     form = DetailMemoForm(instance=memo)
     form.fields['company'].initial = memo.company
@@ -179,7 +220,7 @@ def memo_detail(request, pk_value):
     form.fields['template'].initial = memo.template
     form.fields['subject'].initial = memo.subject
     form_reject = RejectForm()
-    return render(request, 'memo/detail.html', {'memo': memo, 'form': form, 'form_reject': form_reject})
+    return render(request, 'memo/detail.html', {'memo': memo, 'form': form, 'form_reject': form_reject, 'next_link': next_link})
 
 @login_required
 def memo_index(request):

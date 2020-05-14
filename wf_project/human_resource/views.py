@@ -7,12 +7,18 @@ from .serializers import StaffRecruitmentSerializer, StaffJobRequirementSerializ
 from .serializers import StaffPlatformSerializer, StaffCandidateSerializer
 from administration.models import DocumentTypeMaintenance, StatusMaintenance
 from administration.models import TransactiontypeMaintenance
-from administration.models import WorkflowApprovalRule 
+from administration.models import WorkflowApprovalRule
 from administration.models import EmployeeMaintenance, EmployeeDepartmentMaintenance
-from approval.models import ApprovalItem
+from approval.models import ApprovalItem, ApprovalItemApprover
 from approval.forms import RejectForm
+from memo.models import Memo
+from purchasing.models import PurchaseOrder
+from payment.models import PaymentRequest
+from staff_overtime.models import StaffOT
+from drawer_reimbursement.models import ReimbursementRequest
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.urls import reverse
 
 class StaffViewSet(viewsets.ModelViewSet):
     queryset = StaffRecruitmentRequest.objects.all() #.order_by('rank')
@@ -152,10 +158,45 @@ def staff_delete(request, pk):
 
 @login_required
 def staff_detail(request, pk):
+    if request.GET.get('from', None) == 'approval':
+        approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
+        approval_items = ApprovalItem.objects.filter(id__in=approvers).order_by('-id')
+        found = False
+
+        for approval_item in approval_items:
+            if approval_item.document_pk == pk:
+                found = True
+            elif found:
+                found = False
+                document_type = get_object_or_404(DocumentTypeMaintenance, pk=approval_item.document_type.pk)
+
+                if document_type.document_type_code == "601":
+                    document = get_object_or_404(Memo, pk=approval_item.document_pk)
+                    next_link = reverse('memo_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "205":
+                    document = get_object_or_404(PurchaseOrder, pk=approval_item.document_pk)
+                    next_link = reverse('po_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "301":
+                    document = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
+                    next_link = reverse('py_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "501":
+                    document = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
+                    next_link = reverse('staff_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "504":
+                    document = get_object_or_404(StaffOT, pk=approval_item.document_pk)
+                    next_link = reverse('staff_ot_detail', args=(approval_item.document_pk, ))
+                elif document_type.document_type_code == "403":
+                    document = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
+                    next_link = reverse('reimbursement_request_detail', args=(approval_item.document_pk, ))
+
+        next_link = next_link + '?from=approval'
+    else:
+        next_link = reverse('approval_list')
+
     staff = get_object_or_404(StaffRecruitmentRequest, pk=pk)
     form = DetailStaffRecruimentForm(instance=staff)
     form_reject = RejectForm()
-    return render(request, 'human_resource/detail.html', {'staff': staff, 'form': form, 'form_reject': form_reject})
+    return render(request, 'human_resource/detail.html', {'staff': staff, 'form': form, 'form_reject': form_reject, 'next_link': next_link})
 
 @login_required
 def staff_list(request):

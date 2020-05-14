@@ -9,7 +9,7 @@ from .models import ItemCategoryMaintenance
 class ItemAdmin(admin.ModelAdmin):
     list_display = ('item_description','item_type', 'item_class','is_active')
     list_filter = ('is_active',)
-    search_fields = ('item_type', 'item_class','item_description')
+    search_fields = ('item_description',)
     fieldsets = [
         (None, {'fields': ['item_code','item_type', 'item_class','item_group', 'item_description','item_uom','item_category','item_subcategory','item_subsubcategory', 'is_active']}),
         ('Quantity', {'fields': ['minimum_quantity','minimum_order_quantity','standard_packing_quantity','leadtime']}),

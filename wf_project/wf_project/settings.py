@@ -118,7 +118,7 @@ TEMPLATES = [
                 'staff_overtime.context_processors.staff_ot_trans_type',
                 'drawer_reimbursement.context_processors.reimbursement_trans_type',
                 'dashboard.context_processors.dashboard_drawer',
-                'administration.context_processors.access_type',
+                'administration.context_processors.access_accounts_dashboard',
             ],
         },
     },

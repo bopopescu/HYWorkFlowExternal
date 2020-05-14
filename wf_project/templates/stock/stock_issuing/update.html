@@ -35,7 +35,7 @@
     }
  </style>
   {% csrf_token %} 
-    <div>
+    <div id="navbar">
         {% if stock_issuing.status.status_code == 100 %}
         <a href="{% url 'stock_issuing_submit' stock_issuing.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit</a>
         {% endif %}

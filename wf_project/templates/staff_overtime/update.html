@@ -35,7 +35,7 @@
     }
  </style>
   {% csrf_token %} 
-    <div>
+    <div id="navbar">
         <a href="{% url 'staff_ot_send_approval' staff_ot.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
       <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
       <a href="{% url 'staff_ot_list' staff_ot.transaction_type.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>

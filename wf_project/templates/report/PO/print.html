@@ -1,9 +1,9 @@
 {% load static %}
 <html>
 	<head>
-  		<link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+  		<!-- <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
   		<link href="http://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-  		<link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+  		<link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet"> -->
 	</head>
 	<body>
 		<table>
@@ -36,12 +36,12 @@
 			<tr>
 				<td colspan="2" style="border: 1px solid black; padding:5px">
 					<div>Supplier Address:</div>
-					<div>{{po.vendor_address}}</div>
+					<textarea cols="40" rows="10">{{po.vendor_address}}</textarea>
 				</td>
 				<td>&nbsp;</td>
 				<td colspan="2" style="border: 1px solid black; padding:5px">
 					<div>Delivery Address:</div>
-					<div>{{po.delivery_address}}</div>
+					<textarea cols="40" rows="10">{{po.delivery_address}}</textarea>
 				</td>
 			</tr>
 			<tr><td>&nbsp;</td></tr>

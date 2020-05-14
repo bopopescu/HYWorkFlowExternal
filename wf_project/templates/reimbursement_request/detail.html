@@ -35,7 +35,7 @@
     }
  </style>
   {% csrf_token %} 
-    <div>
+    <div id="navbar">
       <a href="#" id="approve_button" data-toggle="modal" data-target="#approveModal" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm" onclick="sendApprove({{reimburse.approval.id|unlocalize}})" style="visibility: hidden"><i class="fas fa-check"></i> Approve</a>  
       <a href="#" id="reject_button" data-toggle="modal" data-target="#rejectModal" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm" onclick="sendReject({{reimburse.approval.id|unlocalize}})" style="visibility: hidden"><i class="fas fa-times"></i> Reject</a>    
       {% if reimburse.status.status_code == 100 or reimburse.status.status_code == 500 %}

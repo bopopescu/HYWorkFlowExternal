@@ -14,6 +14,7 @@
             <table id="myapproval" class="table table-striped table-bordered" style="width:100%">
                 <thead>
                     <tr>
+                        <th></th>
                         <th data-data="row_number">No.</th>
                         <th data-data="id"></th>
                         <th data-data="attachment_path"></th>
@@ -32,31 +33,84 @@
           $(document).ready(function() {
             var table = $('#myapproval').DataTable( {
               "ajax": "{% url 'approvaldata-list' %}?format=datatables",
-              "dom":  "<'row'<'col-sm-12 col-md-9'l>>" +
+              "dom":  "<'row'<'col-sm-12 col-md-7'l><'col-sm-12 col-md-5'B>>" +
                       "<'row'<'col-sm-12 small'tr>>" +
                       "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
               "serverSide": true,
               "ordering": false,
-              "columnDefs": [ {
-                  "targets": -1,
-                  "data": null,
-                  "render": function ( data, type, row ) {
-                        var label = '';
+              "columnDefs": [
+                    {
+                        width: 50,
+                        className: 'select-checkbox',
+                        targets: 0,
+                        "defaultContent": ""
+                    },
+                    {
+                        width:170,
+                        targets: -1,
+                        data: null,
+                        render: function ( data, type, row ) {
+                            var label = '';
                         
-                        label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/?from=approval" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
-                        label = label + '&nbsp;&nbsp;';
-                        label = label + '<a href="' + "{% url 'approval_history' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-info btn-circle btn-sm"><i class="fas fa-clipboard-list"></i></a>';
-                        label = label + '&nbsp;&nbsp;';
-                        label = label + '<a href="#" data-toggle="modal" data-target="#approveModal" class="btn btn-success btn-circle btn-sm" onclick="sendApprove(' + row.id + ')"><i class="fas fa-check"></i></a>';
-                        label = label + '&nbsp;&nbsp;';
-                        label = label + '<a href="#" data-toggle="modal" data-target="#rejectModal" class="btn btn-danger btn-circle btn-sm" onclick="sendReject(' + row.id + ')"><i class="fas fa-times"></i></a>';
-                        return label;
+                            label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/?from=approval" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
+                            label = label + '&nbsp;&nbsp;';
+                            label = label + '<a href="' + "{% url 'approval_history' pk=123 %}".replace(/123/, row.id) + '" class="btn btn-info btn-circle btn-sm"><i class="fas fa-clipboard-list"></i></a>';
+                            label = label + '&nbsp;&nbsp;';
+                            label = label + '<a href="#" data-toggle="modal" data-target="#approveModal" class="btn btn-success btn-circle btn-sm" onclick="sendApprove(' + row.id + ')"><i class="fas fa-check"></i></a>';
+                            label = label + '&nbsp;&nbsp;';
+                            label = label + '<a href="#" data-toggle="modal" data-target="#rejectModal" class="btn btn-danger btn-circle btn-sm" onclick="sendReject(' + row.id + ')"><i class="fas fa-times"></i></a>';
+                            return label;
+                        }
+                    },
+                    { 
+                        visible: false, 
+                        targets: [2,3,4]
+                    },
+                    {
+                        width: 50,
+                        targets: [1]
+                    },
+                    {
+                        width: 120,
+                        targets: [5,9]
                     }
-              },
-              { "visible": false, 
-              "targets": [ 1,2,3] }
-              ],
-              "lengthMenu": [50, 100, 200, 500],          
+                ],
+                buttons: [
+                    'selectAll',
+                    'selectNone',
+                    {
+                        text: 'Approve',
+                        action: function () {
+                            var count = table.rows( { selected: true } ).count();
+                            var rows = table.rows( { selected: true } ).data();
+
+                            var i;
+                            for (i = 0; i < rows.length; i++) {
+                                var post_url = "{% url 'approve_all' pk=123 %}".replace(/123/, rows[i].id); //get form action url
+                                var request_method = "GET"; //get form GET/POST method
+                                
+                                //if everything's ok, continue with Ajax form submit
+                                
+                                    $.ajax({ //ajax form submit
+                                        url : post_url,
+                                        type: request_method,
+                                        contentType: false,
+                                        cache: false,
+                                        processData:false
+                                    }).done(function(res){ 
+
+                                    });
+                            }
+                            var table_reload = $('#myapproval').DataTable(); 
+                            table_reload.ajax.reload();
+                        }
+                    }
+                ],
+                select: 
+                    {
+                        style: 'multi'
+                    },
+                "lengthMenu": [50, 100, 200, 500],          
             });
           });
       </script>

@@ -211,13 +211,17 @@ def approval_update(request, pk):
 
 @login_required
 def approve(request):
-    approver_item = get_object_or_404(ApprovalItemApprover, user=request.user.id, approval_item=request.POST['hiddenValueApprove'])
+    return redirect(approve_item, request.POST['hiddenValueApprove'])
+
+@login_required
+def approve_item(request, pk):
+    approver_item = get_object_or_404(ApprovalItemApprover, user=request.user.id, approval_item=pk)
     approver_item.status = "A"
     approver_item.approved_date = datetime.datetime.now()
     approver_item.save()
 
-    approvers = ApprovalItemApprover.objects.filter(approval_item=request.POST['hiddenValueApprove']).count()
-    approvers_approve = ApprovalItemApprover.objects.filter(approval_item=request.POST['hiddenValueApprove'], status="A").count()
+    approvers = ApprovalItemApprover.objects.filter(approval_item=pk).count()
+    approvers_approve = ApprovalItemApprover.objects.filter(approval_item=pk, status="A").count()
 
     if approvers == approvers_approve:   
         approval_type = DocumentTypeMaintenance.objects.filter(document_type_code="901")[0]
@@ -225,10 +229,10 @@ def approve(request):
         approval_type.running_number = document_number
         approval_type.save()
 
-        approval_item = get_object_or_404(ApprovalItem, pk=request.POST['hiddenValueApprove'])
+        approval_item = get_object_or_404(ApprovalItem, pk=pk)
         approval_item.approval_code = '{0}-{1:05d}'.format(
-                approval_type.document_type_code, document_number
-                )
+            approval_type.document_type_code, document_number
+            )
         approval_item.status = "A"
         approval_item.approved_date = datetime.datetime.now()
         approval_item.save()
@@ -253,12 +257,12 @@ def approve(request):
         elif document_type.document_type_code == "501":
             staff = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
             status = StatusMaintenance.objects.filter(document_type=document_type, status_code='400')[0]
-            staff.status = status  
+            staff.status = status
             staff.save()
         elif document_type.document_type_code == "504":
             staff_ot = get_object_or_404(StaffOT, pk=approval_item.document_pk)
             status = StatusMaintenance.objects.filter(document_type=document_type, status_code='400')[0]
-            staff_ot.status = status          
+            staff_ot.status = status
             staff_ot.save()
         elif document_type.document_type_code == "403":
             reimbursement_request = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
@@ -266,7 +270,7 @@ def approve(request):
             reimbursement_request.status = status
             reimbursement_request.save()
     else:
-        next_approver = get_object_or_404(ApprovalItemApprover, stage=approver_item.stage + 1, approval_item=request.POST['hiddenValueApprove'])
+        next_approver = get_object_or_404(ApprovalItemApprover, stage=approver_item.stage + 1, approval_item=pk)
         next_approver.status = "P"
         next_approver.save()
 

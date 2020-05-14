@@ -18,6 +18,7 @@ urlpatterns = [
     path('approver/delete/', views.approver_delete, name='approver_delete'),
     path('cc/create/<int:pk>/', views.cc_create, name='cc_create'),    
     path('cc/delete/', views.cc_delete, name='cc_delete'),
-    path('approve/', views.approve, name='approve'),
+    path('approve/', views.approve, name='approve'),    
+    path('approve_all/<int:pk>', views.approve_item, name='approve_all'),
     path('reject/', views.reject, name='reject'),
 ]

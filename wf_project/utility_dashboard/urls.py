@@ -23,6 +23,9 @@ urlpatterns = [
     path('approve/', views.approve, name='utility_approve'),
     path('reject/', views.reject, name='utility_reject'),
     path('count/<int:pk>', views.utility_bill_count, name='utility_bill_count'),
+    path('reject_document/<int:pk>&<str:reason>/', views.reject_document, name='reject_document'),
     path('approve_all/<int:pk>', views.approve_all, name='utility_approve_all'),
     path('reject_all/<int:pk>', views.reject_all, name='utility_reject_all'),
+    path('approve_in_document/', views.approve_in_document, name='utility_approve_in_document'),
+    path('reject_in_document/', views.reject_in_document, name='utility_reject_in_document'),
 ]

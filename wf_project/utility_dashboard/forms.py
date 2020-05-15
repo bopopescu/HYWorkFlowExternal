@@ -57,8 +57,8 @@ class UtilityCCForm(forms.ModelForm):
         self.fields['user'].queryset = User.objects.all().order_by('username')
 
 class UtilityRejectForm(forms.ModelForm):
-    reason = forms.CharField(widget=forms.Textarea())
-    hiddenValueReject = forms.IntegerField()
+    utility_reason = forms.CharField(widget=forms.Textarea(),label="Reason")
+    hiddenValueReject = forms.IntegerField(required=False)
 
     class Meta:
         model = UtilityApprovalItemApprover

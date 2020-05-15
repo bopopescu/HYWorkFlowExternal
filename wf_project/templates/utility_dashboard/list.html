@@ -46,7 +46,7 @@
                   "render": function ( data, type, row ) {
                         var label = '';
                         
-                        label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/" target="_blank" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
+                        label = label + '<a href="/'+ row.attachment_path.toLowerCase()  + row.document_pk + '/?from=utilityapproval&utilityaccount={{utility_account.pk}}" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
                         label = label + '&nbsp;&nbsp;';
                         label = label + '<a href="' + "{% url 'utility_approval_history' pk=123 %}".replace(/123/, row.id).replace(/456/,"{{utility_account.pk}}") + '" class="btn btn-info btn-circle btn-sm"><i class="fas fa-clipboard-list"></i></a>';
                         label = label + '&nbsp;&nbsp;';
@@ -203,10 +203,10 @@ $("#approveItem").submit(function(e){
                 <div class="form-group">
                   <div class="form-row">
                       <div class="col col-md-3">
-                          {{form_reject.reason.label_tag}}
+                          {{form_reject.utility_reason.label_tag}}
                       </div>
                       <div class="col col-md-8">
-                          {% render_field form_reject.reason|attr:"rows:5"|attr:"cols:1" class="col-md-12 form-control form-control-use" %}
+                          {% render_field form_reject.utility_reason|attr:"rows:5"|attr:"cols:1" class="col-md-12 form-control form-control-use" %}
                       </div>
                   </div>
               </div>

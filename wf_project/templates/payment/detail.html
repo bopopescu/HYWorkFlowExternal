@@ -88,11 +88,18 @@
        });
    });
    </script> 
+
   {% csrf_token %} 
     <div id="navbar">
+      {% if py.transaction_type.is_utility == False %}
       <a href="{{next_link}}" id="skip_button" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm" style="visibility: hidden"><i class="fas fa-forward"></i> Skip</a>  
       <a href="#" id="approve_button" data-toggle="modal" data-target="#approveModal" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm" onclick="sendApprove({{py.approval.id|unlocalize}})" style="visibility: hidden"><i class="fas fa-check"></i> Approve</a>  
-      <a href="#" id="reject_button" data-toggle="modal" data-target="#rejectModal" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm" onclick="sendReject({{py.approval.id|unlocalize}})" style="visibility: hidden"><i class="fas fa-times"></i> Reject</a>  
+      <a href="#" id="reject_button" data-toggle="modal" data-target="#rejectModal" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm" onclick="sendReject({{py.approval.id|unlocalize}})" style="visibility: hidden"><i class="fas fa-times"></i> Reject</a> 
+      {%else%}
+      <a href="{{utility_next_link}}" id="utility_skip_button" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm" style="visibility: hidden"><i class="fas fa-forward"></i> Skip</a>  
+      <a href="#" id="utility_approve_button" data-toggle="modal" data-target="#approveUtilityModal" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm" onclick="sendUtilityApprove({{py.utility_account_approval.id|unlocalize}})" style="visibility: hidden"><i class="fas fa-check"></i> Approve</a>  
+      <a href="#" id="utility_reject_button" data-toggle="modal" data-target="#rejectUtilityModal" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm" onclick="sendUtilityReject({{py.utility_account_approval.id|unlocalize}})" style="visibility: hidden"><i class="fas fa-times"></i> Reject</a> 
+      {% endif %}
       {% if py.status.status_code == 400 or py.status.status_code == 600 %}
       <a href="{% url 'py_print' py.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fa fa-print"></i>Print</a>
       {% endif %}
@@ -112,6 +119,7 @@
     };
 
     var from_value = getUrlParameter('from');
+    var utility_value = getUrlParameter('utilityaccount');
     var back_button = document.getElementById("back_button");
 
     if (from_value == 'approval'){
@@ -121,7 +129,12 @@
       reject_button.style.visibility = "visible";
     } else if (from_value == 'accounts'){
         back_button.href = "{% url 'task_list' %}";
-      } else {
+    } else if (from_value == 'utilityapproval'){
+        back_button.href = "{% url 'utility_approval_list' pk=123 %}".replace(/123/, utility_value);
+        utility_skip_button.style.visibility = "visible";
+        utility_approve_button.style.visibility = "visible";
+        utility_reject_button.style.visibility = "visible";
+    } else {
       back_button.href = "{% url 'pylist' py.transaction_type.pk%}";
     }
 </script>
@@ -284,7 +297,7 @@
                     {% elif py.status.status_code == 300  %}
                     <p class="text-warning"><strong>{{py.status}}</strong></p>
                     {% elif py.status.status_code == 400 or py.status.status_code == 600%}
-                    <p class="text-success"><strong>{{py.status}}</strong></p>
+                    <p class="text-success"><strong>{{py.status}} - Approval Code: {{py.utility_account_approval.approval_code}}</strong></p>
                     {% else %}
                     <p class="text-danger"><strong>{{py.status}}</strong></p>
                     {% endif %}
@@ -641,4 +654,133 @@ $("#approveItem").submit(function(e){
     }
   });
   </script>
+
+  <!-- Utility Approve -->
+  <!-- Approve Modal-->
+<div class="modal fade" id="approveUtilityModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <form action="{% url 'utility_approve_in_document' %}" method="POST" id="approveUtilityItem">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              {% csrf_token %}
+              <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Approve Utilities Document</h5>
+                  <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  Select "Approve" below if you are ready to approve.
+                  <input type="hidden" name="hiddenValueUtilityApprove" id="hiddenValueUtilityApprove" value="" />
+              </div>
+              <div class="modal-footer">
+                  <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                  <button class="btn btn-success" id="approveUtilityButton">Approve</a>
+              </div>
+          </div>
+      </div>
+  </form>
+</div>
+<script type="text/javascript">
+  function sendUtilityApprove(param) {
+      var approveInput = document.getElementById("hiddenValueUtilityApprove");
+      approveInput.value = param;
+  }
+</script>
+<script>
+$("#approveUtilityItem").submit(function(e){
+  e.preventDefault(); //prevent default action 
+proceed = true;
+  
+var post_url = $(this).attr("action"); //get form action url
+var request_method = $(this).attr("method"); //get form GET/POST method
+  var form_data = new FormData(this); //Creates new FormData object    
+
+  $('#approveModal').modal('hide');
+
+//if everything's ok, continue with Ajax form submit
+if(proceed){ 
+  $.ajax({ //ajax form submit
+    url : post_url,
+    type: request_method,
+    data : form_data,
+    dataType : "json",
+    contentType: false,
+    cache: false,
+    processData:false
+  }).done(function(res){ 
+          if (res.message == 'Success'){
+            window.location.href = "{{utility_next_link}}".replace("amp;","");
+          }
+  });
+}
+});
+</script>
+<!-- Reject Modal-->
+<div class="modal fade" id="rejectUtilityModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <form action="{% url 'utility_reject_in_document' %}" method="POST" id="rejectUtilityItem">
+    {% csrf_token %}
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Reject Utilities Document</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+        <div class="modal-body">
+              <div class="form-group">
+                <div class="form-row">
+                    <div class="col col-md-3">
+                        {{utility_form_reject.utility_reason.label_tag}}
+                    </div>
+                    <div class="col col-md-8">
+                        {% render_field utility_form_reject.utility_reason|attr:"rows:5"|attr:"cols:1" class="col-md-12 form-control form-control-use" %}
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" name="hiddenValueUtilityReject" id="hiddenValueUtilityReject" value="" />
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-danger" id="rejectUtilityButton">Reject</a>
+        </div>
+    </div>
+  </form>
+</div>
+</div>
+<script type="text/javascript">
+function sendUtilityReject(param) {
+    var rejectInput = document.getElementById("hiddenValueUtilityReject");
+    rejectInput.value = param;
+}
+</script>
+<script>
+$("#rejectUtilityItem").submit(function(e){
+    e.preventDefault(); //prevent default action 
+  proceed = true;
+    
+  var post_url = $(this).attr("action"); //get form action url
+  var request_method = $(this).attr("method"); //get form GET/POST method
+    var form_data = new FormData(this); //Creates new FormData object    
+
+    $('#rejectUtilityModal').modal('hide');
+  
+  //if everything's ok, continue with Ajax form submit
+  if(proceed){ 
+    $.ajax({ //ajax form submit
+      url : post_url,
+      type: request_method,
+      data : form_data,
+      dataType : "json",
+      contentType: false,
+      cache: false,
+      processData:false
+    }).done(function(res){ 
+            if (res.message == 'Success'){                  
+                window.location.href = "{{utility_next_link}}".replace("amp;","");
+            }
+    });
+  }
+});
+</script>
 {% endblock content %}

@@ -11,6 +11,7 @@ from rest_framework import viewsets
 from payment.models import PaymentRequest
 from django.contrib.auth.models import User, Group
 from django.http import JsonResponse
+import datetime
 
 class ApprovalViewSet(viewsets.ModelViewSet):
     queryset = UtilityApprovalItem.objects.all().order_by('-id')
@@ -20,7 +21,7 @@ class ApprovalViewSet(viewsets.ModelViewSet):
         approvers = UtilityApprovalItemApprover.objects.filter(user=self.request.user, status='P').values_list('utility_approval_item', flat=True)
         utility_group = get_object_or_404(UtiliyGroupMaintenance,pk=self.request.query_params.get('accountpk', None))
         utility_account = UtiliyAccountTypeMaintenance.objects.filter(utility_group=utility_group)
-        return UtilityApprovalItem.objects.filter(id__in=approvers,utility_account__in=utility_account)
+        return UtilityApprovalItem.objects.filter(id__in=approvers,utility_account__in=utility_account).order_by('-id')
 
 class ApproverViewSet(viewsets.ModelViewSet):
     queryset = UtilityApprovalItemApprover.objects.all().order_by('stage')
@@ -191,8 +192,19 @@ def approve(request):
     approvers_approve = UtilityApprovalItemApprover.objects.filter(utility_approval_item=request.POST['hiddenValueApprove'], status="A").count()
 
     if approvers == approvers_approve:
+        approval_type = DocumentTypeMaintenance.objects.filter(document_type_code="901")[0]
+        document_number = approval_type.running_number + 1
+        approval_type.running_number = document_number
+        approval_type.save()
+
+        approval_code = '{0}-{1:05d}'.format(
+            approval_type.document_type_code, document_number
+            )
+        
         utility_approval_item =  get_object_or_404(UtilityApprovalItem, pk=request.POST['hiddenValueApprove'])
         utility_approval_item.status = "A"
+        utility_approval_item.approval_code = approval_code
+        utility_approval_item.approved_date = datetime.datetime.now()
         utility_approval_item.save()
 
         document_type = get_object_or_404(DocumentTypeMaintenance, pk=utility_approval_item.document_type.pk)
@@ -219,8 +231,19 @@ def approve_all(request,pk):
     approvers_approve = UtilityApprovalItemApprover.objects.filter(utility_approval_item=pk, status="A").count()
 
     if approvers == approvers_approve:
+        approval_type = DocumentTypeMaintenance.objects.filter(document_type_code="901")[0]
+        document_number = approval_type.running_number + 1
+        approval_type.running_number = document_number
+        approval_type.save()
+
+        approval_code = '{0}-{1:05d}'.format(
+            approval_type.document_type_code, document_number
+            )
+            
         utility_approval_item =  get_object_or_404(UtilityApprovalItem, pk=pk)
         utility_approval_item.status = "A"
+        utility_approval_item.approval_code = approval_code
+        utility_approval_item.approved_date = datetime.datetime.now()
         utility_approval_item.save()
 
         document_type = get_object_or_404(DocumentTypeMaintenance, pk=utility_approval_item.document_type.pk)
@@ -361,7 +384,7 @@ def reject(request):
     if form.is_valid():
         approver_item = get_object_or_404(UtilityApprovalItemApprover, user=request.user.id, utility_approval_item=form.cleaned_data['hiddenValueReject'])
         approver_item.status = "R"
-        approver_item.reason = form.cleaned_data['reason']
+        approver_item.reason = form.cleaned_data['utility_reason']
         approver_item.save()
 
         approvers = UtilityApprovalItemApprover.objects.filter(utility_approval_item=form.cleaned_data['hiddenValueReject'])
@@ -388,7 +411,7 @@ def reject_all(request,pk):
     
     approver_item = get_object_or_404(UtilityApprovalItemApprover, user=request.user.id, utility_approval_item=pk)
     approver_item.status = "R"
-    # approver_item.reason = form.cleaned_data['reason']
+    #approver_item.reason = form.cleaned_data['reason']
     approver_item.save()
 
     approvers = UtilityApprovalItemApprover.objects.filter(utility_approval_item=pk)
@@ -410,3 +433,45 @@ def reject_all(request,pk):
         payment.save()
 
     return JsonResponse({'message': 'Success'})
+
+@login_required
+def approve_in_document(request):
+    return redirect(approve_all, request.POST['hiddenValueUtilityApprove'])
+
+@login_required
+def reject_in_document(request):
+    form = UtilityRejectForm(request.POST)
+    if form.is_valid():
+        reason = form.cleaned_data['utility_reason']
+        return redirect(reject_document, request.POST['hiddenValueUtilityReject'],reason)
+
+@login_required
+def reject_document(request,pk,reason):
+    form = UtilityRejectForm(request.POST)
+    
+    approver_item = get_object_or_404(UtilityApprovalItemApprover, user=request.user.id, utility_approval_item=pk)
+    approver_item.status = "R"
+    approver_item.reason = reason
+    approver_item.save()
+
+    approvers = UtilityApprovalItemApprover.objects.filter(utility_approval_item=pk)
+    for approver in approvers:
+        approver.status = "R"
+        approver.save()
+
+    utility_approval_item = get_object_or_404(UtilityApprovalItem, pk=pk)
+    utility_approval_item.status = "R"
+    utility_approval_item.save()
+
+    document_type = get_object_or_404(DocumentTypeMaintenance, pk=utility_approval_item.document_type.pk)
+
+    if document_type.document_type_code == "301":
+        payment = get_object_or_404(PaymentRequest, pk=utility_approval_item.document_pk)
+        document_type = DocumentTypeMaintenance.objects.filter(document_type_code="301")[0]
+        status = StatusMaintenance.objects.filter(document_type=document_type, status_code='500')[0]
+        payment.status = status
+        payment.save()
+
+    return JsonResponse({'message': 'Success'})
+
+

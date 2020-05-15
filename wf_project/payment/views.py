@@ -17,6 +17,7 @@ from purchasing.models import PurchaseOrder
 from human_resource.models import StaffRecruitmentRequest
 from staff_overtime.models import StaffOT
 from drawer_reimbursement.models import ReimbursementRequest
+from utility_dashboard.forms import UtilityRejectForm
 from utility_dashboard.models import UtilityApprovalItem, UtilityApprovalItemApprover
 from PDFreport.render import Render
 from .forms import NewPaymentForm, UpdatePaymentForm, DetailPaymentForm, NewPYItemForm, NewPYAttachmentForm
@@ -292,6 +293,8 @@ def py_detail(request, pk):
         approval_items = ApprovalItem.objects.filter(id__in=approvers).order_by('-id')
         found = False
         next_link = reverse('approval_list')
+        utility_account_id ="1"
+        utility_next_link =""
 
         for approval_item in approval_items:
             if approval_item.document_pk == pk:
@@ -318,15 +321,37 @@ def py_detail(request, pk):
                 elif document_type.document_type_code == "403":
                     document = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
                     next_link = reverse('reimbursement_request_detail', args=(approval_item.document_pk, ))
-
+    
         next_link = next_link + '?from=approval'
-    else:
-        next_link = reverse('approval_list')
+    if request.GET.get('from', None) == 'utilityapproval':
+        approvers = UtilityApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('utility_approval_item', flat=True)
+        utility_account_id = int(request.GET.get('utilityaccount', None))
+        approval_items = UtilityApprovalItem.objects.filter(id__in=approvers,utility_account_id=utility_account_id).order_by('-id')
+        found = False
+        utility_next_link = reverse('utility_approval_list', args=(utility_account_id, ))
+        next_link =""
 
+        for approval_item in approval_items:
+            if approval_item.document_pk == pk:
+                found = True
+            elif found:
+                found = False
+                document_type = get_object_or_404(DocumentTypeMaintenance, pk=approval_item.document_type.pk)
+                if document_type.document_type_code == "301":
+                    document = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
+                    utility_next_link = reverse('py_detail', args=(approval_item.document_pk, ))
+
+        utility_next_link = utility_next_link + '?from=utilityapproval&utilityaccount='+request.GET.get('utilityaccount', None)
+        
+    else:
+        next_link =""
+        utility_next_link=""
     py = get_object_or_404(PaymentRequest, pk=pk)
     form = DetailPaymentForm(instance=py)
     form_reject = RejectForm()
-    return render(request, 'payment/detail.html', {'py': py, 'form': form, 'form_reject': form_reject, 'next_link': next_link})
+    utility_form_reject = UtilityRejectForm()
+    
+    return render(request, 'payment/detail.html', {'py': py, 'form': form, 'form_reject': form_reject, 'next_link': next_link,'utility_form_reject':utility_form_reject,'utility_next_link':utility_next_link})
 
 @login_required
 def pylist(request, pk):

@@ -511,18 +511,19 @@ def grn_list(request, pk):
 @login_required
 def grn_init(request, pk):
     po = get_object_or_404(PurchaseOrder, pk=pk)
-    grn = GoodsReceiptNote.objects.create(receive_by=request.user, po=po)
-    return redirect(grn_create, grn.pk)
+    # grn = GoodsReceiptNote.objects.create(receive_by=request.user, po=po)
+    return redirect(grn_create, po.pk)
 
 @login_required
 def grn_create(request, pk):
-    grn = get_object_or_404(GoodsReceiptNote, pk=pk)
-    po = get_object_or_404(PurchaseOrder, pk=grn.po.id)
+    # grn = get_object_or_404(GoodsReceiptNote, pk=pk)
+    po = get_object_or_404(PurchaseOrder, pk=pk)
     po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Good Receipt Note")[0]
     transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Good Receipt Note")[0]
     
     if request.method == 'POST':
-        form = NewGRNForm(request.POST, instance=grn)
+        form = NewGRNForm(request.POST)
+        grn = GoodsReceiptNote.objects.create(receive_by=request.user, po=po)
         grn_type = DocumentTypeMaintenance.objects.filter(document_type_name="Good Receipt Note")[0]
         document_number = grn_type.running_number + 1
         grn_type.running_number = document_number
@@ -535,7 +536,7 @@ def grn_create(request, pk):
 
         return redirect(grn_detail, grn.pk)
     else:
-        formGrn = NewGRNForm(instance=grn)
+        formGrn = NewGRNForm()
     
     form = DetailPOForm(instance=po)
     form.fields['vendor'].initial = po.vendor
@@ -551,7 +552,7 @@ def grn_create(request, pk):
     form.fields['payment_schedule'].initial = po.payment_schedule
     form.fields['vendor_address'].initial = po.vendor_address
 
-    return render(request, 'grn/create.html', {'grn': grn, 'po': po, 'transaction_type': transaction_type, 'form': form, 'formGrn': formGrn})
+    return render(request, 'grn/create.html', {'po': po, 'transaction_type': transaction_type, 'form': form, 'formGrn': formGrn})
 
 @login_required
 def grn_detail(request, pk):
@@ -589,26 +590,32 @@ def pi_list(request, pk):
 @login_required
 def pi_init(request, pk):
     po = get_object_or_404(PurchaseOrder, pk=pk)
-    pi = PurchaseInvoice.objects.create(receive_by=request.user, po=po)
-    return redirect(pi_create, pi.pk)
+    # pi = PurchaseInvoice.objects.create(receive_by=request.user, po=po)
+    return redirect(pi_create, po.pk)
 
 @login_required
 def pi_create(request, pk):
-    pi = get_object_or_404(PurchaseInvoice, pk=pk)
-    po = get_object_or_404(PurchaseOrder, pk=pi.po.id)
+    po = get_object_or_404(PurchaseOrder, pk=pk)
+    # pi = get_object_or_404(PurchaseInvoice, pk=pk)
     po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Invoice")[0]
     transaction_type = TransactiontypeMaintenance.objects.filter(document_type=po_type, transaction_type_name="Purchase Invoice")[0]
     
     if request.method == 'POST':
+        pi_type = DocumentTypeMaintenance.objects.filter(document_type_code="208")[0]
+        document_number = pi_type.running_number + 1
+        pi_type.running_number = document_number
+        pi_type.save()
+
+        pi = PurchaseInvoice.objects.create(receive_by=request.user, po=po)
         form = NewINVForm(request.POST, instance=pi)
         pi.po = po
         pi.receive_by = request.user
-        pi.invoice_number = request.POST['invoice_number']
+        pi.invoice_number = '{0}-{1:05d}'.format(pi_type.document_type_code, document_number)
         pi.save()
 
         return redirect(pi_detail, pi.pk)
     else:
-        formPi = NewINVForm(instance=pi)
+        formPi = NewINVForm()
     
     form = DetailPOForm(instance=po)
     form.fields['vendor'].initial = po.vendor
@@ -624,7 +631,7 @@ def pi_create(request, pk):
     form.fields['payment_schedule'].initial = po.payment_schedule
     form.fields['vendor_address'].initial = po.vendor_address
 
-    return render(request, 'pi/create.html', {'pi': pi, 'po': po, 'transaction_type': transaction_type, 'form': form, 'formPi': formPi})
+    return render(request, 'pi/create.html', { 'po': po, 'transaction_type': transaction_type, 'form': form, 'formPi': formPi})
 
 @login_required
 def pi_send_to_pr(request, pk):

@@ -141,7 +141,7 @@ class DetailGRNForm(forms.ModelForm):
 
 class NewINVForm(forms.ModelForm):    
     invoice_date = forms.DateField(initial=datetime.date.today, widget=forms.DateInput, disabled=True)
-    invoice_number = forms.CharField(required=True)
+    invoice_number = forms.CharField(required=False,disabled=True)
 
     class Meta:
         model = PurchaseInvoice

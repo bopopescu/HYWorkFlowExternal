@@ -17,11 +17,14 @@ from memo.models import Memo
 from purchasing.models import PurchaseOrder
 from payment.models import PaymentRequest
 from human_resource.models import StaffRecruitmentRequest
+from staff_overtime.models import StaffOT
 from django.contrib.auth.models import User
 import datetime
 from django.http import JsonResponse
 from django.utils.datetime_safe import date
 import decimal
+from django.urls import reverse
+
 
 # Create your views here.
 class MyReimbursementRequestViewSet(viewsets.ModelViewSet):
@@ -157,6 +160,7 @@ def reimbursement_request_detail(request, pk):
         approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
         approval_items = ApprovalItem.objects.filter(id__in=approvers).order_by('-id')
         found = False
+        next_link = reverse('approval_list')
 
         for approval_item in approval_items:
             if approval_item.document_pk == pk:

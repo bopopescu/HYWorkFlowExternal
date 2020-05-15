@@ -162,6 +162,7 @@ def staff_detail(request, pk):
         approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
         approval_items = ApprovalItem.objects.filter(id__in=approvers).order_by('-id')
         found = False
+        next_link = reverse('approval_list')
 
         for approval_item in approval_items:
             if approval_item.document_pk == pk:

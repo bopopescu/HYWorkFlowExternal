@@ -158,7 +158,7 @@ def reimbursement_request_send_approval(request,pk):
 def reimbursement_request_detail(request, pk):
     if request.GET.get('from', None) == 'approval':
         approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
-        approval_items = ApprovalItem.objects.filter(id__in=approvers).order_by('-id')
+        approval_items = ApprovalItem.objects.filter(id__in=approvers,status="IP").order_by('id')
         found = False
         next_link = reverse('approval_list')
 

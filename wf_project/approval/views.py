@@ -27,7 +27,7 @@ class ApprovalViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         approvers = ApprovalItemApprover.objects.filter(user=self.request.user, status='P').values_list('approval_item', flat=True)
-        return ApprovalItem.objects.filter(id__in=approvers,status="IP").annotate(row_number=Window(expression=RowNumber(), order_by=F('id').desc())).order_by('-id')
+        return ApprovalItem.objects.filter(id__in=approvers,status="IP").annotate(row_number=Window(expression=RowNumber(), order_by=F('id').asc())).order_by('id')
 
 class ApproverViewSet(viewsets.ModelViewSet):
     queryset = ApprovalItemApprover.objects.all().order_by('stage')

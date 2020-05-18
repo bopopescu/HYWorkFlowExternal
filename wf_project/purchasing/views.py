@@ -156,7 +156,7 @@ def po_list(request, pk):
 def po_detail(request, pk):
     if request.GET.get('from', None) == 'approval':
         approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
-        approval_items = ApprovalItem.objects.filter(id__in=approvers).order_by('-id')
+        approval_items = ApprovalItem.objects.filter(id__in=approvers,status="IP").order_by('id')
         found = False
         next_link = reverse('approval_list')
 
@@ -220,6 +220,24 @@ def po_create(request, pk):
     po = get_object_or_404(PurchaseOrder, pk=pk)
     if request.method == 'POST':
         form = NewPOForm(request.POST, instance=po)
+        discount = 0
+        discount_amount = 0
+        sub_total = 0
+        tax_amount = 0
+        total_amount = 0
+        comparison_vendor_2_amount = 0
+        comparison_vendor_3_amount = 0
+        if form.is_valid():
+            discount = form.cleaned_data['discount']
+            discount_amount = form.cleaned_data['discount_amount']
+            sub_total = form.cleaned_data['sub_total']
+            tax_amount = form.cleaned_data['tax_amount']
+            total_amount = form.cleaned_data['total_amount']
+            comparison_vendor_2_amount = form.cleaned_data['comparison_vendor_2_amount']
+            comparison_vendor_3_amount = form.cleaned_data['comparison_vendor_3_amount']
+        else:
+            print(form.errors)
+
         po_type = DocumentTypeMaintenance.objects.filter(document_type_name="Purchase Order")[0]
         document_number = po_type.running_number + 1
         po_type.running_number = document_number
@@ -237,11 +255,11 @@ def po_create(request, pk):
         po.transaction_type = transaction_type
         po.reference = request.POST['reference']
         po.subject = request.POST['subject']
-        po.discount = request.POST['discount']
-        po.discount_amount = request.POST['discount_amount']
-        po.sub_total = request.POST['sub_total']
-        po.tax_amount = request.POST['tax_amount']
-        po.total_amount = request.POST['total_amount']
+        po.discount = discount
+        po.discount_amount = discount_amount
+        po.sub_total = sub_total
+        po.tax_amount = tax_amount
+        po.total_amount = total_amount
         po.payment_term = get_object_or_404(PaymentTermMaintenance, pk=request.POST['payment_term'])
         po.payment_schedule = request.POST['payment_schedule']
         po.vendor_address = request.POST['vendor_address']
@@ -252,12 +270,12 @@ def po_create(request, pk):
         if request.POST['comparison_vendor_2'] != '':
             po.comparison_vendor_2 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_2'])
         
-        po.comparison_vendor_2_amount = request.POST['comparison_vendor_2_amount']
+        po.comparison_vendor_2_amount = comparison_vendor_2_amount
         
         if request.POST['comparison_vendor_3'] != '':
             po.comparison_vendor_3 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_3'])
         
-        po.comparison_vendor_3_amount = request.POST['comparison_vendor_3_amount']
+        po.comparison_vendor_3_amount = comparison_vendor_3_amount
         po.submit_by = request.user
         po.save()
         
@@ -303,20 +321,40 @@ def po_update(request, pk):
     po = get_object_or_404(PurchaseOrder, pk=pk)
     if request.method == 'POST':
         form = UpdatePOForm(request.POST, instance=po)
+        discount = 0
+        discount_amount = 0
+        sub_total = 0
+        tax_amount = 0
+        total_amount = 0
+        comparison_vendor_2_amount = 0
+        comparison_vendor_3_amount = 0
+        if form.is_valid():
+            discount = form.cleaned_data['discount']
+            discount_amount = form.cleaned_data['discount_amount']
+            sub_total = form.cleaned_data['sub_total']
+            tax_amount = form.cleaned_data['tax_amount']
+            total_amount = form.cleaned_data['total_amount']
+            comparison_vendor_2_amount = form.cleaned_data['comparison_vendor_2_amount']
+            comparison_vendor_3_amount = form.cleaned_data['comparison_vendor_3_amount']
+        else:
+            print(form.errors)
+
+        po_type = DocumentTypeMaintenance.objects.filter(document_type_code="205")[0]
         po.document_number = request.POST['document_number']
         po.company = get_object_or_404(CompanyMaintenance, pk=request.POST['company'])
         po.currency = get_object_or_404(CurrencyMaintenance, pk=request.POST['currency'])
+        po.status = get_object_or_404(StatusMaintenance, document_type=po_type, status_code="100")
         po.vendor = get_object_or_404(VendorMasterData, pk=request.POST['vendor'])
         po.delivery_receiver = get_object_or_404(CompanyMaintenance, pk=request.POST['delivery_receiver'])     
         po.project = get_object_or_404(ProjectMaintenance, pk=request.POST['project'])
         po.transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=request.POST['transaction_type'])
         po.reference = request.POST['reference']
         po.subject = request.POST['subject']
-        po.discount = request.POST['discount']
-        po.discount_amount = request.POST['discount_amount']
-        po.sub_total = request.POST['sub_total']
-        po.tax_amount = request.POST['tax_amount']
-        po.total_amount = request.POST['total_amount']
+        po.discount = discount
+        po.discount_amount = discount_amount
+        po.sub_total = sub_total
+        po.tax_amount = tax_amount
+        po.total_amount = total_amount
         po.payment_term = get_object_or_404(PaymentTermMaintenance, pk=request.POST['payment_term'])
         po.payment_schedule = request.POST['payment_schedule']
         po.vendor_address = request.POST['vendor_address']
@@ -327,12 +365,12 @@ def po_update(request, pk):
         if request.POST['comparison_vendor_2'] != '':
             po.comparison_vendor_2 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_2'])
         
-        po.comparison_vendor_2_amount = request.POST['comparison_vendor_2_amount']
+        po.comparison_vendor_2_amount = comparison_vendor_2_amount
         
         if request.POST['comparison_vendor_3'] != '':
             po.comparison_vendor_3 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_3'])
             
-        po.comparison_vendor_3_amount = request.POST['comparison_vendor_3_amount']
+        po.comparison_vendor_3_amount = comparison_vendor_3_amount
         po.revision = po.revision + 1
         po.submit_by = request.user
         po.save()

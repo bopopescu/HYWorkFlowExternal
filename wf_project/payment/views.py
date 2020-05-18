@@ -290,19 +290,23 @@ def py_delete(request, pk):
 def py_detail(request, pk):
     if request.GET.get('from', None) == 'approval':
         approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
-        approval_items = ApprovalItem.objects.filter(id__in=approvers).order_by('-id')
+        approval_items = ApprovalItem.objects.filter(id__in=approvers,status="IP").order_by('id')
         found = False
         next_link = reverse('approval_list')
         utility_account_id ="1"
         utility_next_link =""
-
+        # n = 0
         for approval_item in approval_items:
+            # n+=1
             if approval_item.document_pk == pk:
                 found = True
+                # print(found)
+                # print(n)
             elif found:
+                # print(n)
                 found = False
                 document_type = get_object_or_404(DocumentTypeMaintenance, pk=approval_item.document_type.pk)
-
+                print(approval_item.document_pk)
                 if document_type.document_type_code == "601":
                     document = get_object_or_404(Memo, pk=approval_item.document_pk)
                     next_link = reverse('memo_detail', args=(approval_item.document_pk, ))
@@ -312,6 +316,7 @@ def py_detail(request, pk):
                 elif document_type.document_type_code == "301":
                     document = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
                     next_link = reverse('py_detail', args=(approval_item.document_pk, ))
+                    print(next_link)
                 elif document_type.document_type_code == "501":
                     document = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
                     next_link = reverse('staff_detail', args=(approval_item.document_pk, ))
@@ -321,12 +326,13 @@ def py_detail(request, pk):
                 elif document_type.document_type_code == "403":
                     document = get_object_or_404(ReimbursementRequest, pk=approval_item.document_pk)
                     next_link = reverse('reimbursement_request_detail', args=(approval_item.document_pk, ))
-    
+
         next_link = next_link + '?from=approval'
-    if request.GET.get('from', None) == 'utilityapproval':
+
+    elif request.GET.get('from', None) == 'utilityapproval':
         approvers = UtilityApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('utility_approval_item', flat=True)
         utility_account_id = int(request.GET.get('utilityaccount', None))
-        approval_items = UtilityApprovalItem.objects.filter(id__in=approvers,utility_account_id=utility_account_id).order_by('-id')
+        approval_items = UtilityApprovalItem.objects.filter(id__in=approvers,utility_account_id=utility_account_id,status="IP").order_by('id')
         found = False
         utility_next_link = reverse('utility_approval_list', args=(utility_account_id, ))
         next_link =""
@@ -342,10 +348,11 @@ def py_detail(request, pk):
                     utility_next_link = reverse('py_detail', args=(approval_item.document_pk, ))
 
         utility_next_link = utility_next_link + '?from=utilityapproval&utilityaccount='+request.GET.get('utilityaccount', None)
-        
+
     else:
-        next_link =""
-        utility_next_link=""
+        next_link = reverse('approval_list')
+        utility_next_link= reverse('account_selection_list')
+
     py = get_object_or_404(PaymentRequest, pk=pk)
     form = DetailPaymentForm(instance=py)
     form_reject = RejectForm()

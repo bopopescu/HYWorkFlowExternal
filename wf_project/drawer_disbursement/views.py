@@ -7,7 +7,7 @@ from administration.models import DrawerMaintenance, EmployeeMaintenance
 from administration.models import DrawerUserMaintenance
 from django.contrib.auth.hashers import check_password
 from administration.models import TransactiontypeMaintenance, DocumentTypeMaintenance
-from administration.models import StatusMaintenance
+from administration.models import StatusMaintenance,CompanyAddressDetail,CompanyContactDetail
 from approval.models import ApprovalItem, ApprovalItemApprover
 from utility_dashboard.models import UtilityApprovalItem, UtilityApprovalItemApprover
 from drawer_reimbursement.models import DrawerReimbursement
@@ -168,7 +168,14 @@ def payment_voucher_print(request, pk):
 
     requester = get_object_or_404(User, pk=py.submit_by.pk)
     approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
+    company_address = CompanyAddressDetail.objects.filter(company=py.company)
+    if company_address.count() > 0:
+        company_address = CompanyAddressDetail.objects.filter(company=py.company)[0]
+    company_contact = CompanyContactDetail.objects.filter(company=py.company)
+    if company_contact.count() > 0:
+        company_contact = CompanyContactDetail.objects.filter(company=py.company)[0]
     # return render(request, 'PR/print.html', {'py': py, 'py_item':py_item})
+    
     params = {
         'py': py, 
         'py_item': py_item, 
@@ -176,6 +183,8 @@ def payment_voucher_print(request, pk):
         'approval_item': approval_item, 
         'requester': requester, 
         'approver_employee': approver_employee, 
+        'company_address': company_address,
+        'company_contact': company_contact,
     }
     
     pdf = Render.render('PV/print.html', params)

@@ -8,7 +8,8 @@ from rest_framework import viewsets
 from administration.models import CurrencyMaintenance, DocumentTypeMaintenance
 from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
-from administration.models import PaymentmodeMaintenance, EmployeeMaintenance, EmployeeDepartmentMaintenance
+from administration.models import PaymentmodeMaintenance, EmployeeMaintenance
+from administration.models import EmployeeDepartmentMaintenance,EmployeeCompanyMaintenance,EmployeeBranchMaintenance,EmployeeProjectMaintenance
 from administration.models import CompanyAddressDetail,CompanyContactDetail
 from approval.forms import RejectForm
 from approval.models import ApprovalItem, ApprovalItemApprover
@@ -43,12 +44,23 @@ class TeamPYViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         employee = get_object_or_404(EmployeeMaintenance, user=self.request.user)
         depts = EmployeeDepartmentMaintenance.objects.filter(employee=employee).values_list('department_id', flat=True)
-        employees_indept = EmployeeDepartmentMaintenance.objects.filter(department_id__in=depts).values_list('employee_id', flat=True)
+        comps = EmployeeCompanyMaintenance.objects.filter(employee=employee).values_list('company_id', flat=True)
+        projects = EmployeeProjectMaintenance.objects.filter(employee=employee).values_list('project_id', flat=True)
+        branchs = EmployeeBranchMaintenance.objects.filter(employee=employee).values_list('branch_id', flat=True)
         
-        employees_as_user = EmployeeMaintenance.objects.filter(id__in=employees_indept).values_list('user_id', flat=True)
+        employees_indept = EmployeeDepartmentMaintenance.objects.filter(department_id__in=depts).values_list('employee_id', flat=True)
+        employees_incomp = EmployeeCompanyMaintenance.objects.filter(company_id__in=comps).values_list('employee_id', flat=True)
+        employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
+        employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
+        
+        employee_id_list = employees_indept.union(employees_incomp,employees_inproject,employees_inbranch)
+
+        #print(employee_id_list)
+
+        employees_as_user = EmployeeMaintenance.objects.filter(id__in=employee_id_list).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)   
         transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=self.request.query_params.get('trans_type', None))
-        return PaymentRequest.objects.filter(submit_by__in=users, transaction_type=transaction_type).order_by('-id')  
+        return PaymentRequest.objects.filter(submit_by__in=users, transaction_type=transaction_type).exclude(document_number__isnull=True).order_by('-id')  
 
 class PYItemViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequestDetail.objects.all()

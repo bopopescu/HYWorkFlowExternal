@@ -185,14 +185,25 @@
                         }, {
                             "targets": 9,
                             "render": function(data, type, row) {  
+                                if(row.utility_account_approval == null){
+                                    var approval_url = "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id);
+                                }else{
+                                    var approval_url = "{% url 'utility_approval_history' pk=123 %}".replace(/123/, row.approval_id);
+                                }  
+
                                 var label = '';                                  
                                 if (row.approval == 'Draft') {
                                     label = '<p class="text-info"><strong>' + row.approval + '</strong></p>';
                                 } else if (row.approval == 'In Progress') {
                                     label = '<p class="text-warning"><strong>' + row.approval + '</strong></p>';
+                                    label = '<a href="' + approval_url + '">' + label + '</a>';
                                 } else if (row.approval == 'Approved') {
                                     label = '<p class="text-success"><strong>' + row.approval + '</strong></p>';
-                                } else {
+                                    label = '<a href="' + approval_url + '">' + label + '</a>';
+                                } else if(row.approval == 'Rejected') {
+                                    label = '<p class="text-danger"><strong>' + row.approval + '</strong></p>';
+                                    label = '<a href="' + approval_url + '">' + label + '</a>';
+                                }else {
                                     label = '<p class="text-danger"><strong>' + row.approval + '</strong></p>';
                                 }
                                 return label;

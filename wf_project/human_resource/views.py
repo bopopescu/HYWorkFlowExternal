@@ -48,7 +48,7 @@ class TeamStaffViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.union(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
         
         employees_as_user = EmployeeMaintenance.objects.filter(id__in=employee_id_list).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
@@ -170,7 +170,7 @@ def staff_delete(request, pk):
 def staff_detail(request, pk):
     if request.GET.get('from', None) == 'approval':
         approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
-        approval_items = ApprovalItem.objects.filter(id__in=approvers,status="IP").order_by('id')
+        
         found = False
         next_link = reverse('approval_list')
 
@@ -311,9 +311,36 @@ def staff_send_approval(request, pk):
     approval_level = WorkflowApprovalRule.objects.filter(transaction_type=transaction_type)[0]
     approval_item = get_object_or_404(ApprovalItem, pk=staff.approval.pk)
     approval_item.approval_level = approval_level
-    
-    if approval_level.ceo_approve == True:
-            approval_item.notification = "CEO will added by default"
+
+    submiter = get_object_or_404(EmployeeMaintenance, user=request.user)
+    supervisor = get_object_or_404(EmployeeMaintenance, id=submiter.reporting_officer_id.id)
+    notification = supervisor.employee_name
+    # if approval_rule_group.count() > 0:
+    if approval_level.ceo_approve_overwrite == True:
+        # print(notification)
+        if supervisor.employee_group.group_name != "Group A":
+            supervisor_employee = get_object_or_404(EmployeeMaintenance, user=request.user)
+            supervisor_of_reporting_manager = get_object_or_404(EmployeeMaintenance, id=supervisor_employee.reporting_officer_id.id)
+            second_approver = supervisor_of_reporting_manager
+            
+            while True:
+                if second_approver.employee_group.group_name == "Group A":
+                    second_approver = second_approver
+                    break
+                else: 
+                    supervisor_employee = get_object_or_404(EmployeeMaintenance, user=request.user)
+                    supervisor_of_reporting_manager = get_object_or_404(EmployeeMaintenance, id=second_approver.reporting_officer_id.id)
+                    second_approver = supervisor_of_reporting_manager
+
+            approval_item.notification = notification + " and " + second_approver.employee_name + " will added by default"
+        else:
+            approval_item.notification = notification +" will added by default"
+            
+    elif approval_level.ceo_approve == True:
+        approval_item.notification = "CEO will added by default"
+    else:
+        approval_item.notification = notification + " will added by default"
+
     approval_item.save()
 
     return redirect('approval_detail', pk=approval_item.pk)

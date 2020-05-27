@@ -134,6 +134,8 @@
         utility_skip_button.style.visibility = "visible";
         utility_approve_button.style.visibility = "visible";
         utility_reject_button.style.visibility = "visible";
+    } else if (from_value == 'disbursed'){
+        back_button.href = "{% url 'disbursement_list' drawerpk=123%}".replace(/123/, getUrlParameter('pk'));
     } else {
       back_button.href = "{% url 'pylist' py.transaction_type.pk%}";
     }

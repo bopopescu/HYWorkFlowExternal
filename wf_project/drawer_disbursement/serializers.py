@@ -32,7 +32,7 @@ class ApprovedPaymentRequest(serializers.ModelSerializer):
     company = serializers.StringRelatedField(many=False)
     project = serializers.StringRelatedField(many=False)
     approval = serializers.StringRelatedField(many=False)
-    submit_by = serializers.StringRelatedField(many=False)
+    submit_by = serializers.SerializerMethodField()
     total_amount = serializers.SerializerMethodField()
 
     class Meta:
@@ -41,3 +41,6 @@ class ApprovedPaymentRequest(serializers.ModelSerializer):
 
     def get_total_amount(self,obj):
         return number_format(obj.total_amount)
+    
+    def get_submit_by(self,obj):
+        return obj.submit_by.first_name + " " + obj.submit_by.last_name

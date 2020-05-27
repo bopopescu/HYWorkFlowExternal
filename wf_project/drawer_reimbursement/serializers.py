@@ -57,7 +57,7 @@ class DrawerSelectionSerializer(serializers.ModelSerializer):
 class ApprovedReimburserdRequest(serializers.ModelSerializer):
     submit_date = serializers.DateField(format='%d/%m/%Y')
     approval = serializers.StringRelatedField(many=False)
-    submit_by = serializers.StringRelatedField(many=False)
+    submit_by = serializers.SerializerMethodField()
     request_amount = serializers.SerializerMethodField()
 
     class Meta:
@@ -66,3 +66,6 @@ class ApprovedReimburserdRequest(serializers.ModelSerializer):
 
     def get_request_amount(self,obj):
         return number_format(obj.request_amount)
+    
+    def get_submit_by(self,obj):
+        return obj.submit_by.first_name + " " + obj.submit_by.last_name

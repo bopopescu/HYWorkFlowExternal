@@ -53,7 +53,7 @@ class TeamPYViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.union(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
 
         #print(employee_id_list)
 
@@ -178,19 +178,49 @@ def py_send_approval(request, pk):
             utility_approval_item.notification = "CEO will added by default"
 
         utility_approval_item.save()
-        print("12345")
         return redirect('utility_approval_detail', pk=utility_approval_item.pk)
     else: 
         if py.transaction_type.transaction_type_name == "Petty Cash":
             approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte=py.total_amount, transaction_type=py.transaction_type)[0]
             approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)       
             approval_item.approval_level = approval_level
-            if approval_level.ceo_approve == True:
+            if approval_level.supervisor_approve:
+                submiter = get_object_or_404(EmployeeMaintenance, user=request.user)
+                supervisor = get_object_or_404(EmployeeMaintenance, id=submiter.reporting_officer_id.id)
+                notification = supervisor.employee_name
+                # if approval_rule_group.count() > 0:
+                print(approval_level.ceo_approve_overwrite)
+                if approval_level.ceo_approve_overwrite == True:
+                    print(notification)
+                    if supervisor.employee_group.group_name != "Group A":
+                        supervisor_employee = get_object_or_404(EmployeeMaintenance, user=request.user)
+                        supervisor_of_reporting_manager = get_object_or_404(EmployeeMaintenance, id=supervisor_employee.reporting_officer_id.id)
+                        second_approver = supervisor_of_reporting_manager
+                        
+                        while True:
+                            if second_approver.employee_group.group_name == "Group A":
+                                second_approver = second_approver
+                                break
+                            else: 
+                                supervisor_employee = get_object_or_404(EmployeeMaintenance, user=request.user)
+                                supervisor_of_reporting_manager = get_object_or_404(EmployeeMaintenance, id=second_approver.reporting_officer_id.id)
+                                second_approver = supervisor_of_reporting_manager
+
+                        approval_item.notification = notification + " and " + second_approver.employee_name + " will added by default"
+                    else:
+                        approval_item.notification = notification +" will be added by default"
+                        
+                elif approval_level.ceo_approve == True:
+                    approval_item.notification = "CEO will added by default"
+                else:
+                    approval_item.notification = notification + " will added by default"
+
+            elif approval_level.ceo_approve == True:
                 approval_item.notification = "CEO will added by default"
+
 
             approval_item.save()
             return redirect('approval_detail', pk=approval_item.pk)
-
         else:
             approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte= py.total_amount)[0]
             approval_item = get_object_or_404(ApprovalItem, pk=py.approval.pk)       
@@ -302,7 +332,7 @@ def py_delete(request, pk):
 def py_detail(request, pk):
     if request.GET.get('from', None) == 'approval':
         approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
-        approval_items = ApprovalItem.objects.filter(id__in=approvers,status="IP").order_by('id')
+        approval_items = ApprovalItem.objects.filter(id__in=approvers,status="IP").order_by('-id')
         found = False
         next_link = reverse('approval_list')
         utility_account_id ="1"
@@ -318,7 +348,7 @@ def py_detail(request, pk):
                 # print(n)
                 found = False
                 document_type = get_object_or_404(DocumentTypeMaintenance, pk=approval_item.document_type.pk)
-                print(approval_item.document_pk)
+                # print(approval_item.document_pk)
                 if document_type.document_type_code == "601":
                     document = get_object_or_404(Memo, pk=approval_item.document_pk)
                     next_link = reverse('memo_detail', args=(approval_item.document_pk, ))
@@ -328,7 +358,7 @@ def py_detail(request, pk):
                 elif document_type.document_type_code == "301":
                     document = get_object_or_404(PaymentRequest, pk=approval_item.document_pk)
                     next_link = reverse('py_detail', args=(approval_item.document_pk, ))
-                    print(next_link)
+                    # print(next_link)
                 elif document_type.document_type_code == "501":
                     document = get_object_or_404(StaffRecruitmentRequest, pk=approval_item.document_pk)
                     next_link = reverse('staff_detail', args=(approval_item.document_pk, ))
@@ -344,7 +374,7 @@ def py_detail(request, pk):
     elif request.GET.get('from', None) == 'utilityapproval':
         approvers = UtilityApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('utility_approval_item', flat=True)
         utility_account_id = int(request.GET.get('utilityaccount', None))
-        approval_items = UtilityApprovalItem.objects.filter(id__in=approvers,utility_account_id=utility_account_id,status="IP").order_by('id')
+        approval_items = UtilityApprovalItem.objects.filter(id__in=approvers,utility_account_id=utility_account_id,status="IP").order_by('-id')
         found = False
         utility_next_link = reverse('utility_approval_list', args=(utility_account_id, ))
         next_link =""
@@ -514,12 +544,23 @@ def py_print(request, pk):
 
     requester = get_object_or_404(User, pk=py.submit_by.pk)
     approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
-    company_address = CompanyAddressDetail.objects.filter(company=py.company)
+
+    company_address = CompanyAddressDetail.objects.filter(company=py.company,default=True)
     if company_address.count() > 0:
-        company_address = CompanyAddressDetail.objects.filter(company=py.company)[0]
-    company_contact = CompanyContactDetail.objects.filter(company=py.company)
+        company_address = company_address[0]
+    else:
+        company_address = CompanyAddressDetail.objects.filter(company=py.company)
+        if company_address.count() > 0:
+            company_address = company_address[0]
+
+    company_contact = CompanyContactDetail.objects.filter(company=py.company,default=True)
     if company_contact.count() > 0:
-        company_contact = CompanyContactDetail.objects.filter(company=py.company)[0]
+        company_contact = company_contact[0]
+    else:
+        company_contact = CompanyContactDetail.objects.filter(company=py.company)
+        if company_contact.count() > 0:
+            company_contact = company_contact[0]
+
     # return render(request, 'PR/print.html', {'py': py, 'py_item':py_item})
     params = {
         'py': py, 

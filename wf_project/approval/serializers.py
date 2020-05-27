@@ -16,10 +16,10 @@ class ApprovalApproverSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(many=False)
     user_name = serializers.SerializerMethodField()
     user_group = serializers.SerializerMethodField()
-
+    approved_date = serializers.SerializerMethodField()
     class Meta:
         model = ApprovalItemApprover
-        fields = ['id', 'stage', 'user', 'user_name', 'user_group', 'status', 'reason']
+        fields = ['id', 'stage', 'user', 'user_name', 'user_group', 'status', 'reason','approved_date']
 
     def get_user_name(self, obj):
         return obj.user.first_name + ' ' + obj.user.last_name
@@ -28,6 +28,12 @@ class ApprovalApproverSerializer(serializers.ModelSerializer):
         employee = get_object_or_404(EmployeeMaintenance, user=obj.user)
         employee_group = get_object_or_404(EmployeeGroupMaintenance, pk=employee.employee_group.pk)
         return employee_group.group_name
+    
+    def get_approved_date(self,obj):
+        if obj.approved_date == None:
+            return ""
+        else:
+            return obj.approved_date
 
 class ApprovalCCSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(many=False)

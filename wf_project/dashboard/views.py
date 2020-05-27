@@ -8,6 +8,7 @@ from administration.models import DrawerUserMaintenance,DocumentTypeMaintenance,
 from approval.models import ApprovalItem
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.utils.formats import number_format
 import decimal
 
 @login_required
@@ -32,7 +33,7 @@ def count_drawer_amount(request,pk):
         total_reimbursed_amount = total_reimbursed_amount + total_reimbursed
 
     total_drawer_amount = total_reimbursed_amount - total_disbursed_amount
-
+    total_drawer_amount = number_format(total_drawer_amount)
     return JsonResponse({'total_drawer_amount': total_drawer_amount})
 
 @login_required

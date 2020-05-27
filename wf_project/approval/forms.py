@@ -6,6 +6,8 @@ from administration.models import TransactiontypeMaintenance
 from administration.models import WorkflowApprovalRule
 from administration.models import EmployeeMaintenance, EmployeePositionMaintenance
 from django.contrib.auth.models import User, Group
+import django.http.request as request
+from django.db.models import Q
 
 class ApprovalForm(forms.ModelForm):
     document_type = forms.ModelChoiceField(queryset=DocumentTypeMaintenance.objects.all(), label="Doc. Type", empty_label="Not Assigned", initial=ApprovalItem.document_type)
@@ -44,6 +46,27 @@ class ApproverGroupBForm(forms.ModelForm):
         super(ApproverGroupBForm, self).__init__(*args, **kwargs)
         groups = Group.objects.filter(name='Group B').values_list('id', flat=True)
         self.fields['user'].queryset = User.objects.filter(groups__in=groups).order_by('username')
+
+
+class ApproverAandBModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        employee = EmployeeMaintenance.objects.filter(user_id=obj.id)
+        if employee.count() > 0 :
+            return "{}: {} {} - {}".format(obj.username, obj.first_name, obj.last_name,employee[0].employee_group)        
+        else:
+            return "{}: {} {}".format(obj.username, obj.first_name, obj.last_name)
+
+class ApproverGroupAAndBForm(forms.ModelForm):
+    supervisor_user = ApproverAandBModelChoiceField(queryset=User.objects.all(), empty_label="Not Assigned", initial=ApprovalItem.document_type)
+
+    class Meta:
+        model = ApprovalItemApprover
+        fields = []
+    
+    def __init__(self,user ,*args, **kwargs):
+        super(ApproverGroupAAndBForm, self).__init__(*args, **kwargs)
+        groups = Group.objects.filter(Q(name='Group B') | Q(name='Group A')).values_list('id', flat=True)
+        self.fields['supervisor_user'].queryset = User.objects.filter(groups__in=groups).exclude(id=user.id).order_by('username')
 
 class CCForm(forms.ModelForm):
     user = ApproverModelChoiceField(queryset=User.objects.all(), empty_label="Not Assigned", initial=ApprovalItem.document_type)

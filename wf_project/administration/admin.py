@@ -204,7 +204,7 @@ admin.site.register(DocumentTypeMaintenance, DocumentTypeMaintenanceScreen)
 class CompanyContactInline(admin.StackedInline):
     model = CompanyContactDetail
     fieldsets = [
-        (None, {'fields': [('personal_title', 'contact_person'), ('tel_no1', 'tel_no2'), ('mobile', 'email'), ('fax', 'ic_or_passport_no'), ('position', 'dob')]}), 
+        (None, {'fields': ['default',('personal_title', 'contact_person'), ('tel_no1', 'tel_no2'), ('mobile', 'email'), ('fax', 'ic_or_passport_no'), ('position', 'dob')]}), 
     ]
     exclude = ['created_by', 'modified_by']
     extra = 0
@@ -220,7 +220,7 @@ class CompanyContactInline(admin.StackedInline):
 class CompanyAddressInline(admin.StackedInline):
     model = CompanyAddressDetail
     fieldsets = [
-        (None, {'fields': ['address_name', 'address1', 'address2', 'address3', 'address4', ('address_zip', 'state', 'country')]}), 
+        (None, {'fields': ['default','address_name', 'address1', 'address2', 'address3', 'address4', ('address_zip', 'state') ,'country']}), 
     ]
     exclude = ['created_by', 'modified_by']
     extra = 0
@@ -573,7 +573,7 @@ admin.site.register(VendorGroupMaintenance, VendorGroupMaintenanceScreen)
 class VendorContactInline(admin.StackedInline):
     model = VendorContactDetail
     fieldsets = [
-        (None, {'fields': [('personal_title', 'contact_person'), ('tel_no1', 'tel_no2'), ('mobile', 'email'), ('fax', 'ic_or_passport_no'), ('position', 'dob')]}), 
+        (None, {'fields': ['default',('personal_title', 'contact_person'), ('tel_no1', 'tel_no2'), ('mobile', 'email'), ('fax', 'ic_or_passport_no'), ('position', 'dob')]}), 
     ]
     exclude = ['created_by', 'modified_by']
     extra = 0
@@ -589,7 +589,7 @@ class VendorContactInline(admin.StackedInline):
 class VendorAddressInline(admin.StackedInline):
     model = VendorAddressDetail
     fieldsets = [
-        (None, {'fields': ['address_name', 'address1', 'address2', 'address3', 'address4', ('address_zip', 'state', 'country')]}), 
+        (None, {'fields': ['default','address_name', 'address1', 'address2', 'address3', 'address4', ('address_zip', 'state') , 'country']}), 
     ]
     exclude = ['created_by', 'modified_by']
     extra = 0

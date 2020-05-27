@@ -28,7 +28,6 @@ from django.urls import reverse
 
 # Create your views here.
 class MyReimbursementRequestViewSet(viewsets.ModelViewSet):
-
     serializer_class = ReimbursementRequestSerializer
     
     def get_queryset(self):
@@ -158,7 +157,7 @@ def reimbursement_request_send_approval(request,pk):
 def reimbursement_request_detail(request, pk):
     if request.GET.get('from', None) == 'approval':
         approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
-        approval_items = ApprovalItem.objects.filter(id__in=approvers,status="IP").order_by('id')
+        approval_items = ApprovalItem.objects.filter(id__in=approvers,status="IP").order_by('-id')
         found = False
         next_link = reverse('approval_list')
 
@@ -240,6 +239,7 @@ def drawer_reimbursement_reimbursed(request,pk,drawerpk):
     reimbursed_request = ReimbursementRequest.objects.get(pk=pk)
 
     reimbursed_request.status = document_status_closed
+    reimbursed_request.save()
 
     document_type_reimbursed = DocumentTypeMaintenance.objects.get(document_type_code='401')
     document_status_reimbursed = StatusMaintenance.objects.get(document_type=document_type_reimbursed,status_code='700')
@@ -262,6 +262,7 @@ def drawer_reimbursement_cancel(request,pk,drawerpk):
     reimbursed_request = ReimbursementRequest.objects.get(pk=pk)
 
     reimbursed_request.status = document_status_closed
+    reimbursed_request.save()
 
     document_type_reimbursed = DocumentTypeMaintenance.objects.get(document_type_code='401')
     document_status_cancel = StatusMaintenance.objects.get(document_type=document_type_reimbursed,status_code='999')

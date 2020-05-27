@@ -15,6 +15,7 @@
       </label>
       <input type="month" name="filtermonth" class="col-md-5 form-control form-control-user" id="id_filtermonth"><button class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm" onclick="reload()">refresh</button>
       <br>
+      <br>
       <h1 class="h3 mb-0 text-gray-800"> Disbursement</h1>
       <div class="tab-content" id="nav-tabContent">
           <br/>
@@ -32,7 +33,7 @@
                 </thead>
               </table>  
               <script>
-                var disbursed_url = "{%url 'auditdisburseddata-list'%}?format=datatables&pk={{drawer.pk}}&month="+$("input[name='filtermonth']").val()+"";
+                var disbursed_url = "{%url 'auditdisburseddata-list'%}?format=datatables&pk={{drawer.pk}}&month=";
 
                   $(document).ready(function() {
                     var mytable = $('#disbursed').DataTable({
@@ -64,12 +65,13 @@
 
                 function reload(){
                     disbursed_url = "{%url 'auditdisburseddata-list'%}?format=datatables&pk={{drawer.pk}}&month="+$("input[name='filtermonth']").val()+"";
-
+                    
                     var table1 = $('#disbursed').DataTable(); 
+                    table1.ajax.url(disbursed_url).load();
                     table1.ajax.reload();
                     var table2 = $('#reimbursed').DataTable(); 
+                    table2.ajax.url("{%url 'auditreimburseddata-list' %}?format=datatables&pk={{drawer.pk}}&month="+$("input[name='filtermonth']").val()).load();
                     table2.ajax.reload();
-                    alert(disbursed_url) 
               }
             </script> 
               
@@ -79,6 +81,7 @@
     <h1 class="h3 mb-0 text-gray-800"> Reimburse</h1>
     <div class="tab-content" id="nav-tabContent">
         <br/>
+        <br>
         <div class="table-responsive">
           <table id="reimbursed" class="table table-striped table-bordered" style="width:100%">
             <thead>

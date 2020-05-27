@@ -63,7 +63,7 @@ class TeamMemoViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.union(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
 
         employees_as_user = EmployeeMaintenance.objects.filter(
             id__in=employee_id_list
@@ -116,13 +116,8 @@ def memo_create(request, pk_value):
             memo.subject = form.cleaned_data['subject']
             memo.save()
 
-            transaction_type = TransactiontypeMaintenance.objects.filter(
-                document_type=memo_type
-                ).order_by('transaction_type_name')[0]
-            approval_level = get_object_or_404(
-                WorkflowApprovalRule, document_amount_range=0,
-                document_amount_range2=0, supervisor_approve=False
-                )
+            transaction_type = TransactiontypeMaintenance.objects.filter(document_type=memo_type).order_by('transaction_type_name')[0]
+            approval_level = get_object_or_404(WorkflowApprovalRule, document_amount_range=0,document_amount_range2=0, supervisor_approve=False)
 
             approval_item = ApprovalItem()
             approval_item.document_number = memo.document_number
@@ -185,7 +180,7 @@ def memo_detail(request, pk_value):
 
     if request.GET.get('from', None) == 'approval':
         approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
-        approval_items = ApprovalItem.objects.filter(id__in=approvers,status="IP").order_by('id')
+        approval_items = ApprovalItem.objects.filter(id__in=approvers,status="IP").order_by('-id')
         found = False
         next_link = reverse('approval_list')
         
@@ -281,6 +276,7 @@ def memo_print(request, pk):
     requester = get_object_or_404(User, pk=memo.submit_by.pk)
     approver = ApprovalItemApprover.objects.filter(approval_item=approval_item).order_by('-stage')[0]
     approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
+    
     params = {
         'memo': memo,
         'approval_item': approval_item,

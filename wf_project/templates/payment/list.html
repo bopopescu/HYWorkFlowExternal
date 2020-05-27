@@ -70,12 +70,12 @@
                     //                 return label;
                     //             }
                     //         }, 
-                            {
+                        {
                         "targets": 8,
                         "render": function(data, type, row) {  
                             var label = '';
                             if(row.utility_account_approval == null){
-                                var approval_url = "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id);
+                                var approval_url = "{% url 'approval_history' pk=123 %}?from=py&pk={{trans_type.pk|unlocalize}}".replace(/123/, row.approval_id);
                             }else{
                                 var approval_url = "{% url 'utility_approval_history' pk=123 %}".replace(/123/, row.approval_id);
                             }                                  
@@ -97,7 +97,7 @@
 
                             return label;
                             }
-                            }, {
+                        }, {
                         "targets": -1,
                         "data": null,
                         "render": function(data, type, row) {
@@ -120,19 +120,19 @@
                         "visible": false,
                         "targets": [1, 2]
                     },{
-                                "render": function(data, type, row) {
-                                    label = '';
-                                    if (row.document_number == null)
-                                    {
-                                        label = '<p class="text-success"><strong>New Instance</strong></p>'
-                                    }
-                                    else
-                                    {
-                                        label = row.document_number + ' (' + row.revision + ')';
-                                    }
-                                    return label;
-                                },
-                                "targets": 3
+                            "render": function(data, type, row) {
+                                label = '';
+                                if (row.document_number == null)
+                                {
+                                    label = '<p class="text-success"><strong>New Instance</strong></p>'
+                                }
+                                else
+                                {
+                                    label = row.document_number + ' (' + row.revision + ')';
+                                }
+                                return label;
+                            },
+                            "targets": 3
                             }],
                     "lengthMenu": [50, 100, 200, 500],
                 });
@@ -186,7 +186,7 @@
                             "targets": 9,
                             "render": function(data, type, row) {  
                                 if(row.utility_account_approval == null){
-                                    var approval_url = "{% url 'approval_history' pk=123 %}".replace(/123/, row.approval_id);
+                                    var approval_url = "{% url 'approval_history' pk=123 %}?from=py&pk={{trans_type.pk|unlocalize}}".replace(/123/, row.approval_id);
                                 }else{
                                     var approval_url = "{% url 'utility_approval_history' pk=123 %}".replace(/123/, row.approval_id);
                                 }  

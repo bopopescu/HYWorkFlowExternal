@@ -29,7 +29,9 @@
         back_button.href = "{% url 'reimbursement_request_list' %}";
     } else if (from_value == 'accounts'){
         back_button.href = "{% url 'task_list' %}";
-    } else {
+    } else if (from_value == 'py'){
+        back_button.href = "{% url 'pylist' pk=123%}".replace(/123/, getUrlParameter('pk'));
+    }else {
       back_button.href = "{% url 'approval_list' %}";
     }
 </script>
@@ -120,6 +122,7 @@
                             <th data-data="stage">Stage</th>
                             <th data-data="user_name">Approver</th>
                             <th data-data="status">Approval Action Status</th>
+                            <th data-data="approved_date">Approved Date</th>
                             <th data-data="reason">Reason</th>
                         </tr>
                     </thead>

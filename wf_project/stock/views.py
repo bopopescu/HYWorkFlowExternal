@@ -18,7 +18,7 @@ from .serializers import StockIssuingSerializer, StockIssuingDetailSerializer, S
 from .serializers import StockReturnSerializer, StockReturnDetailSerializer, StockReturnAttachmentSerializer
 from administration.models import EmployeeDepartmentMaintenance,EmployeeCompanyMaintenance,EmployeeBranchMaintenance,EmployeeProjectMaintenance
 from administration.models import DocumentTypeMaintenance
-from administration.models import TransactiontypeMaintenance,CompanyMaintenance,CompanyAddressDetail
+from administration.models import TransactiontypeMaintenance,CompanyMaintenance,CompanyAddressDetail,CompanyContactDetail
 from administration.models import WorkflowApprovalRule,StatusMaintenance,LocationMaintenance
 from administration.models import EmployeeMaintenance, EmployeeDepartmentMaintenance
 from django.contrib.auth.models import User
@@ -51,7 +51,7 @@ class TeamStockTransferViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.union(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
 
         employees_as_user = EmployeeMaintenance.objects.filter(id__in=employee_id_list).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
@@ -102,7 +102,7 @@ class TeamStockAdjustmentViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.union(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
 
         employees_as_user = EmployeeMaintenance.objects.filter(id__in=employee_id_list).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
@@ -153,7 +153,7 @@ class TeamStockIssuingViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.union(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
 
         employees_as_user = EmployeeMaintenance.objects.filter(id__in=employee_id_list).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
@@ -204,7 +204,7 @@ class TeamStockReturnViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.union(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
 
         employees_as_user = EmployeeMaintenance.objects.filter(id__in=employee_id_list).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
@@ -708,7 +708,13 @@ def stock_issuing_attachment_delete(request, pk):
 @login_required
 def load_delivery_address(request):
     delivery = get_object_or_404(CompanyMaintenance, pk=request.GET.get('delivery_receiver'))
-    address = CompanyAddressDetail.objects.filter(company=delivery)[0]
+    address = CompanyAddressDetail.objects.filter(company=delivery,default=True)
+    if address.count() > 0:
+        address = address[0]
+    else:
+        address = CompanyAddressDetail.objects.filter(company=delivery)
+        if address.count() > 0:
+            address = address[0]
     return render(request, 'stock/stock_issuing/delivery_address_field.html', {'address': address})
 
 #Stock Return
@@ -867,7 +873,8 @@ def stock_return_attachment_delete(request, pk):
 def stock_balance(request):
     if request.method == 'POST':
         hiddenvalue = request.POST['hiddenValue']
-        print(hiddenvalue)
+        company = CompanyMaintenance.objects.filter(short_name="HY")[0]
+        # print(hiddenvalue)
         if hiddenvalue == "item":
             form = StockBalanceReport(request.POST)
         else:
@@ -889,12 +896,30 @@ def stock_balance(request):
                     for loc in location_select:
                         location_current_balance_list.append(count_stock_balance(itm.id,loc.id,date))
 
+                company_address = CompanyAddressDetail.objects.filter(company=company,default=True)
+                if company_address.count() > 0:
+                    company_address = company_address[0]
+                else:
+                    company_address = CompanyAddressDetail.objects.filter(company=company)
+                    if company_address.count() > 0:
+                        company_address = company_address[0]
+
+                company_contact = CompanyContactDetail.objects.filter(company=company,default=True)
+                if company_contact.count() > 0:
+                    company_contact = company_contact[0]
+                else:
+                    company_contact = CompanyContactDetail.objects.filter(company=company)
+                    if company_contact.count() > 0:
+                        company_contact = company_contact[0]
+
 
                 params = {
                     'items': item_select,
                     'locations': location_select,
                     'location_current_balance':location_current_balance_list,
                     'date':date,
+                    'company_address': company_address,
+                    'company_contact': company_contact,
                 }
 
                 pdf = Render.render('stock/print.html',params)
@@ -930,12 +955,30 @@ def stock_balance(request):
                         location_current_balance_list.append(location_current_balance)
                         location_item.append(item)
 
+                company_address = CompanyAddressDetail.objects.filter(company=company,default=True)
+                if company_address.count() > 0:
+                    company_address = company_address[0]
+                else:
+                    company_address = CompanyAddressDetail.objects.filter(company=company)
+                    if company_address.count() > 0:
+                        company_address = company_address[0]
+
+                company_contact = CompanyContactDetail.objects.filter(company=company,default=True)
+                if company_contact.count() > 0:
+                    company_contact = company_contact[0]
+                else:
+                    company_contact = CompanyContactDetail.objects.filter(company=company)
+                    if company_contact.count() > 0:
+                        company_contact = company_contact[0]
+
 
                 params = {
                     'locations': location_select,
                     'items':location_item,
                     'location_current_balance':location_current_balance_list,
                     'date':date,
+                    'company_address': company_address,
+                    'company_contact': company_contact,
                 }
 
                 pdf = Render.render('LocationStock/print.html',params)

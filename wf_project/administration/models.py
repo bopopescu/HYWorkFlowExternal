@@ -48,6 +48,7 @@ class CompanyContactDetail(models.Model):
     ic_or_passport_no = models.CharField(max_length=50,verbose_name="IC/Passport No.",null=True,blank=True)
     dob = models.DateField(null=True,blank=True,verbose_name="D.O.B")
     position = models.CharField(max_length=150,verbose_name="Position",null=True,blank=True)
+    default = models.BooleanField()
 
     def __str__(self):
         return "%s %s" % (self.personal_title,self.contact_person) 
@@ -62,6 +63,7 @@ class CompanyAddressDetail(models.Model):
     address_zip = models.IntegerField(verbose_name="Zip")
     state = models.ForeignKey('StateMaintenance',verbose_name="State",on_delete=models.CASCADE)
     country = models.ForeignKey('CountryMaintenance',verbose_name="Country",on_delete=models.CASCADE)
+    default = models.BooleanField()
 
     def __str__(self):
         return "%s" % (self.address_name) 
@@ -565,6 +567,7 @@ class VendorContactDetail(models.Model):
     ic_or_passport_no = models.CharField(max_length=50,verbose_name="IC/Passport No.",null=True,blank=True)
     dob = models.DateField(null=True,blank=True,verbose_name="D.O.B")
     position = models.CharField(max_length=150,verbose_name="Position",null=True,blank=True)
+    default = models.BooleanField()
 
     def __str__(self):
         return "%s %s" % (self.personal_title,self.contact_person) 
@@ -579,6 +582,7 @@ class VendorAddressDetail(models.Model):
     address_zip = models.IntegerField(verbose_name="Zip")
     state = models.ForeignKey('StateMaintenance',verbose_name="State",on_delete=models.CASCADE)
     country = models.ForeignKey('CountryMaintenance',verbose_name="Country",on_delete=models.CASCADE)
+    default = models.BooleanField()
 
     def __str__(self):
         return "%s" % (self.address_name) 

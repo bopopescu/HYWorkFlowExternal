@@ -42,16 +42,23 @@ class DisbursementListViewSet(viewsets.ModelViewSet):
     serializer_class = ApprovedPaymentRequest
 
 class DisbursedViewSet(viewsets.ModelViewSet):
-    document_type = DocumentTypeMaintenance.objects.get(document_type_code='402')
-    document_status_disburse = StatusMaintenance.objects.get(document_type=document_type, status_code='700')
-    queryset = DrawerDisbursement.objects.filter(status=document_status_disburse)
     serializer_class = DrawerDisbursementSerializer
 
+    def get_queryset(self):
+        drawer = get_object_or_404(DrawerMaintenance, pk=self.request.query_params.get('drawerpk', None))
+        document_type = DocumentTypeMaintenance.objects.get(document_type_code='402')
+        document_status_disburse = StatusMaintenance.objects.get(document_type=document_type, status_code='700')
+        return DrawerDisbursement.objects.filter(status=document_status_disburse,drawer=drawer)
+
+
 class CancelledViewSet(viewsets.ModelViewSet):
-    document_type = DocumentTypeMaintenance.objects.get(document_type_code='402')
-    document_status_cancel = StatusMaintenance.objects.get(document_type=document_type, status_code='999')
-    queryset = DrawerDisbursement.objects.filter(status=document_status_cancel)
     serializer_class = DrawerDisbursementSerializer
+
+    def get_queryset(self):
+        drawer = get_object_or_404(DrawerMaintenance, pk=self.request.query_params.get('drawerpk', None))
+        document_type = DocumentTypeMaintenance.objects.get(document_type_code='402')
+        document_status_cancel = StatusMaintenance.objects.get(document_type=document_type, status_code='999')
+        return DrawerDisbursement.objects.filter(status=document_status_cancel,drawer=drawer)
 
 @login_required
 def drawer_list(request):
@@ -168,12 +175,22 @@ def payment_voucher_print(request, pk):
 
     requester = get_object_or_404(User, pk=py.submit_by.pk)
     approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
-    company_address = CompanyAddressDetail.objects.filter(company=py.company)
+    
+    company_address = CompanyAddressDetail.objects.filter(company=py.company,default=True)
     if company_address.count() > 0:
-        company_address = CompanyAddressDetail.objects.filter(company=py.company)[0]
-    company_contact = CompanyContactDetail.objects.filter(company=py.company)
+        company_address = company_address[0]
+    else:
+        company_address = CompanyAddressDetail.objects.filter(company=py.company)
+        if company_address.count() > 0:
+            company_address = company_address[0]
+
+    company_contact = CompanyContactDetail.objects.filter(company=py.company,default=True)
     if company_contact.count() > 0:
-        company_contact = CompanyContactDetail.objects.filter(company=py.company)[0]
+        company_contact = company_contact[0]
+    else:
+        company_contact = CompanyContactDetail.objects.filter(company=py.company)
+        if company_contact.count() > 0:
+            company_contact = company_contact[0]
     # return render(request, 'PR/print.html', {'py': py, 'py_item':py_item})
     
     params = {

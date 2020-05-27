@@ -16,6 +16,19 @@
             <a href="#GeneralCard" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="GeneralCard">
                 <h6 class="m-0 font-weight-bold text-primary">Approval Information</h6>
             </a>
+            <script>
+                function getUrlParameter(name) {
+                    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+                    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+                    var results = regex.exec(location.search);
+                    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+                };
+
+                var error_value = getUrlParameter('error');
+                if(error_value == "True"){
+                    alert('Please filled out the approvers')
+                }
+            </script>
             <div class="collapse show" id="GeneralCard">
                 <div class="card-body">
                     <div class="row">
@@ -93,6 +106,9 @@
                     {% for group in approval_rule_group %}
                         <a class="nav-item nav-link {% if first_tab.approval_group.id == group.approval_group.id %} active {% endif %}" id="nav-group{{group.approval_group.id}}-tab" data-toggle="tab" href="#nav-group{{group.approval_group.id}}" role="tab" aria-controls="nav-group{{group.approval_group.id}}" aria-selected="true">{{group.approval_group.approval_group_name}}</a>
                     {% endfor %}
+                    {% if approval_rule.supervisor_approve == True %}
+                        <a class="nav-item nav-link active " id="nav-groupsupervisor-tab" data-toggle="tab" href="#nav-groupsupervisor" role="tab" aria-controls="nav-groupsupervisor" aria-selected="true">Supervisor Group</a>
+                    {% endif %}
                 </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
@@ -300,6 +316,194 @@
                         </script>
                     </div>
                 {% endfor %}
+                {% if approval_rule.supervisor_approve == True %}
+                <div class="tab-pane fade show active" id="nav-groupsupervisor" role="tabpanel" aria-labelledby="nav-groupsupervisor-tab">
+                </br>
+                    <div class="d-sm-flex align-items-right justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800"></h1>
+                        <a href="#" data-toggle="modal" data-target="#addApproverSupervisorModal" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-plus fa-sm text-white-50"></i> Add New</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="approverssupervisor" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th data-data="id"></th>
+                                    <th data-data="stage">Stage</th>
+                                    <th data-data="user">Approver</th>
+                                    <th data-data="user_name">Name</th>
+                                    <th data-data="user_group">Group</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <script>
+                        $(document).ready(function() {
+                            var approversupervisortable = $('#approverssupervisor').DataTable({
+                                "ajax": "{% url 'approversupervisordata-list' %}?format=datatables&pk={{approval_item.pk|unlocalize}}",
+                                "dom": "<'row'<'col-sm-12 small'tr>>",
+                                "columnDefs": [{
+                            "searchable": false,
+                            "orderable": false,
+                            "targets": 0,
+                            "defaultContent": "<i>Not set</i>"
+                        }, {
+                                    "targets": -1,
+                                    "data": null,
+                                    "render": function(data, type, row) {
+                                        return '<a href="#" data-toggle="modal" data-target="#deleteApproverSupervisorModal" class="btn btn-danger btn-circle btn-sm" onclick="sendDeleteApproverSupervisor(' + row.id + ')"><i class="fas fa-trash"></i></a>';
+                                    }
+                                }, {
+                                    "targets": 4,
+                                    "defaultContent": "<i>Not set</i>"
+                                }, {
+                                    "visible": false,
+                                    "targets": [1]
+                                }]
+                            });
+
+                            approversupervisortable.on('order.dt search.dt', function() {
+                                approversupervisortable.column(0, {
+                                    search: 'applied',
+                                    order: 'applied'
+                                }).nodes().each(function(cell, i) {
+                                    cell.innerHTML = i + 1;
+                                });
+                            }).draw();
+                        });
+                    </script>
+                    <!-- Delete Approver Modal-->
+                    <div class="modal fade" id="deleteApproverSupervisorModal" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <form action="{% url 'supervisor_approver_delete' %}" method="POST" id="deleteApproverSupervisor">
+                                <div class="modal-content">
+                                    {% csrf_token %}
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete?</h5>
+                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Select "Delete" below if you are ready to delete.
+                                        <input type="hidden" name="hiddenDeleteGroupId" id="hiddenDeleteGroupId" value="supervisor"/>
+                                        <input type="hidden" name="hiddenValueApproverSupervisor" id="hiddenValueApproveSupervisor" value="" />
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-success" type="button" data-dismiss="modal">Cancel</button>
+                                        <button class="btn btn-danger" id="deleteApproverSupervisorButton">Delete</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                        function sendDeleteApproverSupervisor(param) {
+                            var deleteInput = document.getElementById("hiddenValueApproveSupervisor");
+                            deleteInput.value = param;
+                        }
+                    </script>
+                    <script>
+                        $("#deleteApproverSupervisor").submit(function(e){
+                            e.preventDefault(); //prevent default action 
+                            proceed = true;
+                            $('#deleteApproverSupervisorModal').modal('hide');
+                                
+                            var post_url = $(this).attr("action"); //get form action url
+                            var request_method = $(this).attr("method"); //get form GET/POST method
+                            var form_data = new FormData(this); //Creates new FormData object
+                            
+                            //if everything's ok, continue with Ajax form submit
+                            if(proceed){ 
+                                $.ajax({ //ajax form submit
+                                    url : post_url,
+                                    type: request_method,
+                                    data : form_data,
+                                    dataType : "json",
+                                    contentType: false,
+                                    cache: false,
+                                    processData:false
+                                }).done(function(res){ 
+                                    if (res.message == 'Success'){
+                                        var table = $('#approverssupervisor').DataTable(); 
+                                        table.ajax.reload();
+                                    }          
+                                });
+                            }
+                        });
+                    </script>
+                    <!-- Add ApproverModal-->
+                    <div class="modal fade" id="addApproverSupervisorModal" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <form action="{% url 'supervisor_approver_create' approval_item.pk %}" method="POST" id="addApproverSupervisor">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Add Approver</h5>
+                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <div class="form-row">
+                                                <input type="hidden" name="hiddenGroupId" id="hiddenGroupId" value="supervisor"/>
+                                                <input type="hidden" name="hiddenGroupName" id="hiddenGroupName" value=""/>
+                                                {% if approval_rule.supervisor_approve == True %}
+                                                    <div class="col col-md-3">
+                                                        {{form_approver_a_b.supervisor_user.label_tag}}
+                                                    </div>
+                                                    <div class="col col-md-8">
+                                                        {% render_field form_approver_a_b.supervisor_user class="form-control form-control-use" %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-success" id="addApproverSupervisorButton">Submit</a>
+                                        <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        $("#addApproverSupervisor").submit(function(e){
+                            e.preventDefault(); //prevent default action 
+                            proceed = true;
+                                
+                            var post_url = $(this).attr("action"); //get form action url
+                            var request_method = $(this).attr("method"); //get form GET/POST method
+                            var form_data = new FormData(this); //Creates new FormData object
+                        
+                            $('#addApproverSupervisorModal').modal('hide');
+                            $("#addApproverSupervisor #id_user").prop('selectedIndex',0);
+                            
+                            //if everything's ok, continue with Ajax form submit
+                            if(proceed){ 
+                                $.ajax({ //ajax form submit
+                                    url : post_url,
+                                    type: request_method,
+                                    data : form_data,
+                                    dataType : "json",
+                                    contentType: false,
+                                    cache: false,
+                                    processData:false
+                                }).done(function(res){ 
+                                    if (res.message == 'Success'){
+                                        var table = $('#approverssupervisor').DataTable(); 
+                                        table.ajax.reload();
+                                    } else {
+                                        alert(res.message);
+                                    }
+                                });
+                            }
+                        });
+                    </script>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

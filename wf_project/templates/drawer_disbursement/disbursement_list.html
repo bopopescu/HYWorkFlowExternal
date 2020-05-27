@@ -2,6 +2,7 @@
 
 {% block content %}
 {% load static %}
+{% load l10n %}
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Drawer Disbursement List - {{drawer.drawer_name }}</h1>
@@ -39,7 +40,7 @@
             <script>
                 $(document).ready(function() {
                   var mytable = $('#mystaffs').DataTable({
-                      "ajax": "../../api/disbursementdata/?format=datatables",
+                      "ajax": "{%url 'disbursementdata-list' %}?format=datatables",
                       "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                           "<'row'<'col-sm-12 small'tr>>" +
                           "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -53,7 +54,7 @@
                           "data": null,
                           "render": function(data, type, row) {
                             var label = '';
-                            label = label + '<a href="/payment/'+row.id+'" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
+                            label = label + '<a href="/payment/'+row.id+'?from=disbursed&pk={{drawer.pk|unlocalize}}" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-eye"></i></a>';
                             label = label + '&nbsp;&nbsp;';
                             label = label + '<a href="#" data-toggle="modal" data-target="#approveModal" class="btn btn-success btn-circle btn-sm" onclick="sendApprove(' + row.id + ')"><i class="fas fa-check"></i></a>';
                             label = label + '&nbsp;&nbsp;';
@@ -96,7 +97,7 @@
             <script>
                 $(document).ready(function() {
                   var mytable = $('#disbursed').DataTable({
-                      "ajax": "../../api/disburseddata/?format=datatables",
+                      "ajax": "{%url 'disburseddata-list' %}?format=datatables&drawerpk={{drawer.pk|unlocalize}}",
                       "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                           "<'row'<'col-sm-12 small'tr>>" +
                           "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -151,7 +152,7 @@
                 <script>
                     $(document).ready(function() {
                       var mytable = $('#cancelled').DataTable({
-                          "ajax": "../../api/cancelleddata/?format=datatables",
+                          "ajax": "{%url 'disbursementcancelleddata-list' %}?format=datatables&drawerpk={{drawer.pk|unlocalize}}",
                           "dom": "<'row'<'col-sm-12 col-md-9'l><'col-sm-12 col-md-3'f>>" +
                               "<'row'<'col-sm-12 small'tr>>" +
                               "<'row'<'col-sm-12 col-md-9'p><'col-sm-12 col-md-3'i>>",
@@ -268,7 +269,7 @@
             if(res.valid == false){
               alert(res.message);
               if(res.validbalance == false){
-                  window.location.href = "{% url 'reimbursement_request_init_amount' amount=123 %}".replace(/123/,res.amount);
+                  // window.location.href = "{% url 'reimbursement_request_init_amount' amount=123 %}".replace(/123/,res.amount);
               }
             }else{
               $('#approveModal').modal('hide');

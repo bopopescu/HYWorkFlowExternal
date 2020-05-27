@@ -21,7 +21,7 @@ class ApprovalViewSet(viewsets.ModelViewSet):
         approvers = UtilityApprovalItemApprover.objects.filter(user=self.request.user, status='P').values_list('utility_approval_item', flat=True)
         utility_group = get_object_or_404(UtiliyGroupMaintenance,pk=self.request.query_params.get('accountpk', None))
         utility_account = UtiliyAccountTypeMaintenance.objects.filter(utility_group=utility_group)
-        return UtilityApprovalItem.objects.filter(id__in=approvers,utility_account__in=utility_account,status="IP").order_by('id')
+        return UtilityApprovalItem.objects.filter(id__in=approvers,utility_account__in=utility_account,status="IP").order_by('-id')
 
 class ApproverViewSet(viewsets.ModelViewSet):
     queryset = UtilityApprovalItemApprover.objects.all().order_by('stage')

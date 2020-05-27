@@ -4,6 +4,7 @@ from .models import UtilityApprovalItem, UtilityApprovalItemApprover, UtilityApp
 from administration.models import EmployeeMaintenance, EmployeeGroupMaintenance
 from administration.models import DocumentTypeMaintenance,UtiliyAccountTypeMaintenance,UtiliyGroupMaintenance
 from memo.models import Memo
+from django.utils.formats import number_format
 from django.contrib.auth.models import User
 from payment.models import PaymentRequest
 
@@ -82,4 +83,4 @@ class UtilityApprovalItemSerializer(serializers.ModelSerializer):
         document_type = get_object_or_404(DocumentTypeMaintenance, pk=obj.document_type.pk)
         if document_type.document_type_code == "301":
             py = get_object_or_404(PaymentRequest, pk=obj.document_pk)
-            return py.total_amount
+            return number_format(py.total_amount)

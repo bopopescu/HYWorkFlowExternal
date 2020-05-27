@@ -100,7 +100,7 @@ class TeamPOViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.union(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
 
         employees_as_user = EmployeeMaintenance.objects.filter(id__in=employee_id_list).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)   
@@ -165,7 +165,7 @@ def po_list(request, pk):
 def po_detail(request, pk):
     if request.GET.get('from', None) == 'approval':
         approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
-        approval_items = ApprovalItem.objects.filter(id__in=approvers,status="IP").order_by('id')
+        approval_items = ApprovalItem.objects.filter(id__in=approvers,status="IP").order_by('-id')
         found = False
         next_link = reverse('approval_list')
 
@@ -407,13 +407,27 @@ def po_update(request, pk):
 @login_required
 def load_delivery_address(request):
     delivery = get_object_or_404(CompanyMaintenance, pk=request.GET.get('delivery_receiver'))
-    address = CompanyAddressDetail.objects.filter(company=delivery)[0]
+    # address = CompanyAddressDetail.objects.filter(company=delivery)[0]
+    address = CompanyAddressDetail.objects.filter(company=delivery,default=True)
+    if address.count() > 0:
+        address = address[0]
+    else:
+        address = CompanyAddressDetail.objects.filter(company=delivery)
+        if address.count() > 0:
+            address = address[0]
     return render(request, 'po/delivery_address_field.html', {'address': address})
 
 @login_required
 def load_vendor_address(request):
     vendor = get_object_or_404(VendorMasterData, pk=request.GET.get('vendor'))
-    address = VendorAddressDetail.objects.filter(vendor=vendor)[0]
+    # address = VendorAddressDetail.objects.filter(vendor=vendor)[0]
+    address = VendorAddressDetail.objects.filter(vendor=vendor,default=True)
+    if address.count() > 0:
+        address = address[0]
+    else:
+        address = VendorAddressDetail.objects.filter(vendor=vendor)
+        if address.count() > 0:
+            address = address[0]
     return render(request, 'po/vendor_address_field.html', {'address': address})
 
 @login_required
@@ -776,12 +790,22 @@ def po_print(request, pk):
     approver_employee = get_object_or_404(EmployeeMaintenance, user=approver.user)
     po_details = PurchaseOrderDetail.objects.filter(po=po).order_by("id")
 
-    company_address = CompanyAddressDetail.objects.filter(company=po.company)
+    company_address = CompanyAddressDetail.objects.filter(company=po.company,default=True)
     if company_address.count() > 0:
-        company_address = CompanyAddressDetail.objects.filter(company=po.company)[0]
-    company_contact = CompanyContactDetail.objects.filter(company=po.company)
+        company_address = company_address[0]
+    else:
+        company_address = CompanyAddressDetail.objects.filter(company=po.company)
+        if company_address.count() > 0:
+            company_address = company_address[0]
+
+    company_contact = CompanyContactDetail.objects.filter(company=po.company,default=True)
     if company_contact.count() > 0:
-        company_contact = CompanyContactDetail.objects.filter(company=po.company)[0]
+        company_contact = company_contact[0]
+    else:
+        company_contact = CompanyContactDetail.objects.filter(company=po.company)
+        if company_contact.count() > 0:
+            company_contact = company_contact[0]
+
     params = {
         'po': po,
         'approval_item': approval_item,
@@ -807,12 +831,21 @@ def grn_print(request, pk):
     grn = get_object_or_404(GoodsReceiptNote, pk=pk)
     po = get_object_or_404(PurchaseOrder, pk=grn.po.pk)
     po_details = PurchaseOrderDetail.objects.filter(po=po)
-    company_address = CompanyAddressDetail.objects.filter(company=po.company)
+    company_address = CompanyAddressDetail.objects.filter(company=po.company,default=True)
     if company_address.count() > 0:
-        company_address = CompanyAddressDetail.objects.filter(company=po.company)[0]
-    company_contact = CompanyContactDetail.objects.filter(company=po.company)
+        company_address = company_address[0]
+    else:
+        company_address = CompanyAddressDetail.objects.filter(company=po.company)
+        if company_address.count() > 0:
+            company_address = company_address[0]
+
+    company_contact = CompanyContactDetail.objects.filter(company=po.company,default=True)
     if company_contact.count() > 0:
-        company_contact = CompanyContactDetail.objects.filter(company=po.company)[0]
+        company_contact = company_contact[0]
+    else:
+        company_contact = CompanyContactDetail.objects.filter(company=po.company)
+        if company_contact.count() > 0:
+            company_contact = company_contact[0]
 
     params = {
         'po': po,
@@ -837,12 +870,21 @@ def pi_print(request, pk):
     pi = get_object_or_404(PurchaseInvoice, pk=pk)
     po = get_object_or_404(PurchaseOrder, pk=pi.po.pk)
     po_details = PurchaseOrderDetail.objects.filter(po=po)
-    company_address = CompanyAddressDetail.objects.filter(company=po.company)
+    company_address = CompanyAddressDetail.objects.filter(company=po.company,default=True)
     if company_address.count() > 0:
-        company_address = CompanyAddressDetail.objects.filter(company=po.company)[0]
-    company_contact = CompanyContactDetail.objects.filter(company=po.company)
+        company_address = company_address[0]
+    else:
+        company_address = CompanyAddressDetail.objects.filter(company=po.company)
+        if company_address.count() > 0:
+            company_address = company_address[0]
+
+    company_contact = CompanyContactDetail.objects.filter(company=po.company,default=True)
     if company_contact.count() > 0:
-        company_contact = CompanyContactDetail.objects.filter(company=po.company)[0]
+        company_contact = company_contact[0]
+    else:
+        company_contact = CompanyContactDetail.objects.filter(company=po.company)
+        if company_contact.count() > 0:
+            company_contact = company_contact[0]
         
     params = {
         'po': po,

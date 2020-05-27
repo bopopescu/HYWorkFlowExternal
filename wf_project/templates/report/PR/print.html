@@ -13,6 +13,11 @@
 					<div style="font-size:18px">Payment Request</div>
 					<div>Doc. No.: {{py.document_number}}</div>
 					<div>Date: {{py.submit_date}}</div>
+					{%if py.transaction_type.is_utility == True%}
+					<div>Apv Code: {{py.utility_account_approval.approval_code}}</div>
+					{%else%}
+					<div>Apv Code: {{py.approval.approval_code}}</div>
+					{%endif%}
 				</td>
 			</tr>
 			<tr><td>&nbsp;</td></tr>

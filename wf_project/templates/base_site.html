@@ -29,7 +29,6 @@
 <!-- Core plugin JavaScript-->
 <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
 
-
 <!-- Page level plugins -->
 <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
 
@@ -71,11 +70,23 @@
       padding: 10px;
     }
 
+    /* Add on 29/5/2020 by wong */
+    .dt-button.color {
+        background: #1CC88A;
+        color: #fff;
+        border: #357ebd; /*set the color you want here*/
+    }
+
+    .dt-button.color:hover{
+        background: #1CC88A!important;
+        border: #357ebd; /*set the color you want here*/
+    }
+  /* Add on 29/5/2020 by wong */
+
     /* Add some top padding to the page content to prevent sudden quick movement (as the navigation bar gets a new position at the top of the page (position:fixed and top:0) */
     .sticky + .content {
       padding-top: 60px;
     }
-
   </style>
 </head>
 

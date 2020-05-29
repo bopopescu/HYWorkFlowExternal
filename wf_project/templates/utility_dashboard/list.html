@@ -63,7 +63,8 @@
                     'selectAll',
                     'selectNone',
                     {
-                        text: 'Approve',
+                        text: '<i class="fas fa-check"> Approve',
+                        className: 'color d-none d-sm-inline-block btn btn-sm btn-success shadow-sm',
                         action: function () {
                             var count = table.rows( { selected: true } ).count();
                             var rows = table.rows( { selected: true } ).data();
@@ -89,34 +90,34 @@
                             var table_reload = $('#myapproval').DataTable(); 
                             table_reload.ajax.reload();
                         }
-                    },
-                    {
-                        text: 'Reject',
-                        action: function () {
-                            var count = table.rows( { selected: true } ).count();
-                            var rows = table.rows( { selected: true } ).data();
-
-                            var i;
-                            for (i = 0; i < rows.length; i++) {
-                                var post_url = "{% url 'utility_reject_all' pk=123 %}".replace(/123/, rows[i].id); //get form action url
-                                var request_method = "GET"; //get form GET/POST method
-                                
-                                //if everything's ok, continue with Ajax form submit
-                                 
-                                    $.ajax({ //ajax form submit
-                                        url : post_url,
-                                        type: request_method,
-                                        contentType: false,
-                                        cache: false,
-                                        processData:false
-                                    }).done(function(res){ 
-
-                                    });
-                            }
-                            var table_reload = $('#myapproval').DataTable(); 
-                            table_reload.ajax.reload();
-                        }
                     }
+                    // ,{
+                    //     text: 'Reject',
+                    //     action: function () {
+                    //         var count = table.rows( { selected: true } ).count();
+                    //         var rows = table.rows( { selected: true } ).data();
+
+                    //         var i;
+                    //         for (i = 0; i < rows.length; i++) {
+                    //             var post_url = "{% url 'utility_reject_all' pk=123 %}".replace(/123/, rows[i].id); //get form action url
+                    //             var request_method = "GET"; //get form GET/POST method
+                                
+                    //             //if everything's ok, continue with Ajax form submit
+                                 
+                    //                 $.ajax({ //ajax form submit
+                    //                     url : post_url,
+                    //                     type: request_method,
+                    //                     contentType: false,
+                    //                     cache: false,
+                    //                     processData:false
+                    //                 }).done(function(res){ 
+
+                    //                 });
+                    //         }
+                    //         var table_reload = $('#myapproval').DataTable(); 
+                    //         table_reload.ajax.reload();
+                    //     }
+                    // }
                 ],
                 select: {
                     style: 'multi'

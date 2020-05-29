@@ -15,8 +15,8 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th data-data="row_number">No.</th>
-                        <th data-data="id"></th>
+                        <th class ="sorting" data-data="row_number">No.</th>
+                        <th class ="sorting" data-data="id"></th>
                         <th data-data="attachment_path"></th>
                         <th data-data="document_pk"></th>
                         <th data-data="request_by">Requested By</th>
@@ -79,7 +79,16 @@
                     'selectAll',
                     'selectNone',
                     {
-                        text: 'Approve',
+                        /* Removed on 29/5/2020 by wong */
+                        /* text: Approve', */
+                        /* Removed on 29/5/2020 by wong */
+
+
+                        /* Add on 29/5/2020 by wong */
+                        text: '<i class="fas fa-check"> Approve',
+                        className: 'color d-none d-sm-inline-block btn btn-sm btn-success shadow-sm',
+                         /* Add on 29/5/2020 by wong */
+
                         action: function () {
                             var count = table.rows( { selected: true } ).count();
                             var rows = table.rows( { selected: true } ).data();
@@ -103,6 +112,7 @@
                             }
                             var table_reload = $('#myapproval').DataTable(); 
                             table_reload.ajax.reload();
+
                         }
                     }
                 ],

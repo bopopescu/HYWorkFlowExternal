@@ -425,10 +425,10 @@ def approver_create(request, pk):
     if current_approvers < approval_group.no_of_person:
         if form.is_valid():
             user = get_object_or_404(User, pk=request.POST['user'])
-
+            approver_count_stage = ApprovalItemApprover.objects.filter(approval_item=approval_item).count()
             approver = form.save(commit=False)
             approver.approval_item = approval_item
-            approver.stage = previous_approver_count + current_approvers + 1
+            approver.stage = approver_count_stage + 1
             approver.user = user
             approver.save()
 

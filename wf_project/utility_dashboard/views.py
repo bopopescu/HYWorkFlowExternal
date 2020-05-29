@@ -87,8 +87,8 @@ def approval_detail(request, pk):
         first_tab_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule)[0]
         if first_tab_group.next_condition == 'Or':
             submitter_as_emp = get_object_or_404(EmployeeMaintenance, user=request.user)
-            approval_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)
-            first_tab_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group)[0]
+            approval_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group,approval_rule=approval_rule)
+            first_tab_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group,approval_rule=approval_rule)[0]
 
     if approval_rule_group.count() > 0:
         return render(request, 'utility_dashboard/detail.html', {'utility_approval_item': utility_approval_item, 'approval_rule': approval_rule, 'first_tab': first_tab_group,

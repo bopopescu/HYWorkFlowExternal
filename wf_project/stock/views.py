@@ -27,6 +27,7 @@ from django.http import JsonResponse
 from PDFreport.render import Render
 from django.http import HttpResponse
 from django.db.models.aggregates import Sum
+from django.db.models import Q
 
 # Stock Transfer ViewSet
 class MyStockTransferViewSet(viewsets.ModelViewSet):
@@ -51,8 +52,8 @@ class TeamStockTransferViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
-
+        # employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = EmployeeMaintenance.objects.filter(Q(id__in=employees_indept) & Q(id__in=employees_incomp) & Q(id__in=employees_inproject) & Q(id__in=employees_inbranch)).values_list('id', flat=True)
         employees_as_user = EmployeeMaintenance.objects.filter(id__in=employee_id_list).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
         return StockTransfer.objects.filter(submit_by__in=users).exclude(document_number__isnull=True).order_by('-id')  
@@ -102,8 +103,8 @@ class TeamStockAdjustmentViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
-
+        # employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = EmployeeMaintenance.objects.filter(Q(id__in=employees_indept) & Q(id__in=employees_incomp) & Q(id__in=employees_inproject) & Q(id__in=employees_inbranch)).values_list('id', flat=True)
         employees_as_user = EmployeeMaintenance.objects.filter(id__in=employee_id_list).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
         return StockAdjustment.objects.filter(submit_by__in=users).exclude(document_number__isnull=True).order_by('-id')  
@@ -153,8 +154,8 @@ class TeamStockIssuingViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
-
+        # employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = EmployeeMaintenance.objects.filter(Q(id__in=employees_indept) & Q(id__in=employees_incomp) & Q(id__in=employees_inproject) & Q(id__in=employees_inbranch)).values_list('id', flat=True)
         employees_as_user = EmployeeMaintenance.objects.filter(id__in=employee_id_list).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
         return StockIssuing.objects.filter(submit_by__in=users).exclude(document_number__isnull=True).order_by('-id')  
@@ -204,8 +205,8 @@ class TeamStockReturnViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
-
+        # employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = EmployeeMaintenance.objects.filter(Q(id__in=employees_indept) & Q(id__in=employees_incomp) & Q(id__in=employees_inproject) & Q(id__in=employees_inbranch)).values_list('id', flat=True)
         employees_as_user = EmployeeMaintenance.objects.filter(id__in=employee_id_list).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)
         return StockReturn.objects.filter(submit_by__in=users).exclude(document_number__isnull=True).order_by('-id')  

@@ -21,6 +21,7 @@ from PDFreport.render import Render
 from .models import Memo, MemoAttachment
 from .serializers import MemoSerializer, MemoAttachmentSerializer
 from .forms import NewMemoForm, DetailMemoForm, UpdateMemoForm, NewMemoAttachmentForm
+from django.db.models import Q
 
 class MemoAttachmentViewSet(viewsets.ModelViewSet):
     """Handles Attachement datatable"""
@@ -63,8 +64,8 @@ class TeamMemoViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
-
+        # employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = EmployeeMaintenance.objects.filter(Q(id__in=employees_indept) & Q(id__in=employees_incomp) & Q(id__in=employees_inproject) & Q(id__in=employees_inbranch)).values_list('id', flat=True)
         employees_as_user = EmployeeMaintenance.objects.filter(
             id__in=employee_id_list
             ).values_list('user_id', flat=True)

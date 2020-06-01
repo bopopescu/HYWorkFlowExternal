@@ -20,6 +20,7 @@ from drawer_reimbursement.models import ReimbursementRequest
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.urls import reverse
+from django.db.models import Q
 
 class StaffViewSet(viewsets.ModelViewSet):
     queryset = StaffRecruitmentRequest.objects.all() #.order_by('rank')
@@ -48,7 +49,8 @@ class TeamStaffViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
+        # employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
+        employee_id_list = EmployeeMaintenance.objects.filter(Q(id__in=employees_indept) & Q(id__in=employees_incomp) & Q(id__in=employees_inproject) & Q(id__in=employees_inbranch)).values_list('id', flat=True)
         
         employees_as_user = EmployeeMaintenance.objects.filter(id__in=employee_id_list).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)

@@ -24,6 +24,7 @@ from PDFreport.render import Render
 from .forms import NewPaymentForm, UpdatePaymentForm, DetailPaymentForm, NewPYItemForm, NewPYAttachmentForm
 from .models import PaymentRequest, PaymentRequestDetail, PaymentAttachment
 from .serializers import PYSerializer, PYItemSerializer, PYAttachmentSerializer
+from django.db.models import Q
 
 class PYViewSet(viewsets.ModelViewSet):
     queryset = PaymentRequest.objects.all() #.order_by('rank')
@@ -53,9 +54,9 @@ class TeamPYViewSet(viewsets.ModelViewSet):
         employees_inproject = EmployeeProjectMaintenance.objects.filter(project_id__in=projects).values_list('employee_id',flat=True)
         employees_inbranch = EmployeeBranchMaintenance.objects.filter(branch_id__in=branchs).values_list('employee_id', flat=True)
         
-        employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
-
-        #print(employee_id_list)
+        # employee_id_list = employees_indept.intersection(employees_incomp,employees_inproject,employees_inbranch)
+        #fix for my sql cannot use intersection problem
+        employee_id_list = EmployeeMaintenance.objects.filter(Q(id__in=employees_indept) & Q(id__in=employees_incomp) & Q(id__in=employees_inproject) & Q(id__in=employees_inbranch)).values_list('id', flat=True)
 
         employees_as_user = EmployeeMaintenance.objects.filter(id__in=employee_id_list).values_list('user_id', flat=True)
         users = User.objects.filter(id__in=employees_as_user).exclude(id=self.request.user.id).values_list('id', flat=True)   

@@ -428,6 +428,7 @@ def approver_create(request, pk):
             approver_count_stage = ApprovalItemApprover.objects.filter(approval_item=approval_item).count()
             approver = form.save(commit=False)
             approver.approval_item = approval_item
+            # approver.stage = previous_approver_count + current_approvers + 1
             approver.stage = approver_count_stage + 1
             approver.user = user
             approver.save()
@@ -454,7 +455,7 @@ def approver_create(request, pk):
 def supervisor_approver_create(request, pk):
     # group_name = request.POST['hiddenGroupName']
 
-    form = ApproverGroupAAndBForm(request.POST)
+    form = ApproverGroupAAndBForm(request.user,request.POST)
 
     approval_item = get_object_or_404(ApprovalItem, pk=pk)
     approval_rule = get_object_or_404(WorkflowApprovalRule, pk=approval_item.approval_level.pk)

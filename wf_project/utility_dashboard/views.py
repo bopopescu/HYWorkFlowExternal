@@ -135,6 +135,23 @@ def utility_bill_count(request,pk):
 @login_required
 def approval_update(request, pk):
     utility_approval_item =  get_object_or_404(UtilityApprovalItem, pk=pk)
+
+    approval_rule_valid = utility_approval_item.approval_level
+    if approval_rule_valid.supervisor_approve == False:
+        # print(approval_rule_valid.approval_level)
+        # print(count_approver_needed(request,approval_rule_valid.pk))
+        approver_needed = int(count_approver_needed(request,approval_rule_valid.pk))
+        validation_count = UtilityApprovalItemApprover.objects.filter(utility_approval_item=utility_approval_item).count()
+        if validation_count < approver_needed:
+            urls = "/utilityapproval/detail/"+str(utility_approval_item.pk)+"/?error=True"
+            return redirect(urls)
+    else:
+        validation_count = UtilityApprovalItemApprover.objects.filter(utility_approval_item=utility_approval_item).count()
+        if validation_count <= 0:
+            urls = "/utilityapproval/detail/"+str(utility_approval_item.pk)+"/?error=True"
+            return redirect(urls)
+
+
     utility_approval_item.status = "IP"
     utility_approval_item.submit_by = request.user
     utility_approval_item.save()
@@ -474,4 +491,27 @@ def reject_document(request,pk,reason):
 
     return JsonResponse({'message': 'Success'})
 
+
+@login_required
+def count_approver_needed(request,pk):
+    approval_rule = get_object_or_404(WorkflowApprovalRule,pk=pk)
+    approval_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule).order_by('id')
+
+    if approval_rule_group.count() > 0:
+        first_tab_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule)[0]
+        if first_tab_group.next_condition == 'Or':
+            approver_needed = 0 
+            submitter_as_emp = get_object_or_404(EmployeeMaintenance, user=request.user)
+            approval_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(submitter_group=submitter_as_emp.employee_group,approval_rule=approval_rule)
+            for approval_no in approval_rule_group:
+                approver_needed = approver_needed + approval_no.approval_group.no_of_person
+
+            return approver_needed
+        else:
+            approver_needed = 0
+            approval_rule_group = WorkflowApprovalRuleGroupMaintenance.objects.filter(approval_rule=approval_rule)
+            for approval_no in approval_rule_group:
+                approver_needed = approver_needed + approval_no.approval_group.no_of_person
+
+            return approver_needed
 

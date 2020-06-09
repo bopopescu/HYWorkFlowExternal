@@ -172,6 +172,7 @@ def staff_delete(request, pk):
 def staff_detail(request, pk):
     if request.GET.get('from', None) == 'approval':
         approvers = ApprovalItemApprover.objects.filter(user=request.user, status='P').values_list('approval_item', flat=True)
+        approval_items = ApprovalItem.objects.filter(id__in=approvers,status="IP").order_by('-id')
         
         found = False
         next_link = reverse('approval_list')
@@ -305,7 +306,20 @@ def staff_candidate_delete(request, pk):
     return JsonResponse({'message': 'Success'})
 
 @login_required
+def staff_initupdate(request, pk): 
+    staff = get_object_or_404(StaffRecruitmentRequest, pk=pk)
+    if request.method == 'POST':
+        form = UpdateStaffRecruimentForm(request.POST, instance=staff)
+        if form.is_valid():
+            staff = form.save()
+            staff.save()
+
+
+@login_required
 def staff_send_approval(request, pk):
+    if request.method == 'POST':
+        staff_initupdate(request,pk)
+        
     staff = get_object_or_404(StaffRecruitmentRequest, pk=pk)
     document_type = get_object_or_404(DocumentTypeMaintenance, document_type_code="501")
     transaction_type = get_object_or_404(TransactiontypeMaintenance, transaction_type_name="Staff Requisition", document_type=document_type)

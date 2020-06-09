@@ -286,8 +286,22 @@ def stock_transfer_create(request, pk):
         form_attachment = NewStockTransferAttachmentForm()
     return render(request, 'stock/stock_transfer/create.html', {'stock_transfer': stock_transfer, 'form': form, 'form_detail': form_detail,'form_attachment':form_attachment})
 
+
+@login_required
+def stock_transfer_initupdate(request, pk):
+    stock_transfer = get_object_or_404(StockTransfer, pk=pk)
+    if request.method == 'POST':
+        form = UpdateStockTransferForm(request.POST, instance=stock_transfer)
+        status = stock_transfer.status
+        stock_transfer = form.save()
+        stock_transfer.status = status
+        stock_transfer.save()
+
 @login_required
 def stock_transfer_submit(request, pk):
+    if request.method == 'POST':
+        stock_transfer_initupdate(request,pk)
+
     stock_transfer = get_object_or_404(StockTransfer, pk=pk)
     stock_transfer_details = StockTransferDetail.objects.filter(stock_transfer=stock_transfer)
     document_type = DocumentTypeMaintenance.objects.filter(document_type_code="211")[0]
@@ -451,7 +465,20 @@ def stock_adjustment_create(request, pk):
     return render(request, 'stock/stock_adjustment/create.html', {'stock_adjustment': stock_adjustment, 'form': form, 'form_detail': form_detail,'form_attachment':form_attachment})
 
 @login_required
+def stock_adjustment_initupdate(request, pk):
+    stock_adjustment = get_object_or_404(StockAdjustment, pk=pk)
+    if request.method == 'POST':
+        form = UpdateStockAdjustmentForm(request.POST, instance=stock_adjustment)
+        status = stock_adjustment.status
+        stock_adjustment = form.save()
+        stock_adjustment.status = status
+        stock_adjustment.save()
+        
+@login_required
 def stock_adjustment_submit(request, pk):
+    if request.method == 'POST':
+        stock_adjustment_initupdate(request,pk)
+
     stock_adjustment = get_object_or_404(StockAdjustment, pk=pk)
     stock_adjustment_details = StockAdjustmentDetail.objects.filter(stock_adjustment=stock_adjustment)
     document_type = DocumentTypeMaintenance.objects.filter(document_type_code="210")[0]
@@ -606,8 +633,21 @@ def stock_issuing_create(request, pk):
     return render(request, 'stock/stock_issuing/create.html', {'stock_issuing': stock_issuing, 'form': form, 'form_detail': form_detail,'form_attachment':form_attachment})
 
 @login_required
+def stock_issuing_initupdate(request, pk):
+    stock_issuing = get_object_or_404(StockIssuing, pk=pk)
+    if request.method == 'POST':
+        form = UpdateStockIssuingForm(request.POST, instance=stock_issuing)
+        status = stock_issuing.status
+        stock_issuing = form.save()
+        stock_issuing.status = status
+        stock_issuing.save()
+
+@login_required
 def stock_issuing_submit(request, pk):
     stock_issuing = get_object_or_404(StockIssuing, pk=pk)
+    if request.method == 'POST':
+        stock_issuing_initupdate(request,pk)
+
     stock_issuing_details = StockIssuingDetail.objects.filter(stock_issuing=stock_issuing)
     document_type = DocumentTypeMaintenance.objects.filter(document_type_code="212")[0]
     status = StatusMaintenance.objects.filter(document_type=document_type,status_code='400')[0]
@@ -773,7 +813,20 @@ def stock_return_create(request, pk):
     return render(request, 'stock/stock_return/create.html', {'stock_return': stock_return, 'form': form, 'form_detail': form_detail,'form_attachment':form_attachment})
 
 @login_required
+def stock_return_initupdate(request, pk):
+    stock_return = get_object_or_404(StockReturn, pk=pk)
+    if request.method == 'POST':
+        form = UpdateStockReturnForm(request.POST, instance=stock_return)
+        status = stock_return.status
+        stock_return = form.save()
+        stock_return.status = status
+        stock_return.save()
+
+@login_required
 def stock_return_submit(request, pk):
+    if request.method == 'POST':
+        stock_return_initupdate(request,pk)
+
     stock_return = get_object_or_404(StockReturn, pk=pk)
     stock_return_details = StockReturnDetail.objects.filter(stock_return=stock_return)
     document_type = DocumentTypeMaintenance.objects.filter(document_type_code="214")[0]

@@ -75,7 +75,7 @@
   </script> 
   {% csrf_token %} 
     <div id="navbar">
-      <a href="{% url 'py_send_approval' py.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</a>
+      <button type="submit" formaction="{% url 'py_send_approval' py.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit for Approval</button>
       <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
       <a href="{% url 'pylist' py.transaction_type.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-times fa-sm text-white-50"></i> Cancel</a>
     </div>    

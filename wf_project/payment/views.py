@@ -168,8 +168,24 @@ def py_create_edit(request, pk):
         form_item = NewPYItemForm()
     return render(request, 'payment/create.html', {'py': py, 'form': form, 'form_item':form_item , 'form_attachment': form_attachment})
 
+
+@login_required
+def py_initupdate(request, pk): 
+    py = get_object_or_404(PaymentRequest, pk=pk)
+    if request.method == 'POST':
+        form = UpdatePaymentForm(request.POST, instance=py)
+        if form.is_valid():
+            py = form.save()
+            py.save()
+        else:
+            print(form.errors)
+
+
 @login_required
 def py_send_approval(request, pk):
+    if request.method == 'POST':
+        py_initupdate(request,pk)
+        
     py = get_object_or_404(PaymentRequest, pk=pk)
     if py.transaction_type.is_utility == True:
         approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=py.total_amount, document_amount_range__lte=py.total_amount)[0]

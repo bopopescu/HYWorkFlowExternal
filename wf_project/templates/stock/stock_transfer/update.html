@@ -37,7 +37,7 @@
   {% csrf_token %} 
     <div id="navbar">
         {% if stock_transfer.status.status_code == 100 %}
-        <a href="{% url 'stock_transfer_submit' stock_transfer.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit</a>
+        <button type="submit" formaction="{% url 'stock_transfer_submit' stock_transfer.pk %}" class="d-none d-sm-inline-block btn btn-sm btn-warning shadow-sm"><i class="fas fa-sign-out-alt"></i> Submit</button>
         {% endif %}
         <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i class="fas fa-save fa-sm text-white-50"></i> Save</button>
         <a href="{% url 'stock_transfer_list' %}" id="back_button" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"><i class="fas fa-angle-left"></i> Back</a>

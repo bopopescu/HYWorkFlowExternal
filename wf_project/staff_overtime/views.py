@@ -132,7 +132,20 @@ def staff_ot_create(request, pk):
     return render(request, 'staff_overtime/create.html', {'staff_ot': staff_ot, 'form': form, 'form_detail': form_detail})
 
 @login_required
+def staff_ot_initupdate(request, pk):
+    staff_ot = get_object_or_404(StaffOT, pk=pk)
+    if request.method == 'POST':
+        form = UpdateStaffOTForm(request.POST, instance=staff_ot)
+        status = staff_ot.status
+        staff_ot = form.save()
+        staff_ot.status = status
+        staff_ot.save()
+
+@login_required
 def staff_ot_send_approval(request, pk):
+    if request.method == 'POST':
+        staff_ot_initupdate(request,pk)
+        
     staff_ot = get_object_or_404(StaffOT, pk=pk)
 
     approval_level = WorkflowApprovalRule.objects.filter(transaction_type=staff_ot.transaction_type)[0]

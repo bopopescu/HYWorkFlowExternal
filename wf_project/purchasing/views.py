@@ -313,8 +313,71 @@ def po_create(request, pk):
     form_detail = NewPODetailForm()
     return render(request, 'po/create.html', {'po': po, 'form': form, 'form_attachment': form_attachment, 'form_cov2_attachment': form_cov2_attachment, 'form_cov3_attachment': form_cov3_attachment, 'form_detail': form_detail})
 
+
+@login_required
+def po_initupdate(request, pk):
+    po = get_object_or_404(PurchaseOrder, pk=pk)
+    if request.method == 'POST':
+        form = UpdatePOForm(request.POST, instance=po)
+        discount = 0
+        discount_amount = 0
+        sub_total = 0
+        tax_amount = 0
+        total_amount = 0
+        comparison_vendor_2_amount = 0
+        comparison_vendor_3_amount = 0
+        if form.is_valid():
+            discount = form.cleaned_data['discount']
+            discount_amount = form.cleaned_data['discount_amount']
+            sub_total = form.cleaned_data['sub_total']
+            tax_amount = form.cleaned_data['tax_amount']
+            total_amount = form.cleaned_data['total_amount']
+            comparison_vendor_2_amount = form.cleaned_data['comparison_vendor_2_amount']
+            comparison_vendor_3_amount = form.cleaned_data['comparison_vendor_3_amount']
+        else:
+            print(form.errors)
+
+        po_type = DocumentTypeMaintenance.objects.filter(document_type_code="205")[0]
+        po.document_number = request.POST['document_number']
+        po.company = get_object_or_404(CompanyMaintenance, pk=request.POST['company'])
+        po.currency = get_object_or_404(CurrencyMaintenance, pk=request.POST['currency'])
+        po.status = get_object_or_404(StatusMaintenance, document_type=po_type, status_code="100")
+        po.vendor = get_object_or_404(VendorMasterData, pk=request.POST['vendor'])
+        po.delivery_receiver = get_object_or_404(CompanyMaintenance, pk=request.POST['delivery_receiver'])     
+        po.project = get_object_or_404(ProjectMaintenance, pk=request.POST['project'])
+        po.transaction_type = get_object_or_404(TransactiontypeMaintenance, pk=request.POST['transaction_type'])
+        po.reference = request.POST['reference']
+        po.subject = request.POST['subject']
+        po.discount = discount
+        po.discount_amount = discount_amount
+        po.sub_total = sub_total
+        po.tax_amount = tax_amount
+        po.total_amount = total_amount
+        po.payment_term = get_object_or_404(PaymentTermMaintenance, pk=request.POST['payment_term'])
+        po.payment_schedule = request.POST['payment_schedule']
+        po.vendor_address = request.POST['vendor_address']
+        po.delivery_address = request.POST['delivery_address']
+        po.delivery_instruction = request.POST['delivery_instruction']
+        po.remarks = request.POST['remarks']
+
+        if request.POST['comparison_vendor_2'] != '':
+            po.comparison_vendor_2 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_2'])
+        
+        po.comparison_vendor_2_amount = comparison_vendor_2_amount
+        
+        if request.POST['comparison_vendor_3'] != '':
+            po.comparison_vendor_3 = get_object_or_404(VendorMasterData, pk=request.POST['comparison_vendor_3'])
+            
+        po.comparison_vendor_3_amount = comparison_vendor_3_amount
+        po.revision = po.revision + 1
+        po.submit_by = request.user
+        po.save()
+        
 @login_required
 def po_send_approval(request, pk):
+    if request.method == 'POST':
+        po_initupdate(request,pk)
+
     po = get_object_or_404(PurchaseOrder, pk=pk)
     approval_level = WorkflowApprovalRule.objects.filter(document_amount_range2__gte=po.total_amount, document_amount_range__lte= po.total_amount)[0]
     approval_item = get_object_or_404(ApprovalItem, pk=po.approval.pk)

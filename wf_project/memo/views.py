@@ -242,8 +242,14 @@ def memo_update(request, pk_value):
     """Updates a Memo"""
 
     memo = get_object_or_404(Memo, pk=pk_value)
+    status = memo.status
     if request.method == 'POST':
         form = UpdateMemoForm(request.POST, instance=memo)
+        if form.is_valid():
+            project = form.cleaned_data['project']
+            memo.project = project
+            
+        memo.status = status
         memo.revision = memo.revision + 1
         memo.submit_by = request.user
         memo.subject = request.POST['subject']
@@ -262,6 +268,32 @@ def memo_update(request, pk_value):
         'memo': memo, 'form': form,
         'form_attachment': form_attachment
         })
+
+@login_required
+def memo_initupdate(request, pk):
+    """Updates a Memo"""
+
+    memo = get_object_or_404(Memo, pk=pk)
+    status = memo.status
+    if request.method == 'POST':
+        form = UpdateMemoForm(request.POST, instance=memo)
+        if form.is_valid():
+            project = form.cleaned_data['project']
+            memo.project = project
+            
+        memo.status = status
+        memo.revision = memo.revision + 1
+        memo.submit_by = request.user
+        memo.subject = request.POST['subject']
+        memo.details = request.POST['details']
+        memo.save()
+
+@login_required
+def memo_send_approval(request, pk):
+    if request.method == 'POST':
+        memo_initupdate(request,pk)
+    memo = get_object_or_404(Memo, pk=pk)
+    return redirect('approval_detail', pk=memo.approval.pk)
 
 @login_required
 def load_template(request):

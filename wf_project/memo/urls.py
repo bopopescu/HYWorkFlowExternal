@@ -22,6 +22,7 @@ urlpatterns = [
     path('<int:pk_value>/', views.memo_detail, name='memo_detail'),
     path('delete/', views.memo_delete, name='memo_delete'),
     path('update/<int:pk_value>/', views.memo_update, name='memo_update'),
+    path('send_approval/<int:pk>/',views.memo_send_approval,name='memo_send_approval'),
 
     path('ajax/load-template/', views.load_template, name='ajax_load_template'),
     path('print/<int:pk>/', views.memo_print, name='memo_print'),

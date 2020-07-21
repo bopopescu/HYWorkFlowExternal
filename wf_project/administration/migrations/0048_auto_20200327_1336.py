@@ -19,12 +19,12 @@ class Migration(migrations.Migration):
             field=models.CharField(max_length=100, verbose_name='Contact Person Name'),
         ),
         migrations.AlterField(
-            model_name='vendormasterdata',
+            model_name='vendormaindata',
             name='is_qualified',
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='vendormasterdata',
+            model_name='vendormaindata',
             name='vendor_group',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='administration.VendorGroupMaintenance', verbose_name='Vendor Group'),
         ),
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.AddField(
-            model_name='vendormasterdata',
+            model_name='vendormaindata',
             name='vendor_category',
             field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='administration.VendorCategoryMaintenance', verbose_name='Vendor Category'),
             preserve_default=False,

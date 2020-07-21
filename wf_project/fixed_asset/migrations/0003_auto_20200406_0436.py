@@ -6,12 +6,12 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('fixed_asset', '0002_assetmaster_company'),
+        ('fixed_asset', '0002_assetmain_company'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='assetmaster',
+            model_name='assetmain',
             name='modify_date',
             field=models.DateTimeField(auto_now=True, null=True),
         ),

@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name='vendormasterdata',
+            model_name='vendormaindata',
             name='is_qualified',
             field=models.BooleanField(),
         ),

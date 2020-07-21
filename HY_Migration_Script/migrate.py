@@ -983,7 +983,7 @@ def migrate_vendorgrp(conn_src, conn_dst):
         print("Rollback performed.")
 
 def migrate_vendor(conn_src, conn_dst):
-    table_name = "administration_vendormasterdata"
+    table_name = "administration_vendormaindata"
     cur_src = conn_src.cursor()
     cur_chk = conn_src.cursor()
     cur_dst = conn_dst.cursor()
@@ -1066,7 +1066,7 @@ def migrate_vendor_address(conn_src, conn_dst):
     cur_dst = conn_dst.cursor()
     cur_dat = conn_src.cursor()
     
-    sql = "SELECT uuid_src,id_dst FROM uuid_map WHERE tb_name = 'administration_vendormasterdata'"
+    sql = "SELECT uuid_src,id_dst FROM uuid_map WHERE tb_name = 'administration_vendormaindata'"
     cur_src.execute(sql)
     recordset = list(cur_src.fetchall())
     cur_dst.execute("begin")
@@ -1482,7 +1482,7 @@ def migrate_paymentrequest(conn_src, conn_dst):
             project_id = result[0]
             
             #Get vendor_id
-            ar_param = ("administration_vendormasterdata",uuid_vendor_id)
+            ar_param = ("administration_vendormaindata",uuid_vendor_id)
             cur_dst.execute(sql,ar_param)
             result = cur_dst.fetchone()
             if result is None:
@@ -1862,7 +1862,7 @@ def migrate_po(conn_src, conn_dst):
             currency_id = 218
 
             #Get vendor_id
-            ar_param = ("administration_vendormasterdata",uuid_vendor_id)
+            ar_param = ("administration_vendormaindata",uuid_vendor_id)
             cur_dst.execute(sql,ar_param)
             result = cur_dst.fetchone()
             if result is None:
@@ -1872,7 +1872,7 @@ def migrate_po(conn_src, conn_dst):
                 vendor_id = result[0]
             
             #Get comparison_vendor_2_id
-            ar_param = ("administration_vendormasterdata",uuid_comparison_vendor_2_id)
+            ar_param = ("administration_vendormaindata",uuid_comparison_vendor_2_id)
             cur_dst.execute(sql,ar_param)
             result = cur_dst.fetchone()
             if result is None:
@@ -1882,7 +1882,7 @@ def migrate_po(conn_src, conn_dst):
                 comparison_vendor_2_id = result[0]
 
             #Get comparison_vendor_3_id
-            ar_param = ("administration_vendormasterdata",uuid_comparison_vendor_3_id)
+            ar_param = ("administration_vendormaindata",uuid_comparison_vendor_3_id)
             cur_dst.execute(sql,ar_param)
             result = cur_dst.fetchone()
             if result is None:

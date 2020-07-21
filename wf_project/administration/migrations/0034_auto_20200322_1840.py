@@ -148,7 +148,7 @@ class Migration(migrations.Migration):
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='vendormasterdata',
+            model_name='vendormaindata',
             name='is_active',
             field=models.BooleanField(default=False),
             preserve_default=False,
@@ -522,27 +522,27 @@ class Migration(migrations.Migration):
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AlterField(
-            model_name='vendormasterdata',
+            model_name='vendormaindata',
             name='created_by',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='vendorcreated_by_user', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AlterField(
-            model_name='vendormasterdata',
+            model_name='vendormaindata',
             name='created_timestamp',
             field=models.DateTimeField(auto_now_add=True),
         ),
         migrations.AlterField(
-            model_name='vendormasterdata',
+            model_name='vendormaindata',
             name='modified_by',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='vendormodified_by_user', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AlterField(
-            model_name='vendormasterdata',
+            model_name='vendormaindata',
             name='modified_timestamp',
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AlterField(
-            model_name='vendormasterdata',
+            model_name='vendormaindata',
             name='tax_id_2',
             field=models.CharField(blank=True, max_length=100, null=True),
         ),

@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='AssetMaster',
+            name='AssetMain',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('asset_number', models.CharField(max_length=35)),
@@ -66,7 +66,7 @@ class Migration(migrations.Migration):
                 ('asset_category_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='fixed_asset.AssetCategory')),
             ],
             options={
-                'verbose_name_plural': 'AssetsMaster',
+                'verbose_name_plural': 'AssetsMain',
             },
         ),
         migrations.CreateModel(
@@ -176,24 +176,24 @@ class Migration(migrations.Migration):
                 ('is_deleted', models.BooleanField(default=False, null=True)),
                 ('delete_by', models.CharField(max_length=120)),
                 ('delete_date', models.DateTimeField(blank=True, default=datetime.datetime.now)),
-                ('asset_master_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='fixed_asset.AssetMaster')),
+                ('asset_main_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='fixed_asset.AssetMain')),
             ],
             options={
                 'verbose_name_plural': 'Statistics',
             },
         ),
         migrations.AddField(
-            model_name='assetmaster',
+            model_name='assetmain',
             name='asset_type_id',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='fixed_asset.AssetType'),
         ),
         migrations.AddField(
-            model_name='assetmaster',
+            model_name='assetmain',
             name='class_type_id',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='fixed_asset.ClassType'),
         ),
         migrations.AddField(
-            model_name='assetmaster',
+            model_name='assetmain',
             name='tax_id',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='fixed_asset.Tax'),
         ),

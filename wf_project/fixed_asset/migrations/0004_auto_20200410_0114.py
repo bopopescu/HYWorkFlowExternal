@@ -12,22 +12,22 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name='assetmaster',
+            model_name='assetmain',
             name='asset_category_id',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='fixed_asset.AssetCategory'),
         ),
         migrations.AlterField(
-            model_name='assetmaster',
+            model_name='assetmain',
             name='asset_type_id',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='fixed_asset.AssetType'),
         ),
         migrations.AlterField(
-            model_name='assetmaster',
+            model_name='assetmain',
             name='class_type_id',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='fixed_asset.ClassType'),
         ),
         migrations.AlterField(
-            model_name='assetmaster',
+            model_name='assetmain',
             name='tax_id',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='fixed_asset.Tax'),
         ),

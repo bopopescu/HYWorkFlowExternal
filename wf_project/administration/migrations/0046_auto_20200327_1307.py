@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.AddField(
-            model_name='vendormasterdata',
+            model_name='vendormaindata',
             name='is_qualified',
             field=models.BooleanField(default=False, editable=False),
             preserve_default=False,
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='administration.CountryMaintenance', verbose_name='Country'),
         ),
         migrations.AlterField(
-            model_name='vendormasterdata',
+            model_name='vendormaindata',
             name='currency',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='administration.CurrencyMaintenance', verbose_name='Currency'),
         ),
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
                 ('ic_or_passport_no', models.CharField(blank=True, max_length=50, null=True, verbose_name='IC/Passport No.')),
                 ('dob', models.DateField(blank=True, null=True, verbose_name='D.O.B')),
                 ('position', models.CharField(blank=True, max_length=150, null=True, verbose_name='Position')),
-                ('vendor', models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, to='administration.VendorMasterData')),
+                ('vendor', models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, to='administration.VendorMainData')),
             ],
         ),
         migrations.CreateModel(
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
                 ('address_zip', models.IntegerField(verbose_name='Zip')),
                 ('country', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='administration.CountryMaintenance', verbose_name='Country')),
                 ('state', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='administration.StateMaintenance', verbose_name='State')),
-                ('vendor', models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, to='administration.VendorMasterData')),
+                ('vendor', models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, to='administration.VendorMainData')),
             ],
         ),
     ]

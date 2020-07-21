@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='assetmaster',
+            model_name='assetmain',
             name='company',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='administration.CompanyMaintenance', verbose_name='Company'),
         ),

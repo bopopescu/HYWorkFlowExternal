@@ -75,9 +75,9 @@ class Tax(models.Model):
     def __str__(self):
         return self.description
 
-class AssetMaster(models.Model):
+class AssetMain(models.Model):
     class Meta:
-        verbose_name_plural = 'AssetsMaster'
+        verbose_name_plural = 'AssetsMain'
 
     asset_number = models.CharField(max_length = 35)
     company = models.ForeignKey(CompanyMaintenance, verbose_name="Company", on_delete=models.CASCADE, blank=True, null=True)
@@ -119,7 +119,7 @@ class Statistics(models.Model):
     class Meta:
         verbose_name_plural = 'Statistics'
 
-    asset_master_id = models.ForeignKey(AssetMaster, on_delete = models.CASCADE)
+    asset_main_id = models.ForeignKey(AssetMain, on_delete = models.CASCADE)
     elapsed_months_py = models.DecimalField(max_digits = 8, decimal_places = 2)
     elapsed_months_cy = models.DecimalField(max_digits = 8, decimal_places = 2)
     elapsed_months_pm = models.DecimalField(max_digits = 8, decimal_places = 2)
@@ -168,4 +168,4 @@ class Statistics(models.Model):
     delete_date = models.DateTimeField(default = datetime.now, blank = True)
 
     def __str__(self):
-        return self.asset_master_id
+        return self.asset_main_id
